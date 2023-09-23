@@ -15,9 +15,8 @@ export default defineNuxtConfig({
       ]
     }
   },
-  buildModules: [
-    '@nuxtjs/pwa',
-  ],
+  modules: ['@nuxt/ui'],
+  buildModules: ['@nuxtjs/pwa'],
   pwa: {
     manifest: {
       name: 'Fire hydrant surveyor',
