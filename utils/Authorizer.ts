@@ -1,1 +1,1 @@
-import "pouchdb-authentication"
+// import "pouchdb-authentication";

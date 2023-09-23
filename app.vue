@@ -13,8 +13,7 @@ provide(loginStateKey, {loginState, updateLoginState})
 
 <template>
   <div>
-    <Login v-if="loginState == LoginState.loggedOut"/>
-    <homepage/>
+    <NuxtPage/>
   </div>
 </template>
 

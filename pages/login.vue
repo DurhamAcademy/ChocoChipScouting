@@ -10,20 +10,38 @@
   let repeatPassword = ref("")
   let signUpPage = ref(false);
   let passwordsMustMatch = ref(false);
+  let error = ref(false)
 
-  const { loginState, updateLoginState } = inject(loginStateKey)
+  const {updateLoginState}: {updateLoginState: (newState: LoginState)=>void} = inject(loginStateKey)!
 
   async function login(username: string, password: string) {
-    var result = await usersDB.logIn(username, password)
+    try{
+      var result = await usersDB.logIn(username, password)
+    } catch (e) {
+      error.value = true
+    }
     if (result.ok) {
       updateLoginState(LoginState.loggedIn)
+      navigateTo("/dashboard")
     }
+    else error.value = true
   }
 
   async function signUp(username: string, password: string, repeatPassword: string) {
-    if (password == repeatPassword)
-      await usersDB.signUp(username, password)
-    else {
+    if (password == repeatPassword) {
+      try {
+        let {ok} = await usersDB.signUp(username, password);
+        if (ok) {
+          signUpPage.value=false;
+          error.value=false
+        } else {
+          error.value = true;
+        }
+      } catch (e) {
+        error.value = true
+      }
+
+    } else {
       validateInput()
     }
   }
@@ -65,6 +83,7 @@
                  required>
         </div>
         <p v-if="passwordsMustMatch">Passwords must match.</p>
+        <p v-if="error">An error occurred.</p>
         <div class="inputDiv">
           <button v-if="!signUpPage"
                   @click="

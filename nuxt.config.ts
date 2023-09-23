@@ -15,6 +15,20 @@ export default defineNuxtConfig({
       ]
     }
   },
+  buildModules: [
+    '@nuxtjs/pwa',
+  ],
+  pwa: {
+    manifest: {
+      name: 'Fire hydrant surveyor',
+      short_name: 'Hydrant Surveyor',
+      lang: 'en',
+      display: 'standalone',
+    },
+    workbox: {
+      enabled: true
+    }
+  },
   devtools: { enabled: true },
   ssr: false
 })
