@@ -1,10 +1,9 @@
 <script setup lang="ts">
-  import "../utils/Authorizer";
-  import {couchDBBaseURL} from "~/utils/URIs"
-  import {loginStateKey} from "~/utils/keys";
-  import LoginState from "~/utils/LoginState";
+import "../utils/authorization/Authorizer";
+import {couchDBBaseURL} from "~/utils/URIs"
+import {loginStateKey} from "~/utils/keys";
 
-  var usersDB = new PouchDB(`${couchDBBaseURL}/_users`, {skip_setup: true});
+var usersDB = new PouchDB(`${couchDBBaseURL}/_users`, {skip_setup: true});
   let username = ref("");
   let password = ref("");
   let repeatPassword = ref("")
@@ -12,19 +11,19 @@
   let passwordsMustMatch = ref(false);
   let error = ref(false)
 
-  const {updateLoginState}: {updateLoginState: (newState: LoginState)=>void} = inject(loginStateKey)!
+
+const {updateUsernameState}: { updateUsernameState: () => void } = inject(loginStateKey)!
 
   async function login(username: string, password: string) {
     try{
       var result = await usersDB.logIn(username, password)
+      if (result.ok) {
+        updateUsernameState()
+        navigateTo("/dashboard")
+      } else error.value = true
     } catch (e) {
       error.value = true
     }
-    if (result.ok) {
-      updateLoginState(LoginState.loggedIn)
-      navigateTo("/dashboard")
-    }
-    else error.value = true
   }
 
   async function signUp(username: string, password: string, repeatPassword: string) {
@@ -47,63 +46,80 @@
   }
 
   function validateInput() {
-    // noinspection RedundantIfStatementJS
-    if ((password.value == repeatPassword.value) || (repeatPassword.value.length == 0)) {
-      passwordsMustMatch.value = false;
-    } else {
-      passwordsMustMatch.value = true;
+    try {
+      // noinspection RedundantIfStatementJS
+      if ((!signUpPage.value) || (password.value == repeatPassword.value)) {
+        passwordsMustMatch.value = false;
+      } else {
+        passwordsMustMatch.value = true;
+      }
+    } catch (e) {
+
     }
   }
 
 </script>
 
 <template>
-  <div class="outer-login">
-    <div class="inner-login">
-      <form action="javascript:void(0);">
-        <div class="inputDiv">
-          <input type="text"
+  <UContainer :ui="{
+  'base': 'mx-auto',
+  'padding': 'p-4 sm:p-6 lg:p-8',
+  'constrained': 'max-w-sm'
+  }">
+    <UCard>
+      <template #header>
+        <h2 class="font-semibold text-xl text-gray-900 dark:text-white leading-tight">
+          {{ (signUpPage) ? "Signup" : "Login" }}
+        </h2>
+      </template>
+
+      <UForm action="javascript:void(0);">
+        <UFormGroup label="Username" name="username" required>
+          <UInput required
                  v-model="username"
-                 placeholder="Username"
-                 required>
-        </div>
-        <div class="inputDiv">
-          <input type="password"
-                 v-model="password"
-                 placeholder="Password"
-                 @input="validateInput()"
-                 required>
-        </div>
-        <div class="inputDiv">
-          <input v-if="signUpPage"
-                 type="password"
-                 v-model="repeatPassword"
-                 placeholder="Repeat password"
-                 @input="validateInput()"
-                 required>
-        </div>
+                  type="text"/>
+        </UFormGroup>
+        <UFormGroup label="Password" name="password" required>
+          <UInput v-model="password"
+                  placeholder="Password"
+                  required
+                  type="password"/>
+        </UFormGroup>
+        <UFormGroup v-if="signUpPage"
+                    :error="error && 'You must enter an email'"
+                    label="Repeat Password"
+                    name="repeat-password"
+                    required>
+          <UInput v-model="repeatPassword"
+                  placeholder="Repeat password"
+                  required
+                  type="password"/>
+        </UFormGroup>
         <p v-if="passwordsMustMatch">Passwords must match.</p>
         <p v-if="error">An error occurred.</p>
-        <div class="inputDiv">
-          <button v-if="!signUpPage"
+        <UFormGroup class="inputDiv">
+          <UButton v-if="!signUpPage"
                   @click="
                   login(username, password)"
-                  type="submit">Login</button>
-        </div>
-        <div class="inputDiv">
-          <button v-if="signUpPage"
+                   type="submit">Login
+          </UButton>
+        </UFormGroup>
+        <UFormGroup class="inputDiv">
+          <UButton v-if="signUpPage"
                   @click="
                   signUp(username,password,repeatPassword);"
-                  type="submit">Signup</button>
-        </div>
+                   type="submit">Signup
+          </UButton>
+        </UFormGroup>
         <p v-if="!signUpPage">Don't have an account? <a href="javascript:void(0)" @click="signUpPage=!signUpPage; repeatPassword=''">Signup</a>!</p>
         <p v-if="signUpPage">Already have an account? <a href="javascript:void(0)" @click="signUpPage=!signUpPage; repeatPassword=''">Login</a>!</p>
-      </form>
-    </div>
-  </div>
+      </UForm>
+    </UCard>
+  </UContainer>
 </template>
 
 <style scoped>
+/*
 .inputDiv {
   width: 80%;
   max-width: 25em;
@@ -113,7 +129,7 @@ input, button {
   width: 100%;
   padding: 15px;
 }
-/* Full-width input fields */
+!* Full-width input fields *!
 input[type=text], input[type=password] {
   margin: 5px 0 22px 0;
   display: inline-block;
@@ -121,13 +137,13 @@ input[type=text], input[type=password] {
   background: #f1f1f1;
 }
 
-/* Add a background color when the inputs get focus */
+!* Add a background color when the inputs get focus *!
 input[type=text]:focus, input[type=password]:focus {
   background-color: #ddd;
   outline: none;
 }
 
-/* Set a style for all buttons */
+!* Set a style for all buttons *!
 button {
   background-color: #04AA6D;
   color: white;
@@ -154,5 +170,5 @@ p {
   left: 50%;
   transform: translate(-50%, -50%);
 //max-width: 250em;
-}
+}*/
 </style>

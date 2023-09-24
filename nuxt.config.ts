@@ -1,4 +1,6 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
+// import setupCouchDB from "~/hooks/setupCouchDB";
+
 export default defineNuxtConfig({
   app: {
     head: {
@@ -29,5 +31,12 @@ export default defineNuxtConfig({
     }
   },
   devtools: { enabled: true },
-  ssr: false
+  ssr: false,
+  ui: {
+    primary: "rose",
+    notifications: {
+      // Show toasts at the top right of the screen
+      position: 'top-0 right-0'
+    }
+  }
 })

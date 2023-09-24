@@ -1,4 +1,22 @@
 <script setup lang="ts">
+import {loginStateKey} from "~/utils/keys";
+import SessionResponse = PouchDB.Authentication.SessionResponse;
+
+const {sessionState}: { sessionState: SessionResponse } = inject(loginStateKey)!
+
+let addButtonLinks = [{
+  label: 'Scout Match',
+  icon: 'i-heroicons-clipboard-document-list',
+  to: '/scout'
+}, {
+  label: 'Create Note',
+  icon: 'i-heroicons-pencil-square',
+  to: '/notes/new'
+}, {
+  label: 'Add Attachment',
+  icon: 'i-heroicons-chart-bar',
+  to: '/attachents/new'
+}]
 
 </script>
 
@@ -6,14 +24,26 @@
   <navbar></navbar>
   <div>
     <div class="app-button-grid">
-      <app-button to="/matches" text="Matches"/>
-      <app-button to="/teams" text="Teams"/>
-      <app-button to="/notes" text="Notes"/>
-      <app-button to="/competitions" text="Competitions"/>
-      <app-button to="/contacts" text="Contacts"/>
-      <app-button to="/users" text="Users"/>
+      <app-button v-if="sessionState.userCtx.roles?.includes('verified')" text="Matches" to="/matches"/>
+      <app-button v-if="sessionState.userCtx.roles?.includes('verified')" text="Teams" to="/teams"/>
+      <app-button v-if="sessionState.userCtx.roles?.includes('verified')" text="Notes" to="/notes"/>
+      <app-button v-if="sessionState.userCtx.roles?.includes('verified')" text="Competitions" to="/competitions"/>
+      <app-button v-if="sessionState.userCtx.roles?.includes('verified')" text="Contacts" to="/contacts"/>
+      <app-button v-if="sessionState.userCtx.roles?.includes('admin')" text="Users" to="/users"/>
     </div>
   </div>
+  <UContainer class="bottom-0 right-0 fixed p-2">
+    <UPopover>
+      <UButton :ui="{ rounded: 'rounded-full' }"
+               class="m-0 shadow-md"
+               color="primary"
+               icon="i-heroicons-plus-20-solid"
+               size="xl"/>
+      <template #panel>
+        <UVerticalNavigation :links="addButtonLinks"/>
+      </template>
+    </UPopover>
+  </UContainer>
 </template>
 
 <style scoped>

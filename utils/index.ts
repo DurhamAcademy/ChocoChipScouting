@@ -1,1 +1,1 @@
-import "./Authorizer"
+import "./authorization/Authorizer"

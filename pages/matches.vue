@@ -14,7 +14,7 @@ const columns = [{
 }, {
   key: 'role'
 }]
-const people = [{
+const matches = [{
   id: 1,
   name: 'Lindsay Walton',
   title: 'Front-end Developer',
@@ -53,7 +53,8 @@ const people = [{
 }]
 </script>
 <template>
-  <UTable :columns="columns" :rows="people" />
+  <Navbar/>
+  <UTable :columns="columns" :rows="matches"/>
 </template>
 <style scoped>
 
