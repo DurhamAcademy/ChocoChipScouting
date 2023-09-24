@@ -11,6 +11,7 @@ const props = defineProps({
 <template>
   <UButton :label="text"
            :trailing="false"
+           :to="to"
            block
            size="xl"
            square
