@@ -1,8 +1,11 @@
 <script setup lang="ts">
 import {loginStateKey} from "~/utils/keys";
+import AddAttachment from "~/components/attachments/AddAttachment.vue";
 import SessionResponse = PouchDB.Authentication.SessionResponse;
 
 const {sessionState}: { sessionState: SessionResponse } = inject(loginStateKey)!
+
+let addAttachmentModal = ref(false)
 
 let addButtonLinks = [{
   label: 'Scout Match',
@@ -15,7 +18,9 @@ let addButtonLinks = [{
 }, {
   label: 'Add Attachment',
   icon: 'i-heroicons-chart-bar',
-  to: '/attachents/new'
+  click: () => {
+    // open()
+  }
 }]
 
 </script>
@@ -44,6 +49,9 @@ let addButtonLinks = [{
       </template>
     </UPopover>
   </UContainer>
+  <UModal>
+    <AddAttachment/>
+  </UModal>
 </template>
 
 <style scoped>

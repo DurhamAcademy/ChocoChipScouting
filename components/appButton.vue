@@ -9,13 +9,14 @@ const props = defineProps({
 </script>
 
 <template>
-  <UButton :label="text"
-           :trailing="false"
-           :to="to"
-           block
-           size="xl"
-           square
-           variant="outline"/>
+  <div class="w-full p-1">
+    <UButton :label="text"
+             :to="to"
+             :trailing="false"
+             block
+             size="xl"
+             square/>
+  </div>
 </template>
 
 <style scoped>
