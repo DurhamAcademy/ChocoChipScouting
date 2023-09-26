@@ -76,6 +76,8 @@ async function submit() {
       var result = await db.putAttachment(doc.id, v.valueOf(), rev, fileList.value[i], fileList.value[i].type)
       console.info(rev)
       rev = result.rev
+      // notes mid match
+      //
     }
   }
 }
