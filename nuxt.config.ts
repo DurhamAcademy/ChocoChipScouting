@@ -9,7 +9,7 @@ export default defineNuxtConfig({
           textContent: "window.global = window;"
         },
         {
-          src: "//cdn.jsdelivr.net/npm/pouchdb@8.0.1/dist/pouchdb.min.js"
+          src: "//cdn.jsdelivr.net/npm/pouchdb@8.0.1/dist/pouchdb.js"
         },
         {
           src: "https://github.com/pouchdb-community/pouchdb-authentication/releases/download/v1.1.3/pouchdb.authentication.min.js"

@@ -8,7 +8,6 @@ let session = await pdb.getSession();
 
 let loginState = ref((session.userCtx.name==null)?LoginState.loggedOut:LoginState.loggedIn)
 let route = useRoute()
-console.log(route)
 if ((loginState.value === LoginState.loggedOut) && route.fullPath != "/login") await navigateTo("/login")
 
 let sessionState = ref(session)

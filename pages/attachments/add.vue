@@ -1,0 +1,110 @@
+<script lang="ts"
+        setup>
+import AddButton from "~/components/AddButton.vue";
+import Compressor from "compressorjs";
+import {useDropZone, useFileDialog} from '@vueuse/core'
+import LoginState from "~/utils/authorization/LoginState";
+
+const dropZoneRef = ref<HTMLDivElement>()
+const AttachmentName = ref("")
+const TeamNumber = ref(0)
+
+const db = new PouchDB("attachment-db")
+let fileList = ref<(File|Blob)[]>([])
+let nameList = ref<(String)[]>([])
+async function onDrop(files: File[] | null) {
+  files?.map((file) => {
+    if (file.type.match("image/*")) {
+      new Compressor(file, {
+        maxHeight: 1080,
+        maxWidth: 1080,
+        quality: 0.6,
+        convertSize: 1000000,
+        success(newFile: File | Blob) {
+          fileList.value?.push(newFile)
+          nameList.value?.push(file.name)
+        }
+      })
+    }
+  })
+}
+
+const { files, open, reset, onChange } = useFileDialog()
+
+onChange((files) => {
+  if (files)
+  for (let i = 0; i < files?.length; i++) {
+    let file = files.item(i)
+    if (file && file.type.match("image/*")) {
+      let currentFile = file!
+      new Compressor(currentFile, {
+        maxHeight: 1080,
+        maxWidth: 1080,
+        quality: 0.6,
+        convertSize: 0,
+        convertTypes: [],
+        success(newFile: File | Blob) {
+          fileList.value?.push(newFile)
+          nameList.value.push(currentFile.name)
+        }
+      })
+    }
+  }
+})
+
+var {usernameState, logout}: {
+  loginState: LoginState;
+  usernameState: globalThis.Ref<string | undefined>;
+  updateUsernameState: () => Promise<void>;
+  logout: () => Promise<void>
+} = inject(loginStateKey)!
+
+async function submit() {
+  const docObject = {
+    name: AttachmentName.value,
+    team: TeamNumber.value,
+    author: usernameState.value
+  };
+  console.log(docObject)
+  var doc = await db.post(docObject)
+  console.info(doc)
+  var rev=doc.rev;
+  for (let i = 0; i < fileList.value.length; i++) {
+    var v = nameList.value.at(i)
+    if (v != undefined) {
+      console.info(i, rev)
+      var result = await db.putAttachment(doc.id, v.valueOf(), rev, fileList.value[i], fileList.value[i].type)
+      console.info(rev)
+      rev = result.rev
+    }
+  }
+}
+
+const {isOverDropZone} = useDropZone(dropZoneRef, onDrop)
+// let f = new File([], "", {type: })
+</script>
+
+<template>
+  <navbar></navbar>
+  <UContainer>
+    <UFormGroup class="m-3" label="Attachment Name" required>
+      <UInput v-model="AttachmentName" placeholder="Robot Photo!" required/>
+    </UFormGroup>
+    <UFormGroup class="m-3" label="Team Number">
+      <UInput v-model="TeamNumber"  placeholder="6502" type="number"/>
+    </UFormGroup>
+    <UCard class="w-lg h-96 flex flex-wrap justify-center content-center m-3" ref="dropZoneRef">
+      <template #header>Drop files here</template>
+        <UButton type="button" @click="open" label="Choose file" variant=""/>
+      <template #footer>
+        <UButton type="button" @click="submit" label="Submit"/>
+      </template>
+    </UCard>
+    <UCard class="m-3">
+      <UTable :rows="fileList.map((file)=>{return {size: file.size, type: file.type}})" :columns="['size', 'type']" />
+    </UCard>
+  </UContainer>
+  <AddButton/>
+</template>
+
+<style scoped/>
