@@ -1,14 +1,16 @@
 <script setup lang="ts">
 import LoginState from "~/utils/authorization/LoginState";
+import {VerticalNavigationLink} from "@nuxt/ui/dist/runtime/types";
+import {loginStateKey} from "~/utils/keys";
+import SessionResponse = PouchDB.Authentication.SessionResponse;
 
-var {usernameState, logout}: {
+const {usernameState, sessionState, logout}: {
   loginState: LoginState;
+  sessionState: SessionResponse,
   usernameState: string | undefined;
   updateUsernameState: () => Promise<void>;
   logout: () => Promise<void>
 } = inject(loginStateKey)!
-
-let route = useRoute()
 
 let props = defineProps({
   scoutMode: {
@@ -16,12 +18,29 @@ let props = defineProps({
     default: false
   }
 })
+
+let route = useRoute()
+
+let isOpen = ref(false)
+
+let links: VerticalNavigationLink[] = [
+  { label: "Dashboard", to: "/dashboard" },
+  { label: "Matches", to: "/matches" },
+  { label: "Teams", to: "/teams" },
+  { label: "Notes", to: "/notes" },
+  { label: "Competitions", to: "/competitions" },
+  { label: "Attachments", to: "/attachments" },
+  { label: "Contacts", to: "/contacts" }
+]
+if (sessionState.userCtx?.roles?.includes('admin'))
+  links.push({ label: "Users", to: "/users" })
+
 </script>
 
 <template>
-  <container class="bg-gray-200 dark:bg-gray-700 w-screen navbar-right sticky top-0 flex flex-row justify-between">
+  <container class="z-10 bg-opacity-50 bg-gray-200 dark:bg-gray-700 w-screen navbar-right sticky top-0 flex flex-row justify-between backdrop-blur-lg">
     <div class="flex">
-      <UButton v-if="(route.fullPath != '/dashboard') && (!scoutMode)" label="Home" to="/dashboard" variant="ghost"/>
+      <UButton icon="i-heroicons-bars-3-20-solid" variant="ghost" @click="isOpen=!isOpen" :size="scoutMode?'sm':'xl'"/>
     </div>
     <div class="flex">
       <UPopover>
@@ -36,6 +55,14 @@ let props = defineProps({
       </UPopover>
     </div>
   </container>
+  <USlideover v-model="isOpen" side="left">
+    <UCard class="flex flex-col h-screen">
+      <template #header>
+        <UButton icon="i-heroicons-bars-3-20-solid" variant="ghost" @click="isOpen=!isOpen" :size="scoutMode?'sm':'xl'"/>
+      </template>
+      <UVerticalNavigation :links="links"/>
+    </UCard>
+  </USlideover>
 </template>
 
 <style scoped>

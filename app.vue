@@ -8,7 +8,9 @@ let session = await pdb.getSession();
 
 let loginState = ref((session.userCtx.name==null)?LoginState.loggedOut:LoginState.loggedIn)
 let route = useRoute()
-if ((loginState.value === LoginState.loggedOut) && route.fullPath != "/login") await navigateTo("/login")
+if ((loginState.value === LoginState.loggedOut) && (route.matched[0].name != "login"))
+  await navigateTo("login")
+else if ((route.matched[0].name == 'index')) navigateTo("dashboard")
 
 let sessionState = ref(session)
 let usernameState = ref(session.userCtx.name)
@@ -59,7 +61,6 @@ onErrorCaptured((err) => {
     title: err.name,
     description: err.message,
     icon: "i-heroicons-exclamation-triangle",
-    color: "bg-red-400"
   })
 })
 </script>
@@ -67,10 +68,8 @@ onErrorCaptured((err) => {
 <template>
   <div>
     <UContainer class="p-0 m-0">
-      <div class="ale"></div>
       <NuxtPage/>
     </UContainer>
-
     <UNotifications/>
   </div>
 </template>

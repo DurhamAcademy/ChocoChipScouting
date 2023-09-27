@@ -1,5 +1,6 @@
 <script lang="ts"
         setup>
+
 import AddButton from "~/components/AddButton.vue";
 import Compressor from "compressorjs";
 import {useDropZone, useFileDialog} from '@vueuse/core'
@@ -76,8 +77,7 @@ async function submit() {
       var result = await db.putAttachment(doc.id, v.valueOf(), rev, fileList.value[i], fileList.value[i].type)
       console.info(rev)
       rev = result.rev
-      // notes mid match
-      //
+      // TODO: notes mid match
     }
   }
 }
