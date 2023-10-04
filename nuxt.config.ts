@@ -1,5 +1,4 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
-// import setupCouchDB from "~/hooks/setupCouchDB";
 
 export default defineNuxtConfig({
   app: {
@@ -17,7 +16,7 @@ export default defineNuxtConfig({
       ]
     }
   },
-  modules: ['@nuxt/ui'],
+  modules: ['@nuxt/ui', './modules/databaseStarter'],
   buildModules: ['@nuxtjs/pwa'],
   pwa: {
     manifest: {
@@ -38,5 +37,5 @@ export default defineNuxtConfig({
       // Show toasts at the top right of the screen
       position: 'top-0 right-0'
     }
-  }
+  },
 })

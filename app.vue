@@ -1,4 +1,14 @@
 <script setup lang="ts">
+let errorToast = useToast()
+
+onErrorCaptured((err) => {
+  errorToast.add({
+    title: err.name,
+    description: err.message,
+    icon: "i-heroicons-exclamation-triangle",
+  })
+})
+
 import "./utils/authorization/Authorizer"
 import LoginState from "~/utils/authorization/LoginState"
 import {loginStateKey} from "~/utils/keys";
@@ -54,22 +64,13 @@ async function logout() {
 
 provide(loginStateKey, {loginState, usernameState, sessionState, updateUsernameState, logout})
 
-let errorToast = useToast()
-
-onErrorCaptured((err) => {
-  errorToast.add({
-    title: err.name,
-    description: err.message,
-    icon: "i-heroicons-exclamation-triangle",
-  })
-})
 </script>
 
 <template>
-  <div>
-    <UContainer class="p-0 m-0">
+  <div class="min-h-screen min-w-screen">
+<!--    <UContainer class="p-0 m-0">-->
       <NuxtPage/>
-    </UContainer>
+<!--    </UContainer>-->
     <UNotifications/>
   </div>
 </template>

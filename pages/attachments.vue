@@ -4,8 +4,10 @@ import {useInfiniteScroll} from '@vueuse/core'
 import {integer} from "vscode-languageserver-types";
 import AddButton from "~/components/AddButton.vue";
 import {useRoute} from "vue-router";
+import databases from "~/utils/databases"
+const { attachments } = databases.locals
 
-const db: PouchDB.Database<{name: string, team: number|undefined, author: string}> & {} = new PouchDB("attachment-db")
+const db = attachments;
 var info = await db.info();
 var total = info.doc_count
 console.log(info, total)
@@ -59,23 +61,18 @@ async function close() {
 </script>
 
 <template>
-  <div :v-if="hideAll">
-    <NuxtPage/>
+  <Navbar/>
+  <div class="w-xl h-screen overflow-y-scroll" ref="el">
+    <UTable :rows="data" :columns="columns">
+      <template #actions-data="{ row }">
+        <UButton color="gray" variant="ghost" icon="i-heroicons-eye" @click="view(row.id)"/>
+      </template>
+    </UTable>
+    <UModal v-model="showModal" :onClose="close">
+      <NuxtPage/>
+    </UModal>
   </div>
-  <div :v-if="(!hideAll)">
-    <Navbar/>
-    <div class="w-xl h-screen overflow-y-scroll" ref="el">
-      <UTable :rows="data" :columns="columns">
-        <template #actions-data="{ row }">
-          <UButton color="gray" variant="ghost" icon="i-heroicons-eye" @click="view(row.id)"/>
-        </template>
-      </UTable>
-      <UModal v-model="showModal" :onClose="close">
-        <NuxtPage :db="db"/>
-      </UModal>
-    </div>
-    <AddButton/>
-  </div>
+  <AddButton/>
 </template>
 
 <style scoped>

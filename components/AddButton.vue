@@ -10,7 +10,7 @@ let addButtonLinks = [{
 }, {
   label: 'Add Attachment',
   icon: 'i-heroicons-chart-bar',
-  to: '/attachments/add'
+  to: '/attachment/add'
 }]
 </script>
 

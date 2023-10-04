@@ -5,12 +5,15 @@ import AddButton from "~/components/AddButton.vue";
 import Compressor from "compressorjs";
 import {useDropZone, useFileDialog} from '@vueuse/core'
 import LoginState from "~/utils/authorization/LoginState";
+import databases from "~/utils/databases"
+
+const { attachments } = databases.locals
+const db = attachments;
 
 const dropZoneRef = ref<HTMLDivElement>()
 const AttachmentName = ref("")
 const TeamNumber = ref(0)
 
-const db = new PouchDB("attachment-db")
 let fileList = ref<(File|Blob)[]>([])
 let nameList = ref<(String)[]>([])
 async function onDrop(files: File[] | null) {
@@ -103,7 +106,7 @@ const {isOverDropZone} = useDropZone(dropZoneRef, onDrop)
       </template>
     </UCard>
     <UCard class="m-3">
-      <UTable :rows="fileList.map((file)=>{return {size: file.size, type: file.type}})" :columns="['size', 'type']" />
+      <UTable :rows="filList.map((file)=>{return {size: file.size, type: file.type}})" :columns="['size', 'type']" />
     </UCard>
   </UContainer>
   <AddButton/>

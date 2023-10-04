@@ -1,8 +1,11 @@
 <script setup lang="ts">
 
 import {ref} from "vue";
+import databases from "~/utils/databases"
 
-const props = defineProps(['db'])
+const { attachments } = databases.locals
+const db = attachments;
+
 const showModal = ref<boolean>(false)
 const modalName = ref<string>('name')
 const modalAuthor = ref<string>('author')
@@ -11,7 +14,6 @@ const modalAttachments = ref<string[]>([])
 
 async function view(id: string) {
   console.trace("view called", id)
-  const db: PouchDB.Database<{name: string, team: number|undefined, author: string}> & {} = props.db
   console.log("hello", id)
   let doc = await db.get(id)
   console.log(doc)
@@ -41,7 +43,7 @@ async function view(id: string) {
   showModal.value = true;
 }
 const route = useRoute()
-if (!Array.isArray(route.params.id) && (props.db !==undefined))
+if (!Array.isArray(route.params.id))
   await view(route.params.id)
 </script>
 

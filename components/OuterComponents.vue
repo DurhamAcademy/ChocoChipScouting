@@ -1,0 +1,76 @@
+<script setup lang="ts">
+  import {useWindowSize} from "@vueuse/core";
+  import {VerticalNavigationLink} from "@nuxt/ui/dist/runtime/types";
+  import LoginState from "~/utils/authorization/LoginState";
+  import {loginStateKey} from "~/utils/keys";
+  import AddButton from "~/components/AddButton.vue";
+
+  const {loginState,usernameState, sessionState, logout}: {
+    loginState: LoginState;
+    sessionState: SessionResponse,
+    usernameState: string | undefined;
+    updateUsernameState: () => Promise<void>;
+    logout: () => Promise<void>
+  } = inject(loginStateKey)!
+
+  var {width, height} = useWindowSize()
+  let isOpen = ref(false)
+
+  let route = useRoute()
+
+  let links: VerticalNavigationLink[] = [
+    { label: "Dashboard", to: "/dashboard" },
+    { label: "Matches", to: "/matches" },
+    { label: "Teams", to: "/teams" },
+    { label: "Notes", to: "/notes" },
+    { label: "Competitions", to: "/competitions" },
+    { label: "Attachments", to: "/attachments" },
+    { label: "Contacts", to: "/contacts" }
+  ]
+  if (sessionState.userCtx?.roles?.includes('_admin'))
+    links.push({ label: "Users", to: "/users" })
+  console.log(sessionState)
+
+</script>
+
+<template>
+  <div class="min-h-screen flex-col">
+    <Navbar :disable-sidebar="width > 800"/>
+    <div class="flex place-content-around min-h-full">
+      <Transition name="width-fade">
+        <div v-show="width > 800" class="vis min-h-full">
+          <UCard class="h-full" :ui="{rounded: 'rounded-none'}">
+            <UVerticalNavigation :links="links"/>
+          </UCard>
+        </div>
+      </Transition>
+      <div class="flex-col flex-grow place-content-center">
+        <slot/>
+      </div>
+    </div>
+  </div>
+  <AddButton/>
+</template>
+
+<style scoped>
+/*
+  Enter and leave animations can use different
+  durations and timing functions.
+*/
+.width-fade-enter-active,
+.width-fade-leave-active {
+  transition: all 0.3s ease-in-out;
+}
+
+.width-fade-enter-from,
+.width-fade-leave-to {
+  width: 0em !important;
+  opacity: 0;
+}
+
+.vis {
+  width: 20em;
+  left: 0em;
+  position:relative;
+}
+</style>
