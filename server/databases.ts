@@ -18,23 +18,30 @@ class LocalRemoteServerSideDatabaseSyncHolder<Content extends {} = {}> {
     }
 
     async sync() {
-        PouchDB.sync(this.local, this.remote, {live: true, retry: true,})
+        if (this.local) {
+            PouchDB.sync(this.local, this.remote, {live: true, retry: true,})
+            return true
+        }
+        return false
     }
 
-    static databases: { attachments: LocalRemoteServerSideDatabaseSyncHolder<{ name: string; team: number | undefined; author: string }>; scoutingData: LocalRemoteServerSideDatabaseSyncHolder<{ points: number }>; basic: LocalRemoteServerSideDatabaseSyncHolder<{}> } = {
+    static databases = {
         "attachments": new this<{name: string, team: number|undefined, author: string}>("attachment-db", false),
         "scoutingData": new this<{points: number}>("scouting-data", false),
-        "basic": new this<{}>("basic", false)
+        "basic": new this<{}>("basic", false),
+        "users": new this<{}>("_users", false)
     };
-    static locals: { attachments: PouchDB.Database<{ name: string; team: number | undefined; author: string }>|null; scoutingData: PouchDB.Database<{ points: number }>|null; basic: PouchDB.Database<{}>|null } = {
+    static locals = {
         "attachments": this.databases.attachments.local,
         "scoutingData": this.databases.scoutingData.local,
         "basic": this.databases.basic.local,
+        "users": this.databases.users.local,
     };
-    static remotes: { attachments: PouchDB.Database<{ name: string; team: number | undefined; author: string }>; scoutingData: PouchDB.Database<{ points: number }>; basic: PouchDB.Database<{}> } = {
+    static remotes = {
         "attachments": this.databases.attachments.remote,
         "scoutingData": this.databases.scoutingData.remote,
         "basic": this.databases.basic.remote,
+        "users": this.databases.users.remote,
     };
 }
 
