@@ -62,7 +62,8 @@ async function logout() {
   }
 }
 
-provide(loginStateKey, {loginState, usernameState, sessionState, updateUsernameState, logout})
+const loginStateObject = {loginState, usernameState, sessionState, updateUsernameState, logout};
+provide(loginStateKey, loginStateObject)
 
 </script>
 

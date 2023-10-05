@@ -22,6 +22,7 @@
     "compressorjs": "^1.2.1",
     "pouchdb": "^8.0.1",
     "pouchdb-authentication": "^1.1.3",
-    "pouchdb-browser": "^8.0.1"
+    "pouchdb-browser": "^8.0.1",
+    "pouchdb-security-helper": "^2.1.2"
   }
 }

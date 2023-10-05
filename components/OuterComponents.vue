@@ -4,13 +4,16 @@
   import LoginState from "~/utils/authorization/LoginState";
   import {loginStateKey} from "~/utils/keys";
   import AddButton from "~/components/AddButton.vue";
+  import SessionResponse = PouchDB.Authentication.SessionResponse;
+  import {Ref} from "@vue/reactivity";
+  import {UnwrapRef} from "vue";
 
   const {loginState,usernameState, sessionState, logout}: {
-    loginState: LoginState;
-    sessionState: SessionResponse,
-    usernameState: string | undefined;
-    updateUsernameState: () => Promise<void>;
-    logout: () => Promise<void>
+    logout: () => Promise<void>;
+    loginState: Ref<UnwrapRef<LoginState>>;
+    sessionState: Ref<UnwrapRef<PouchDB.Authentication.SessionResponse>>;
+    usernameState: Ref<UnwrapRef<string>>;
+    updateUsernameState: () => Promise<boolean>
   } = inject(loginStateKey)!
 
   var {width, height} = useWindowSize()
@@ -27,9 +30,8 @@
     { label: "Attachments", to: "/attachments" },
     { label: "Contacts", to: "/contacts" }
   ]
-  if (sessionState.userCtx?.roles?.includes('_admin'))
+  if (sessionState?.value?.userCtx?.roles?.indexOf('_admin') != -1)
     links.push({ label: "Users", to: "/users" })
-  console.log(sessionState)
 
 </script>
 
