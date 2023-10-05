@@ -3,13 +3,15 @@ import LoginState from "~/utils/authorization/LoginState";
 import {VerticalNavigationLink} from "@nuxt/ui/dist/runtime/types";
 import {loginStateKey} from "~/utils/keys";
 import SessionResponse = PouchDB.Authentication.SessionResponse;
+import {UnwrapRef} from "vue";
+import {Ref} from "@vue/reactivity";
 
 const {usernameState, sessionState, logout}: {
-  loginState: LoginState;
-  sessionState: SessionResponse,
-  usernameState: string | undefined;
-  updateUsernameState: () => Promise<void>;
-  logout: () => Promise<void>
+  logout: () => Promise<void>;
+  loginState: Ref<UnwrapRef<LoginState>>;
+  sessionState: Ref<UnwrapRef<PouchDB.Authentication.SessionResponse>>;
+  usernameState: Ref<UnwrapRef<string>>;
+  updateUsernameState: () => Promise<boolean>
 } = inject(loginStateKey)!
 
 let props = defineProps({
@@ -36,7 +38,8 @@ let links: VerticalNavigationLink[] = [
   { label: "Attachments", to: "/attachments" },
   { label: "Contacts", to: "/contacts" }
 ]
-if (sessionState.userCtx?.roles?.includes('_admin'))
+console.log(sessionState?.value?.userCtx?.roles)
+if (sessionState?.value?.userCtx?.roles?.indexOf('_admin') != -1)
   links.push({ label: "Users", to: "/users" })
 
 
@@ -55,9 +58,13 @@ if (sessionState.userCtx?.roles?.includes('_admin'))
           <UAvatar v-if="usernameState!==undefined" :alt="usernameState" :size="scoutMode?'xs':'md'" class="m-1"/>
         </UButton>
         <template #panel>
-          <UContainer class="p-2">
-            <UButton block label="Logout" square @click="logout"></UButton>
-          </UContainer>
+          <UCard class="p-2">
+            <template #header>
+              {{usernameState}}
+            </template>
+
+            <UButton block label="Logout" square @click="logout"/>
+          </UCard>
         </template>
       </UPopover>
     </div>
