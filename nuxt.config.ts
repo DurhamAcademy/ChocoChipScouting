@@ -16,7 +16,7 @@ export default defineNuxtConfig({
       ]
     }
   },
-  modules: ['@nuxt/ui', './modules/databaseStarter'],
+  modules: ['@nuxt/ui'],
   buildModules: ['@nuxtjs/pwa'],
   pwa: {
     manifest: {
@@ -40,4 +40,5 @@ export default defineNuxtConfig({
       position: 'top-0 right-0'
     }
   },
+  logLevel: "verbose"
 })

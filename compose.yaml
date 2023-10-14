@@ -1,10 +1,30 @@
+name: "scouting_app"
+version: 1.0.0
 services:
   server:
-    build: .
+    container_name: "NuxtJS_Scouting_Frontend_and_Backend_Manager"
+#    restart: unless-stopped
+#    deploy:
+#      restart_policy:
+#        delay: 0.1s
+#        max_attempts: 50
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: run
+    depends_on:
+      couchdb:
+        condition: service_healthy
+      couch-db-setup:
+        condition: service_completed_successfully
     ports:
       - "3000:3000"
+    links:
+      - couchdb:localhost
   couchdb:
     container_name: my-couchdb
+    expose:
+      - '5984'
     ports:
       - '5984:5984'
     #      - '4369:4369'
@@ -12,4 +32,26 @@ services:
     environment:
       - COUCHDB_USER=admin
       - COUCHDB_PASSWORD=password
-    image: 'couchdb:latest'
+    image: 'couchdb:3'
+    labels:
+      - database
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5984"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    networks:
+      - intercom_network
+  couch-db-setup:
+    depends_on:
+      couchdb:
+        condition: service_healthy
+    build:
+      context: .
+      target: setup
+      dockerfile: ./Dockerfile
+    networks:
+      - intercom_network
+networks:
+  intercom_network:
+    name: intercom
