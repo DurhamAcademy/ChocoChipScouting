@@ -1,3 +1,4 @@
+[![Docker Image CI](https://github.com/DurhamAcademy/NuxtScoutingSystem/actions/workflows/docker-image.yml/badge.svg)](https://github.com/DurhamAcademy/NuxtScoutingSystem/actions/workflows/docker-image.yml)
 # Nuxt 3 Minimal Starter
 
 Look at the [Nuxt 3 documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
