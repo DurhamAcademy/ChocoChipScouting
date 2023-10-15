@@ -2,31 +2,54 @@ name: "scouting_app"
 version: 1.0.0
 services:
   server:
-    container_name: "NuxtJS_Scouting_Frontend_and_Backend_Manager"
-#    restart: unless-stopped
-#    deploy:
-#      restart_policy:
-#        delay: 0.1s
-#        max_attempts: 50
+    restart: on-failure
+#    container_name: "Nuxt"
     build:
       context: .
       dockerfile: Dockerfile
       target: run
+    develop:
+      watch:
+        - path: .
+          action: sync
+          ignore:
+            - node_modules
+            - bun.lockb
+            - .npmrc
+            - .gitignore
+            - .env
+            - compose.yaml
+            - Dockerfile
+            - README.md
+            - .nuxt
+            - .output
+            - .idea
+            - .output
+            - .data
+            - .nuxt
+            - .nitro
+            - .cache
+            - dist
     depends_on:
       couchdb:
         condition: service_healthy
       couch-db-setup:
         condition: service_completed_successfully
-    ports:
-      - "3000:3000"
+#    ports:
+#      - "3000:3000"
     links:
-      - couchdb:localhost
+      - couchdb:couchdb
+    environment:
+      couchDBHostname: couchdb
+    networks:
+      - intercom_network
+
   couchdb:
-    container_name: my-couchdb
+    restart: on-failure
     expose:
       - '5984'
-    ports:
-      - '5984:5984'
+#    ports:
+#      - '5984:5984'
     #      - '4369:4369'
     #      - '9100:9100'
     environment:
@@ -43,6 +66,7 @@ services:
     networks:
       - intercom_network
   couch-db-setup:
+    restart: no
     depends_on:
       couchdb:
         condition: service_healthy
@@ -50,8 +74,7 @@ services:
       context: .
       target: setup
       dockerfile: ./Dockerfile
-    networks:
-      - intercom_network
+    network_mode: service:couchdb
 networks:
   intercom_network:
     name: intercom

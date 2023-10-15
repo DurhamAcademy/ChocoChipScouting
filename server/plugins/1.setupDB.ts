@@ -16,7 +16,7 @@ export default defineNitroPlugin((nitroApp) => {
                 .map((database) => database.name)
                 .map((name) => {
                     console.log(name)
-                    return new PouchDB("http://localhost:5984/" + name, {
+                    return new PouchDB(`http://${process.env.couchDBHostname}:5984/` + name, {
                         name: name,
                         auth: {username: "admin", password: "password"}
                     })
