@@ -31,13 +31,4 @@ export default defineNuxtConfig({
   },
   devtools: { enabled: true },
   ssr: false,
-  ui: {
-    global: true,
-    primary: "rose",
-    gray: "cool",
-    notifications: {
-      // Show toasts at the top right of the screen
-      position: 'top-0 right-0'
-    }
-  },
 })
