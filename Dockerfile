@@ -1,29 +1,78 @@
-## Dockerfile
-#FROM node:11.13.0-alpine as base
-#
-## create destination directory
-#RUN mkdir -p /usr/src/nuxt-app
-#WORKDIR /usr/src/nuxt-app
-#
-## copy the app, note .dockerignore
-#FROM base as build
-#COPY . /usr/src/nuxt-app/
-#RUN npm config set strict-ssl false
-#RUN npm ci --omit=dev
-#RUN npm run build
-#
-## run build
-#FROM base as final
-#
+# Ubuntu With Curl
+FROM ubuntu AS install-curl
 
-FROM node:latest as base
-RUN mkdir -p /usr/src/nuxt-app
-WORKDIR /usr/src/nuxt-app
-COPY .output .output
+RUN apt-get -y update
+RUN apt-get -y install curl
+
+# the setup script
+FROM install-curl AS setup
+
+
+CMD curl -s -X PUT http://admin:password@couchdb:5984/_users; \
+    curl -s -X PUT http://admin:password@couchdb:5984/_replicator; \
+    curl -s -X PUT http://admin:password@couchdb:5984/_global_changes; \
+    curl -s -X PUT http://admin:password@couchdb:5984/_node/nonode@nohost/_config/chttpd/enable_cors -d '"true"'; \
+    curl -s -X PUT http://admin:password@couchdb:5984/_node/nonode@nohost/_config/cors/origins -d '"*"'; \
+    curl -s -X PUT http://admin:password@couchdb:5984/_node/nonode@nohost/_config/cors/credentials -d '"true"'; \
+    curl -s -X PUT http://admin:password@couchdb:5984/_node/nonode@nohost/_config/cors/methods -d '"GET, PUT, POST, HEAD, DELETE"'; \
+    curl -s -X PUT http://admin:password@couchdb:5984/_node/nonode@nohost/_config/cors/headers -d '"accept, authorization, content-type, origin, referer, x-csrf-token"'
+
+# Main Server
+FROM oven/bun:1-alpine AS bun-base
+RUN mkdir -p /usr/src/nuxt3-app
+WORKDIR /usr/src/nuxt3-app
+
+FROM bun-base AS bun-install
+COPY package-lock.json .
+COPY package.json .
+RUN ["bun", "install", "--ignore-scripts"]
+
+FROM bun-install AS bun-prepare
+
+COPY .npmrc .
+
+COPY package-lock.json .
+COPY package.json .
+COPY tsconfig.json .
+
+COPY nuxt.config.ts .
+
+FROM bun-prepare AS files
+
+COPY app.vue .
+COPY pages ./pages
+COPY public ./public
+COPY server ./server
+COPY components ./components
+COPY utils ./utils
+
+RUN ["bun", "--bun", "run", "postinstall"]
+
+FROM files AS build
+
+RUN bun --bun run build
+
+FROM oven/bun:1-alpine as run
+
+RUN mkdir -p /usr/src/nuxt3-app
+WORKDIR /usr/src/nuxt3-app
+
+RUN apk upgrade --no-cache && apk add --no-cache libstdc++
+
+COPY --from=build /usr/src/nuxt3-app/.output .output
 
 EXPOSE 3000
 
-#ENV NUXT_HOST=0.0.0.0
-#ENV NUXT_PORT=3000
+ENV HOST=0.0.0.0
+ENV PORT=3000
 
-RUN node .output/server/index.mjs
+ENTRYPOINT ["bun", ".output/server/index.mjs"]
+
+COPY testServer.js .
+
+HEALTHCHECK \
+    --interval=10s \
+    --timeout=3s \
+    --start-period=100ms \
+    --retries=5 \
+    CMD bun testServer.js

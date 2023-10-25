@@ -1,5 +1,5 @@
 {
-  "name": "nuxt-app",
+  "name": "scouting-app",
   "private": true,
   "type": "module",
   "scripts": {
@@ -11,18 +11,18 @@
   },
   "devDependencies": {
     "@nuxt/devtools": "latest",
-    "@types/pouchdb": "^6.4.0",
-    "nuxt": "^3.7.3"
+    "@types/pouchdb": "6.4.0",
+    "nuxt": "3.7.3"
   },
   "dependencies": {
-    "@nuxt/ui": "^2.8.1",
-    "@nuxtjs/pwa": "^3.3.5",
-    "@userfront/vue": "^0.1.20",
-    "@vueuse/core": "^10.4.1",
-    "compressorjs": "^1.2.1",
-    "pouchdb": "^8.0.1",
-    "pouchdb-authentication": "^1.1.3",
-    "pouchdb-browser": "^8.0.1",
-    "pouchdb-security-helper": "^2.1.2"
+    "@nuxt/ui": "2.8.1",
+    "@nuxtjs/pwa": "3.3.5",
+    "@userfront/vue": "0.1.20",
+    "@vueuse/core": "10.4.1",
+    "compressorjs": "1.2.1",
+    "pouchdb": "8.0.1",
+    "pouchdb-authentication": "1.1.3",
+    "pouchdb-browser": "8.0.1",
+    "pouchdb-security-helper": "2.1.2"
   }
 }
