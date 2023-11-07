@@ -48,8 +48,8 @@ services:
     restart: on-failure
     expose:
       - '5984'
-#    ports:
-#      - '5984:5984'
+    ports:
+      - '5984:5984'
     #      - '4369:4369'
     #      - '9100:9100'
     environment:

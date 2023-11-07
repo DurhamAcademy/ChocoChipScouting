@@ -1,5 +1,7 @@
 <script lang="ts" setup>
 import databases from "~/utils/databases"
+import {integer} from "vscode-languageserver-types";
+import IncrementalButton from '~/components/IncrementalButton.vue'
 const { scoutingData } = databases.locals
 enum GameTime {
   Autonomous = "Auto",
@@ -10,30 +12,63 @@ enum GameTime {
 
 let gameTime = ref(GameTime.Autonomous)
 
-function incrementGameTime() {
-  switch (gameTime.value) {
-    case GameTime.Autonomous:
-      gameTime.value = GameTime.Teleoperated;
-      break;
-    case GameTime.Teleoperated:
-      gameTime.value = GameTime.Endgame;
-      break
-    case GameTime.Endgame:
-      gameTime.value = GameTime.Autonomous;
-      break
+let cone = ref([0, 0, 0])
+let cube = ref([0, 0, 0])
+
+function editGameTime(direction: String) {
+  if(direction.localeCompare("+") == 0){
+    switch (gameTime.value) {
+      case GameTime.Autonomous:
+        gameTime.value = GameTime.Teleoperated;
+        break;
+      case GameTime.Teleoperated:
+        gameTime.value = GameTime.Endgame;
+        break
+      case GameTime.Endgame:
+        gameTime.value = GameTime.Autonomous;
+        break
+    }
+  }
+  else if(direction.localeCompare("-") == 0)
+    {
+      switch (gameTime.value) {
+        case GameTime.Autonomous:
+          gameTime.value = GameTime.Endgame;
+          break;
+        case GameTime.Teleoperated:
+          gameTime.value = GameTime.Autonomous;
+          break;
+        case GameTime.Endgame:
+          gameTime.value = GameTime.Teleoperated;
+          break;
+      }
     }
 }
 
-function deincrementGameTime() {
-  switch (gameTime.value) {
-    case GameTime.Autonomous:
-      gameTime.value = GameTime.Endgame;
+function addToCone(height: String, direction: integer){
+  switch (height) {
+    case "low":
+      cone.value[0] = cone.value[0] + (direction > 0 ? 1: -1)
       break;
-    case GameTime.Teleoperated:
-      gameTime.value = GameTime.Autonomous;
+    case "mid":
+      cone.value[1] = cone.value[1] + (direction > 0 ? 1: -1)
       break;
-    case GameTime.Endgame:
-      gameTime.value = GameTime.Teleoperated;
+    case "high":
+      cone.value[2] = cone.value[2] + (direction > 0 ? 1: -1)
+      break;
+  }
+}
+
+function addToCube(height: String, direction: integer){
+  switch (height) {
+    case "low":
+      cube.value[0] = cube.value[0] + (direction > 0 ? 1: -1)
+      break;
+    case "mid":
+      cube.value[1] = cube.value[1] + (direction > 0 ? 1: -1)
+      break;
+    case "high":
+      cube.value[2] = cube.value[2] + (direction > 0 ? 1: -1)
       break;
   }
 }
@@ -63,23 +98,24 @@ async function submit() {
       <template #header>
           <UButtonGroup class="flex">
             <UButton :disabled="gameTime==GameTime.Autonomous" icon="i-heroicons-chevron-left"
-                     @click="deincrementGameTime"/>
+                     @click="editGameTime('-')"/>
             <UButton :label="gameTime.valueOf()" block class="w-auto" disabled style="flex-grow: 1;"/>
-            <UButton :disabled="gameTime==GameTime.Endgame" icon="i-heroicons-chevron-right" @click="incrementGameTime"/>
+            <UButton :disabled="gameTime==GameTime.Endgame" icon="i-heroicons-chevron-right" @click="editGameTime('+')"/>
           </UButtonGroup>
       </template>
       <div v-if="gameTime == GameTime.Autonomous">
-
+        
       </div>
       <div v-if="gameTime == GameTime.Teleoperated">
-        <UFormGroup label="Points">
-          <UButtonGroup class="flex">
-            <UButton :disabled="data.points <= 0" icon="i-heroicons-chevron-left"
-                     @click="data.points--"/>
-            <UButton :label="data.points.toLocaleString()" block class="w-auto" disabled style="flex-grow: 1;"/>
-            <UButton icon="i-heroicons-chevron-right" @click="data.points++"/>
-          </UButtonGroup>
-        </UFormGroup>
+        <div class="w-1/2" id="cone-div" style="text-align:center; display:inline-block">
+          <h1 class="mb-2.5">Cone</h1>
+        <IncrementalButton v-model="cone[2]"/>
+          <br/>
+        <IncrementalButton v-model="cone[1]"/>
+          <br/>
+        <IncrementalButton v-model="cone[0]"/>
+
+        </div>
       </div>
       <div v-if="gameTime == GameTime.Endgame">
 
