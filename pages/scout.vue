@@ -3,17 +3,17 @@ import databases from "~/utils/databases"
 import {integer} from "vscode-languageserver-types";
 import IncrementalButton from '~/components/IncrementalButton.vue'
 const { scoutingData } = databases.locals
+let db = scoutingData
+
 enum GameTime {
   Autonomous = "Auto",
   Teleoperated = "Teleop",
   Endgame = "Endgame"
 }
-
-
 let gameTime = ref(GameTime.Autonomous)
 
-let cone = ref([0, 0, 0])
-let cube = ref([0, 0, 0])
+const endgames = ["None", "Parked", "Docked", "Docked & Engaged"];
+let selectedIndex = 0
 
 function editGameTime(direction: String) {
   if(direction.localeCompare("+") == 0){
@@ -45,50 +45,30 @@ function editGameTime(direction: String) {
     }
 }
 
-function addToCone(height: String, direction: integer){
-  switch (height) {
-    case "low":
-      cone.value[0] = cone.value[0] + (direction > 0 ? 1: -1)
-      break;
-    case "mid":
-      cone.value[1] = cone.value[1] + (direction > 0 ? 1: -1)
-      break;
-    case "high":
-      cone.value[2] = cone.value[2] + (direction > 0 ? 1: -1)
-      break;
-  }
-}
-
-function addToCube(height: String, direction: integer){
-  switch (height) {
-    case "low":
-      cube.value[0] = cube.value[0] + (direction > 0 ? 1: -1)
-      break;
-    case "mid":
-      cube.value[1] = cube.value[1] + (direction > 0 ? 1: -1)
-      break;
-    case "high":
-      cube.value[2] = cube.value[2] + (direction > 0 ? 1: -1)
-      break;
-  }
-}
-
 const notesOpen = ref(false)
 
 let data = ref({
   points: 0,
-  top: 0,
-  middle: 0,
-  low: 0,
+  ConeHigh: 0,
+  ConeMid: 0,
+  ConeLow: 0,
+  CubeHigh: 0,
+  CubeMid: 0,
+  CubeLow: 0,
+  endgame: endgames[selectedIndex],
   notes: "",
 })
 
-let db = scoutingData
 
 async function submit() {
   var newDoc = await db.post(data.value)
   await navigateTo("matches")
 }
+
+/* Good looking square buttons but dont work horizontally why?
+<UButton label="Docked & Engaged" style="aspect-ratio : 1 / 1; max-width: 75px; max-height: 75px;" class="m-1.5"/>
+        <UButton label="Docked" style="aspect-ratio : 1 / 1; max-width: 75px; max-height: 75px;" class="m-1.5"/>
+ */
 </script>
 
 <template>
@@ -109,16 +89,16 @@ async function submit() {
       <div v-if="gameTime == GameTime.Teleoperated">
         <div class="w-1/2" id="cone-div" style="text-align:center; display:inline-block">
           <h1 class="mb-2.5">Cone</h1>
-        <IncrementalButton v-model="cone[2]"/>
+        <IncrementalButton v-model="data.ConeHigh"/>
           <br/>
-        <IncrementalButton v-model="cone[1]"/>
+        <IncrementalButton v-model="data.ConeMid"/>
           <br/>
-        <IncrementalButton v-model="cone[0]"/>
+        <IncrementalButton v-model="data.ConeLow"/>
 
         </div>
       </div>
       <div v-if="gameTime == GameTime.Endgame">
-
+        <SingleSelect v-model="selectedIndex" :options="endgames"></SingleSelect>
       </div>
       <template #footer>
         <div class="flex justify-between">
