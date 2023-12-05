@@ -17,17 +17,17 @@ class LocalRemoteDatabaseSyncHolder<Content extends {} = {}> {
         PouchDB.sync(this.local, this.remote, {live: true, retry: true,})
     }
 
-    static databases: { attachments: LocalRemoteDatabaseSyncHolder<{ name: string; team: number | undefined; author: string }>; scoutingData: LocalRemoteDatabaseSyncHolder<{ points: number }>; basic: LocalRemoteDatabaseSyncHolder<{}> } = {
+    static databases: { attachments: LocalRemoteDatabaseSyncHolder<{ name: string; team: number | undefined; author: string }>; scoutingData: LocalRemoteDatabaseSyncHolder<{ team: number }>; basic: LocalRemoteDatabaseSyncHolder<{}> } = {
         "attachments": new LocalRemoteDatabaseSyncHolder<{name: string, team: number|undefined, author: string}>("attachment-db"),
-        "scoutingData": new LocalRemoteDatabaseSyncHolder<{points: number}>("scouting-data"),
+        "scoutingData": new LocalRemoteDatabaseSyncHolder<{team: number}>("scouting-data"),
         "basic": new LocalRemoteDatabaseSyncHolder<{}>("basic")
     };
-    static locals: { attachments: PouchDB.Database<{ name: string; team: number | undefined; author: string }>; scoutingData: PouchDB.Database<{ points: number }>; basic: PouchDB.Database<{}> } = {
+    static locals: { attachments: PouchDB.Database<{ name: string; team: number | undefined; author: string }>; scoutingData: PouchDB.Database<{ team: number }>; basic: PouchDB.Database<{}> } = {
         "attachments": this.databases.attachments.local,
         "scoutingData": this.databases.scoutingData.local,
         "basic": this.databases.basic.local,
     };
-    static remotes: { attachments: PouchDB.Database<{ name: string; team: number | undefined; author: string }>; scoutingData: PouchDB.Database<{ points: number }>; basic: PouchDB.Database<{}> } = {
+    static remotes: { attachments: PouchDB.Database<{ name: string; team: number | undefined; author: string }>; scoutingData: PouchDB.Database<{ team: number }>; basic: PouchDB.Database<{}> } = {
         "attachments": this.databases.attachments.remote,
         "scoutingData": this.databases.scoutingData.remote,
         "basic": this.databases.basic.remote,

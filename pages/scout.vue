@@ -48,14 +48,15 @@ function editGameTime(direction: String) {
 const notesOpen = ref(false)
 
 let data = ref({
-  points: 0,
+  team: 0,
+  Match: 0,
   ConeHigh: 0,
   ConeMid: 0,
   ConeLow: 0,
   CubeHigh: 0,
   CubeMid: 0,
   CubeLow: 0,
-  endgame: endgames[selectedIndex],
+  endgame: endgames[0],
   notes: "",
 })
 
@@ -84,7 +85,7 @@ async function submit() {
           </UButtonGroup>
       </template>
       <div v-if="gameTime == GameTime.Autonomous">
-        
+        <ScoutModeSelection :options="[15, 105, 30]"></ScoutModeSelection>
       </div>
       <div v-if="gameTime == GameTime.Teleoperated">
         <div class="w-1/2" id="cone-div" style="text-align:center; display:inline-block">
@@ -98,7 +99,7 @@ async function submit() {
         </div>
       </div>
       <div v-if="gameTime == GameTime.Endgame">
-        <SingleSelect v-model="selectedIndex" :options="endgames"></SingleSelect>
+        <SingleSelect :model-value="selectedIndex" @update:model-value="index => {data.endgame = endgames[index]; selectedIndex = index}" :options="endgames"></SingleSelect>
       </div>
       <template #footer>
         <div class="flex justify-between">

@@ -46,14 +46,12 @@ if (sessionState?.value?.userCtx?.roles?.indexOf('_admin') != -1)
 </script>
 
 <template>
-  <container class="py-2.5 px-5 z-10 bg-opacity-50 bg-gray-200 dark:bg-gray-700 w-screen navbar-right sticky top-0 flex flex-row justify-between backdrop-blur-lg">
+  <div class="py-2.5 px-5 z-10 bg-opacity-50 bg-gray-200 dark:bg-gray-700 w-screen navbar-right sticky top-0 flex-row justify-between backdrop-blur-lg">
     <div class="flex">
       <Transition name="slide-fade">
         <UButton class="slide-nothing" v-if="!disableSidebar" icon="i-heroicons-bars-3-20-solid" variant="ghost" @click="isOpen=!isOpen" :size="scoutMode?'sm':'xl'" square/>
       </Transition>
-    </div>
-    <div class="flex">
-      <UPopover >
+      <UPopover style="right: 1%; position: absolute;top: 50%;transform: translateY(-50%);">
         <UButton variant="ghost">
           <UAvatar v-if="usernameState!==undefined" :alt="usernameState" :size="scoutMode?'xs':'md'" class="m-1"/>
         </UButton>
@@ -68,7 +66,7 @@ if (sessionState?.value?.userCtx?.roles?.indexOf('_admin') != -1)
         </template>
       </UPopover>
     </div>
-  </container>
+  </div>
   <USlideover v-model="isOpen" side="left" :appear="!disableSidebar">
     <UCard class="flex flex-col h-screen">
       <template #header>
