@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import databases from "~/utils/databases";
-import {emit} from "pouchdb";
+
 
 const { scoutingData } = databases.locals
 let db = scoutingData
@@ -10,15 +10,18 @@ let match = matches.map(async (doc) => {
   return await db.get(doc.id)
 })
 
-let mp = new Map<number, Array<{team: number} & PouchDB.Core.IdMeta & PouchDB.Core.GetMeta>[]>();
+let teamOrgMatches = new Map<number, Array<any>>()
 
-for(let i = 0; i < match.length; i++){
-  let matchInfo = (await match[i])
-  if(mp.has(matchInfo.team)){
-    //mp.set(matchInfo.team, mp.get(matchInfo.team).push(matchInfo))
+for(let i  = 0; i < match.length; i++){
+  let currentMatch = (await match[i])
+  if(!teamOrgMatches.has(currentMatch.team)) {
+    teamOrgMatches.set(currentMatch.team, [currentMatch])
   }
-
+  else
+    teamOrgMatches.get(currentMatch.team)!.push(currentMatch)
 }
+
+console.log(teamOrgMatches.get(6502)![0].ConeHigh)
 
 </script>
 
