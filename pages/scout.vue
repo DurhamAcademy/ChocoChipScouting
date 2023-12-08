@@ -48,7 +48,7 @@ function editGameTime(direction: String) {
 const notesOpen = ref(false)
 
 let data = ref({
-  team: 0,
+  team: 6502,
   Match: 0,
   ConeHigh: 0,
   ConeMid: 0,
