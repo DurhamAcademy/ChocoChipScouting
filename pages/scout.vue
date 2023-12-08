@@ -2,8 +2,10 @@
 import databases from "~/utils/databases"
 import {integer} from "vscode-languageserver-types";
 import IncrementalButton from '~/components/IncrementalButton.vue'
+
 const { scoutingData } = databases.locals
 let db = scoutingData
+
 
 enum GameTime {
   Autonomous = "Auto",
@@ -14,7 +16,19 @@ let gameTime = ref(GameTime.Autonomous)
 
 const endgames = ["None", "Parked", "Docked", "Docked & Engaged"];
 let selectedIndex = 0
-
+/*
+async function dataPull(team: integer): Promise<any>{
+  let refNum: integer = team;
+  let urlNoNum: string = "https://www.thebluealliance.com/api/v3/frc";
+  let urlFinal: string = urlNoNum + refNum.toString();
+  let grab: any;
+  grab = await fetch(urlFinal);
+  grab = await grab.json();
+  let grabParse: any;
+  grabParse = JSON.parse(grab);
+  return grabParse.nickname;
+}
+*/
 function editGameTime(direction: String) {
   if(direction.localeCompare("+") == 0){
     switch (gameTime.value) {
@@ -47,9 +61,17 @@ function editGameTime(direction: String) {
 
 const notesOpen = ref(false)
 
+
+/*const ph: any = dataPull(info.teamNum)();
+let parsed = JSON.parse(await ph);
+let impData = {
+  nickname: parsed.nickname,
+  */
+
 let data = ref({
-  team: 6502,
-  Match: 0,
+  TeamNumber: null,
+  MatchNumber: null,
+  points: 0,
   ConeHigh: 0,
   ConeMid: 0,
   ConeLow: 0,
@@ -62,7 +84,7 @@ let data = ref({
 
 
 async function submit() {
-  var newDoc = await db.post(data.value)
+  var newDoc = db.post(data.value)
   await navigateTo("matches")
 }
 
@@ -86,6 +108,30 @@ async function submit() {
       </template>
       <div v-if="gameTime == GameTime.Autonomous">
         <ScoutModeSelection :options="[15, 105, 30]"></ScoutModeSelection>
+      </div>
+    </UCard>
+  <UCard class="max-w-xl flex-grow m-5 ">
+    <template #header>
+      <UButtonGroup class="flex">
+        <UButton :disabled="gameTime==GameTime.Autonomous" icon="i-heroicons-chevron-left"
+                 @click="editGameTime('-')"/>
+        <UButton :label="gameTime.valueOf()" block class="w-auto" disabled style="flex-grow: 1;"/>
+        <UButton :disabled="gameTime==GameTime.Endgame" icon="i-heroicons-chevron-right" @click="editGameTime('+')"/>
+      </UButtonGroup>
+    </template>
+
+    <UInput v-model="data.TeamNumber" placeholder="Team #"></UInput>
+    <UInput v-model="data.MatchNumber" placeholder="Match #"></UInput>
+    <div v-if="(data.TeamNumber>0)&&(data.MatchNumber>0)">
+      <p>Ready</p>
+    </div>
+    <div v-else-if="(data.TeamNumber==null)&&(data.MatchNumber==null)">
+    </div>
+    <div v-else>
+      <p>Incorrect Team/Match Number</p>
+    </div>
+    <div v-if="gameTime == GameTime.Autonomous">
+
       </div>
       <div v-if="gameTime == GameTime.Teleoperated">
         <div class="w-1/2" id="cone-div" style="text-align:center; display:inline-block">

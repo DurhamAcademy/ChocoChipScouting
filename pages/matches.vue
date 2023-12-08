@@ -2,7 +2,7 @@
 import databases from "~/utils/databases"
 import AddButton from "~/components/AddButton.vue";
 const { scoutingData } = databases.locals
-var columns = [{
+let columns = [{
   key: '_id',
   label: 'ID'
 }, {
