@@ -56,8 +56,6 @@ services:
       - COUCHDB_USER=admin
       - COUCHDB_PASSWORD=password
     image: 'couchdb:3'
-    labels:
-      - database
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:5984"]
       interval: 10s

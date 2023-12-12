@@ -1,7 +1,8 @@
 <script lang="ts" setup>
 import databases from "~/utils/databases"
-import {integer} from "vscode-languageserver-types";
+//import {integer} from "vscode-languageserver-types";
 import IncrementalButton from '~/components/IncrementalButton.vue'
+import {UnwrapRef} from "vue";
 
 const { scoutingData } = databases.locals
 let db = scoutingData
@@ -68,6 +69,7 @@ let impData = {
   nickname: parsed.nickname,
   */
 
+
 let data = ref({
   TeamNumber: null,
   MatchNumber: null,
@@ -82,13 +84,19 @@ let data = ref({
   notes: "",
 })
 
-
-async function submit() {
-  var newDoc = db.post(data.value)
-  await navigateTo("matches")
+function isValidNum() {
+  return (data.value.TeamNumber != null) && (data.value.MatchNumber != null) && (data.value.TeamNumber > 0) && (data.value.MatchNumber > 0) && (data.value.TeamNumber < 10000)
 }
 
-/* Good looking square buttons but dont work horizontally why?
+async function submit() {
+
+    let newDoc = db.post(data.value)
+    await navigateTo("matches")
+
+
+}
+
+/* Good-looking square buttons but don't work horizontally why?
 <UButton label="Docked & Engaged" style="aspect-ratio : 1 / 1; max-width: 75px; max-height: 75px;" class="m-1.5"/>
         <UButton label="Docked" style="aspect-ratio : 1 / 1; max-width: 75px; max-height: 75px;" class="m-1.5"/>
  */
@@ -122,13 +130,13 @@ async function submit() {
 
     <UInput v-model="data.TeamNumber" placeholder="Team #"></UInput>
     <UInput v-model="data.MatchNumber" placeholder="Match #"></UInput>
-    <div v-if="(data.TeamNumber>0)&&(data.MatchNumber>0)">
+    <div v-if="isValidNum()">
       <p>Ready</p>
     </div>
-    <div v-else-if="(data.TeamNumber==null)&&(data.MatchNumber==null)">
+    <div v-else-if="(data.TeamNumber==null)||(data.MatchNumber==null)">
     </div>
     <div v-else>
-      <p>Incorrect Team/Match Number</p>
+      <p>Invalid Team/Match Number</p>
     </div>
     <div v-if="gameTime == GameTime.Autonomous">
 
@@ -151,7 +159,7 @@ async function submit() {
         <div class="flex justify-between">
           <div>
             <UButton class="m-1" color="rose" label="Cancel" to="/dashboard" type="reset" variant="outline"/>
-            <UButton class="m-1" color="green" label="Submit" type="submit" variant="solid" @click="submit"/>
+            <UButton class="m-1" color="green" label="Submit" type="submit" variant="solid" :disabled="!isValidNum()" @click="submit"/>
           </div>
           <UButton class="m-1" color="yellow" label="Notes" variant="soft" @click="notesOpen = !notesOpen"/>
         </div>
