@@ -105,19 +105,6 @@ async function submit() {
 <template>
   <Navbar scout-mode></Navbar>
   <div class="flex justify-center">
-    <UCard class="max-w-xl flex-grow m-5 ">
-      <template #header>
-          <UButtonGroup class="flex">
-            <UButton :disabled="gameTime==GameTime.Autonomous" icon="i-heroicons-chevron-left"
-                     @click="editGameTime('-')"/>
-            <UButton :label="gameTime.valueOf()" block class="w-auto" disabled style="flex-grow: 1;"/>
-            <UButton :disabled="gameTime==GameTime.Endgame" icon="i-heroicons-chevron-right" @click="editGameTime('+')"/>
-          </UButtonGroup>
-      </template>
-      <div v-if="gameTime == GameTime.Autonomous">
-        <ScoutModeSelection :options="[15, 105, 30]"></ScoutModeSelection>
-      </div>
-    </UCard>
   <UCard class="max-w-xl flex-grow m-5 ">
     <template #header>
       <UButtonGroup class="flex">
