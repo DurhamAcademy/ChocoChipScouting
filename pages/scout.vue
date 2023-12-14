@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import databases from "~/utils/databases"
-import {integer} from "vscode-languageserver-types";
 import IncrementalButton from '~/components/IncrementalButton.vue'
 const { scoutingData } = databases.locals
 let db = scoutingData
@@ -61,10 +60,12 @@ let data = ref({
 })
 
 
-async function submit() {
-  var newDoc = await db.post(data.value)
+async function submit()
+{
+  await db.post(data.value);
   await navigateTo("matches")
 }
+
 
 /* Good looking square buttons but dont work horizontally why?
 <UButton label="Docked & Engaged" style="aspect-ratio : 1 / 1; max-width: 75px; max-height: 75px;" class="m-1.5"/>
@@ -107,22 +108,10 @@ async function submit() {
             <UButton class="m-1" color="rose" label="Cancel" to="/dashboard" type="reset" variant="outline"/>
             <UButton class="m-1" color="green" label="Submit" type="submit" variant="solid" @click="submit"/>
           </div>
-          <UButton class="m-1" color="yellow" label="Notes" variant="soft" @click="notesOpen = !notesOpen"/>
+          <UTextarea v-model="data.notes" color="yellow" size="xl"/>
         </div>
       </template>
     </UCard>
-    <USlideover v-model="notesOpen" side="right">
-      <UCard class="flex flex-col h-screen">
-        <template #header>
-          <div class="flex justify-end">
-            <UButton icon="i-heroicons-x-mark-solid" size="xl" @click="notesOpen=false" color="yellow" variant="ghost"/>
-          </div>
-        </template>
-        <div class="overflow-y-scroll">
-          <UTextarea v-model="data.notes" color="yellow" size="xl" autoresize/>
-        </div>
-      </UCard>
-    </USlideover>
   </div>
 </template>
 
