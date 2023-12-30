@@ -61,9 +61,10 @@ COPY LsFACert.cer /usr/local/share/ca-certificates/WebFilterCert.crt
 
 RUN update-ca-certificates
 
-FROM add-cert AS bun-install
+FROM bun-base AS bun-install
 #COPY --from=package-lock /opt/app/package-lock.json .
-
+ENV NODE_TLS_REJECT_UNAUTHORIZED 0
+RUN NODE_TLS_REJECT_UNAUTHORIZED=0
 COPY .npmrc .
 COPY package.json .
 RUN ["bun", "install", "--ignore-scripts", "--force"]
@@ -91,7 +92,7 @@ COPY utils ./utils
 RUN ["bun", "--bun", "run", "postinstall"]
 
 FROM files AS build
-
+ENV NODE_ENV development
 RUN ["bun", "--bun", "run", "build"]
 
 FROM oven/bun:latest as run
