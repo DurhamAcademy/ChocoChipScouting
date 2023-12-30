@@ -11,7 +11,8 @@
   },
   "devDependencies": {
     "@nuxt/devtools": "latest",
-    "@types/pouchdb": "6.4.0"
+    "@types/pouchdb": "6.4.0",
+    "vite-plugin-node-polyfills": "^0.19.0"
   },
   "dependencies": {
     "@nuxt/ui": "2.10.0",
@@ -19,10 +20,10 @@
     "@userfront/vue": "0.1.20",
     "@vueuse/core": "10.4.1",
     "compressorjs": "1.2.1",
+    "nuxt": "latest",
     "pouchdb": "8.0.1",
     "pouchdb-authentication": "1.1.3",
     "pouchdb-browser": "8.0.1",
-    "pouchdb-security-helper": "2.1.2",
-    "nuxt": "latest"
+    "pouchdb-security-helper": "2.1.2"
   }
 }
