@@ -17,21 +17,64 @@ CMD curl -s -X PUT http://admin:password@couchdb:5984/_users; \
     curl -s -X PUT http://admin:password@couchdb:5984/_node/nonode@nohost/_config/cors/methods -d '"GET, PUT, POST, HEAD, DELETE"'; \
     curl -s -X PUT http://admin:password@couchdb:5984/_node/nonode@nohost/_config/cors/headers -d '"accept, authorization, content-type, origin, referer, x-csrf-token"'
 
+# NPM package-lock.json
+FROM node:lts-alpine AS package-lock-old
+RUN mkdir -p /usr/src/nuxt3-app
+WORKDIR /usr/src/nuxt3-app
+COPY package.json package.json
+#COPY .npmrc .
+ARG NODE_ENV=development
+ENV NODE_ENV=${NODE_ENV}
+#COPY package-lock.json .
+#RUN echo "{\"name\": \"scouting-app\",\"lockfileVersion\": 3,\"requires\": true,\"packages\": {}}" > package-lock.json
+#RUN ["npm", "install", "--package-lock-only", "--ignore-scripts"]
+#RUN ["npm", "update", "--package-lock=false"]
+
+#
+FROM node:20-bookworm-slim AS package-lock
+
+#RUN #echo "deb http://archive.ubuntu.com/ubuntu precise main universe" > /etc/apt/sources.list
+#RUN apt update
+#RUN #apt-get -y install python-software-properties git build-essential
+#RUN #add-apt-repository -y ppa:chris-lea/node.js
+#RUN apt-get install -y nodejs npm
+
+WORKDIR /opt/app
+
+COPY package.json .
+COPY .npmrc .
+
+RUN npm install --ignore-scripts
+
 # Main Server
-FROM oven/bun:1-alpine AS bun-base
+FROM oven/bun AS bun-base
 RUN mkdir -p /usr/src/nuxt3-app
 WORKDIR /usr/src/nuxt3-app
 
+# Add Certificates
+FROM bun-base AS add-cert
+
+RUN apt-get update
+RUN apt-get install -y ca-certificates;
+
+COPY LsFACert.cer /usr/local/share/ca-certificates/WebFilterCert.crt
+
+RUN update-ca-certificates
+
 FROM bun-base AS bun-install
-COPY package-lock.json .
+#COPY --from=package-lock /opt/app/package-lock.json .
+ENV NODE_TLS_REJECT_UNAUTHORIZED 0
+RUN NODE_TLS_REJECT_UNAUTHORIZED=0
+COPY .npmrc .
 COPY package.json .
-RUN ["bun", "install", "--ignore-scripts"]
+RUN ["bun", "install", "--ignore-scripts", "--force"]
 
 FROM bun-install AS bun-prepare
 
 COPY .npmrc .
 
-COPY package-lock.json .
+#COPY package-lock.json .
+
 COPY package.json .
 COPY tsconfig.json .
 
@@ -49,15 +92,15 @@ COPY utils ./utils
 RUN ["bun", "--bun", "run", "postinstall"]
 
 FROM files AS build
+ENV NODE_ENV development
+RUN ["bun", "--bun", "run", "build"]
 
-RUN bun --bun run build
-
-FROM oven/bun:1-alpine as run
+FROM oven/bun:latest as run
 
 RUN mkdir -p /usr/src/nuxt3-app
 WORKDIR /usr/src/nuxt3-app
 
-RUN apk upgrade --no-cache && apk add --no-cache libstdc++
+RUN #apk upgrade --no-cache && apk add --no-cache libstdc++
 
 COPY --from=build /usr/src/nuxt3-app/.output .output
 
