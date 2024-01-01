@@ -27,3 +27,5 @@ logs
 sw.*
 
 # Other
+bun.lockb
+package-lock.json
