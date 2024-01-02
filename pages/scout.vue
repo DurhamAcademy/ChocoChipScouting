@@ -1,8 +1,11 @@
 <script lang="ts" setup>
 import databases from "~/utils/databases"
 import IncrementalButton from '~/components/IncrementalButton.vue'
+import {UnwrapRef} from "vue";
+
 const { scoutingData } = databases.locals
 let db = scoutingData
+
 
 enum GameTime {
   Autonomous = "Auto",
@@ -13,7 +16,19 @@ let gameTime = ref(GameTime.Autonomous)
 
 const endgames = ["None", "Parked", "Docked", "Docked & Engaged"];
 let selectedIndex = 0
-
+/*
+async function dataPull(team: integer): Promise<any>{
+  let refNum: integer = team;
+  let urlNoNum: string = "https://www.thebluealliance.com/api/v3/frc";
+  let urlFinal: string = urlNoNum + refNum.toString();
+  let grab: any;
+  grab = await fetch(urlFinal);
+  grab = await grab.json();
+  let grabParse: any;
+  grabParse = JSON.parse(grab);
+  return grabParse.nickname;
+}
+*/
 function editGameTime(direction: String) {
   if(direction.localeCompare("+") == 0){
     switch (gameTime.value) {
@@ -46,9 +61,18 @@ function editGameTime(direction: String) {
 
 const notesOpen = ref(false)
 
+
+/*const ph: any = dataPull(info.teamNum)();
+let parsed = JSON.parse(await ph);
+let impData = {
+  nickname: parsed.nickname,
+  */
+
+
 let data = ref({
-  team: 6502,
-  Match: 0,
+  TeamNumber: null,
+  MatchNumber: null,
+  points: 0,
   ConeHigh: 0,
   ConeMid: 0,
   ConeLow: 0,
@@ -59,6 +83,9 @@ let data = ref({
   notes: "",
 })
 
+function isValidNum() {
+  return (data.value.TeamNumber != null) && (data.value.MatchNumber != null) && (data.value.TeamNumber > 0) && (data.value.MatchNumber > 0) && (data.value.TeamNumber < 10000)
+}
 
 async function submit()
 {
@@ -68,6 +95,7 @@ async function submit()
 
 
 /* Good looking square buttons but dont work horizontally why?
+
 <UButton label="Docked & Engaged" style="aspect-ratio : 1 / 1; max-width: 75px; max-height: 75px;" class="m-1.5"/>
         <UButton label="Docked" style="aspect-ratio : 1 / 1; max-width: 75px; max-height: 75px;" class="m-1.5"/>
  */
@@ -76,17 +104,28 @@ async function submit()
 <template>
   <Navbar scout-mode></Navbar>
   <div class="flex justify-center">
-    <UCard class="max-w-xl flex-grow m-5 ">
-      <template #header>
-          <UButtonGroup class="flex">
-            <UButton :disabled="gameTime==GameTime.Autonomous" icon="i-heroicons-chevron-left"
-                     @click="editGameTime('-')"/>
-            <UButton :label="gameTime.valueOf()" block class="w-auto" disabled style="flex-grow: 1;"/>
-            <UButton :disabled="gameTime==GameTime.Endgame" icon="i-heroicons-chevron-right" @click="editGameTime('+')"/>
-          </UButtonGroup>
-      </template>
-      <div v-if="gameTime == GameTime.Autonomous">
-        <ScoutModeSelection :options="[15, 105, 30]"></ScoutModeSelection>
+  <UCard class="max-w-xl flex-grow m-5 ">
+    <template #header>
+      <UButtonGroup class="flex">
+        <UButton :disabled="gameTime==GameTime.Autonomous" icon="i-heroicons-chevron-left"
+                 @click="editGameTime('-')"/>
+        <UButton :label="gameTime.valueOf()" block class="w-auto" disabled style="flex-grow: 1;"/>
+        <UButton :disabled="gameTime==GameTime.Endgame" icon="i-heroicons-chevron-right" @click="editGameTime('+')"/>
+      </UButtonGroup>
+    </template>
+
+    <UInput v-model="data.TeamNumber" placeholder="Team #"></UInput>
+    <UInput v-model="data.MatchNumber" placeholder="Match #"></UInput>
+    <div v-if="isValidNum()">
+      <p>Ready</p>
+    </div>
+    <div v-else-if="(data.TeamNumber==null)||(data.MatchNumber==null)">
+    </div>
+    <div v-else>
+      <p>Invalid Team/Match Number</p>
+    </div>
+    <div v-if="gameTime == GameTime.Autonomous">
+
       </div>
       <div v-if="gameTime == GameTime.Teleoperated">
         <div class="w-1/2" id="cone-div" style="text-align:center; display:inline-block">
@@ -106,7 +145,7 @@ async function submit()
         <div class="flex justify-between">
           <div>
             <UButton class="m-1" color="rose" label="Cancel" to="/dashboard" type="reset" variant="outline"/>
-            <UButton class="m-1" color="green" label="Submit" type="submit" variant="solid" @click="submit"/>
+            <UButton class="m-1" color="green" label="Submit" type="submit" variant="solid" :disabled="!isValidNum()" @click="submit"/>
           </div>
           <UTextarea v-model="data.notes" color="yellow" size="xl"/>
         </div>

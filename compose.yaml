@@ -35,8 +35,8 @@ services:
         condition: service_healthy
       couch-db-setup:
         condition: service_completed_successfully
-#    ports:
-#      - "3000:3000"
+    ports:
+      - "3000:3000"
     links:
       - couchdb:couchdb
     environment:
@@ -56,8 +56,6 @@ services:
       - COUCHDB_USER=admin
       - COUCHDB_PASSWORD=password
     image: 'couchdb:3'
-    labels:
-      - database
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:5984"]
       interval: 10s
@@ -78,3 +76,4 @@ services:
 networks:
   intercom_network:
     name: intercom
+    external: true
