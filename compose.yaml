@@ -22,7 +22,7 @@ services:
     networks:
       - intercom_network
   devserver:
-#    restart: on-failure
+    restart: on-failure
 
     build:
       context: .
@@ -70,8 +70,6 @@ services:
       couchDBHostname: couchdb
     networks:
       - intercom_network
-#    profiles:
-#      - "development"
   couchdb:
     restart: on-failure
     expose:
