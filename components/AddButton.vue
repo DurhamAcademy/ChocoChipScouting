@@ -28,7 +28,3 @@ let addButtonLinks = [{
     </UPopover>
   </UContainer>
 </template>
-
-<style>
-
-</style>

@@ -56,5 +56,4 @@ let addAttachmentModal = ref(false)
   flex-direction: row;
   flex-wrap: wrap;
 }
-
 </style>
