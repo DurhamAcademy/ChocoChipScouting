@@ -1,12 +1,8 @@
-name: Docker Image CI
+name: Run Build
 
 on:
   workflow_dispatch:
     inputs:
-      ref:
-        description: Git branch refrence
-        type: string
-        required: true
       useCache: 
         description: should the cache be used
         default: false
@@ -23,9 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-    - uses: actions/checkout@v3
-      with: 
-        ref: ${{ inputs.ref }}
+    - uses: actions/checkout@v4
     - name: Extract metadata (tags, labels) for Docker
       id: meta
       uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
@@ -52,5 +46,3 @@ jobs:
         context: .
         target: production
         push: false
-        cache-from: type=gha
-        cache-to: type=gha,mode=max
