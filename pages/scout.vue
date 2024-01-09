@@ -17,6 +17,10 @@ let gameTime = ref(GameTime.Autonomous)
 
 const endgames = ["None", "Parked", "Docked", "Docked & Engaged"];
 let selectedIndex = 0
+
+const firstValue = "First"
+const secondValue = "Second"
+let boolValue = true
 /*
 async function dataPull(team: integer): Promise<any>{
   let refNum: integer = team;
@@ -81,6 +85,7 @@ let data = ref({
   CubeMid: 0,
   CubeLow: 0,
   endgame: endgames[0],
+  parked: firstValue,
   notes: "",
 })
 
@@ -141,6 +146,7 @@ async function submit() {
       </div>
       <div v-if="gameTime == GameTime.Endgame">
         <SingleSelect :model-value="selectedIndex" @update:model-value="index => {data.endgame = endgames[index]; selectedIndex = index}" :options="endgames"></SingleSelect>
+        <BooleanButton :model-value="boolValue" @update:model-value="bool => {data.parked = bool ? firstValue: secondValue}" :defaultValue="firstValue" :otherValue="secondValue"></BooleanButton>
       </div>
       <template #footer>
         <div class="flex justify-between">
