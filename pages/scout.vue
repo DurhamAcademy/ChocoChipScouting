@@ -18,6 +18,10 @@ let gameTime = ref(GameTime.Autonomous)
 const endgames = ["None", "Parked", "Onstage", "Onstage in Harmony"];
 let selectedEndgameIndex = 0
 
+const endgameOptions = ["None", "Parked", "Attempted Onstage" , "Onstage", "Harmony"]
+let endgameIndex = [0, 0, 0, 0, 0]
+
+
 /*
 async function dataPull(team: integer): Promise<any>{
   let refNum: integer = team;
@@ -87,10 +91,20 @@ let data = ref({
   },
   endgame: {
     trap: 0,
-    endgame: endgames[selectedEndgameIndex]
+    endgame: [endgameOptions[0]]
   },
   notes: "",
 })
+
+function updateEndgameOptions(value: Array<number>){
+  let arr = []
+  for(let i = 0; i < value.length; i++){
+    if(value[i] == 1){
+      arr.push(endgameOptions[i])
+    }
+  }
+  data.value.endgame.endgame = arr
+}
 
 function isValidNum() {
   return (data.value.teamNumber != null) && (data.value.matchNumber != null) && (data.value.teamNumber > 0) && (data.value.matchNumber > 0) && (data.value.teamNumber < 10000)
@@ -115,10 +129,15 @@ async function submit() {
   <div class="flex justify-center">
   <UCard class="max-w-xl flex-grow m-5 ">
     <template #header>
-      <div style="display:flex;">
-      <UInput v-model="data.matchNumber" placeholder="Match #" style="flex:1"></UInput>
-      <UInput v-model="data.teamNumber" placeholder="Team #" style="flex:1"></UInput>
+      <div style="display:flex">
+        <div style="flex:1">
+          <UInput v-model="data.teamNumber" placeholder="Team #"></UInput>
+        </div>
+        <div style="flex:1">
+          <UInput v-model="data.matchNumber" placeholder="Match #"></UInput>
+        </div>
       </div>
+      <br>
       <UButtonGroup class="flex">
         <UButton :disabled="gameTime==GameTime.Autonomous" icon="i-heroicons-chevron-left"
                  @click="editGameTime('-')"/>
@@ -126,19 +145,11 @@ async function submit() {
         <UButton :disabled="gameTime==GameTime.Endgame" icon="i-heroicons-chevron-right" @click="editGameTime('+')"/>
       </UButtonGroup>
     </template>
-      <div v-if="isValidNum()">
-        <p>Ready</p>
-      </div>
-      <div v-else-if="(data.teamNumber==null)||(data.matchNumber==null)">
-      </div>
-      <div v-else>
-        <p>Invalid Team/Match Number</p>
-      </div>
         <div v-if="gameTime == GameTime.Autonomous">
           <IncrementalButton v-model="data.auto.speakerNA"></IncrementalButton>
           <IncrementalButton v-model="data.auto.speakerA"></IncrementalButton>
           <IncrementalButton v-model="data.auto.amp"></IncrementalButton>
-          <BooleanButton :model-value="data.auto.leave"  :defaultValue="'Stationary'" :otherValue="'Moved'"></BooleanButton>
+          <BooleanButton v-model="data.auto.leave"  :defaultValue="'Stationary'" :otherValue="'Moved'"></BooleanButton>
         </div>
         <div v-if="gameTime == GameTime.Teleoperated">
           <IncrementalButton v-model="data.teleop.speakerNA"></IncrementalButton>
@@ -150,7 +161,7 @@ async function submit() {
           <IncrementalButton v-model="data.teleop.speakerA"></IncrementalButton>
           <IncrementalButton v-model="data.teleop.amp"></IncrementalButton>
           <IncrementalButton v-model="data.endgame.trap"></IncrementalButton>
-          <SingleSelect :model-value="selectedEndgameIndex" @update:model-value="index => {data.endgame.endgame = endgames[index]; selectedEndgameIndex = index}" :options="endgames"></SingleSelect>
+          <MultiSelect :model-value="endgameIndex" :options="endgameOptions" @update:model-value="value => {updateEndgameOptions(value)}"></MultiSelect>
         </div>
       <template #footer>
         <div class="flex justify-between">

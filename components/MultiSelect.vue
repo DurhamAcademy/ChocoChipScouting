@@ -2,21 +2,9 @@
 import { computed } from 'vue'
 const emit = defineEmits(['update:modelValue'])
 const props = defineProps<{
-  modelValue: number,
+  modelValue: Array<number>,
   options: Array<String>
 }>()
-
-/**
- * Changes the solid button to the selected index
- * @param selectedIndex the index of the button the user selects
- */
-function selected(selectedIndex:number){
-  variantArray.value.forEach(
-      (element, listIndex) => variantArray.value[listIndex] = "outline"
-  )
-  value.value = selectedIndex
-  variantArray.value[selectedIndex] = "solid"
-}
 
 const value = computed({
   get() {
@@ -27,14 +15,21 @@ const value = computed({
   }
 })
 
+function selected(index:number){
+  let currentVariant = variantArray.value[index]
+  variantArray.value[index] = currentVariant == "solid" ? "outline" : "solid"
+  let updatedValue = value.value
+  updatedValue[index] = value.value[index] == 0 ? 1 : 0
+  value.value = updatedValue
+}
+
 let variantArray = ref(
     Array(props.options.length)
         .fill("")
         .map(
-            (_, index) => props.modelValue == index ? "solid" : "outline"
+            (_, index) => props.modelValue[index] == 1 ? "solid" : "outline"
         )
 )
-
 
 </script>
 

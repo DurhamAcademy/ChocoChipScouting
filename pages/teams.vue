@@ -14,10 +14,10 @@ let teamOrgMatches = new Map<number, Array<any>>()
 
 for(let i  = 0; i < match.length; i++){
   let currentMatch = (await match[i])
-  if(!teamOrgMatches.has(currentMatch.team))
-    teamOrgMatches.set(currentMatch.team, [currentMatch])
+  if(!teamOrgMatches.has(currentMatch.teamNumber))
+    teamOrgMatches.set(currentMatch.teamNumber, [currentMatch])
   else
-    teamOrgMatches.get(currentMatch.team)!.push(currentMatch)
+    teamOrgMatches.get(currentMatch.teamNumber)!.push(currentMatch)
 }
 
 function getConeAverage(teamNum: number){

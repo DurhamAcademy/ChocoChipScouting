@@ -29,10 +29,10 @@ function selected(){
 let bool = props.modelValue
 
 let variantReference = ref(
-    props.modelValue ? "outline" : "solid"
+    props.modelValue ? "solid" : "outline"
 )
 let labelReference = ref(
-    props.modelValue ? props.defaultValue : props.otherValue
+    props.modelValue ? props.otherValue : props.defaultValue
 )
 </script>
 
