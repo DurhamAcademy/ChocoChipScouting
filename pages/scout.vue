@@ -15,12 +15,9 @@ enum GameTime {
 }
 let gameTime = ref(GameTime.Autonomous)
 
-const endgames = ["None", "Parked", "Docked", "Docked & Engaged"];
-let selectedIndex = 0
+const endgames = ["None", "Parked", "Onstage", "Onstage in Harmony"];
+let selectedEndgameIndex = 0
 
-const firstValue = "First"
-const secondValue = "Second"
-let boolValue = true
 /*
 async function dataPull(team: integer): Promise<any>{
   let refNum: integer = team;
@@ -75,22 +72,28 @@ let impData = {
 
 
 let data = ref({
-  TeamNumber: null,
-  MatchNumber: null,
-  points: 0,
-  ConeHigh: 0,
-  ConeMid: 0,
-  ConeLow: 0,
-  CubeHigh: 0,
-  CubeMid: 0,
-  CubeLow: 0,
-  endgame: endgames[0],
-  parked: firstValue,
+  teamNumber: null,
+  matchNumber: null,
+  auto: {
+    speakerNA: 8,
+    speakerA: 0,
+    amp: 0,
+    leave: false,
+  },
+  teleop: {
+    amp: 0,
+    speakerNA: 0,
+    speakerA: 0,
+  },
+  endgame: {
+    trap: 0,
+    endgame: endgames[selectedEndgameIndex]
+  },
   notes: "",
 })
 
 function isValidNum() {
-  return (data.value.TeamNumber != null) && (data.value.MatchNumber != null) && (data.value.TeamNumber > 0) && (data.value.MatchNumber > 0) && (data.value.TeamNumber < 10000)
+  return (data.value.teamNumber != null) && (data.value.matchNumber != null) && (data.value.teamNumber > 0) && (data.value.matchNumber > 0) && (data.value.teamNumber < 10000)
 }
 
 async function submit() {
@@ -120,33 +123,33 @@ async function submit() {
       </UButtonGroup>
     </template>
 
-    <UInput v-model="data.TeamNumber" placeholder="Team #"></UInput>
-    <UInput v-model="data.MatchNumber" placeholder="Match #"></UInput>
+    <UInput v-model="data.teamNumber" placeholder="Team #"></UInput>
+    <UInput v-model="data.matchNumber" placeholder="Match #"></UInput>
     <div v-if="isValidNum()">
       <p>Ready</p>
     </div>
-    <div v-else-if="(data.TeamNumber==null)||(data.MatchNumber==null)">
+    <div v-else-if="(data.teamNumber==null)||(data.matchNumber==null)">
     </div>
     <div v-else>
       <p>Invalid Team/Match Number</p>
     </div>
-    <div v-if="gameTime == GameTime.Autonomous">
-
+      <div v-if="gameTime == GameTime.Autonomous">
+        <IncrementalButton :model-value="data.auto.speakerNA"></IncrementalButton>
+        <IncrementalButton :model-value="data.auto.speakerA"></IncrementalButton>
+        <IncrementalButton :model-value="data.auto.amp"></IncrementalButton>
+        <BooleanButton :model-value="data.auto.leave"  :defaultValue="'Stationary'" :otherValue="'Moved'"></BooleanButton>
       </div>
       <div v-if="gameTime == GameTime.Teleoperated">
-        <div class="w-1/2" id="cone-div" style="text-align:center; display:inline-block">
-          <h1 class="mb-2.5">Cone</h1>
-        <IncrementalButton v-model="data.ConeHigh"/>
-          <br/>
-        <IncrementalButton v-model="data.ConeMid"/>
-          <br/>
-        <IncrementalButton v-model="data.ConeLow"/>
-
-        </div>
+        <IncrementalButton :model-value="data.teleop.speakerNA"></IncrementalButton>
+        <IncrementalButton :model-value="data.teleop.speakerA"></IncrementalButton>
+        <IncrementalButton :model-value="data.teleop.amp"></IncrementalButton>
       </div>
       <div v-if="gameTime == GameTime.Endgame">
-        <SingleSelect :model-value="selectedIndex" @update:model-value="index => {data.endgame = endgames[index]; selectedIndex = index}" :options="endgames"></SingleSelect>
-        <BooleanButton :model-value="boolValue" @update:model-value="bool => {data.parked = bool ? firstValue: secondValue}" :defaultValue="firstValue" :otherValue="secondValue"></BooleanButton>
+        <IncrementalButton :model-value="data.teleop.speakerNA"></IncrementalButton>
+        <IncrementalButton :model-value="data.teleop.speakerA"></IncrementalButton>
+        <IncrementalButton :model-value="data.teleop.amp"></IncrementalButton>
+        <IncrementalButton :model-value="data.endgame.trap"></IncrementalButton>
+        <SingleSelect :model-value="selectedEndgameIndex" @update:model-value="index => {data.endgame.endgame = endgames[index]; selectedEndgameIndex = index}" :options="endgames"></SingleSelect>
       </div>
       <template #footer>
         <div class="flex justify-between">

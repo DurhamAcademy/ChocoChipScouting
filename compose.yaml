@@ -76,4 +76,4 @@ services:
 networks:
   intercom_network:
     name: intercom
-    external: true
+    external: false
