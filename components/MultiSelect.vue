@@ -3,7 +3,8 @@ import { computed } from 'vue'
 const emit = defineEmits(['update:modelValue'])
 const props = defineProps<{
   modelValue: Array<number>,
-  options: Array<String>
+  options: Array<String>,
+  connectedOptions: Array<number>
 }>()
 
 const value = computed({
@@ -17,6 +18,18 @@ const value = computed({
 
 function selected(index:number){
   let currentVariant = variantArray.value[index]
+  if(props.connectedOptions != null){
+    variantArray.value.forEach(
+        (element, listIndex) => {
+          if(props.connectedOptions[index] != props.connectedOptions[listIndex]){
+            variantArray.value[listIndex] = "outline"
+            let uv = value.value
+            uv[listIndex] = 0
+            value.value = uv
+          }
+        }
+    )
+  }
   variantArray.value[index] = currentVariant == "solid" ? "outline" : "solid"
   let updatedValue = value.value
   updatedValue[index] = value.value[index] == 0 ? 1 : 0

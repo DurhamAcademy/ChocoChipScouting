@@ -161,7 +161,7 @@ async function submit() {
           <IncrementalButton v-model="data.teleop.speakerA"></IncrementalButton>
           <IncrementalButton v-model="data.teleop.amp"></IncrementalButton>
           <IncrementalButton v-model="data.endgame.trap"></IncrementalButton>
-          <MultiSelect :model-value="endgameIndex" :options="endgameOptions" @update:model-value="value => {updateEndgameOptions(value)}"></MultiSelect>
+          <MultiSelect :model-value="endgameIndex" :options="endgameOptions" @update:model-value="value => {updateEndgameOptions(value)}" :connected-options="[1, 2, 2, 3, 3]"></MultiSelect>
         </div>
       <template #footer>
         <div class="flex justify-between">
