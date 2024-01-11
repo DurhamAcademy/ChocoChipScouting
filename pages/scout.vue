@@ -15,8 +15,6 @@ enum GameTime {
 }
 let gameTime = ref(GameTime.Autonomous)
 
-const endgames = ["None", "Parked", "Onstage", "Onstage in Harmony"];
-let selectedEndgameIndex = 0
 
 const endgameOptions = ["None", "Parked", "Attempted Onstage" , "Onstage", "Harmony"]
 let endgameIndex = [0, 0, 0, 0, 0]
@@ -160,7 +158,7 @@ async function submit() {
           <IncrementalButton v-model="data.teleop.speakerNA"></IncrementalButton>
           <IncrementalButton v-model="data.teleop.speakerA"></IncrementalButton>
           <IncrementalButton v-model="data.teleop.amp"></IncrementalButton>
-          <IncrementalButton v-model="data.endgame.trap"></IncrementalButton>
+          <IncrementalButton v-model="data.endgame.trap" :max-value="3"></IncrementalButton>
           <MultiSelect :model-value="endgameIndex" :options="endgameOptions" @update:model-value="value => {updateEndgameOptions(value)}" :connected-options="[1, 2, 2, 3, 3]"></MultiSelect>
         </div>
       <template #footer>
