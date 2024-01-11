@@ -1,12 +1,12 @@
 <script setup lang="ts">
   import {useWindowSize} from "@vueuse/core";
-  import {VerticalNavigationLink} from "@nuxt/ui/dist/runtime/types";
+  // import {VerticalNavigationLink} from "@nuxt/ui/dist/runtime/types";
   import LoginState from "~/utils/authorization/LoginState";
   import {loginStateKey} from "~/utils/keys";
   import AddButton from "~/components/AddButton.vue";
   import SessionResponse = PouchDB.Authentication.SessionResponse;
-  import {Ref} from "@vue/reactivity";
-  import {UnwrapRef} from "vue";
+  // import {Ref} from "@vue/reactivity";
+  // import {UnwrapRef} from "vue";
 
   const {loginState,usernameState, sessionState, logout}: {
     logout: () => Promise<void>;

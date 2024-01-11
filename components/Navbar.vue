@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import LoginState from "~/utils/authorization/LoginState";
-import {VerticalNavigationLink} from "@nuxt/ui/dist/runtime/types";
+// import {VerticalNavigationLink} from "@nuxt/ui/dist/runtime/types";
 import {loginStateKey} from "~/utils/keys";
 import SessionResponse = PouchDB.Authentication.SessionResponse;
-import {UnwrapRef} from "vue";
-import {Ref} from "@vue/reactivity";
+// import {UnwrapRef} from "vue";
+// import {Ref} from "@vue/reactivity";
 
 const {usernameState, sessionState, logout}: {
   logout: () => Promise<void>;
