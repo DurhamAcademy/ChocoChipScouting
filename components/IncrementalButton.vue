@@ -20,7 +20,9 @@ const value = computed({
  * adds one to the value of the component
  */
 function addToValue(){
-  if(props.maxValue != undefined && value.value < props.maxValue )
+  if(props.maxValue == undefined)
+    value.value++
+  else if(value.value < props.maxValue)
     value.value++
 }
 
