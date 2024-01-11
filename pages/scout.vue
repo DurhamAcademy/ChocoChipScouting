@@ -17,7 +17,10 @@ let gameTime = ref(GameTime.Autonomous)
 
 
 const endgameOptions = ["None", "Parked", "Attempted Onstage" , "Onstage", "Harmony"]
-let endgameIndex = [0, 0, 0, 0, 0]
+let endgameIndex = [1, 0, 0, 0, 0]
+
+const autoOptions = ["None", "Mobility"]
+let autoIndex = 0
 
 
 /*
@@ -78,7 +81,6 @@ let data = ref({
   matchNumber: null,
   auto: {
     speakerNA: 0,
-    speakerA: 0,
     amp: 0,
     leave: false,
   },
@@ -102,7 +104,11 @@ function updateEndgameOptions(value: Array<number>){
     }
   }
   data.value.endgame.endgame = arr
+  if(data.value.endgame.endgame.length < 1){
+    data.value.endgame.endgame = [endgameOptions[0]]
+  }
 }
+
 
 function isValidNum() {
   return (data.value.teamNumber != null) && (data.value.matchNumber != null) && (data.value.teamNumber > 0) && (data.value.matchNumber > 0) && (data.value.teamNumber < 10000)
@@ -144,20 +150,23 @@ async function submit() {
       </UButtonGroup>
     </template>
         <div v-if="gameTime == GameTime.Autonomous">
-          <IncrementalButton v-model="data.auto.speakerNA"></IncrementalButton>
-          <IncrementalButton v-model="data.auto.speakerA"></IncrementalButton>
-          <IncrementalButton v-model="data.auto.amp"></IncrementalButton>
-          <BooleanButton v-model="data.auto.leave"  :defaultValue="'Stationary'" :otherValue="'Moved'"></BooleanButton>
+          <div style="text-align:center">
+            <IncrementalButton v-model="data.auto.amp"></IncrementalButton>
+            <IncrementalButton v-model="data.auto.speakerNA"></IncrementalButton>
+          </div>
+          <br>
+          <BooleanButton v-model="data.auto.leave" :default-value="'Mobility'" :other-value="'Mobility'"></BooleanButton>
         </div>
         <div v-if="gameTime == GameTime.Teleoperated">
+          <IncrementalButton v-model="data.teleop.amp"></IncrementalButton>
           <IncrementalButton v-model="data.teleop.speakerNA"></IncrementalButton>
           <IncrementalButton v-model="data.teleop.speakerA"></IncrementalButton>
-          <IncrementalButton v-model="data.teleop.amp"></IncrementalButton>
         </div>
         <div v-if="gameTime == GameTime.Endgame">
+          <IncrementalButton v-model="data.teleop.amp"></IncrementalButton>
           <IncrementalButton v-model="data.teleop.speakerNA"></IncrementalButton>
           <IncrementalButton v-model="data.teleop.speakerA"></IncrementalButton>
-          <IncrementalButton v-model="data.teleop.amp"></IncrementalButton>
+          <br>
           <IncrementalButton v-model="data.endgame.trap" :max-value="3"></IncrementalButton>
           <MultiSelect :model-value="endgameIndex" :options="endgameOptions" @update:model-value="value => {updateEndgameOptions(value)}" :connected-options="[1, 2, 2, 3, 3]"></MultiSelect>
         </div>
