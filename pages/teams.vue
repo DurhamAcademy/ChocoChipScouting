@@ -20,29 +20,29 @@ for(let i  = 0; i < match.length; i++){
     teamOrgMatches.get(currentMatch.teamNumber)!.push(currentMatch)
 }
 
-function getConeAverage(teamNum: number){
-  let total = 0.0
-  for(let i = 0; i < teamOrgMatches.get(teamNum)!.length; i++){
-    total += teamOrgMatches.get(teamNum)![i].ConeHigh + teamOrgMatches.get(teamNum)![i].ConeMid + teamOrgMatches.get(teamNum)![i].ConeLow
-  }
-  return total/teamOrgMatches.get(teamNum)!.length
+console.log(teamOrgMatches)
+
+let teamsData : Array<Array<any>> = []
+
+for(let [key, value] of teamOrgMatches){
+  let arr = [key, getAverageSpeakerCycles(value)]
+  teamsData.push(arr)
 }
 
-let x = [[teamOrgMatches.get(6502)![0].team, getConeAverage(6502)]]
+function getAverageSpeakerCycles(teamArrays: Array<any>){
+  let nonAveragedValue = 0
+  for(let i = 0; i < teamArrays.length; i++){
+    nonAveragedValue += teamArrays[i].auto.speakerNA + teamArrays[i].teleop.speakerNA + teamArrays[i].teleop.speakerA
+  }
+  return nonAveragedValue/teamArrays.length
+}
 
-const columns = [{
-  key: "0",
-  label: 'TEAM #'
-}, {
-  key: "1",
-  label: 'AVERAGE CONE CYCLES'
-}]
 
 </script>
 
 <template>
 <Navbar></Navbar>
-  <UTable :rows="x" :columns="columns"></UTable>
+  <UTable :rows="teamsData" />
 </template>
 
 <style scoped>

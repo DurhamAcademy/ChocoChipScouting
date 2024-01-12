@@ -17,10 +17,6 @@ let gameTime = ref(GameTime.Autonomous)
 const endgameOptions = ["None", "Parked", "Attempted Onstage" , "Onstage", "Harmony"]
 let endgameIndex = [1, 0, 0, 0, 0]
 
-const autoOptions = ["None", "Mobility"]
-let autoIndex = 0
-
-
 /*
 async function dataPull(team: integer): Promise<any>{
   let refNum: integer = team;
