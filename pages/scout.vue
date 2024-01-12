@@ -164,7 +164,7 @@ async function submit() {
           <MultiSelect :model-value="endgameIndex" :options="endgameOptions" @update:model-value="value => {updateEndgameOptions(value)}" :connected-options="[1, 2, 2, 3, 3]"></MultiSelect>
         </div>
       <template #footer>
-        <UTextarea v-model="data.notes" color="yellow"/>
+        <UTextarea v-model="data.notes" color="yellow" placeholder="Notes..."/>
         <br/>
         <div class="flex justify-between">
           <div>

@@ -20,12 +20,11 @@ for(let i  = 0; i < match.length; i++){
     teamOrgMatches.get(currentMatch.teamNumber)!.push(currentMatch)
 }
 
-console.log(teamOrgMatches)
-
-let teamsData : Array<Array<any>> = []
+let teamsData : Array<any> = []
 
 for(let [key, value] of teamOrgMatches){
-  let arr = [key, getAverageAmpCycles(value), getAverageSpeakerCycles(value)]
+  compileEndgames(value)
+  let arr = {team: key, amp:getAverageAmpCycles(value), speaker:getAverageSpeakerCycles(value), endgame:compileEndgames(value)}
   teamsData.push(arr)
 }
 
@@ -36,6 +35,7 @@ function getAverageSpeakerCycles(teamArrays: Array<any>){
   }
   return nonAveragedValue/teamArrays.length
 }
+
 function getAverageAmpCycles(teamArrays: Array<any>){
   let nonAveragedValue = 0
   for(let i = 0; i < teamArrays.length; i++){
@@ -44,12 +44,52 @@ function getAverageAmpCycles(teamArrays: Array<any>){
   return nonAveragedValue/teamArrays.length
 }
 
+function compileEndgames(teamArrays: Array<any>){
+  let endgameMap = new Map<string, number>();
+  for(let i = 0; i < teamArrays.length; i++){
+    let endgame = ""
+    teamArrays[i].endgame.endgame.forEach(function (value: Array<string>) {
+      endgame += endgame == "" ? value: " & " + value
+    })
+    if(endgameMap.has(endgame)) {
+      endgameMap.set(endgame, endgameMap.get(endgame)! + 1)
+    }
+    else
+        endgameMap.set(endgame, 1)
+  }
+  let total = 0
+  for(let [, value] of endgameMap){
+    total += value
+  }
+  endgameMap.forEach(function(value, key){
+    endgameMap.set(key, value/total)
+  })
+  return endgameMap
+}
+
+const columns = [{
+  key: 'team',
+  label: 'Team #'
+}, {
+  key: 'amp',
+  label: 'Average Amp Cycles'
+}, {
+  key: 'speaker',
+  label: 'Average Speaker Cycles'
+}, {
+  key: 'actions'
+}]
+
 
 </script>
 
 <template>
 <Navbar></Navbar>
-  <UTable :rows="teamsData" />
+  <UTable :rows="teamsData" :columns="columns">
+    <template #actions-data="{ row }">
+      <p>{{row.endgame}}</p>
+    </template>
+  </UTable>
 </template>
 
 <style scoped>
