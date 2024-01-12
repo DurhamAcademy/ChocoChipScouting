@@ -1,8 +1,6 @@
 <script lang="ts" setup>
 import databases from "~/utils/databases"
-//import {integer} from "vscode-languageserver-types";
 import IncrementalButton from '~/components/IncrementalButton.vue'
-import {UnwrapRef} from "vue";
 
 const { scoutingData } = databases.locals
 let db = scoutingData
@@ -66,7 +64,6 @@ function editGameTime(direction: String) {
     }
 }
 
-const notesOpen = ref(false)
 
 
 /*const ph: any = dataPull(info.teamNum)();
@@ -171,27 +168,16 @@ async function submit() {
           <MultiSelect :model-value="endgameIndex" :options="endgameOptions" @update:model-value="value => {updateEndgameOptions(value)}" :connected-options="[1, 2, 2, 3, 3]"></MultiSelect>
         </div>
       <template #footer>
+        <UTextarea v-model="data.notes" color="yellow"/>
+        <br/>
         <div class="flex justify-between">
           <div>
             <UButton class="m-1" color="rose" label="Cancel" to="/dashboard" type="reset" variant="outline"/>
             <UButton class="m-1" color="green" label="Submit" type="submit" variant="solid" :disabled="!isValidNum()" @click="submit"/>
           </div>
-          <UButton class="m-1" color="yellow" label="Notes" variant="soft" @click="notesOpen = !notesOpen"/>
         </div>
       </template>
     </UCard>
-    <USlideover v-model="notesOpen" side="right">
-      <UCard class="flex flex-col h-screen">
-        <template #header>
-          <div class="flex justify-end">
-            <UButton icon="i-heroicons-x-mark-solid" size="xl" @click="notesOpen=false" color="yellow" variant="ghost"/>
-          </div>
-        </template>
-        <div class="overflow-y-scroll">
-          <UTextarea v-model="data.notes" color="yellow" size="xl" autoresize/>
-        </div>
-      </UCard>
-    </USlideover>
   </div>
 </template>
 
