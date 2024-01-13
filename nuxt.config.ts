@@ -1,4 +1,5 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
+import vuetify, { transformAssetUrls } from 'vite-plugin-vuetify'
 
 export default defineNuxtConfig({
   app: {
@@ -16,7 +17,18 @@ export default defineNuxtConfig({
       ]
     }
   },
-  modules: ['@nuxt/ui'],
+  build: {
+    transpile: ['vuetify'],
+  },
+  modules: [
+      '@nuxt/ui',
+      (_options, nuxt) => {
+        nuxt.hooks.hook('vite:extendConfig', (config) => {
+          // @ts-expect-error
+          config.plugins.push(vuetify({autoImport: true}))
+        })
+      }
+  ],
   buildModules: ['@nuxtjs/pwa'],
   pwa: {
     manifest: {
@@ -29,6 +41,9 @@ export default defineNuxtConfig({
       enabled: true
     }
   },
+  plugins: [
+      '~/plugins/vuetify.ts'
+  ],
   devtools: { enabled: true },
   ssr: false,
   ui: {
@@ -39,6 +54,13 @@ export default defineNuxtConfig({
       // Show toasts at the top right of the screen
       position: 'top-0 right-0'
     }
+  },
+  vite: {
+    vue: {
+      template: {
+        transformAssetUrls,
+      },
+    },
   },
   logLevel: "verbose"
 })

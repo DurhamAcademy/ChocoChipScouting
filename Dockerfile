@@ -88,6 +88,7 @@ COPY public ./public
 COPY server ./server
 COPY components ./components
 COPY utils ./utils
+COPY plugins ./plugins
 
 RUN ["bun", "--bun", "run", "postinstall"]
 
