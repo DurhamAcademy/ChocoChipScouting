@@ -23,8 +23,7 @@ for(let i  = 0; i < match.length; i++){
 let teamsData : Array<any> = []
 
 for(let [key, value] of teamOrgMatches){
-  compileEndgames(value)
-  let arr = {team: key, amp:getAverageAmpCycles(value), speaker:getAverageSpeakerCycles(value), endgame:compileEndgames(value)}
+  let arr = {team: key, amp:getAverageAmpCycles(value).toFixed(2), speaker:getAverageSpeakerCycles(value).toFixed(2), mobility:averageAuto(value).toFixed(2), endgame:compileEndgames(value)}
   teamsData.push(arr)
 }
 
@@ -44,27 +43,32 @@ function getAverageAmpCycles(teamArrays: Array<any>){
   return nonAveragedValue/teamArrays.length
 }
 
+function averageAuto(teamArrays: Array<any>){
+  let successfulMobilityCount = 0
+  for(let match of teamArrays){
+    successfulMobilityCount += match.auto.leave ? 1 : 0
+  }
+  return successfulMobilityCount/teamArrays.length
+}
+
 function compileEndgames(teamArrays: Array<any>){
   let endgameMap = new Map<string, number>();
-  for(let i = 0; i < teamArrays.length; i++){
-    let endgame = ""
-    teamArrays[i].endgame.endgame.forEach(function (value: Array<string>) {
-      endgame += endgame == "" ? value: " & " + value
+  for(let i = 0; i < teamArrays.length; i++) {
+    teamArrays[i].endgame.endgame.forEach(function (value: string) {
+        if (endgameMap.has(value)) {
+          endgameMap.set(value, endgameMap.get(value)! + 1)
+        } else
+          endgameMap.set(value, 1)
+
     })
-    if(endgameMap.has(endgame)) {
-      endgameMap.set(endgame, endgameMap.get(endgame)! + 1)
-    }
-    else
-        endgameMap.set(endgame, 1)
   }
-  let total = 0
-  for(let [, value] of endgameMap){
-    total += value
-  }
+  let endgameOptionsArr : Array<string> = []
+  let endgameDataArr : Array<number> = []
   endgameMap.forEach(function(value, key){
-    endgameMap.set(key, value/total)
+    endgameOptionsArr.push(key)
+    endgameDataArr.push(value)
   })
-  return endgameMap
+  return [endgameOptionsArr, endgameDataArr]
 }
 
 const columns = [{
@@ -77,7 +81,11 @@ const columns = [{
   key: 'speaker',
   label: 'Average Speaker Cycles'
 }, {
-  key: 'actions'
+  key: 'mobility',
+  label: 'Mobility Success Rate'
+}, {
+  key: 'actions',
+  label: 'Endgame'
 }]
 
 
@@ -86,9 +94,33 @@ const columns = [{
 <template>
 <Navbar></Navbar>
   <UTable :rows="teamsData" :columns="columns">
-    <template #actions-data="{ row }">
-      <p>{{row.endgame}}</p>
+
+    <template #amp-data="{ row }">
+      <UPopover>
+        <UButton class="m-1" color="white" variant="soft" >{{row.amp}}</UButton>
+        <template #panel>
+          <UCard>
+            <div class="max-w-xs min-w-[15rem] overflow-y-auto" style="max-height: 20rem; min-height: 10rem">
+
+            </div>
+          </UCard>
+        </template>
+      </UPopover>
     </template>
+
+    <template #actions-data="{ row }">
+      <UPopover>
+        <UButton class="m-1" color="blue" label="Chart" variant="soft" />
+        <template #panel>
+          <UCard>
+            <div class="max-w-xs min-w-[15rem] overflow-y-auto" style="max-height: 20rem; min-height: 10rem">
+              <PieChart :labels="row.endgame[0]" :data="row.endgame[1]"/>
+            </div>
+          </UCard>
+        </template>
+      </UPopover>
+    </template>
+
   </UTable>
 </template>
 
