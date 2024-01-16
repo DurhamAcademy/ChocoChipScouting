@@ -143,12 +143,11 @@ async function submit() {
       </UButtonGroup>
     </template>
         <div v-if="gameTime == GameTime.Autonomous">
-          <div style="text-align:center">
-            <IncrementalButton v-model="data.auto.amp"></IncrementalButton>
-            <IncrementalButton v-model="data.auto.speakerNA"></IncrementalButton>
+          <div class="flex" style="text-align:center">
+            <IncrementalButton v-model="data.auto.amp" style="margin:5px"></IncrementalButton>
+            <IncrementalButton v-model="data.auto.speakerNA" style="margin:5px"></IncrementalButton>
+            <BooleanButton v-model="data.auto.leave" :default-value="'Mobility'" :other-value="'Mobility'" style="margin:5px"></BooleanButton>
           </div>
-          <br>
-          <BooleanButton v-model="data.auto.leave" :default-value="'Mobility'" :other-value="'Mobility'"></BooleanButton>
         </div>
         <div v-if="gameTime == GameTime.Teleoperated">
           <IncrementalButton v-model="data.teleop.amp"></IncrementalButton>

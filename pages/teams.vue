@@ -86,6 +86,8 @@ const columns = [{
 }, {
   key: 'actions',
   label: 'Endgame'
+}, {
+  key: 'dropdown'
 }]
 
 
@@ -108,6 +110,32 @@ const columns = [{
       </UPopover>
     </template>
 
+    <template #mobility-data="{ row }">
+      <UPopover>
+        <UButton class="m-1" color="white" variant="soft" >{{row.mobility}}</UButton>
+        <template #panel>
+          <UCard>
+            <div class="max-w-xs min-w-[15rem] overflow-y-auto" style="max-height: 20rem; min-height: 10rem">
+
+            </div>
+          </UCard>
+        </template>
+      </UPopover>
+    </template>
+
+    <template #speaker-data="{ row }">
+      <UPopover>
+        <UButton class="m-1" color="white" variant="soft" >{{row.speaker}}</UButton>
+        <template #panel>
+          <UCard>
+            <div class="max-w-xs min-w-[15rem] overflow-y-auto" style="max-height: 20rem; min-height: 10rem">
+
+            </div>
+          </UCard>
+        </template>
+      </UPopover>
+    </template>
+
     <template #actions-data="{ row }">
       <UPopover>
         <UButton class="m-1" color="blue" label="Chart" variant="soft" />
@@ -115,6 +143,19 @@ const columns = [{
           <UCard>
             <div class="max-w-xs min-w-[15rem] overflow-y-auto" style="max-height: 20rem; min-height: 10rem">
               <PieChart :labels="row.endgame[0]" :data="row.endgame[1]"/>
+            </div>
+          </UCard>
+        </template>
+      </UPopover>
+    </template>
+
+    <template #dropdown-data="{ row }">
+      <UPopover>
+        <UButton color="gray" variant="ghost" icon="i-heroicons-ellipsis-horizontal-20-solid" />
+        <template #panel>
+          <UCard>
+            <div class="max-w-full min-w-max overflow-y-auto" style="max-height: 20rem; min-height: 10rem">
+
             </div>
           </UCard>
         </template>
