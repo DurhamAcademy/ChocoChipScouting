@@ -47,7 +47,7 @@ COPY .npmrc .
 RUN npm install --ignore-scripts
 
 # Main Server
-FROM oven/bun AS bun-base
+FROM oven/bun:latest AS bun-base
 RUN mkdir -p /usr/src/nuxt3-app
 WORKDIR /usr/src/nuxt3-app
 
@@ -67,7 +67,7 @@ ENV NODE_TLS_REJECT_UNAUTHORIZED 0
 RUN NODE_TLS_REJECT_UNAUTHORIZED=0
 COPY .npmrc .
 COPY package.json .
-RUN ["bun", "install", "--ignore-scripts", "--force"]
+RUN ["bun", "install", "--ignore-scripts"]
 
 FROM bun-install AS bun-prepare
 
@@ -79,23 +79,26 @@ COPY package.json .
 COPY tsconfig.json .
 
 COPY nuxt.config.ts .
+COPY app.config.ts .
 
 FROM bun-prepare AS files
 
 COPY app.vue .
-COPY pages ./pages
-COPY public ./public
-COPY server ./server
-COPY components ./components
-COPY utils ./utils
+COPY ./pages ./pages
+COPY ./public ./public
+COPY ./server ./server
+COPY ./components ./components
+COPY ./utils ./utils
 
+#ENTRYPOINT ["bash"]
 RUN ["bun", "--bun", "run", "postinstall"]
 
 FROM files AS build
 ENV NODE_ENV development
+
 RUN ["bun", "--bun", "run", "build"]
 
-FROM oven/bun:latest as run
+FROM oven/bun:latest as production
 
 RUN mkdir -p /usr/src/nuxt3-app
 WORKDIR /usr/src/nuxt3-app
@@ -110,6 +113,25 @@ ENV HOST=0.0.0.0
 ENV PORT=3000
 
 ENTRYPOINT ["bun", ".output/server/index.mjs"]
+
+COPY testServer.js .
+
+HEALTHCHECK \
+    --interval=10s \
+    --timeout=3s \
+    --start-period=100ms \
+    --retries=5 \
+    CMD bun testServer.js
+
+FROM files as development
+
+EXPOSE 3000
+
+ENV HOST=0.0.0.0
+ENV PORT=3000
+
+ENV NODE_ENV development
+ENTRYPOINT ["bun", "--bun", "run", "dev"]
 
 COPY testServer.js .
 
