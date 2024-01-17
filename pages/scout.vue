@@ -2,7 +2,7 @@
 import databases from "~/utils/databases"
 //import {integer} from "vscode-languageserver-types";
 import IncrementalButton from '~/components/IncrementalButton.vue'
-import {UnwrapRef} from "vue";
+
 
 const { scoutingData } = databases.locals
 let db = scoutingData
