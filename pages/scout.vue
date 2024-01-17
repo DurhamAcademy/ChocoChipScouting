@@ -135,12 +135,11 @@ async function submit() {
         </div>
       </div>
       <br>
-      <UButtonGroup class="flex">
-        <UButton :disabled="gameTime==GameTime.Autonomous" icon="i-heroicons-chevron-left"
-                 @click="editGameTime('-')"/>
-        <UButton :label="gameTime.valueOf()" block class="w-auto" disabled style="flex-grow: 1;"/>
-        <UButton :disabled="gameTime==GameTime.Endgame" icon="i-heroicons-chevron-right" @click="editGameTime('+')"/>
-      </UButtonGroup>
+        <UButtonGroup class="flex">
+          <UButton :label=GameTime.Autonomous block class="w-auto" enabled style="flex-grow: 1;" @click="gameTime= GameTime.Autonomous"/>
+          <UButton :label=GameTime.Teleoperated block class="w-auto" enabled style="flex-grow: 1;" @click="gameTime= GameTime.Teleoperated"/>
+          <UButton :label=GameTime.Endgame block class="w-auto" enabled style="flex-grow: 1;" @click="gameTime= GameTime.Endgame"/>
+        </UButtonGroup>
     </template>
         <div v-if="gameTime == GameTime.Autonomous">
           <div class="flex" style="text-align:center">
