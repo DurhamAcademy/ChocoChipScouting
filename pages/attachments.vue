@@ -9,6 +9,7 @@ const { attachments } = databases.locals
 const db = attachments;
 var info = await db.info();
 var total = info.doc_count
+var rowId = ""
 console.log(info, total)
 
 async function getDocsPaged(amount: integer, startingAt: integer): Promise<(PouchDB.Core.ExistingDocument<{name: string, team: number | undefined, author: string}>)[]> {
@@ -23,7 +24,7 @@ async function getDocsPaged(amount: integer, startingAt: integer): Promise<(Pouc
 const el = ref<HTMLElement>()
 
 const data = ref((await getDocsPaged(40, 0)).map((b)=>{return {name: b.name, team: b.team, author: b.author, id: b._id}}))
-console.log(data.value)
+
 useInfiniteScroll(
     el,
     async (state) => {
@@ -49,7 +50,7 @@ router.afterEach(()=>{route.value = useRoute()})
 const isAttach = route.value.matched.find((match)=>match.name=="attachments-id") !== undefined
 const showModal = ref<boolean>(isAttach)
 const hideAll = ref((route.value.matched.length!==1) && (!isAttach))
-
+const isOpen = ref(false)
 async function view(id: string) {
   showModal.value=true;
   await navigateTo("/attachments/"+id)
@@ -57,6 +58,14 @@ async function view(id: string) {
 async function close() {
   await navigateTo('/attachments')
 }
+
+async function deleteAttachment(id: string) {
+  var doc = await db.get(id);
+  await db.remove(doc);
+  data.value = data.value.filter(doc => doc.id != id)
+  isOpen.value = false
+}
+
 </script>
 
 <template>
@@ -65,8 +74,15 @@ async function close() {
     <UTable :rows="data" :columns="columns">
       <template #actions-data="{ row }">
         <UButton color="gray" variant="ghost" icon="i-heroicons-eye" @click="view(row.id)"/>
+        <UButton color="gray" variant="ghost" icon="i-heroicons-trash" @click="isOpen = true; rowId = row.id"/>
       </template>
     </UTable>
+    <UModal v-model="isOpen" prevent-close :overlay="false">
+      <div class="p-10" style="text-align:center">
+        <UButton class="m-0.5" color="gray" variant="outline" label="Cancel" @click="isOpen = false"/>
+        <UButton class="m-0.5" color="red" variant="solid" label="Delete" @click="deleteAttachment(rowId)"/>
+      </div>
+    </UModal>
     <UModal v-model="showModal" :onClose="close">
       <NuxtPage/>
     </UModal>
