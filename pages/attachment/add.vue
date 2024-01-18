@@ -77,7 +77,7 @@ async function submit() {
     author: usernameState.value
   };
   console.log(docObject)
-  var doc = await db.post(docObject)
+  let doc = await db.post(docObject)
   console.info(doc)
   var rev=doc.rev;
   for (let i = 0; i < fileList.value.length; i++) {
@@ -114,7 +114,7 @@ const {isOverDropZone} = useDropZone(dropZoneRef, onDrop) // variable that check
       </template>
     </UCard>
     <UCard class="m-3">
-      <UTable :rows="filList.map((file)=>{return {size: file.size, type: file.type}})" :columns="['size', 'type']" />
+      <UTable :rows="fileList.map((file)=>{return {size: file.size, type: file.type}})" :columns="['size', 'type']" />
     </UCard>
   </UContainer>
   <AddButton/>
