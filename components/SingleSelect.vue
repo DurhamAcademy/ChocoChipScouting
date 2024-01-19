@@ -10,12 +10,12 @@ const props = defineProps<{
  * Changes the solid button to the selected index
  * @param selectedIndex the index of the button the user selects
  */
-function currentlySelected(selectedIndex:number){
-  variantCheckList.value.forEach(
-      (element, listIndex) => variantCheckList.value[listIndex] = "outline"
+function selected(selectedIndex:number){
+  variantArray.value.forEach(
+      (element, listIndex) => variantArray.value[listIndex] = "outline"
   )
   value.value = selectedIndex
-  variantCheckList.value[selectedIndex] = "solid"
+  variantArray.value[selectedIndex] = "solid"
 }
 
 const value = computed({
@@ -27,7 +27,7 @@ const value = computed({
   }
 })
 
-let variantCheckList = ref(
+let variantArray = ref(
     Array(props.options.length)
         .fill("")
         .map(
@@ -39,7 +39,7 @@ let variantCheckList = ref(
 </script>
 
 <template>
-  <UButton v-for="(item, index) in options" class="m-1" :label=item :variant="variantCheckList[index]" @click="currentlySelected(index)"></UButton>
+  <UButton v-for="(item, index) in options" class="m-1" :label=item :variant="variantArray[index]" @click="selected(index)"></UButton>
 </template>
 
 <style scoped>
