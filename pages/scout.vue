@@ -143,22 +143,56 @@ async function submit() {
     </template>
         <div v-if="gameTime == GameTime.Autonomous">
           <div class="flex" style="text-align:center">
-            <IncrementalButton v-model="data.auto.amp" style="margin:5px"></IncrementalButton>
-            <IncrementalButton v-model="data.auto.speakerNA" style="margin:5px"></IncrementalButton>
-            <BooleanButton v-model="data.auto.leave" :default-value="'Mobility'" :other-value="'Mobility'" style="margin:5px"></BooleanButton>
+            <div>
+              <h1 class="text-green-600 font-sans">Amp</h1>
+              <IncrementalButton v-model="data.auto.amp" style="margin:5px"></IncrementalButton>
+            </div>
+            <div>
+              <h1 class="text-green-600 font-sans">Speaker</h1>
+              <IncrementalButton v-model="data.auto.speakerNA" style="margin:5px"></IncrementalButton>
+            </div>
+            <div>
+              <br>
+              <BooleanButton v-model="data.auto.leave" :default-value="'Mobility'" :other-value="'Mobility'" style="margin:5px"></BooleanButton>
+            </div>
           </div>
         </div>
         <div v-if="gameTime == GameTime.Teleoperated">
-          <IncrementalButton v-model="data.teleop.amp"></IncrementalButton>
-          <IncrementalButton v-model="data.teleop.speakerNA"></IncrementalButton>
-          <IncrementalButton v-model="data.teleop.speakerA"></IncrementalButton>
+          <div class="flex" style="text-align:center">
+            <div>
+              <h1 class="text-green-600 font-sans">Amp</h1>
+              <IncrementalButton v-model="data.teleop.amp" style="margin:5px"></IncrementalButton>
+            </div>
+            <div>
+              <h1 class="text-green-600 font-sans">SpeakerNA</h1>
+              <IncrementalButton v-model="data.teleop.speakerNA" style="margin:5px"></IncrementalButton>
+            </div>
+            <div>
+              <h1 class="text-green-600 font-sans">SpeakerA</h1>
+              <IncrementalButton v-model="data.teleop.speakerA" style="margin:5px"></IncrementalButton>
+            </div>
+          </div>
         </div>
         <div v-if="gameTime == GameTime.Endgame">
-          <IncrementalButton v-model="data.teleop.amp"></IncrementalButton>
-          <IncrementalButton v-model="data.teleop.speakerNA"></IncrementalButton>
-          <IncrementalButton v-model="data.teleop.speakerA"></IncrementalButton>
+          <div class="flex" style="text-align:center">
+            <div>
+              <h1 class="text-green-600 font-sans">Amp</h1>
+              <IncrementalButton v-model="data.teleop.amp" style="margin:5px"></IncrementalButton>
+            </div>
+            <div>
+              <h1 class="text-green-600 font-sans">SpeakerNA</h1>
+              <IncrementalButton v-model="data.teleop.speakerNA" style="margin:5px"></IncrementalButton>
+            </div>
+            <div>
+              <h1 class="text-green-600 font-sans">SpeakerA</h1>
+              <IncrementalButton v-model="data.teleop.speakerA" style="margin:5px"></IncrementalButton>
+            </div>
+            <div>
+              <h1 class="text-green-600 font-sans">Trap</h1>
+              <IncrementalButton v-model="data.endgame.trap" style="margin:5px"></IncrementalButton>
+            </div>
+          </div>
           <br>
-          <IncrementalButton v-model="data.endgame.trap" :max-value="3"></IncrementalButton>
           <MultiSelect :model-value="endgameIndex" :options="endgameOptions" @update:model-value="value => {updateEndgameOptions(value)}" :connected-options="[1, 2, 2, 3, 3]"></MultiSelect>
         </div>
       <template #footer>
