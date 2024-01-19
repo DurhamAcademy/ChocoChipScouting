@@ -30,35 +30,6 @@ async function dataPull(team: integer): Promise<any>{
   return grabParse.nickname;
 }
 */
-function editGameTime(direction: String) {
-  if(direction.localeCompare("+") == 0){
-    switch (gameTime.value) {
-      case GameTime.Autonomous:
-        gameTime.value = GameTime.Teleoperated;
-        break;
-      case GameTime.Teleoperated:
-        gameTime.value = GameTime.Endgame;
-        break
-      case GameTime.Endgame:
-        gameTime.value = GameTime.Autonomous;
-        break
-    }
-  }
-  else if(direction.localeCompare("-") == 0)
-    {
-      switch (gameTime.value) {
-        case GameTime.Autonomous:
-          gameTime.value = GameTime.Endgame;
-          break;
-        case GameTime.Teleoperated:
-          gameTime.value = GameTime.Autonomous;
-          break;
-        case GameTime.Endgame:
-          gameTime.value = GameTime.Teleoperated;
-          break;
-      }
-    }
-}
 
 
 
@@ -136,9 +107,9 @@ async function submit() {
       </div>
       <br>
         <UButtonGroup class="flex">
-          <UButton :label=GameTime.Autonomous block class="w-auto" enabled style="flex-grow: 1;" @click="gameTime= GameTime.Autonomous"/>
-          <UButton :label=GameTime.Teleoperated block class="w-auto" enabled style="flex-grow: 1;" @click="gameTime= GameTime.Teleoperated"/>
-          <UButton :label=GameTime.Endgame block class="w-auto" enabled style="flex-grow: 1;" @click="gameTime= GameTime.Endgame"/>
+          <UButton :label=GameTime.Autonomous block class="w-auto" enabled style="flex: 1;" @click="gameTime= GameTime.Autonomous"/>
+          <UButton :label=GameTime.Teleoperated block class="w-auto" enabled style="flex: 1;" @click="gameTime= GameTime.Teleoperated"/>
+          <UButton :label=GameTime.Endgame block class="w-auto" enabled style="flex: 1;" @click="gameTime= GameTime.Endgame"/>
         </UButtonGroup>
     </template>
         <div v-if="gameTime == GameTime.Autonomous">
