@@ -6,9 +6,10 @@ import Compressor from "compressorjs";
 import {useDropZone, useFileDialog} from '@vueuse/core'
 import LoginState from "~/utils/authorization/LoginState";
 import databases from "~/utils/databases"
+import heic2any from "heic2any"
 
-const { attachments } = databases.locals
-const db = attachments;
+const { attachments } = databases.databases
+const db = attachments.local;
 
 const dropZoneRef = ref<HTMLDivElement>()
 const AttachmentName = ref("")
@@ -16,35 +17,42 @@ const TeamNumber = ref(0)
 
 let fileList = ref<(File|Blob)[]>([])
 let nameList = ref<(String)[]>([])
-async function onDrop(files: File[] | null) {
-  files?.map((file) => {
-    if (file.type.match("image/*")) {
-      new Compressor(file, {
-        maxHeight: 1080,
-        maxWidth: 1080,
-        quality: 0.6,
-        convertSize: 1000000,
-        success(newFile: File | Blob) {
-          fileList.value?.push(newFile)
-          nameList.value?.push(file.name)
-        }
-      })
-    }
-  })
+async function onDrop(files: File[] | null) { // dropbox
+  imageProcessor(files)
 }
 
-const { files, open, reset, onChange } = useFileDialog()
-
+const { files, open, reset, onChange } = useFileDialog({
+  accept: 'image/*,.heic'
+})
+// if a file has been chosen by useFileDialog
 onChange((files) => {
+  if (files) {
+    const fileArray: File[] = Array.from(files);
+    imageProcessor(fileArray)
+  }
+})
+
+// processes images from the useFileDialog/dropbox
+function imageProcessor(files: File[] | null) {
   if (files)
-  for (let i = 0; i < files?.length; i++) {
-    let file = files.item(i)
-    if (file && file.type.match("image/*")) {
+    for (let i = 0; i < files.length; i++) {
+      let file = files[i]
       let currentFile = file!
+
+      if (!(currentFile.type.match('image/.+') || currentFile.type.match('.heic')))
+        throw new Error('Filetype is not accepted')
+
+      if(currentFile.type.match('.heic')) {
+        heic2any({
+          blob: currentFile,
+          toType: "image/jpeg"
+        })
+      }
+
       new Compressor(currentFile, {
         maxHeight: 1080,
         maxWidth: 1080,
-        quality: 0.6,
+        quality: 0.5,
         convertSize: 0,
         convertTypes: [],
         success(newFile: File | Blob) {
@@ -53,8 +61,7 @@ onChange((files) => {
         }
       })
     }
-  }
-})
+}
 
 var {usernameState, logout}: {
   loginState: LoginState;
@@ -83,10 +90,11 @@ async function submit() {
       // TODO: notes mid match
     }
   }
+  await attachments.sync();
 }
 
-const {isOverDropZone} = useDropZone(dropZoneRef, onDrop)
-// let f = new File([], "", {type: })
+const {isOverDropZone} = useDropZone(dropZoneRef, onDrop) // variable that checks if file is being dragged over dropbox
+
 </script>
 
 <template>
@@ -98,7 +106,7 @@ const {isOverDropZone} = useDropZone(dropZoneRef, onDrop)
     <UFormGroup class="m-3" label="Team Number">
       <UInput v-model="TeamNumber"  placeholder="6502" type="number"/>
     </UFormGroup>
-    <UCard class="w-lg h-96 flex flex-wrap justify-center content-center m-3" ref="dropZoneRef">
+    <UCard class="w-lg h-96 flex flex-wrap justify-center content-center m-3 transition-colors" :class="{'bg-emerald-100': isOverDropZone}" ref="dropZoneRef">
       <template #header>Drop files here</template>
         <UButton type="button" @click="open" label="Choose file" variant=""/>
       <template #footer>
