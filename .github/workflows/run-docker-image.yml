@@ -1,11 +1,17 @@
-name: Docker Image CI
+name: Run Build
 
 on:
-  push:
-    branches: [ "main", "dev" ]
-  pull_request:
-    branches: [ "main", "dev" ]
-
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: Git branch refrence
+        type: string
+        required: true
+      useCache: 
+        description: should the cache be used
+        default: false
+        required: true
+        type: boolean
 env:
   IMAGE_NAME: ${{ github.repository }}
 
@@ -18,6 +24,8 @@ jobs:
     timeout-minutes: 5
     steps:
     - uses: actions/checkout@v3
+      with: 
+        ref: ${{ inputs.ref }}
     - name: Extract metadata (tags, labels) for Docker
       id: meta
       uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
@@ -30,9 +38,17 @@ jobs:
       run: docker buildx create --use
     - name: Build Docker image
       uses: docker/build-push-action@v5.1.0
+      if: ${{ inputs.useCache }}
       with:
         context: .
         target: production
         push: false
         cache-from: type=gha
         cache-to: type=gha,mode=max
+    - name: Build Docker image
+      uses: docker/build-push-action@v5.1.0
+      if: ${{ !inputs.useCache }}
+      with:
+        context: .
+        target: production
+        push: false

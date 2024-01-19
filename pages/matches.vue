@@ -2,7 +2,7 @@
 import databases from "~/utils/databases"
 import AddButton from "~/components/AddButton.vue";
 const { scoutingData } = databases.locals
-var columns = [{
+let columns = [{
   key: '_id',
   label: 'ID'
 }, {
@@ -18,16 +18,15 @@ let matc = matche.map(async (doc) => {
 })
 let matches = await Promise.all(matc)
 columns = Object.keys(matches[0]).map((a)=>{return {key: a, label: a}})
-console.log(matches)
 </script>
 <template>
   <OuterComponents>
-    <UTable :columns="columns" :rows="matches">
+    <UTable :columns="columns" :rows="matches" style="overflow-x: scroll; width: 77vw">
       <template #notes-data="{ row }">
         <UPopover>
           <UButton class="m-1" color="yellow" label="Notes" variant="soft" />
           <template #panel>
-            <UCard >
+            <UCard>
               <div class="max-w-lg min-w-[15rem] overflow-y-auto" style="max-height: 20rem; min-height: 10rem">
                 <div class="whitespace-normal break-all">{{row.notes}}</div>
               </div>
