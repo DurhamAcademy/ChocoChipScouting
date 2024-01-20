@@ -81,7 +81,7 @@ function isValidNum() {
 async function submit() {
 
     let newDoc = db.post(data.value)
-    await navigateTo("matches")
+    await navigateTo("/matches")
 
 
 }
