@@ -25,6 +25,7 @@ const endWidthCalc = computed(() => {
     <UButton :style="{display: 'inline-block', width: autoWidthCalc + '%'}">Auto</UButton>
     <UButton :style="{display: 'inline-block', width: teleWidthCalc + '%'}">TeleOp</UButton>
     <UButton :style="{display: 'inline-block', width: endWidthCalc + '%'}">Endgame</UButton>
+    <UButton :style="{display: 'inline-block', width: endWidthCalc + '%'}">Notes</UButton>
   </UButtonGroup>
   <UProgress :value="75"/>
 </template>

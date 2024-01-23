@@ -28,7 +28,9 @@ columns = Object.keys(matches[0]).map((a)=>{return {key: a, label: a}})
           <template #panel>
             <UCard>
               <div class="max-w-lg min-w-[15rem] overflow-y-auto" style="max-height: 20rem; min-height: 10rem">
-                <div class="whitespace-normal break-all">{{row.notes}}</div>
+                <div class="whitespace-normal break-all">{{row.notes.notes}}</div>
+                <p>Reliability:{{ row.notes.reliability }}</p>
+                <p>Efficiency:{{ row.notes.efficiency }}</p>
               </div>
             </UCard>
           </template>

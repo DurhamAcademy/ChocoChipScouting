@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import databases from "~/utils/databases"
 import IncrementalButton from '~/components/IncrementalButton.vue'
+import {URange} from "#components";
 
 const { scoutingData } = databases.locals
 let db = scoutingData
@@ -9,7 +10,8 @@ let db = scoutingData
 enum GameTime {
   Autonomous = "Auto",
   Teleoperated = "Teleop",
-  Endgame = "Endgame"
+  Endgame = "Endgame",
+  Notes = "Notes"
 }
 let gameTime = ref(GameTime.Autonomous)
 
@@ -40,6 +42,9 @@ function editGameTime(direction: String) {
         gameTime.value = GameTime.Endgame;
         break
       case GameTime.Endgame:
+        gameTime.value = GameTime.Notes;
+        break
+      case GameTime.Notes:
         gameTime.value = GameTime.Autonomous;
         break
     }
@@ -48,7 +53,7 @@ function editGameTime(direction: String) {
     {
       switch (gameTime.value) {
         case GameTime.Autonomous:
-          gameTime.value = GameTime.Endgame;
+          gameTime.value = GameTime.Notes;
           break;
         case GameTime.Teleoperated:
           gameTime.value = GameTime.Autonomous;
@@ -56,11 +61,12 @@ function editGameTime(direction: String) {
         case GameTime.Endgame:
           gameTime.value = GameTime.Teleoperated;
           break;
+        case GameTime.Notes:
+          gameTime.value =  GameTime.Endgame;
+          break;
       }
     }
 }
-
-
 
 /*const ph: any = dataPull(info.teamNum)();
 let parsed = JSON.parse(await ph);
@@ -86,7 +92,11 @@ let data = ref({
     trap: 0,
     endgame: [endgameOptions[0]]
   },
-  notes: "",
+  notes: {
+    efficiency: 1,
+    notes: "",
+    reliability: 1
+  }
 })
 
 function updateEndgameOptions(value: Array<number>){
@@ -139,7 +149,7 @@ async function submit() {
         <UButton :disabled="gameTime==GameTime.Autonomous" icon="i-heroicons-chevron-left"
                  @click="editGameTime('-')"/>
         <UButton :label="gameTime.valueOf()" block class="w-auto" disabled style="flex-grow: 1;"/>
-        <UButton :disabled="gameTime==GameTime.Endgame" icon="i-heroicons-chevron-right" @click="editGameTime('+')"/>
+        <UButton :disabled="gameTime==GameTime.Notes" icon="i-heroicons-chevron-right" @click="editGameTime('+')"/>
       </UButtonGroup>
     </template>
         <div v-if="gameTime == GameTime.Autonomous">
@@ -162,14 +172,24 @@ async function submit() {
           <IncrementalButton v-model="data.endgame.trap" :max-value="3"></IncrementalButton>
           <MultiSelect :model-value="endgameIndex" :options="endgameOptions" @update:model-value="value => {updateEndgameOptions(value)}" :connected-options="[1, 2, 2, 3, 3]"></MultiSelect>
         </div>
+      <div v-if="gameTime == GameTime.Notes">
+        <p>Rate (1-5)</p>
+        <br/>
+        <p>Reliability ({{ data.notes.reliability }})</p>
+        <br/>
+        <URange v-model="data.notes.reliability" size="md" color="green" min="1" :max="5"/>
+        <br/>
+        <br/>
+        <p>Efficiency ({{data.notes.efficiency}})</p>
+        <br/>
+        <URange v-model="data.notes.efficiency" size="md" color="green" min="1" :max="5"/>
+      </div>
       <template #footer>
-        <UTextarea v-model="data.notes" color="yellow" placeholder="Notes..."/>
+        <UTextarea v-model="data.notes.notes" color="yellow" placeholder="Notes..."/>
         <br/>
         <div class="flex justify-between">
-          <div>
-            <UButton class="m-1" color="rose" label="Cancel" to="/dashboard" type="reset" variant="outline"/>
-            <UButton class="m-1" color="green" label="Submit" type="submit" variant="solid" :disabled="!isValidNum()" @click="submit"/>
-          </div>
+          <UButton class="m-1" color="rose" label="Cancel" to="/dashboard" type="reset" variant="outline"/>
+          <UButton class="m-1" color="green" label="Submit" type="submit" variant="solid" :disabled="!isValidNum()" @click="submit"/>
         </div>
       </template>
     </UCard>
