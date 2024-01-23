@@ -89,20 +89,19 @@ watch(data, (value) => {
         if(valueArr[i][j] != prevData[i][j]){
           if(typeof valueArr[i][j] === "number" && valueArr[i][j] < prevData[i][j])
             for(let x = data.value.timedArr.length - 1; x >= 0; x--){
-              if(Object.values(data.value.timedArr[x])[0] == keyArr[i][j]){
+              if(Object.values(data.value.timedArr[x])[0].split(" ")[0] == keyArr[i][j].toString()){
                 data.value.timedArr.splice(x, 1)
                 break;
               }
             }
           else
-            data.value.timedArr.push([keyArr[i][j], counter != undefined ? counter.min * 60 + counter.sec: counter])
+            data.value.timedArr.push([keyArr[i][j].toString() + " " + valueArr[i][j].toString(), counter != undefined ? counter.min * 60 + counter.sec: counter])
           break loop
         }
       }
     }
   }
   prevData = valueArr
-  console.log(data.value.timedArr)
 },{ deep: true })
 
 
