@@ -56,8 +56,8 @@ let impData = {
   nickname: parsed.nickname,
   */
 
-let prevData: any
 let timedArrPlaceholder: Array<Array<any>> = []
+let prevData: ((number | boolean)[] | (number | string[])[])[] | undefined = [[0, 0, false], [0, 0, 0], [0, [""]]]
 
 let data = ref({
   teamNumber: null,
@@ -87,14 +87,22 @@ watch(data, (value) => {
     loop: for(let i = 0; i < valueArr.length; i++){
       for(let j = 0; j < valueArr[i].length; j++){
         if(valueArr[i][j] != prevData[i][j]){
-          data.value.timedArr.push([keyArr[i][j], counter.min * 60 + counter.sec])
-          console.log(data.value.timedArr)
+          if(typeof valueArr[i][j] === "number" && valueArr[i][j] < prevData[i][j])
+            for(let x = data.value.timedArr.length - 1; x >= 0; x--){
+              if(Object.values(data.value.timedArr[x])[0] == keyArr[i][j]){
+                data.value.timedArr.splice(x, 1)
+                break;
+              }
+            }
+          else
+            data.value.timedArr.push([keyArr[i][j], counter != undefined ? counter.min * 60 + counter.sec: counter])
           break loop
         }
       }
     }
   }
   prevData = valueArr
+  console.log(data.value.timedArr)
 },{ deep: true })
 
 
@@ -149,7 +157,7 @@ async function submit() {
       </div>
       <br>
         <UButtonGroup class="flex">
-          <UButton :label=GameTime.Autonomous block class="w-auto" enabled style="flex: 1;" @click="gameTime= GameTime.Autonomous"/>
+          <UButton :label=GameTime.Autonomous block class="w-auto" enabled style="flex: 1" @click="gameTime= GameTime.Autonomous"/>
           <UButton :label=GameTime.Teleoperated block class="w-auto" enabled style="flex: 1;" @click="gameTime= GameTime.Teleoperated"/>
           <UButton :label=GameTime.Endgame block class="w-auto" enabled style="flex: 1;" @click="gameTime= GameTime.Endgame"/>
         </UButtonGroup>
