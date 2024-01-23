@@ -17,6 +17,23 @@ let gameTime = ref(GameTime.Autonomous)
 const endgameOptions = ["None", "Parked", "Attempted Onstage" , "Onstage", "Harmony"]
 let endgameIndex = [1, 0, 0, 0, 0]
 
+let counter: { min: number, sec: number }
+let matchStarted = ref(false)
+function startTimer() {
+  matchStarted.value = true
+  counter = { min: 0, sec: 0 } // choose whatever you want
+  let intervalId = setInterval(() => {
+    console.log(counter)
+    if (counter.sec + 1 == 60) {
+      counter.min += 1;
+      counter.sec = 0;
+    }
+    else counter.sec += 1
+    if (counter.min === 2 && counter.sec == 45) clearInterval(intervalId)
+  }, 1000)
+}
+
+
 /*
 async function dataPull(team: integer): Promise<any>{
   let refNum: integer = team;
@@ -39,6 +56,8 @@ let impData = {
   nickname: parsed.nickname,
   */
 
+let prevData: any
+let timedArrPlaceholder: Array<Array<any>> = []
 
 let data = ref({
   teamNumber: null,
@@ -58,7 +77,27 @@ let data = ref({
     endgame: [endgameOptions[0]]
   },
   notes: "",
+  timedArr: timedArrPlaceholder
 })
+
+watch(data, (value) => {
+  let valueArr = [Object.values(value.auto), Object.values(value.teleop), Object.values(value.endgame)]
+  let keyArr = [Object.keys(value.auto), Object.keys(value.teleop), Object.keys(value.endgame)]
+  if(prevData != undefined){
+    loop: for(let i = 0; i < valueArr.length; i++){
+      for(let j = 0; j < valueArr[i].length; j++){
+        if(valueArr[i][j] != prevData[i][j]){
+          data.value.timedArr.push([keyArr[i][j], counter.min * 60 + counter.sec])
+          console.log(data.value.timedArr)
+          break loop
+        }
+      }
+    }
+  }
+  prevData = valueArr
+},{ deep: true })
+
+
 
 function updateEndgameOptions(value: Array<number>){
   let arr = []
@@ -103,6 +142,9 @@ async function submit() {
         </div>
         <div style="flex:1">
           <UInput v-model="data.matchNumber" placeholder="Match #"></UInput>
+        </div>
+        <div style="flex:.5">
+          <UButton :disabled="matchStarted" :label="'Start Match'" @click="startTimer" style="margin-left:5px"></UButton>
         </div>
       </div>
       <br>
