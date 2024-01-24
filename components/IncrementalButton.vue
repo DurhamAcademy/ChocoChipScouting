@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-const props = defineProps(['modelValue'])
+const props = defineProps<{
+  modelValue: number,
+  maxValue?: number,
+}>()
 const emit = defineEmits(['update:modelValue'])
 
 const value = computed({
@@ -17,7 +20,10 @@ const value = computed({
  * adds one to the value of the component
  */
 function addToValue(){
-  value.value++
+  if(props.maxValue == undefined)
+    value.value++
+  else if(value.value < props.maxValue)
+    value.value++
 }
 
 /**

@@ -5,8 +5,11 @@ import SessionResponse = PouchDB.Authentication.SessionResponse;
 
 const {usernameState, sessionState, logout}: {
   logout: () => Promise<void>;
+  // noinspection TypeScriptUnresolvedReference
   loginState: Ref<UnwrapRef<LoginState>>;
+  // noinspection TypeScriptUnresolvedReference
   sessionState: Ref<UnwrapRef<PouchDB.Authentication.SessionResponse>>;
+  // noinspection TypeScriptUnresolvedReference
   usernameState: Ref<UnwrapRef<string>>;
   updateUsernameState: () => Promise<boolean>
 } = inject(loginStateKey)!
