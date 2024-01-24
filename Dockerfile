@@ -89,6 +89,7 @@ COPY ./public ./public
 COPY ./server ./server
 COPY ./components ./components
 COPY ./utils ./utils
+COPY ./plugins ./plugins
 
 #ENTRYPOINT ["bash"]
 RUN ["bun", "--bun", "run", "postinstall"]

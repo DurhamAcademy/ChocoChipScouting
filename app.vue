@@ -69,9 +69,11 @@ provide(loginStateKey, loginStateObject)
 
 <template>
   <div class="min-h-screen min-w-screen">
+      <v-app>
 <!--    <UContainer class="p-0 m-0">-->
-      <NuxtPage/>
+          <NuxtPage/>
 <!--    </UContainer>-->
+      </v-app>
     <UNotifications/>
   </div>
 </template>
