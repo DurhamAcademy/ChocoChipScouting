@@ -7,29 +7,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-      target: run
-    develop:
-      watch:
-        - path: .
-          action: sync
-          ignore:
-            - node_modules
-            - bun.lockb
-            - .npmrc
-            - .gitignore
-            - .env
-            - compose.yaml
-            - Dockerfile
-            - README.md
-            - .nuxt
-            - .output
-            - .idea
-            - .output
-            - .data
-            - .nuxt
-            - .nitro
-            - .cache
-            - dist
+      target: production
     depends_on:
       couchdb:
         condition: service_healthy
@@ -43,7 +21,55 @@ services:
       couchDBHostname: couchdb
     networks:
       - intercom_network
+  devserver:
+    restart: on-failure
 
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development
+    develop:
+      watch:
+        - path: .
+          action: sync
+          target: /usr/src/nuxt3-app
+          ignore:
+            - node_modules
+            - bun.lockb
+            - .npmrc
+            - .gitignore
+            - compose.yaml
+            - Dockerfile
+            - README.md
+            - .nuxt
+            - .output
+            - .idea
+            - .output
+            - .data
+            - .nuxt
+            - .nitro
+            - .cache
+            - dist
+        - path: testServer.js
+          action: rebuild
+          target: /usr/src/nuxt3-app/testServer.js
+        - path: package.json
+          action: rebuild
+        - path: Dockerfile
+          action: rebuild
+    depends_on:
+      couchdb:
+        condition: service_healthy
+      couch-db-setup:
+        condition: service_completed_successfully
+    ports:
+      - "3000:3000"
+    links:
+      - couchdb:couchdb
+    environment:
+      couchDBHostname: couchdb
+    networks:
+      - intercom_network
   couchdb:
     restart: on-failure
     expose:

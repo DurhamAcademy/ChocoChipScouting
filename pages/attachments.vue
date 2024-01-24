@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import {ref} from 'vue'
 import {useInfiniteScroll} from '@vueuse/core'
-import {integer} from "vscode-languageserver-types";
 import AddButton from "~/components/AddButton.vue";
 import {useRoute} from "vue-router";
 import databases from "~/utils/databases"
