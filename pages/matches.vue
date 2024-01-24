@@ -1,13 +1,10 @@
 <script setup lang="ts">
 import databases from "~/utils/databases"
 const { scoutingData } = databases.locals
-import { ref } from 'vue'
 
 const sortBy = ref([{ key: 'teamNumber', order: 'asc' }])
 
 let db = scoutingData
-
-console.log((await db.allDocs()).rows)
 
 const matche = (await db.allDocs()).rows
 let matc = matche.map(async (doc) => {
@@ -58,7 +55,7 @@ const items = matches
 </script>
 <template>
   <OuterComponents>
-    <v-data-table
+    <VDataTable
         :headers="headers"
         :items="items"
         item-key="name"
@@ -78,7 +75,7 @@ const items = matches
           </template>
         </UPopover>
       </template>
-    </v-data-table>
+    </VDataTable>
   </OuterComponents>
 </template>
 <style scoped>

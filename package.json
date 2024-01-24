@@ -17,12 +17,11 @@
     "vuetify": "^3.4.10"
   },
   "dependencies": {
-    "@mdi/font": "^7.4.47",
     "@nuxt/ui": "^2.10.0",
     "@nuxtjs/pwa": "3.3.5",
     "@userfront/vue": "0.1.20",
     "@vueuse/core": "10.4.1",
-    "chart.js": "^4.4.1",
+    "chart.js": "^3.9.1",
     "compressorjs": "1.2.1",
     "nuxt": "^3.9.1",
     "pouchdb": "8.0.1",
