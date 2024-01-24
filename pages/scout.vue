@@ -3,7 +3,7 @@ import databases from "~/utils/databases"
 import IncrementalButton from '~/components/IncrementalButton.vue'
 import {URange} from "#components";
 
-const { scoutingData } = databases.locals
+const {scoutingData} = databases.locals
 let db = scoutingData
 
 
@@ -13,11 +13,29 @@ enum GameTime {
   Endgame = "Endgame",
   Notes = "Notes"
 }
+
 let gameTime = ref(GameTime.Autonomous)
 
 
-const endgameOptions = ["None", "Parked", "Attempted Onstage" , "Onstage", "Harmony"]
+const endgameOptions = ["None", "Parked", "Attempted Onstage", "Onstage", "Harmony"]
 let endgameIndex = [1, 0, 0, 0, 0]
+
+let counter: { min: number, sec: number }
+let matchStarted = ref(false)
+
+function startTimer() {
+  matchStarted.value = true
+  counter = {min: 0, sec: 0} // choose whatever you want
+  let intervalId = setInterval(() => {
+    console.log(counter)
+    if (counter.sec + 1 == 60) {
+      counter.min += 1;
+      counter.sec = 0;
+    } else counter.sec += 1
+    if (counter.min === 2 && counter.sec == 45) clearInterval(intervalId)
+  }, 1000)
+}
+
 
 /*
 async function dataPull(team: integer): Promise<any>{
@@ -32,41 +50,6 @@ async function dataPull(team: integer): Promise<any>{
   return grabParse.nickname;
 }
 */
-function editGameTime(direction: String) {
-  if(direction.localeCompare("+") == 0){
-    switch (gameTime.value) {
-      case GameTime.Autonomous:
-        gameTime.value = GameTime.Teleoperated;
-        break;
-      case GameTime.Teleoperated:
-        gameTime.value = GameTime.Endgame;
-        break
-      case GameTime.Endgame:
-        gameTime.value = GameTime.Notes;
-        break
-      case GameTime.Notes:
-        gameTime.value = GameTime.Autonomous;
-        break
-    }
-  }
-  else if(direction.localeCompare("-") == 0)
-    {
-      switch (gameTime.value) {
-        case GameTime.Autonomous:
-          gameTime.value = GameTime.Notes;
-          break;
-        case GameTime.Teleoperated:
-          gameTime.value = GameTime.Autonomous;
-          break;
-        case GameTime.Endgame:
-          gameTime.value = GameTime.Teleoperated;
-          break;
-        case GameTime.Notes:
-          gameTime.value =  GameTime.Endgame;
-          break;
-      }
-    }
-}
 
 /*const ph: any = dataPull(info.teamNum)();
 let parsed = JSON.parse(await ph);
@@ -74,6 +57,8 @@ let impData = {
   nickname: parsed.nickname,
   */
 
+let timedArrPlaceholder: Array<Array<any>> = []
+let prevData: ((number | boolean)[] | (number | string[])[])[] | undefined = [[0, 0, false], [0, 0, 0], [0, [""]]]
 
 let data = ref({
   teamNumber: null,
@@ -99,15 +84,40 @@ let data = ref({
   }
 })
 
-function updateEndgameOptions(value: Array<number>){
+watch(data, (value) => {
+  let valueArr = [Object.values(value.auto), Object.values(value.teleop), Object.values(value.endgame)]
+  let keyArr = [Object.keys(value.auto), Object.keys(value.teleop), Object.keys(value.endgame)]
+  if (prevData != undefined) {
+    loop: for (let i = 0; i < valueArr.length; i++) {
+      for (let j = 0; j < valueArr[i].length; j++) {
+        if (valueArr[i][j] != prevData[i][j]) {
+          if (typeof valueArr[i][j] === "number" && valueArr[i][j] < prevData[i][j])
+            for (let x = data.value.timedArr.length - 1; x >= 0; x--) {
+              if (Object.values(data.value.timedArr[x])[0].split(" ")[0] == keyArr[i][j].toString()) {
+                data.value.timedArr.splice(x, 1)
+                break;
+              }
+            }
+          else
+            data.value.timedArr.push([keyArr[i][j].toString() + " " + valueArr[i][j].toString(), counter != undefined ? counter.min * 60 + counter.sec : counter])
+          break loop
+        }
+      }
+    }
+  }
+  prevData = valueArr
+}, {deep: true})
+
+
+function updateEndgameOptions(value: Array<number>) {
   let arr = []
-  for(let i = 0; i < value.length; i++){
-    if(value[i] == 1){
+  for (let i = 0; i < value.length; i++) {
+    if (value[i] == 1) {
       arr.push(endgameOptions[i])
     }
   }
   data.value.endgame.endgame = arr
-  if(data.value.endgame.endgame.length < 1){
+  if (data.value.endgame.endgame.length < 1) {
     data.value.endgame.endgame = [endgameOptions[0]]
   }
 }
@@ -118,11 +128,8 @@ function isValidNum() {
 }
 
 async function submit() {
-
-    let newDoc = db.post(data.value)
-    await navigateTo("matches")
-
-
+  let newDoc = db.post(data.value)
+  await navigateTo("/matches")
 }
 
 /* Good-looking square buttons but don't work horizontally why?
@@ -134,44 +141,88 @@ async function submit() {
 <template>
   <Navbar scout-mode></Navbar>
   <div class="flex justify-center">
-  <UCard class="max-w-xl flex-grow m-5 ">
-    <template #header>
-      <div style="display:flex">
-        <div style="flex:1">
-          <UInput v-model="data.teamNumber" placeholder="Team #"></UInput>
-        </div>
-        <div style="flex:1">
-          <UInput v-model="data.matchNumber" placeholder="Match #"></UInput>
-        </div>
-      </div>
-      <br>
-      <UButtonGroup class="flex">
-        <UButton :disabled="gameTime==GameTime.Autonomous" icon="i-heroicons-chevron-left"
-                 @click="editGameTime('-')"/>
-        <UButton :label="gameTime.valueOf()" block class="w-auto" disabled style="flex-grow: 1;"/>
-        <UButton :disabled="gameTime==GameTime.Notes" icon="i-heroicons-chevron-right" @click="editGameTime('+')"/>
-      </UButtonGroup>
-    </template>
-        <div v-if="gameTime == GameTime.Autonomous">
-          <div class="flex" style="text-align:center">
-            <IncrementalButton v-model="data.auto.amp" style="margin:5px"></IncrementalButton>
-            <IncrementalButton v-model="data.auto.speakerNA" style="margin:5px"></IncrementalButton>
-            <BooleanButton v-model="data.auto.leave" :default-value="'Mobility'" :other-value="'Mobility'" style="margin:5px"></BooleanButton>
+    <UCard class="max-w-xl flex-grow m-5 ">
+      <template #header>
+        <div style="display:flex">
+          <div style="flex:1">
+            <UInput v-model="data.teamNumber" placeholder="Team #"></UInput>
+          </div>
+          <div style="flex:1">
+            <UInput v-model="data.matchNumber" placeholder="Match #"></UInput>
+          </div>
+          <div style="flex:.5">
+            <UButton :disabled="matchStarted" :label="'Start Match'" @click="startTimer"
+                     style="margin-left:5px"></UButton>
           </div>
         </div>
-        <div v-if="gameTime == GameTime.Teleoperated">
-          <IncrementalButton v-model="data.teleop.amp"></IncrementalButton>
-          <IncrementalButton v-model="data.teleop.speakerNA"></IncrementalButton>
-          <IncrementalButton v-model="data.teleop.speakerA"></IncrementalButton>
+        <br>
+        <UButtonGroup class="flex">
+          <UButton :label=GameTime.Autonomous block class="w-auto" enabled style="flex: 1"
+                   @click="gameTime= GameTime.Autonomous"/>
+          <UButton :label=GameTime.Teleoperated block class="w-auto" enabled style="flex: 1;"
+                   @click="gameTime= GameTime.Teleoperated"/>
+          <UButton :label=GameTime.Endgame block class="w-auto" enabled style="flex: 1;"
+                   @click="gameTime= GameTime.Endgame"/>
+          <UButton :label=GameTime.Notes block class="w-auto" enabled style="flex: 1;"
+                   @click="gameTime= GameTime.Notes"/>
+        </UButtonGroup>
+      </template>
+      <div v-if="gameTime == GameTime.Autonomous">
+        <div class="flex" style="text-align:center">
+          <div>
+            <h1 class="text-green-600 font-sans">Amp</h1>
+            <IncrementalButton v-model="data.auto.amp" style="margin:5px"></IncrementalButton>
+          </div>
+          <div>
+            <h1 class="text-green-600 font-sans">Speaker</h1>
+            <IncrementalButton v-model="data.auto.speakerNA" style="margin:5px"></IncrementalButton>
+          </div>
+          <div>
+            <br>
+            <BooleanButton v-model="data.auto.leave" :default-value="'Mobility'" :other-value="'Mobility'"
+                           style="margin:5px"></BooleanButton>
+          </div>
         </div>
-        <div v-if="gameTime == GameTime.Endgame">
-          <IncrementalButton v-model="data.teleop.amp"></IncrementalButton>
-          <IncrementalButton v-model="data.teleop.speakerNA"></IncrementalButton>
-          <IncrementalButton v-model="data.teleop.speakerA"></IncrementalButton>
+      </div>
+      <div v-if="gameTime == GameTime.Teleoperated">
+        <div class="flex" style="text-align:center">
+          <div>
+            <h1 class="text-green-600 font-sans">Amp</h1>
+            <IncrementalButton v-model="data.teleop.amp" style="margin:5px"></IncrementalButton>
+          </div>
+          <div>
+            <h1 class="text-green-600 font-sans">SpeakerNA</h1>
+            <IncrementalButton v-model="data.teleop.speakerNA" style="margin:5px"></IncrementalButton>
+          </div>
+          <div>
+            <h1 class="text-green-600 font-sans">SpeakerA</h1>
+            <IncrementalButton v-model="data.teleop.speakerA" style="margin:5px"></IncrementalButton>
+          </div>
+        </div>
+      </div>
+      <div v-if="gameTime == GameTime.Endgame">
+        <div class="flex" style="text-align:center">
+          <div>
+            <h1 class="text-green-600 font-sans">Amp</h1>
+            <IncrementalButton v-model="data.teleop.amp" style="margin:5px"></IncrementalButton>
+          </div>
+          <div>
+            <h1 class="text-green-600 font-sans">SpeakerNA</h1>
+            <IncrementalButton v-model="data.teleop.speakerNA" style="margin:5px"></IncrementalButton>
+          </div>
+          <div>
+            <h1 class="text-green-600 font-sans">SpeakerA</h1>
+            <IncrementalButton v-model="data.teleop.speakerA" style="margin:5px"></IncrementalButton>
+          </div>
+          <div>
+            <h1 class="text-green-600 font-sans">Trap</h1>
+            <IncrementalButton v-model="data.endgame.trap" style="margin:5px"></IncrementalButton>
+          </div>
           <br>
-          <IncrementalButton v-model="data.endgame.trap" :max-value="3"></IncrementalButton>
-          <MultiSelect :model-value="endgameIndex" :options="endgameOptions" @update:model-value="value => {updateEndgameOptions(value)}" :connected-options="[1, 2, 2, 3, 3]"></MultiSelect>
-        </div>
+            <MultiSelect :model-value="endgameIndex" :options="endgameOptions"
+                     @update:model-value="value => {updateEndgameOptions(value)}"
+                     :connected-options="[1, 2, 2, 3, 3]"></MultiSelect>
+       </div>
       <div v-if="gameTime == GameTime.Notes">
         <p>Rate (1-5)</p>
         <br/>
@@ -188,8 +239,11 @@ async function submit() {
         <UTextarea v-model="data.notes.notes" color="yellow" placeholder="Notes..."/>
         <br/>
         <div class="flex justify-between">
-          <UButton class="m-1" color="rose" label="Cancel" to="/dashboard" type="reset" variant="outline"/>
-          <UButton class="m-1" color="green" label="Submit" type="submit" variant="solid" :disabled="!isValidNum()" @click="submit"/>
+          <div>
+            <UButton class="m-1" color="rose" label="Cancel" to="/dashboard" type="reset" variant="outline"/>
+            <UButton class="m-1" color="green" label="Submit" type="submit" variant="solid" :disabled="!isValidNum()"
+                     @click="submit"/>
+          </div>
         </div>
       </template>
     </UCard>
