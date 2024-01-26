@@ -12,7 +12,7 @@ let matc = matche.map(async (doc) => {
 })
 let matches = await Promise.all(matc)
 for (let i=matches.length-1; i>=0; i--) {
-  if(matches[i].matchNumber === -1 || matches[i].matchNumber === null) matches.splice(i, 1)
+  if(matches[i].matchNumber === -1 || matches[i].matchNumber === null || (matches[i].event != window.localStorage.getItem("event") || window.localStorage.getItem("event") == null)) matches.splice(i, 1)
 }
 
 const headers = [

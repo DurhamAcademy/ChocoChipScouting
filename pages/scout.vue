@@ -43,6 +43,7 @@ let impData = {
 
 
 let data = ref({
+  event: "",
   teamNumber: null,
   matchNumber: null,
   auto: {
@@ -83,6 +84,7 @@ function isValidNum() {
 }
 
 async function submit() {
+  data.value.event = window.localStorage.getItem("event") || ""
   let newDoc = db.post(data.value)
   await navigateTo("/matches")
 }
