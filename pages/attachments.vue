@@ -52,7 +52,6 @@ const showModal = ref<boolean>(isAttach)
 const hideAll = ref((route.value.matched.length!==1) && (!isAttach))
 const isOpen = ref(false)
 async function view(id: string) {
-  showModal.value=true;
   await navigateTo("/attachments/"+id)
 }
 async function close() {
@@ -73,14 +72,15 @@ async function deleteAttachment(id: string) {
   <div class="w-xl h-screen overflow-y-scroll" ref="el">
     <UTable :rows="data" :columns="columns">
       <template #actions-data="{ row }">
-        <UButton color="gray" variant="ghost" icon="i-heroicons-eye" @click="view(row.id)"/>
-        <UButton color="gray" variant="ghost" icon="i-heroicons-trash" @click="isOpen = true; rowId = row.id"/>
+        <UButton color="gray" variant="ghost" icon="i-heroicons-eye" @click="view(row.id); showModal=true;"/>
+        <UButton color="gray" variant="ghost" icon="i-heroicons-trash" @click="isOpen = true; rowId = row.id; view(row.id)"/>
       </template>
     </UTable>
-    <UModal v-model="isOpen" prevent-close :overlay="false">
-      <div class="p-10" style="text-align:center">
+    <UModal v-model="isOpen" prevent-close :overlay="false" :onClose="close">
+      <NuxtPage/>
+      <div class="p-5" style="text-align:center">
         <UButton class="m-0.5" color="gray" variant="outline" label="Cancel" @click="isOpen = false"/>
-        <UButton class="m-0.5" color="red" variant="solid" label="Delete" @click="deleteAttachment(rowId)"/>
+        <UButton class="m-0.5" color="red" variant="solid" label="Confirm" @click="deleteAttachment(rowId)"/>
       </div>
     </UModal>
     <UModal v-model="showModal" :onClose="close">

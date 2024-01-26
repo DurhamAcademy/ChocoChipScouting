@@ -8,7 +8,11 @@ const props = defineProps({value: Boolean, name: String, author: String, team: N
     <UCard>
       <template #header>
         <div class="flex justify-between">
-          <h1>{{(name.length==0)?'[No Name]':name}}</h1>
+          <div>
+            <h1>{{(name.length==0)?'[No Name]':'Team Name: '+name}}</h1>
+            <h2>{{(team==0)?'[No Team #]':'Team #: '+team}}</h2>
+          </div>
+
           <UPopover mode="hover">
             <UAvatar :alt="author?author:''"/>
             <template #panel>
