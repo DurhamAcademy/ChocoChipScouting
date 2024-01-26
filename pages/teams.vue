@@ -14,10 +14,12 @@ let teamOrgMatches = new Map<number, Array<any>>()
 
 for(let i  = 0; i < match.length; i++){
   let currentMatch = (await match[i])
-  if(!teamOrgMatches.has(currentMatch.teamNumber))
-    teamOrgMatches.set(currentMatch.teamNumber, [currentMatch])
-  else
-    teamOrgMatches.get(currentMatch.teamNumber)!.push(currentMatch)
+  if(currentMatch.event == window.localStorage.getItem("event") || window.localStorage.getItem("event") == null) {
+    if (!teamOrgMatches.has(currentMatch.teamNumber))
+      teamOrgMatches.set(currentMatch.teamNumber, [currentMatch])
+    else
+      teamOrgMatches.get(currentMatch.teamNumber)!.push(currentMatch)
+  }
 }
 
 let teamsData : Array<any> = []
