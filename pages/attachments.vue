@@ -80,7 +80,7 @@ async function deleteAttachment(id: string) {
       <NuxtPage/>
       <div class="p-5" style="text-align:center">
         <UButton class="m-0.5" color="gray" variant="outline" label="Cancel" @click="isOpen = false"/>
-        <UButton class="m-0.5" color="red" variant="solid" label="Confirm" @click="deleteAttachment(rowId)"/>
+        <UButton class="m-0.5" color="red" variant="solid" label="Delete" @click="deleteAttachment(rowId)"/>
       </div>
     </UModal>
     <UModal v-model="showModal" :onClose="close">

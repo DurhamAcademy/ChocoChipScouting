@@ -9,7 +9,7 @@ const props = defineProps({value: Boolean, name: String, author: String, team: N
       <template #header>
         <div class="flex justify-between">
           <div>
-            <h1>{{(name.length==0)?'[No Name]':'Team Name: '+name}}</h1>
+            <h1>{{(name.length==0)?'[No Name]':'Name: '+name}}</h1>
             <h2>{{(team==0)?'[No Team #]':'Team #: '+team}}</h2>
           </div>
 
