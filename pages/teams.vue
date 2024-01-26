@@ -94,7 +94,7 @@ const columns = [{
 </script>
 
 <template>
-<Navbar></Navbar>
+<OuterComponents>
   <UTable :rows="teamsData" :columns="columns">
 
     <template #amp-data="{ row }">
@@ -163,6 +163,7 @@ const columns = [{
     </template>
 
   </UTable>
+</OuterComponents>
 </template>
 
 <style scoped>
