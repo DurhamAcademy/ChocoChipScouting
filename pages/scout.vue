@@ -46,6 +46,7 @@ let data = ref({
   event: "",
   teamNumber: null,
   matchNumber: null,
+  event: "",
   auto: {
     speakerNA: 0,
     amp: 0,
@@ -104,7 +105,7 @@ async function submit() {
           <div style="flex:1">
             <UInput v-model="data.teamNumber" placeholder="Team #"></UInput>
           </div>
-          <div style="flex:1">
+          <div style="flex:1;padding-left:5px">
             <UInput v-model="data.matchNumber" placeholder="Match #"></UInput>
           </div>
         </div>
