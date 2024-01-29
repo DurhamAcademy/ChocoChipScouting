@@ -80,7 +80,7 @@ const items = matches
 </template>
 <style scoped>
 .v-data-table ::v-deep th {
-  font-weight: bold !important;
+  font-weight: 600 !important;
 }
 .v-data-table ::v-deep td {
   color: gray;
