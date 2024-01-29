@@ -79,5 +79,10 @@ const items = matches
   </OuterComponents>
 </template>
 <style scoped>
-
+.v-data-table ::v-deep th {
+  font-weight: bold !important;
+}
+.v-data-table ::v-deep td {
+  color: gray;
+}
 </style>
