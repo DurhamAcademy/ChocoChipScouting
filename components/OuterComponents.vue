@@ -4,6 +4,9 @@
   import {loginStateKey} from "~/utils/keys";
   import AddButton from "~/components/AddButton.vue";
   import SessionResponse = PouchDB.Authentication.SessionResponse;
+  import type {VerticalNavigationLink} from "#ui/types";
+  import type {Ref} from "@vue/reactivity";
+  import type {UnwrapRef} from "vue";
 
   const {loginState,usernameState, sessionState, logout}: {
     logout: () => Promise<void>;
@@ -24,7 +27,6 @@
     { label: "Teams", to: "/teams" },
     { label: "Competitions", to: "/competitions" },
     { label: "Attachments", to: "/attachments" },
-    { label: "Contacts", to: "/contacts" }
   ]
   if (sessionState?.value?.userCtx?.roles?.indexOf('_admin') != -1)
     links.push({ label: "Users", to: "/users" })
