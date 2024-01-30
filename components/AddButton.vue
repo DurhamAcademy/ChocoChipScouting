@@ -6,7 +6,7 @@ let addButtonLinks = [{
 }, {
   label: 'Create Note',
   icon: 'i-heroicons-pencil-square',
-  to: '/notes/new'
+  to: '/notes'
 }, {
   label: 'Add Attachment',
   icon: 'i-heroicons-chart-bar',

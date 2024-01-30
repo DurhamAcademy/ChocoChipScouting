@@ -20,22 +20,6 @@ let gameTime = ref(GameTime.Autonomous)
 const endgameOptions = ["None", "Parked", "Attempted Onstage", "Onstage", "Harmony"]
 let endgameIndex = [1, 0, 0, 0, 0]
 
-let counter: { min: number, sec: number }
-let matchStarted = ref(false)
-
-function startTimer() {
-  matchStarted.value = true
-  counter = {min: 0, sec: 0} // choose whatever you want
-  let intervalId = setInterval(() => {
-    console.log(counter)
-    if (counter.sec + 1 == 60) {
-      counter.min += 1;
-      counter.sec = 0;
-    } else counter.sec += 1
-    if (counter.min === 2 && counter.sec == 45) clearInterval(intervalId)
-  }, 1000)
-}
-
 
 /*
 async function dataPull(team: integer): Promise<any>{
@@ -57,12 +41,12 @@ let impData = {
   nickname: parsed.nickname,
   */
 
-let timedArrPlaceholder: Array<Array<any>> = []
-let prevData: ((number | boolean)[] | (number | string[])[])[] | undefined = [[0, 0, false], [0, 0, 0], [0, [""]]]
 
 let data = ref({
+  event: "",
   teamNumber: null,
   matchNumber: null,
+  event: "",
   auto: {
     speakerNA: 0,
     amp: 0,
@@ -84,29 +68,6 @@ let data = ref({
   }
 })
 
-watch(data, (value) => {
-  let valueArr = [Object.values(value.auto), Object.values(value.teleop), Object.values(value.endgame)]
-  let keyArr = [Object.keys(value.auto), Object.keys(value.teleop), Object.keys(value.endgame)]
-  if (prevData != undefined) {
-    loop: for (let i = 0; i < valueArr.length; i++) {
-      for (let j = 0; j < valueArr[i].length; j++) {
-        if (valueArr[i][j] != prevData[i][j]) {
-          if (typeof valueArr[i][j] === "number" && valueArr[i][j] < prevData[i][j])
-            for (let x = data.value.timedArr.length - 1; x >= 0; x--) {
-              if (Object.values(data.value.timedArr[x])[0].split(" ")[0] == keyArr[i][j].toString()) {
-                data.value.timedArr.splice(x, 1)
-                break;
-              }
-            }
-          else
-            data.value.timedArr.push([keyArr[i][j].toString() + " " + valueArr[i][j].toString(), counter != undefined ? counter.min * 60 + counter.sec : counter])
-          break loop
-        }
-      }
-    }
-  }
-  prevData = valueArr
-}, {deep: true})
 
 
 function updateEndgameOptions(value: Array<number>) {
@@ -128,6 +89,7 @@ function isValidNum() {
 }
 
 async function submit() {
+  data.value.event = window.localStorage.getItem("event") || ""
   let newDoc = db.post(data.value)
   await navigateTo("/matches")
 }
@@ -147,12 +109,8 @@ async function submit() {
           <div style="flex:1">
             <UInput v-model="data.teamNumber" placeholder="Team #"></UInput>
           </div>
-          <div style="flex:1">
+          <div style="flex:1;padding-left:5px">
             <UInput v-model="data.matchNumber" placeholder="Match #"></UInput>
-          </div>
-          <div style="flex:.5">
-            <UButton :disabled="matchStarted" :label="'Start Match'" @click="startTimer"
-                     style="margin-left:5px"></UButton>
           </div>
         </div>
         <br>
