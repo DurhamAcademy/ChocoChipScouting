@@ -36,6 +36,18 @@
       }
     });
   }
+  function deleteUser(username: string){
+    usersDB.deleteUser(username, function (err, response) {
+      if (err) {
+          console.log(err.name)
+      }
+    });
+    for(let i = 0; i < userArr.value.length; i++){
+      if(userArr.value[i].includes(username)){
+        userArr.value.splice(i, 1)
+      }
+    }
+  }
   function createAdmin(){
     usersDB.signUpAdmin(username.value, password.value, function (err, response) {
       if (err) {
@@ -52,6 +64,13 @@
       }
     });
   }
+
+  const columns = [{
+    key: 'user',
+    label: 'Username'
+  }, {
+    key: 'delete',
+  }]
 
 </script>
 
@@ -73,7 +92,23 @@
           </div>
           </template>
         <template #default>
-          <UTable :rows="userArr"/>
+          <UTable :rows="userArr" :columns="columns">
+            <template #user-data="{ row }">
+              <p>{{ row[0] }}</p>
+            </template>
+            <template #delete-data="{ row }">
+              <UPopover>
+              <UButton color="gray" variant="soft" icon="i-heroicons-trash" />
+              <template #panel>
+                <UCard>
+                  <div class="max-w-xs overflow-y-auto">
+                    <UButton color="red" @click="deleteUser(row[0])">Confirm</UButton>
+                  </div>
+                </UCard>
+              </template>
+              </UPopover>
+            </template>
+          </UTable>
         </template>
         </UCard>
     </div>
