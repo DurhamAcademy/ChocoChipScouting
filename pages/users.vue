@@ -9,7 +9,7 @@
 
   let userArr = ref([[""]])
 
-  async function test() {
+  async function setup() {
     userArr.value.splice(0, 1)
     let docs = await usersDB.allDocs()
     for(let user of docs.rows){
@@ -18,10 +18,15 @@
       }
     }
   }
-  test()
+  setup()
 
   function createUser(){
-    usersDB.signUp(username.value, password.value, function (err, response) {
+    usersDB.signUp(username.value, password.value,
+      {
+        metadata:{
+          unaccessedAccount: true
+        }
+      }, function (err, response) {
       if (err) {
         if (err.name === 'conflict') {
           console.log("Username already exists")
@@ -33,6 +38,7 @@
       }
       else{
         console.log("User created")
+        setup()
       }
     });
   }

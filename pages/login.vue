@@ -11,18 +11,63 @@ const usersDB = new PouchDB(`${couchDBBaseURL}/_users`, {skip_setup: true});
 
 const {updateUsernameState}: { updateUsernameState: () => void } = inject(loginStateKey)!
 
-  async function login(username: string, password: string) {
-    try{
+async function login(username: string, password: string) {
+    try
+    {
       window.localStorage.setItem("event", selectedEvent.value)
-      let result = await usersDB.logIn(username, password)
-      if (result) {
-        updateUsernameState()
-        navigateTo("/dashboard")
-      } else error.value = true
-    } catch (e) {
+
+      usersDB.logIn(username, password, async function (err, response) {
+        if (response) {
+          updateUsernameState()
+          navigateTo("/dashboard")
+        }
+        else if (err) {
+          let loginResult = await usersDB.logIn("admin", "password")
+          if(loginResult){
+            let getUserResult = await usersDB.getUser(username)
+            if (getUserResult && getUserResult.unaccessedAccount != undefined && getUserResult.unaccessedAccount) {
+              if(await unaccessedAccountReset(username, password)){
+                updateUsernameState()
+                navigateTo("/dashboard")
+              }
+              else{
+                error.value = true
+              }
+            }
+            else{
+              error.value = true
+            }
+          }
+          else{
+            error.value = true
+          }
+        }
+      })
+    }
+    catch (e) {
       error.value = true
     }
   }
+
+  async function unaccessedAccountReset(username: string, password: string){
+    usersDB.changePassword(username, password).then(() => {
+      usersDB.putUser(username, { metadata: { unaccessedAccount: false }}).then(() => {
+        usersDB.logOut().then(() =>{
+          usersDB.logIn(username, password).then(() =>{
+            return true
+          }).catch(()=>{
+            return false
+          }).catch(()=>{
+            return false
+          })
+        }).catch(()=>{
+          return false
+        })
+      })
+    })
+    return false
+  }
+
 
 const events = ['2024test']
 
