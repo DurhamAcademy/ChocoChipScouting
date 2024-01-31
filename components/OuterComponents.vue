@@ -27,6 +27,9 @@
     { label: "Competitions", to: "/competitions" },
     { label: "Attachments", to: "/attachments" },
   ]
+  watch(sessionState?.value?.userCtx?.roles, (value, oldValue) => {
+
+  })
   if (sessionState?.value?.userCtx?.roles?.indexOf('_admin') != -1)
     links.push({ label: "Users", to: "/users" })
 
