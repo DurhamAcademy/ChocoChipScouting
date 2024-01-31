@@ -17,6 +17,7 @@ const TeamNumber = ref(0)
 
 let fileList = ref<(File|Blob)[]>([])
 let nameList = ref<(String)[]>([])
+let rows = ref<({ size: string; name: string; type: string; photoURL: string })[]>([])
 async function onDrop(files: File[] | null) { // dropbox
   imageProcessor(files)
 }
@@ -32,34 +33,48 @@ onChange((files) => {
   }
 })
 
+async function resetPage() {
+  fileList.value = []
+  nameList.value = []
+  rows.value = []
+  AttachmentName.value = ""
+  TeamNumber.value = 0
+}
 // processes images from the useFileDialog/dropbox
-function imageProcessor(files: File[] | null) {
+async function imageProcessor(files: File[] | null) {
   if (files)
     for (let i = 0; i < files.length; i++) {
-      let file = files[i]
-      let currentFile = file!
+      try {
+        let file = files[i]
+        let currentFile = file!
+        let realFileType = currentFile.type
 
-      if (!(currentFile.type.match('image/.+') || currentFile.type.match('.heic')))
-        throw new Error('Filetype is not accepted')
-
-      if(currentFile.type.match('.heic')) {
-        heic2any({
-          blob: currentFile,
-          toType: "image/jpeg"
+        if (!(currentFile.type.match('image/.+') || currentFile.type.match('.heic')))
+          throw new Error('Filetype is not accepted')
+        if(currentFile.type.match('image/heic')) {
+          currentFile = await heic2any({
+            blob: currentFile,
+            toType: "image/jpeg"
+          })
+          realFileType = "image/heic"
+        }
+        new Compressor(currentFile, {
+          maxHeight: 1080,
+          maxWidth: 1080,
+          quality: 0.5,
+          convertSize: 10000000,
+          convertTypes: [],
+          success(newFile: File | Blob) {
+            fileList.value?.push(newFile)
+            nameList.value.push(currentFile.name)
+            let fileSize = (currentFile.size / (1024 * 1024)).toFixed(2)
+            rows.value.push({size: fileSize+" MB", name: file.name, type: realFileType, photoURL: URL.createObjectURL(currentFile)});
+          }
         })
       }
-
-      new Compressor(currentFile, {
-        maxHeight: 1080,
-        maxWidth: 1080,
-        quality: 0.5,
-        convertSize: 0,
-        convertTypes: [],
-        success(newFile: File | Blob) {
-          fileList.value?.push(newFile)
-          nameList.value.push(currentFile.name)
-        }
-      })
+      catch(e) {
+        console.log(e)
+      }
     }
 }
 
@@ -91,6 +106,7 @@ async function submit() {
     }
   }
   await attachments.sync();
+  resetPage()
 }
 
 const {isOverDropZone} = useDropZone(dropZoneRef, onDrop) // variable that checks if file is being dragged over dropbox
@@ -108,13 +124,25 @@ const {isOverDropZone} = useDropZone(dropZoneRef, onDrop) // variable that check
     </UFormGroup>
     <UCard class="w-lg h-96 flex flex-wrap justify-center content-center m-3 transition-colors" :class="{'bg-emerald-100': isOverDropZone}" ref="dropZoneRef">
       <template #header>Drop files here</template>
-        <UButton type="button" @click="open" label="Choose file" variant=""/>
+        <UButton type="button" @click="open" label="Choose file" variant="ghost"/>
       <template #footer>
         <UButton type="button" @click="submit" label="Submit"/>
       </template>
     </UCard>
     <UCard class="m-3">
-      <UTable :rows="fileList.map((file)=>{return {size: file.size, type: file.type}})" :columns="['size', 'type']" />
+      <UTable :rows="rows" :columns="[{key: 'size', label: 'File Size'}, {key: 'name', label: 'File Name'}, {key: 'type', label: 'File Type'}, {key: 'actions'}]">
+        <template #actions-data="{ row, index }">
+          <div style="display: flex; align-items: center;">
+            <UPopover mode="hover" :popper="{ placement: 'left-end'}">
+              <UButton color="gray" variant="ghost" icon="i-heroicons-eye"/>
+              <template #panel>
+                <img :src="row.photoURL" class="h-48 w-100" alt="Selected Image" />
+              </template>
+            </UPopover>
+            <UButton color="gray" variant="ghost" icon="i-heroicons-trash" @click="rows.splice(index, 1)"/>
+          </div>
+        </template>
+      </UTable>
     </UCard>
   </UContainer>
   <AddButton/>
