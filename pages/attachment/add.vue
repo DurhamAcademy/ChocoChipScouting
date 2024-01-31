@@ -6,7 +6,7 @@ import Compressor from "compressorjs";
 import {useDropZone, useFileDialog} from '@vueuse/core'
 import LoginState from "~/utils/authorization/LoginState";
 import databases from "~/utils/databases"
-import heic2any from "heic2any"
+import heic2any from "~/node_modules/heic2any/package.json"
 
 const { attachments } = databases.databases
 const db = attachments.local;
