@@ -176,6 +176,7 @@ async function submit() {
             <h1 class="text-green-600 font-sans">Trap</h1>
             <IncrementalButton v-model="data.endgame.trap" style="margin:5px"></IncrementalButton>
           </div>
+          </div>
           <br>
             <MultiSelect :model-value="endgameIndex" :options="endgameOptions"
                      @update:model-value="value => {updateEndgameOptions(value)}"
