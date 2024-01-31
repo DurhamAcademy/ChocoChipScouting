@@ -5,6 +5,7 @@
 
 
   const username = ref("")
+  let deleteButtonOpen = ref([false])
 
 
   let adminAccount = ref(false)
@@ -13,10 +14,12 @@
 
   async function setup() {
     userArr.value.splice(0, 1)
+    deleteButtonOpen.value.splice(0, 1)
     let docs = await usersDB.allDocs()
     for(let user of docs.rows){
       if(user.id.includes("org.couchdb.user:")){
         userArr.value.push([user.id.split(":")[1]])
+        deleteButtonOpen.value.push(false)
       }
     }
     usersDB.getSession(function(err, response){
@@ -51,8 +54,13 @@
       }
     });
   }
-  function createAdmin(){
-    //currently not working
+
+  /*
+  <div style="flex:.5;padding-left:5px">
+    <UButton :label="'Create Admin'" @click="createAdmin" block></UButton>
+  </div>
+
+  async function createAdmin(){
     usersDB.signUpAdmin(username.value, "temp",
         {
           metadata:{
@@ -69,11 +77,15 @@
             }
           }
           else{
-            console.log("User created")
-            setup()
+            if(response){
+              console.log()
+              console.log("User created")
+              setup()
+            }
           }
-        });
+        })
   }
+   */
 
   function deleteUser(username: string){
     usersDB.deleteUser(username, function (err, response) {
@@ -81,9 +93,11 @@
           console.log(err.name)
       }
     });
-    for(let i = 0; i < userArr.value.length; i++){
-      if(userArr.value[i].includes(username)){
+    for(let i = 0; i < userArr.value.length; i++) {
+      if (userArr.value[i].includes(username)) {
         userArr.value.splice(i, 1)
+        deleteButtonOpen.value[i] = false
+        console.log(deleteButtonOpen.value)
       }
     }
   }
@@ -107,9 +121,6 @@
               <UInput v-model="username" placeholder="Username"/>
             </div>
             <div style="flex:.5;padding-left:5px">
-              <UButton :label="'Create Admin'" @click="createAdmin" block></UButton>
-            </div>
-            <div style="flex:.5;padding-left:5px">
               <UButton :label="'Create User'" @click="createUser" block></UButton>
             </div>
           </div>
@@ -120,8 +131,8 @@
               <p>{{ row[0] }}</p>
             </template>
             <template #delete-data="{ row }">
-              <UPopover>
-              <UButton color="gray" variant="soft" icon="i-heroicons-trash"/>
+              <UPopover :open="deleteButtonOpen[row]">
+              <UButton color="gray" variant="soft" icon="i-heroicons-trash" @click="deleteButtonOpen[row] = true"/>
               <template #panel>
                 <UCard>
                   <div class="max-w-xs overflow-y-auto">

@@ -27,8 +27,16 @@
     { label: "Competitions", to: "/competitions" },
     { label: "Attachments", to: "/attachments" },
   ]
-  watch(sessionState?.value?.userCtx?.roles, (value, oldValue) => {
-
+  watch(sessionState?.value?.userCtx, () => {
+    console.log("ran")
+    if(sessionState?.value?.userCtx?.roles?.includes("_admin")){
+      links.push({ label: "Users", to: "/users" })
+    }
+    else{
+      if(links.includes({ label: "Users", to: "/users" })){
+        links.splice(links.indexOf({ label: "Users", to: "/users" }, 1))
+      }
+    }
   })
   if (sessionState?.value?.userCtx?.roles?.indexOf('_admin') != -1)
     links.push({ label: "Users", to: "/users" })
