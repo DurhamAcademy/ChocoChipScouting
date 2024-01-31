@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import databases from "~/utils/databases"
 import IncrementalButton from '~/components/IncrementalButton.vue'
+import {URange} from "#components";
 
 const {scoutingData} = databases.locals
 let db = scoutingData
@@ -9,7 +10,8 @@ let db = scoutingData
 enum GameTime {
   Autonomous = "Auto",
   Teleoperated = "Teleop",
-  Endgame = "Endgame"
+  Endgame = "Endgame",
+  Notes = "Notes"
 }
 
 let gameTime = ref(GameTime.Autonomous)
@@ -32,8 +34,6 @@ async function dataPull(team: integer): Promise<any>{
   return grabParse.nickname;
 }
 */
-
-
 
 /*const ph: any = dataPull(info.teamNum)();
 let parsed = JSON.parse(await ph);
@@ -61,7 +61,11 @@ let data = ref({
     trap: 0,
     endgame: [endgameOptions[0]]
   },
-  notes: "",
+  notes: {
+    efficiency: 1,
+    notes: "",
+    reliability: 1
+  }
 })
 
 
@@ -117,6 +121,8 @@ async function submit() {
                    @click="gameTime= GameTime.Teleoperated"/>
           <UButton :label=GameTime.Endgame block class="w-auto" enabled style="flex: 1;"
                    @click="gameTime= GameTime.Endgame"/>
+          <UButton :label=GameTime.Notes block class="w-auto" enabled style="flex: 1;"
+                   @click="gameTime= GameTime.Notes"/>
         </UButtonGroup>
       </template>
       <div v-if="gameTime == GameTime.Autonomous">
@@ -170,14 +176,26 @@ async function submit() {
             <h1 class="text-green-600 font-sans">Trap</h1>
             <IncrementalButton v-model="data.endgame.trap" style="margin:5px"></IncrementalButton>
           </div>
-        </div>
-        <br>
-        <MultiSelect :model-value="endgameIndex" :options="endgameOptions"
+          </div>
+          <br>
+            <MultiSelect :model-value="endgameIndex" :options="endgameOptions"
                      @update:model-value="value => {updateEndgameOptions(value)}"
                      :connected-options="[1, 2, 2, 3, 3]"></MultiSelect>
+       </div>
+      <div v-if="gameTime == GameTime.Notes">
+        <p>Rate (1-5)</p>
+        <br/>
+        <p>Reliability ({{ data.notes.reliability }})</p>
+        <br/>
+        <URange v-model="data.notes.reliability" size="md" color="green" min="1" :max="5"/>
+        <br/>
+        <br/>
+        <p>Efficiency ({{data.notes.efficiency}})</p>
+        <br/>
+        <URange v-model="data.notes.efficiency" size="md" color="green" min="1" :max="5"/>
       </div>
       <template #footer>
-        <UTextarea v-model="data.notes" color="yellow" placeholder="Notes..."/>
+        <UTextarea v-model="data.notes.notes" color="yellow" placeholder="Notes..."/>
         <br/>
         <div class="flex justify-between">
           <div>
