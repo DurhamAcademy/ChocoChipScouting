@@ -25,7 +25,9 @@ async function login(username: string, password: string) {
           let loginResult = await usersDB.logIn("admin", "password")
           if(loginResult){
             let getUserResult = await usersDB.getUser(username)
+            console.log(error.value)
             if (getUserResult && getUserResult.unaccessedAccount != undefined && getUserResult.unaccessedAccount) {
+              console.log("run")
               if(await unaccessedAccountReset(username, password)){
                 updateUsernameState()
                 navigateTo("/dashboard")
@@ -35,14 +37,19 @@ async function login(username: string, password: string) {
               }
             }
             else{
-              error.value = true
+              console.log("not run")
             }
           }
           else{
             error.value = true
           }
+          console.log(error.value)
+        }
+        else{
+          error.value = true
         }
       })
+
     }
     catch (e) {
       error.value = true
@@ -109,6 +116,7 @@ const selectedEvent = ref(events[0])
                    type="submit">Login
           </UButton>
         </UFormGroup>
+        <p v-if="error">An error occurred.</p>
       </UForm>
     </UCard>
   </UContainer>

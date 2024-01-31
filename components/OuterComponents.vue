@@ -16,8 +16,7 @@
     updateUsernameState: () => Promise<boolean>
   } = inject(loginStateKey)!
 
-  var {width, height} = useWindowSize()
-  let isOpen = ref(false)
+  let {width, height} = useWindowSize()
 
   let route = useRoute()
 
@@ -34,17 +33,17 @@
 </script>
 
 <template>
-  <div class="min-h-screen flex-col">
-    <Navbar :disable-sidebar="width > 800"/>
-    <div class="flex place-content-around min-h-full">
+  <div class="flex min-h-screen w-screen flex-col">
+    <Navbar class="flex-grow basis-auto" :disable-sidebar="width > 800"/>
+    <div class="flex flex-grow flex-shrink basis-auto flex-row w-screen overflow-x-clip max-h-none place-content-around min-h-full">
       <Transition name="width-fade">
-        <div v-show="width > 800" class="vis min-h-full">
+        <div v-show="width > 800" class="vis min-h-full max-w-full">
           <UCard class="h-full" :ui="{rounded: 'rounded-none'}">
             <UVerticalNavigation :links="links"/>
           </UCard>
         </div>
       </Transition>
-      <div class="flex-col flex-grow place-content-center">
+      <div class="flex-col min-w-0 min-h-full max-h-none max-w-full overflow-x-auto flex-grow place-content-center">
         <slot/>
       </div>
     </div>

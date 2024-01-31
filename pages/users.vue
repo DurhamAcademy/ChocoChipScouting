@@ -5,7 +5,6 @@
 
 
   const username = ref("")
-  const password = ref("")
 
 
   let adminAccount = ref(false)
@@ -31,7 +30,7 @@
   setup()
 
   function createUser(){
-    usersDB.signUp(username.value, password.value,
+    usersDB.signUp(username.value, "temp",
       {
         metadata:{
           unaccessedAccount: true
@@ -52,6 +51,30 @@
       }
     });
   }
+  function createAdmin(){
+    //currently not working
+    usersDB.signUpAdmin(username.value, "temp",
+        {
+          metadata:{
+            unaccessedAccount: true
+          }
+        }, function (err, response) {
+          if (err) {
+            if (err.name === 'conflict') {
+              console.log("Username already exists")
+            } else if (err.name === 'forbidden') {
+              console.log("Invalid name")
+            } else {
+              console.log(err.name)
+            }
+          }
+          else{
+            console.log("User created")
+            setup()
+          }
+        });
+  }
+
   function deleteUser(username: string){
     usersDB.deleteUser(username, function (err, response) {
       if (err) {
@@ -63,22 +86,6 @@
         userArr.value.splice(i, 1)
       }
     }
-  }
-  function createAdmin(){
-    usersDB.signUpAdmin(username.value, password.value, function (err, response) {
-      if (err) {
-        if (err.name === 'conflict') {
-          console.log("Username already exists")
-        } else if (err.name === 'forbidden') {
-          console.log("Invalid name")
-        } else {
-          console.log(err.name)
-        }
-      }
-      else{
-        console.log("User created")
-      }
-    });
   }
 
   const columns = [{
@@ -99,8 +106,8 @@
             <div style="flex:1">
               <UInput v-model="username" placeholder="Username"/>
             </div>
-            <div style="flex:1;padding-left:5px">
-              <UInput v-model="password" placeholder="Password"/>
+            <div style="flex:.5;padding-left:5px">
+              <UButton :label="'Create Admin'" @click="createAdmin" block></UButton>
             </div>
             <div style="flex:.5;padding-left:5px">
               <UButton :label="'Create User'" @click="createUser" block></UButton>
@@ -114,7 +121,7 @@
             </template>
             <template #delete-data="{ row }">
               <UPopover>
-              <UButton color="gray" variant="soft" icon="i-heroicons-trash" />
+              <UButton color="gray" variant="soft" icon="i-heroicons-trash"/>
               <template #panel>
                 <UCard>
                   <div class="max-w-xs overflow-y-auto">
