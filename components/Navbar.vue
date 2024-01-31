@@ -33,7 +33,6 @@ let links: VerticalNavigationLink[] = [
   { label: "Dashboard", to: "/dashboard" },
   { label: "Matches", to: "/matches" },
   { label: "Teams", to: "/teams" },
-  { label: "Notes", to: "/notes" },
   { label: "Competitions", to: "/competitions" },
   { label: "Attachments", to: "/attachments" },
   { label: "Contacts", to: "/contacts" }

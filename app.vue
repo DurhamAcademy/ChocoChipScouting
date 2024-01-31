@@ -19,8 +19,8 @@ let session = await pdb.getSession();
 let loginState = ref((session.userCtx.name==null)?LoginState.loggedOut:LoginState.loggedIn)
 let route = useRoute()
 if ((loginState.value === LoginState.loggedOut) && (route.matched[0].name != "login"))
-  await navigateTo("login")
-else if ((route.matched[0].name == 'index')) navigateTo("dashboard")
+  await navigateTo("/login")
+else if ((route.matched[0].name == 'index')) navigateTo("/dashboard")
 
 let sessionState = ref(session)
 let usernameState = ref(session.userCtx.name)
@@ -69,9 +69,11 @@ provide(loginStateKey, loginStateObject)
 
 <template>
   <div class="min-h-screen min-w-screen">
+      <v-app>
 <!--    <UContainer class="p-0 m-0">-->
-      <NuxtPage/>
+          <NuxtPage/>
 <!--    </UContainer>-->
+      </v-app>
     <UNotifications/>
   </div>
 </template>
