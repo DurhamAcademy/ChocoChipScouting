@@ -7,6 +7,9 @@
   const username = ref("")
   const password = ref("")
 
+
+  let adminAccount = ref(false)
+
   let userArr = ref([[""]])
 
   async function setup() {
@@ -17,6 +20,13 @@
         userArr.value.push([user.id.split(":")[1]])
       }
     }
+    usersDB.getSession(function(err, response){
+      if(response){
+        if(response.userCtx.roles?.includes("_admin")){
+          adminAccount.value = true
+        }
+      }
+    })
   }
   setup()
 
@@ -81,7 +91,7 @@
 </script>
 
 <template>
-  <OuterComponents>
+  <OuterComponents v-if="adminAccount">
     <div class="flex justify-center">
       <UCard class="max-w-xl flex-grow m-5 ">
         <template #header>
