@@ -16,6 +16,7 @@ const {updateUsernameState}: { updateUsernameState: () => void } = inject(loginS
 
   async function login(username: string, password: string) {
     try{
+      window.localStorage.setItem("event", selectedEvent.value)
       var result = await usersDB.logIn(username, password)
       if (result.ok) {
         updateUsernameState()
@@ -58,6 +59,9 @@ const {updateUsernameState}: { updateUsernameState: () => void } = inject(loginS
     }
   }
 
+const events = ['2024test']
+
+const selectedEvent = ref(events[0])
 </script>
 
 <template>
@@ -85,6 +89,9 @@ const {updateUsernameState}: { updateUsernameState: () => void } = inject(loginS
                   required
                   type="password"/>
         </UFormGroup>
+        <UFormGroup class="inputDiv" label="Event" name="event" required>
+          <USelectMenu v-model="selectedEvent" :options="events" />
+        </UFormGroup>
         <UFormGroup v-if="signUpPage"
                     :error="error && 'You must enter an email'"
                     label="Repeat Password"
@@ -97,7 +104,7 @@ const {updateUsernameState}: { updateUsernameState: () => void } = inject(loginS
         </UFormGroup>
         <p v-if="passwordsMustMatch">Passwords must match.</p>
         <p v-if="error">An error occurred.</p>
-        <UFormGroup class="inputDiv">
+        <UFormGroup class="inputDiv" style="padding-top: 10px">
           <UButton v-if="!signUpPage"
                   @click="
                   login(username, password)"

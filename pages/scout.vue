@@ -1,22 +1,26 @@
 <script lang="ts" setup>
 import databases from "~/utils/databases"
-//import {integer} from "vscode-languageserver-types";
 import IncrementalButton from '~/components/IncrementalButton.vue'
-import {UnwrapRef} from "vue";
+import {URange} from "#components";
 
-const { scoutingData } = databases.locals
+const {scoutingData} = databases.locals
 let db = scoutingData
 
 
 enum GameTime {
   Autonomous = "Auto",
   Teleoperated = "Teleop",
-  Endgame = "Endgame"
+  Endgame = "Endgame",
+  Notes = "Notes"
 }
+
 let gameTime = ref(GameTime.Autonomous)
 
-const endgames = ["None", "Parked", "Docked", "Docked & Engaged"];
-let selectedIndex = 0
+
+const endgameOptions = ["None", "Parked", "Attempted Onstage", "Onstage", "Harmony"]
+let endgameIndex = [1, 0, 0, 0, 0]
+
+
 /*
 async function dataPull(team: integer): Promise<any>{
   let refNum: integer = team;
@@ -30,38 +34,6 @@ async function dataPull(team: integer): Promise<any>{
   return grabParse.nickname;
 }
 */
-function editGameTime(direction: String) {
-  if(direction.localeCompare("+") == 0){
-    switch (gameTime.value) {
-      case GameTime.Autonomous:
-        gameTime.value = GameTime.Teleoperated;
-        break;
-      case GameTime.Teleoperated:
-        gameTime.value = GameTime.Endgame;
-        break
-      case GameTime.Endgame:
-        gameTime.value = GameTime.Autonomous;
-        break
-    }
-  }
-  else if(direction.localeCompare("-") == 0)
-    {
-      switch (gameTime.value) {
-        case GameTime.Autonomous:
-          gameTime.value = GameTime.Endgame;
-          break;
-        case GameTime.Teleoperated:
-          gameTime.value = GameTime.Autonomous;
-          break;
-        case GameTime.Endgame:
-          gameTime.value = GameTime.Teleoperated;
-          break;
-      }
-    }
-}
-
-const notesOpen = ref(false)
-
 
 /*const ph: any = dataPull(info.teamNum)();
 let parsed = JSON.parse(await ph);
@@ -71,29 +43,55 @@ let impData = {
 
 
 let data = ref({
-  TeamNumber: null,
-  MatchNumber: null,
-  points: 0,
-  ConeHigh: 0,
-  ConeMid: 0,
-  ConeLow: 0,
-  CubeHigh: 0,
-  CubeMid: 0,
-  CubeLow: 0,
-  endgame: endgames[0],
-  notes: "",
+  event: "",
+  teamNumber: null,
+  matchNumber: null,
+  event: "",
+  auto: {
+    speakerNA: 0,
+    amp: 0,
+    leave: false,
+  },
+  teleop: {
+    amp: 0,
+    speakerNA: 0,
+    speakerA: 0,
+  },
+  endgame: {
+    trap: 0,
+    endgame: [endgameOptions[0]]
+  },
+  notes: {
+    efficiency: 1,
+    notes: "",
+    reliability: 1
+  }
 })
 
+
+
+function updateEndgameOptions(value: Array<number>) {
+  let arr = []
+  for (let i = 0; i < value.length; i++) {
+    if (value[i] == 1) {
+      arr.push(endgameOptions[i])
+    }
+  }
+  data.value.endgame.endgame = arr
+  if (data.value.endgame.endgame.length < 1) {
+    data.value.endgame.endgame = [endgameOptions[0]]
+  }
+}
+
+
 function isValidNum() {
-  return (data.value.TeamNumber != null) && (data.value.MatchNumber != null) && (data.value.TeamNumber > 0) && (data.value.MatchNumber > 0) && (data.value.TeamNumber < 10000)
+  return (data.value.teamNumber != null) && (data.value.matchNumber != null) && (data.value.teamNumber > 0) && (data.value.matchNumber > 0) && (data.value.teamNumber < 10000)
 }
 
 async function submit() {
-
-    let newDoc = db.post(data.value)
-    await navigateTo("matches")
-
-
+  data.value.event = window.localStorage.getItem("event") || ""
+  let newDoc = db.post(data.value)
+  await navigateTo("/matches")
 }
 
 /* Good-looking square buttons but don't work horizontally why?
@@ -105,65 +103,109 @@ async function submit() {
 <template>
   <Navbar scout-mode></Navbar>
   <div class="flex justify-center">
-  <UCard class="max-w-xl flex-grow m-5 ">
-    <template #header>
-      <UButtonGroup class="flex">
-        <UButton :disabled="gameTime==GameTime.Autonomous" icon="i-heroicons-chevron-left"
-                 @click="editGameTime('-')"/>
-        <UButton :label="gameTime.valueOf()" block class="w-auto" disabled style="flex-grow: 1;"/>
-        <UButton :disabled="gameTime==GameTime.Endgame" icon="i-heroicons-chevron-right" @click="editGameTime('+')"/>
-      </UButtonGroup>
-    </template>
-
-    <UInput v-model="data.TeamNumber" placeholder="Team #"></UInput>
-    <UInput v-model="data.MatchNumber" placeholder="Match #"></UInput>
-    <div v-if="isValidNum()">
-      <p>Ready</p>
-    </div>
-    <div v-else-if="(data.TeamNumber==null)||(data.MatchNumber==null)">
-    </div>
-    <div v-else>
-      <p>Invalid Team/Match Number</p>
-    </div>
-    <div v-if="gameTime == GameTime.Autonomous">
-
+    <UCard class="max-w-xl flex-grow m-5 ">
+      <template #header>
+        <div style="display:flex">
+          <div style="flex:1">
+            <UInput v-model="data.teamNumber" placeholder="Team #"></UInput>
+          </div>
+          <div style="flex:1;padding-left:5px">
+            <UInput v-model="data.matchNumber" placeholder="Match #"></UInput>
+          </div>
+        </div>
+        <br>
+        <UButtonGroup class="flex">
+          <UButton :label=GameTime.Autonomous block class="w-auto" enabled style="flex: 1"
+                   @click="gameTime= GameTime.Autonomous"/>
+          <UButton :label=GameTime.Teleoperated block class="w-auto" enabled style="flex: 1;"
+                   @click="gameTime= GameTime.Teleoperated"/>
+          <UButton :label=GameTime.Endgame block class="w-auto" enabled style="flex: 1;"
+                   @click="gameTime= GameTime.Endgame"/>
+          <UButton :label=GameTime.Notes block class="w-auto" enabled style="flex: 1;"
+                   @click="gameTime= GameTime.Notes"/>
+        </UButtonGroup>
+      </template>
+      <div v-if="gameTime == GameTime.Autonomous">
+        <div class="flex" style="text-align:center">
+          <div>
+            <h1 class="text-green-600 font-sans">Amp</h1>
+            <IncrementalButton v-model="data.auto.amp" style="margin:5px"></IncrementalButton>
+          </div>
+          <div>
+            <h1 class="text-green-600 font-sans">Speaker</h1>
+            <IncrementalButton v-model="data.auto.speakerNA" style="margin:5px"></IncrementalButton>
+          </div>
+          <div>
+            <br>
+            <BooleanButton v-model="data.auto.leave" :default-value="'Mobility'" :other-value="'Mobility'"
+                           style="margin:5px"></BooleanButton>
+          </div>
+        </div>
       </div>
       <div v-if="gameTime == GameTime.Teleoperated">
-        <div class="w-1/2" id="cone-div" style="text-align:center; display:inline-block">
-          <h1 class="mb-2.5">Cone</h1>
-        <IncrementalButton v-model="data.ConeHigh"/>
-          <br/>
-        <IncrementalButton v-model="data.ConeMid"/>
-          <br/>
-        <IncrementalButton v-model="data.ConeLow"/>
-
+        <div class="flex" style="text-align:center">
+          <div>
+            <h1 class="text-green-600 font-sans">Amp</h1>
+            <IncrementalButton v-model="data.teleop.amp" style="margin:5px"></IncrementalButton>
+          </div>
+          <div>
+            <h1 class="text-green-600 font-sans">SpeakerNA</h1>
+            <IncrementalButton v-model="data.teleop.speakerNA" style="margin:5px"></IncrementalButton>
+          </div>
+          <div>
+            <h1 class="text-green-600 font-sans">SpeakerA</h1>
+            <IncrementalButton v-model="data.teleop.speakerA" style="margin:5px"></IncrementalButton>
+          </div>
         </div>
       </div>
       <div v-if="gameTime == GameTime.Endgame">
-        <SingleSelect :model-value="selectedIndex" @update:model-value="index => {data.endgame = endgames[index]; selectedIndex = index}" :options="endgames"></SingleSelect>
+        <div class="flex" style="text-align:center">
+          <div>
+            <h1 class="text-green-600 font-sans">Amp</h1>
+            <IncrementalButton v-model="data.teleop.amp" style="margin:5px"></IncrementalButton>
+          </div>
+          <div>
+            <h1 class="text-green-600 font-sans">SpeakerNA</h1>
+            <IncrementalButton v-model="data.teleop.speakerNA" style="margin:5px"></IncrementalButton>
+          </div>
+          <div>
+            <h1 class="text-green-600 font-sans">SpeakerA</h1>
+            <IncrementalButton v-model="data.teleop.speakerA" style="margin:5px"></IncrementalButton>
+          </div>
+          <div>
+            <h1 class="text-green-600 font-sans">Trap</h1>
+            <IncrementalButton v-model="data.endgame.trap" style="margin:5px"></IncrementalButton>
+          </div>
+          </div>
+          <br>
+            <MultiSelect :model-value="endgameIndex" :options="endgameOptions"
+                     @update:model-value="value => {updateEndgameOptions(value)}"
+                     :connected-options="[1, 2, 2, 3, 3]"></MultiSelect>
+       </div>
+      <div v-if="gameTime == GameTime.Notes">
+        <p>Rate (1-5)</p>
+        <br/>
+        <p>Reliability ({{ data.notes.reliability }})</p>
+        <br/>
+        <URange v-model="data.notes.reliability" size="md" color="green" min="1" :max="5"/>
+        <br/>
+        <br/>
+        <p>Efficiency ({{data.notes.efficiency}})</p>
+        <br/>
+        <URange v-model="data.notes.efficiency" size="md" color="green" min="1" :max="5"/>
       </div>
       <template #footer>
+        <UTextarea v-model="data.notes.notes" color="yellow" placeholder="Notes..."/>
+        <br/>
         <div class="flex justify-between">
           <div>
             <UButton class="m-1" color="rose" label="Cancel" to="/dashboard" type="reset" variant="outline"/>
-            <UButton class="m-1" color="green" label="Submit" type="submit" variant="solid" :disabled="!isValidNum()" @click="submit"/>
+            <UButton class="m-1" color="green" label="Submit" type="submit" variant="solid" :disabled="!isValidNum()"
+                     @click="submit"/>
           </div>
-          <UButton class="m-1" color="yellow" label="Notes" variant="soft" @click="notesOpen = !notesOpen"/>
         </div>
       </template>
     </UCard>
-    <USlideover v-model="notesOpen" side="right">
-      <UCard class="flex flex-col h-screen">
-        <template #header>
-          <div class="flex justify-end">
-            <UButton icon="i-heroicons-x-mark-solid" size="xl" @click="notesOpen=false" color="yellow" variant="ghost"/>
-          </div>
-        </template>
-        <div class="overflow-y-scroll">
-          <UTextarea v-model="data.notes" color="yellow" size="xl" autoresize/>
-        </div>
-      </UCard>
-    </USlideover>
   </div>
 </template>
 
