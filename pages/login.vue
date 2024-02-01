@@ -25,25 +25,16 @@ async function login(username: string, password: string) {
           let loginResult = await usersDB.logIn("admin", "password")
           if(loginResult){
             let getUserResult = await usersDB.getUser(username)
-            console.log(error.value)
             if (getUserResult && getUserResult.unaccessedAccount != undefined && getUserResult.unaccessedAccount) {
-              console.log("run")
-              if(await unaccessedAccountReset(username, password)){
-                updateUsernameState()
-                navigateTo("/dashboard")
-              }
-              else{
-                error.value = true
-              }
+              await unaccessedAccountReset(username, password)
             }
             else{
-              console.log("not run")
+              error.value = true
             }
           }
           else{
             error.value = true
           }
-          console.log(error.value)
         }
         else{
           error.value = true
@@ -61,18 +52,20 @@ async function login(username: string, password: string) {
       usersDB.putUser(username, { metadata: { unaccessedAccount: false }}).then(() => {
         usersDB.logOut().then(() =>{
           usersDB.logIn(username, password).then(() =>{
-            return true
+            updateUsernameState()
+            navigateTo("/dashboard")
           }).catch(()=>{
-            return false
+            error.value = true
           }).catch(()=>{
-            return false
+            error.value = true
           })
         }).catch(()=>{
-          return false
+          error.value = true
         })
       })
+    }).finally(() => {
+      error.value = true
     })
-    return false
   }
 
 
