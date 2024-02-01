@@ -14,10 +14,18 @@ const db = attachments.local;
 const dropZoneRef = ref<HTMLDivElement>()
 const AttachmentName = ref("")
 const TeamNumber = ref(0)
+const tagsList = ["robot", "person", "strategy"] //idk what tags would be good
 
+let showPicture = ref(false)
 let fileList = ref<(File|Blob)[]>([])
 let nameList = ref<(String)[]>([])
-let rows = ref<({ size: string; name: string; type: string; photoURL: string })[]>([])
+let rows = ref<({ size: string; name: string; type: string; photoURL: string; tags: string[]; tagStyle: string[]})[]>([])
+
+let tagStyles = Array(tagsList.length)
+for (let i = 0; i < tagStyles.length; i++) {
+  tagStyles[i] = "outline"
+}
+
 async function onDrop(files: File[] | null) { // dropbox
   imageProcessor(files)
 }
@@ -43,39 +51,40 @@ async function resetPage() {
 // processes images from the useFileDialog/dropbox
 async function imageProcessor(files: File[] | null) {
   if (files)
-    for (let i = 0; i < files.length; i++) {
-      try {
-        let file = files[i]
-        let currentFile = file!
-        let realFileType = currentFile.type
+    if (rows.value.length <= 25)
+      for (let i = 0; i < files.length; i++) {
+        try {
+          let file = files[i]
+          let currentFile = file!
+          let realFileType = currentFile.type
 
-        if (!(currentFile.type.match('image/.+') || currentFile.type.match('.heic')))
-          throw new Error('Filetype is not accepted')
-        if(currentFile.type.match('image/heic')) {
-          currentFile = await heic2any({
-            blob: currentFile,
-            toType: "image/jpeg"
-          })
-          realFileType = "image/heic"
-        }
-        new Compressor(currentFile, {
-          maxHeight: 1080,
-          maxWidth: 1080,
-          quality: 0.5,
-          convertSize: 10000000,
-          convertTypes: [],
-          success(newFile: File | Blob) {
-            fileList.value?.push(newFile)
-            nameList.value.push(currentFile.name)
-            let fileSize = (currentFile.size / (1024 * 1024)).toFixed(2)
-            rows.value.push({size: fileSize+" MB", name: file.name, type: realFileType, photoURL: URL.createObjectURL(currentFile)});
+          if (!(currentFile.type.match('image/.+') || currentFile.type.match('.heic')))
+            throw new Error('Filetype is not accepted')
+          if(currentFile.type.match('image/heic')) {
+            currentFile = await heic2any({
+              blob: currentFile,
+              toType: "image/jpeg"
+            })
+            realFileType = "image/heic"
           }
-        })
+          new Compressor(currentFile, {
+            maxHeight: 1080,
+            maxWidth: 1080,
+            quality: 0.5,
+            convertSize: 10000000,
+            convertTypes: [],
+            success(newFile: File | Blob) {
+              fileList.value?.push(newFile)
+              nameList.value.push(currentFile.name)
+              let fileSize = (currentFile.size / (1024 * 1024)).toFixed(2)
+              rows.value.push({size: fileSize+" MB", name: file.name, type: realFileType, photoURL: URL.createObjectURL(currentFile), tags: new Array(tagsList.length), tagStyle: tagStyles.map(item =>  { return item })})
+            }
+          })
+        }
+        catch(e) {
+          console.log(e)
+        }
       }
-      catch(e) {
-        console.log(e)
-      }
-    }
 }
 
 var {usernameState, logout}: {
@@ -109,6 +118,16 @@ async function submit() {
   resetPage()
 }
 
+function toggleTag(index: number, indexOfTag: number) {
+  if (rows.value[index].tagStyle[indexOfTag] == "outline") {
+    rows.value[index].tags[indexOfTag] = tagsList[indexOfTag]
+    rows.value[index].tagStyle[indexOfTag] = "solid"
+  } else if (rows.value[index].tags[indexOfTag] == tagsList[indexOfTag]){
+    rows.value[index].tags[indexOfTag] = ""
+    rows.value[index].tagStyle[indexOfTag] = "outline"
+  }
+}
+
 const {isOverDropZone} = useDropZone(dropZoneRef, onDrop) // variable that checks if file is being dragged over dropbox
 
 </script>
@@ -130,22 +149,29 @@ const {isOverDropZone} = useDropZone(dropZoneRef, onDrop) // variable that check
       </template>
     </UCard>
     <UCard class="m-3">
-      <UTable :rows="rows" :columns="[{key: 'size', label: 'File Size'}, {key: 'name', label: 'File Name'}, {key: 'type', label: 'File Type'}, {key: 'actions'}]">
+      <UTable :rows="rows" :columns="[{key: 'size', label: 'File Size'}, {key: 'name', label: 'File Name'}, {key: 'type', label: 'File Type'}, {key: 'actions', label: 'Tags'}]">
         <template #actions-data="{ row, index }">
           <div style="display: flex; align-items: center;">
-            <UPopover mode="hover" :popper="{ placement: 'left-end'}">
-              <UButton color="gray" variant="ghost" icon="i-heroicons-eye"/>
+            <UPopover>
+              <UButton label="+ Add Tags" variant="ghost"/>
+              <template #panel>
+                <div class="flex-wrap flex max-w-64 justify-center">
+                  <UButton v-for="tag in tagsList" :label="tag" style="margin:5px" :variant="row.tagStyle[tagsList.indexOf(tag)]" :ui="{ rounded: 'rounded-full' }" @click="toggleTag(index, tagsList.indexOf(tag))" class="flex-grow justify-center"/>
+                </div>
+              </template>
+            </UPopover>
+            <UPopover v-model:open="showPicture" :popper="{ placement: 'left-end'}">
+              <UButton color="gray" variant="ghost" icon="i-heroicons-eye" @mouseenter="showPicture = true" @mouseleave="showPicture = false"/>
               <template #panel>
                 <img :src="row.photoURL" class="h-48 w-100" alt="Selected Image" />
               </template>
             </UPopover>
-            <UButton color="gray" variant="ghost" icon="i-heroicons-trash" @click="rows.splice(index, 1)"/>
+            <UButton color="red" variant="ghost" icon="i-heroicons-trash" @click="rows.splice(index, 1)"/>
           </div>
         </template>
       </UTable>
     </UCard>
   </UContainer>
-  <AddButton/>
 </template>
 
 <style scoped/>
