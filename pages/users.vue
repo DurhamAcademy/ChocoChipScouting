@@ -5,18 +5,21 @@
 
 
   let username = ref("")
+
   let roles = ref([[""]])
-  const roleOptions = ["Coach", "Scout"]
+  const roleOptions = ["Admin", "Coach", "Scout"]
   let prevRoles: string[][] = [[]]
+  let resetRoles = false
 
   let adminAccount = ref(false)
 
   let userArr = ref([[""]])
 
   async function setup() {
-    userArr.value = [[]]
-    userArr.value.splice(0, 1)
-    roles.value.splice(0,1)
+    resetRoles = true
+    userArr.value.length = 0
+    roles.value.length = 0
+    prevRoles.length = 0
     let docs = await usersDB.allDocs()
     for(let user of docs.rows){
       if(user.id.includes("org.couchdb.user:")){
@@ -27,9 +30,10 @@
       }
     }
     prevRoles = Array.from(roles.value)
+    resetRoles = false
     usersDB.getSession(function(err, response){
       if(response){
-        if(response.userCtx.roles?.includes("_admin")){
+        if(response.userCtx.roles?.includes("Admin") || response.userCtx.roles?.includes("_admin")){
           adminAccount.value = true
         }
       }
@@ -37,57 +41,63 @@
   }
   setup()
 
-  function createUser(){
+  async function createUser() {
+    let sessionRoles = await usersDB.getSession()
+    if(! (sessionRoles.userCtx.roles && (sessionRoles.userCtx.roles.includes("Admin") || sessionRoles.userCtx.roles.includes("_admin"))) ) return
     usersDB.signUp(username.value, "temp",
-      {
-        metadata:{
-          unaccessedAccount: true
-        }
-      }, function (err, response) {
-      if (err) {
-        if (err.name === 'conflict') {
-          console.log("Username already exists")
-        } else if (err.name === 'forbidden') {
-          console.log("Invalid name")
-        } else {
-          console.log(err.name)
-        }
-      }
-      else{
-        console.log("User created")
-        setup()
-      }
-    });
+        {
+          metadata: {
+            unaccessedAccount: true
+          }
+        }, function (err, response) {
+          if (err) {
+            if (err.name === 'conflict') {
+              console.log("Username already exists")
+            } else if (err.name === 'forbidden') {
+              console.log("Invalid name")
+            } else {
+              console.log(err.name)
+            }
+          } else {
+            console.log("User created")
+            setup()
+          }
+        });
   }
 
-
-  watch(roles.value, (value) => {
-    for(let i = 0; i < value.length; i++){
-      let updateRoles = false
-      for(let j = 0; j < value[i].length; j++){
-        if(prevRoles[i][j] && value[i][j] != prevRoles[i][j]){
-          updateRoles = true
+  watch(roles.value, (value, oldValue, onCleanup) => {
+    if(!resetRoles) {
+      for (let i = 0; i < value.length; i++) {
+        let updateRoles = false
+        for (let j = 0; j < value[i].length; j++) {
+          if (value[i][j] != prevRoles[i][j]) {
+            updateRoles = true
+          }
+        }
+        if (updateRoles) {
+          if (userArr.value[i][0]) editRoles(userArr.value[i][0], value[i])
         }
       }
-      if(updateRoles){
-        if(userArr.value[i][0]) editRoles(userArr.value[i][0], value[i])
-      }
+      prevRoles = Array.from(value)
     }
-    prevRoles = Array.from(value)
   })
 
-  function editRoles(username:string, newRoles:Array<string>){
-    usersDB.putUser(username, { roles: newRoles })
+  async function editRoles(username: string, newRoles: Array<string>) {
+    let sessionRoles = await usersDB.getSession()
+    if(! (sessionRoles.userCtx.roles && (sessionRoles.userCtx.roles.includes("Admin") || sessionRoles.userCtx.roles.includes("_admin"))) ) return
+    await usersDB.putUser(username, {roles: newRoles})
   }
 
 
-  function deleteUser(username: string){
+  async function deleteUser(username: string) {
+    let sessionRoles = await usersDB.getSession()
+    if(! (sessionRoles.userCtx.roles && (sessionRoles.userCtx.roles.includes("Admin") || sessionRoles.userCtx.roles.includes("_admin"))) ) return
     usersDB.deleteUser(username, function (err, result) {
       if (err) {
-          console.log(err.name)
+        console.log(err.name)
       }
-      if(result){
-        for(let i = 0; i < userArr.value.length; i++) {
+      if (result) {
+        for (let i = 0; i < userArr.value.length; i++) {
           if (userArr.value[i].includes(username)) {
             userArr.value.splice(i, 1)
           }
