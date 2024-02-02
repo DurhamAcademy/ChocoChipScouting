@@ -12,14 +12,12 @@ const { attachments } = databases.databases
 const db = attachments.local;
 
 const dropZoneRef = ref<HTMLDivElement>()
-const AttachmentName = ref("")
-const TeamNumber = ref(0)
 const tagsList = ["robot", "person", "strategy"] //idk what tags would be good
 
 let showPicture = ref(false)
 let fileList = ref<(File|Blob)[]>([])
 let nameList = ref<(String)[]>([])
-let rows = ref<({ size: string; name: string; type: string; photoURL: string; tags: string[]; tagStyle: string[]})[]>([])
+let rows = ref<({ size: string; name: string; type: string; photoURL: string; teamNumber: number, tags: string[]; tagStyle: string[], extraNotes: string})[]>([])
 
 let tagStyles = Array(tagsList.length)
 for (let i = 0; i < tagStyles.length; i++) {
@@ -45,8 +43,6 @@ async function resetPage() {
   fileList.value = []
   nameList.value = []
   rows.value = []
-  AttachmentName.value = ""
-  TeamNumber.value = 0
 }
 // processes images from the useFileDialog/dropbox
 async function imageProcessor(files: File[] | null) {
@@ -77,7 +73,7 @@ async function imageProcessor(files: File[] | null) {
               fileList.value?.push(newFile)
               nameList.value.push(currentFile.name)
               let fileSize = (currentFile.size / (1024 * 1024)).toFixed(2)
-              rows.value.push({size: fileSize+" MB", name: file.name, type: realFileType, photoURL: URL.createObjectURL(currentFile), tags: new Array(tagsList.length), tagStyle: tagStyles.map(item =>  { return item })})
+              rows.value.push({size: fileSize+" MB", name: file.name, type: realFileType, photoURL: URL.createObjectURL(currentFile), teamNumber: 0, tags: new Array(tagsList.length), tagStyle: tagStyles.map(item =>  { return item }), extraNotes: "" })
             }
           })
         }
@@ -96,8 +92,6 @@ var {usernameState, logout}: {
 
 async function submit() {
   const docObject = {
-    name: AttachmentName.value,
-    team: TeamNumber.value,
     author: usernameState.value
   };
   console.log(docObject)
@@ -135,12 +129,6 @@ const {isOverDropZone} = useDropZone(dropZoneRef, onDrop) // variable that check
 <template>
   <navbar></navbar>
   <UContainer>
-    <UFormGroup class="m-3" label="Attachment Name" required>
-      <UInput v-model="AttachmentName" placeholder="Robot Photo!" required/>
-    </UFormGroup>
-    <UFormGroup class="m-3" label="Team Number">
-      <UInput v-model="TeamNumber"  placeholder="6502" type="number"/>
-    </UFormGroup>
     <UCard class="w-lg h-96 flex flex-wrap justify-center content-center m-3 transition-colors" :class="{'bg-emerald-100': isOverDropZone}" ref="dropZoneRef">
       <template #header>Drop files here</template>
         <UButton type="button" @click="open" label="Choose file" variant="ghost"/>
@@ -149,15 +137,26 @@ const {isOverDropZone} = useDropZone(dropZoneRef, onDrop) // variable that check
       </template>
     </UCard>
     <UCard class="m-3">
-      <UTable :rows="rows" :columns="[{key: 'size', label: 'File Size'}, {key: 'name', label: 'File Name'}, {key: 'type', label: 'File Type'}, {key: 'actions', label: 'Tags'}]">
+      <UTable :rows="rows" :columns="[{key: 'size', label: 'File Size'}, {key: 'name', label: 'File Name'}, {key: 'type', label: 'File Type'}, {key: 'teamNum', label: 'Team #'}, {key: 'tags', label: 'Tags'}, {key: 'actions'}]">
+        <template #teamNum-data="{ row }">
+          <UInput v-model="row.teamNumber" placeholder="Team #" type="number" min="-1" max="9999"/>
+        </template>
+        <template #tags-data="{ row, index }">
+          <UPopover>
+            <UButton label="+ Add Tags" variant="ghost"/>
+            <template #panel>
+              <div class="flex-wrap flex max-w-64 justify-center">
+                <UButton v-for="tag in tagsList" :label="tag" style="margin:5px" :variant="row.tagStyle[tagsList.indexOf(tag)]" :ui="{ rounded: 'rounded-full' }" @click="toggleTag(index, tagsList.indexOf(tag))" class="flex-grow justify-center"/>
+              </div>
+            </template>
+          </UPopover>
+        </template>
         <template #actions-data="{ row, index }">
-          <div style="display: flex; align-items: center;">
+          <div style="display: flex; align-items: center">
             <UPopover>
-              <UButton label="+ Add Tags" variant="ghost"/>
+              <UButton color="gray" variant="ghost" icon="i-heroicons-pencil-square"/>
               <template #panel>
-                <div class="flex-wrap flex max-w-64 justify-center">
-                  <UButton v-for="tag in tagsList" :label="tag" style="margin:5px" :variant="row.tagStyle[tagsList.indexOf(tag)]" :ui="{ rounded: 'rounded-full' }" @click="toggleTag(index, tagsList.indexOf(tag))" class="flex-grow justify-center"/>
-                </div>
+                <UTextarea v-model="row.extraNotes"/>
               </template>
             </UPopover>
             <UPopover v-model:open="showPicture" :popper="{ placement: 'left-end'}">
