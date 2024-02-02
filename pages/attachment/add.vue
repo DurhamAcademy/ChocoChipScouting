@@ -1,22 +1,21 @@
 <script lang="ts"
         setup>
 
-import AddButton from "~/components/AddButton.vue";
 import Compressor from "compressorjs";
 import {useDropZone, useFileDialog} from '@vueuse/core'
 import LoginState from "~/utils/authorization/LoginState";
 import databases from "~/utils/databases"
 import heic2any from "heic2any"
 
-const { attachments } = databases.databases
+const { attachments } = databases.databases;
 const db = attachments.local;
 
 const dropZoneRef = ref<HTMLDivElement>()
-const tagsList = ["robot", "person", "strategy"] //idk what tags would be good
+const tagsList = ["robot", "person", "strategy", "auto", "logo", "food"] //idk what tags would be good
 
 let fileList = ref<(File|Blob)[]>([])
 let nameList = ref<(String)[]>([])
-let rows = ref<({ name: string; type: string; size: string; photoURL: string; teamNumber: number, tags: string[]; tagStyle: string[], extraNotes: string})[]>([])
+let rows = ref<({ fileName: string; fileType: string; fileSize: string; photoURL: string; teamNumber: number, tags: string[]; tagStyle: string[], extraNotes: string})[]>([])
 
 let tagStyles = Array(tagsList.length)
 for (let i = 0; i < tagStyles.length; i++) {
@@ -70,9 +69,8 @@ async function imageProcessor(files: File[] | null) {
             convertTypes: [],
             success(newFile: File | Blob) {
               fileList.value?.push(newFile)
-              nameList.value.push(currentFile.name)
               let fileSize = (currentFile.size / (1024 * 1024)).toFixed(2)
-              rows.value.push({name: file.name, type: realFileType, size: fileSize+" MB", photoURL: URL.createObjectURL(currentFile), teamNumber: 0, tags: new Array(tagsList.length), tagStyle: tagStyles.map(item =>  { return item }), extraNotes: "" })
+              rows.value.push({ fileName: file.name, fileType: realFileType, fileSize: fileSize+" MB", photoURL: URL.createObjectURL(currentFile), teamNumber: -1, tags: new Array(tagsList.length), tagStyle: tagStyles.map(item =>  { return item }), extraNotes: "" })
             }
           })
         }
@@ -82,7 +80,7 @@ async function imageProcessor(files: File[] | null) {
       }
 }
 
-var {usernameState, logout}: {
+let {usernameState, logout}: {
   loginState: LoginState;
   usernameState: globalThis.Ref<string | undefined>;
   updateUsernameState: () => Promise<void>;
@@ -90,22 +88,25 @@ var {usernameState, logout}: {
 } = inject(loginStateKey)!
 
 async function submit() {
-  const docObject = {
-    author: usernameState.value
+  for (let i = 0; i < rows.value.length; i++) {
+    const docObject = {
+      event: window.localStorage.getItem("event") || "",
+      name: rows.value[i].fileName,
+      teamNumber: rows.value[i].teamNumber,
+      fileSize: rows.value[i].fileSize,
+      author: usernameState.value,
+      tags: rows.value[i].tags,
+      extraNotes: rows.value[i].extraNotes
   };
   console.log(docObject)
   let doc = await db.post(docObject)
   console.info(doc)
-  var rev=doc.rev;
-  for (let i = 0; i < fileList.value.length; i++) {
-    var v = nameList.value.at(i)
-    if (v != undefined) {
-      console.info(i, rev)
-      var result = await db.putAttachment(doc.id, v.valueOf(), rev, fileList.value[i], fileList.value[i].type)
-      console.info(rev)
-      rev = result.rev
-      // TODO: notes mid match
-    }
+  let rev=doc.rev;
+  let v = rows.value[i].fileName
+  console.info(i, rev)
+  let result = await db.putAttachment(doc.id, v, rev, fileList.value[i], fileList.value[i].type)
+  console.info(rev)
+  rev = result.rev
   }
   await attachments.sync();
   resetPage()
@@ -122,10 +123,14 @@ function toggleTag(index: number, indexOfTag: number) {
 }
 
 function minMaxTeam(index: number ) {
-  if (rows.value[index].teamNumber > 9999)
-    rows.value[index].teamNumber = 9999
-  else if (rows.value[index].teamNumber < 0)
-      rows.value[index].teamNumber = 0
+  if (rows.value[index].teamNumber > 9999 || rows.value[index].teamNumber < -1)
+    rows.value[index].teamNumber = -1
+}
+
+function changeAllTeams(index: number) {
+  for (let i = 0; i < rows.value.length; i++) {
+    rows.value[i].teamNumber = rows.value[index].teamNumber
+  }
 }
 
 const {isOverDropZone} = useDropZone(dropZoneRef, onDrop) // variable that checks if file is being dragged over dropbox
@@ -143,9 +148,14 @@ const {isOverDropZone} = useDropZone(dropZoneRef, onDrop) // variable that check
       </template>
     </UCard>
     <UCard class="m-3">
-      <UTable :rows="rows" :columns="[{key: 'name', label: 'File Name'}, {key: 'type', label: 'File Type'}, {key: 'size', label: 'File Size'}, {key: 'teamNum', label: 'Team #'}, {key: 'tags', label: 'Tags'}, {key: 'actions'}]">
+      <UTable :rows="rows" :columns="[{key: 'fileName', label: 'File Name'}, {key: 'fileType', label: 'File Type'}, {key: 'fileSize', label: 'File Size'}, {key: 'teamNum', label: 'Team # (-1 for misc)'}, {key: 'tags', label: 'Tags'}, {key: 'actions'}]">
         <template #teamNum-data="{ row, index }">
-          <UInput v-model="row.teamNumber" placeholder="Team #" type="number" @change="minMaxTeam(index)"/>
+          <div class="flex ">
+            <UInput v-model="row.teamNumber" placeholder="Team #" type="number" @change="minMaxTeam(index)"/>
+            <UTooltip text="Apply team # to all">
+              <UButton @click="changeAllTeams(index)" icon="i-heroicons-arrows-up-down" style="margin-left:5px" variant="ghost"/>
+            </UTooltip>
+          </div>
         </template>
         <template #tags-data="{ row, index }">
           <UPopover>
