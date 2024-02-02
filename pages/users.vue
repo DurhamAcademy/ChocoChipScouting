@@ -4,21 +4,29 @@
   const usersDB = new PouchDB(`${couchDBBaseURL}/_users`, {skip_setup: true});
 
 
-  const username = ref("")
-
+  let username = ref("")
+  let roles = ref([[""]])
+  const roleOptions = ["Coach", "Scout"]
+  let prevRoles: string[][] = [[]]
 
   let adminAccount = ref(false)
 
   let userArr = ref([[""]])
 
   async function setup() {
+    userArr.value = [[]]
     userArr.value.splice(0, 1)
+    roles.value.splice(0,1)
     let docs = await usersDB.allDocs()
     for(let user of docs.rows){
       if(user.id.includes("org.couchdb.user:")){
+        let userInfo = await usersDB.getUser(user.id.split(":")[1])
         userArr.value.push([user.id.split(":")[1]])
+        if(userInfo.roles) roles.value.push(userInfo.roles)
+        else roles.value.push([])
       }
     }
+    prevRoles = Array.from(roles.value)
     usersDB.getSession(function(err, response){
       if(response){
         if(response.userCtx.roles?.includes("_admin")){
@@ -53,22 +61,47 @@
   }
 
 
+  watch(roles.value, (value) => {
+    for(let i = 0; i < value.length; i++){
+      let updateRoles = false
+      for(let j = 0; j < value[i].length; j++){
+        if(prevRoles[i][j] && value[i][j] != prevRoles[i][j]){
+          updateRoles = true
+        }
+      }
+      if(updateRoles){
+        if(userArr.value[i][0]) editRoles(userArr.value[i][0], value[i])
+      }
+    }
+    prevRoles = Array.from(value)
+  })
+
+  function editRoles(username:string, newRoles:Array<string>){
+    usersDB.putUser(username, { roles: newRoles })
+  }
+
+
   function deleteUser(username: string){
-    usersDB.deleteUser(username, function (err, response) {
+    usersDB.deleteUser(username, function (err, result) {
       if (err) {
           console.log(err.name)
       }
-    });
-    for(let i = 0; i < userArr.value.length; i++) {
-      if (userArr.value[i].includes(username)) {
-        userArr.value.splice(i, 1)
+      if(result){
+        for(let i = 0; i < userArr.value.length; i++) {
+          if (userArr.value[i].includes(username)) {
+            userArr.value.splice(i, 1)
+          }
+        }
       }
-    }
+    });
   }
 
   const columns = [{
     key: 'user',
     label: 'Username'
+  }, {
+    key: 'roles',
+    label: "Roles"
   }, {
     key: 'delete',
   }]
@@ -78,7 +111,7 @@
 <template>
   <OuterComponents v-if="adminAccount">
     <div class="flex justify-center">
-      <UCard class="max-w-xl flex-grow m-5 ">
+      <UCard class="max-w-xl flex-grow m-5" style="overflow:visible">
         <template #header>
           <div style="display:flex">
             <div style="flex:1">
@@ -96,6 +129,9 @@
             </template>
             <template #delete-data="{ row }">
               <UButton color="gray" variant="soft" icon="i-heroicons-trash" @click="deleteUser(row[0])"/>
+            </template>
+            <template #roles-data="{ row }">
+              <USelectMenu v-model="roles[userArr.indexOf(row)]" :options="roleOptions" multiple placeholder="0 Selected" class="max-w-36 w-36 min-w-24"/>
             </template>
           </UTable>
         </template>
