@@ -41,9 +41,13 @@ console.log(sessionState?.value?.userCtx?.roles)
 if (sessionState?.value?.userCtx?.roles?.indexOf('_admin') != -1)
   links.push({ label: "Users", to: "/users" })
 
-const events = ['2024test']
+const events = ['2024test', '2024trial']
 
 let selectedEvent = ref(window.localStorage.getItem("event"))
+
+function updateEvent(value: string){
+  window.localStorage.setItem("event", value)
+}
 </script>
 
 <template>
@@ -62,7 +66,7 @@ let selectedEvent = ref(window.localStorage.getItem("event"))
               {{usernameState}}
             </template>
             <UFormGroup class="inputDiv" label="Event" name="event">
-              <USelectMenu :model-value="selectedEvent" :options="events" @update:model-value ="value => {window.localStorage.setItem('event', value)}"/>
+              <USelectMenu v-model="selectedEvent" :options="events" @update:model-value ="value => {updateEvent(value)}"/>
             </UFormGroup>
             <template #footer>
               <UButton block label="Logout" square @click="logout"/>
