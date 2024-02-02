@@ -14,7 +14,6 @@ const db = attachments.local;
 const dropZoneRef = ref<HTMLDivElement>()
 const tagsList = ["robot", "person", "strategy"] //idk what tags would be good
 
-let showPicture = ref(false)
 let fileList = ref<(File|Blob)[]>([])
 let nameList = ref<(String)[]>([])
 let rows = ref<({ size: string; name: string; type: string; photoURL: string; teamNumber: number, tags: string[]; tagStyle: string[], extraNotes: string})[]>([])
@@ -159,10 +158,10 @@ const {isOverDropZone} = useDropZone(dropZoneRef, onDrop) // variable that check
                 <UTextarea v-model="row.extraNotes"/>
               </template>
             </UPopover>
-            <UPopover v-model:open="showPicture" :popper="{ placement: 'left-end'}">
-              <UButton color="gray" variant="ghost" icon="i-heroicons-eye" @mouseenter="showPicture = true" @mouseleave="showPicture = false"/>
-              <template #panel>
-                <img :src="row.photoURL" class="h-48 w-100" alt="Selected Image" />
+            <UPopover mode="hover" :popper="{ placement: 'left-end'}">
+              <UButton color="gray" variant="ghost" icon="i-heroicons-eye"/>
+              <template #panel=" { close }">
+                <img :src="row.photoURL" class="h-48 w-100" alt="Selected Image" @mouseenter="close"/>
               </template>
             </UPopover>
             <UButton color="red" variant="ghost" icon="i-heroicons-trash" @click="rows.splice(index, 1)"/>
