@@ -59,9 +59,10 @@ const {updateUsernameState}: { updateUsernameState: () => void } = inject(loginS
     }
   }
 
-const events = ['2024test']
+//also change in navbar
+const events = ['2024test', '2024trial']
 
-const selectedEvent = ref(events[0])
+const selectedEvent = ref(window.localStorage.getItem('event') != undefined ? window.localStorage.getItem('event') : events[0])
 </script>
 
 <template>
