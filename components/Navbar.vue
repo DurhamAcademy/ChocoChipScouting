@@ -41,7 +41,9 @@ console.log(sessionState?.value?.userCtx?.roles)
 if (sessionState?.value?.userCtx?.roles?.indexOf('_admin') != -1)
   links.push({ label: "Users", to: "/users" })
 
+const events = ['2024test']
 
+const selectedEvent = ref(events[0])
 </script>
 
 <template>
@@ -59,8 +61,12 @@ if (sessionState?.value?.userCtx?.roles?.indexOf('_admin') != -1)
             <template #header>
               {{usernameState}}
             </template>
-
-            <UButton block label="Logout" square @click="logout"/>
+            <UFormGroup class="inputDiv" label="Event" name="event">
+              <USelectMenu v-model="selectedEvent" :options="events" />
+            </UFormGroup>
+            <template #footer>
+              <UButton block label="Logout" square @click="logout"/>
+            </template>
           </UCard>
         </template>
       </UPopover>
