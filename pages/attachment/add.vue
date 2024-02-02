@@ -159,14 +159,14 @@ const {isOverDropZone} = useDropZone(dropZoneRef, onDrop) // variable that check
         </template>
         <template #actions-data="{ row, index }">
           <div style="display: flex; align-items: center">
-            <UPopover>
-              <UTooltip text="Extra Notes">
+            <UTooltip text="Extra Notes" :popper="{ placement: 'left'}">
+              <UPopover>
                 <UButton color="gray" variant="ghost" icon="i-heroicons-pencil-square"/>
                 <template #panel>
                   <UTextarea v-model="row.extraNotes"/>
                 </template>
-              </UTooltip>
-            </UPopover>
+              </UPopover>
+            </UTooltip>
             <UPopover mode="hover" :popper="{ placement: 'left-end'}">
               <UButton color="gray" variant="ghost" icon="i-heroicons-eye"/>
               <template #panel=" { close }">
