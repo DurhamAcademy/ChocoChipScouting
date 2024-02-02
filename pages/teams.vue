@@ -1,6 +1,18 @@
 <script setup lang="ts">
 import databases from "~/utils/databases";
+import Sentiment from 'sentiment';
 
+let sentiment = new Sentiment()
+let options = {
+  extras: {
+    'mid': -2,
+    'pretty': 0,
+    'broke': -3.5,
+    'disabled': -3.5,
+    'quickly': 2,
+    'easily': 2
+  }
+}
 
 const { scoutingData } = databases.locals
 let db = scoutingData
@@ -25,8 +37,17 @@ for(let i  = 0; i < match.length; i++){
 let teamsData : Array<any> = []
 
 for(let [key, value] of teamOrgMatches){
-  let arr = {team: key, amp:getAverageAmpCycles(value).toFixed(2), speaker:getAverageSpeakerCycles(value).toFixed(2), mobility:averageAuto(value).toFixed(2), endgame:compileEndgames(value)}
+  let arr = {team: key, amp:getAverageAmpCycles(value).toFixed(2), speaker:getAverageSpeakerCycles(value).toFixed(2), mobility:averageAuto(value).toFixed(2), sentiment: analyzeNotes(value).toFixed(2), endgame:compileEndgames(value)}
   teamsData.push(arr)
+}
+
+function analyzeNotes(teamArrays: Array<any>){
+  let analysisTotal = 0
+  for(let match of teamArrays){
+    analysisTotal += sentiment.analyze(match.notes.notes, options).score
+    console.dir(sentiment.analyze(match.notes.notes, options))
+  }
+  return analysisTotal/teamArrays.length
 }
 
 function getAverageSpeakerCycles(teamArrays: Array<any>){
@@ -89,6 +110,9 @@ const columns = [{
   key: 'actions',
   label: 'Endgame'
 }, {
+  key: 'sentiment',
+  label: 'Sentiment Analysis'
+}, {
   key: 'dropdown'
 }]
 
@@ -98,45 +122,6 @@ const columns = [{
 <template>
 <OuterComponents>
   <UTable :rows="teamsData" :columns="columns">
-
-    <template #amp-data="{ row }">
-      <UPopover>
-        <UButton class="m-1" color="white" variant="soft" >{{row.amp}}</UButton>
-        <template #panel>
-          <UCard>
-            <div class="max-w-xs min-w-[15rem] overflow-y-auto" style="max-height: 20rem; min-height: 10rem">
-
-            </div>
-          </UCard>
-        </template>
-      </UPopover>
-    </template>
-
-    <template #mobility-data="{ row }">
-      <UPopover>
-        <UButton class="m-1" color="white" variant="soft" >{{row.mobility}}</UButton>
-        <template #panel>
-          <UCard>
-            <div class="max-w-xs min-w-[15rem] overflow-y-auto" style="max-height: 20rem; min-height: 10rem">
-
-            </div>
-          </UCard>
-        </template>
-      </UPopover>
-    </template>
-
-    <template #speaker-data="{ row }">
-      <UPopover>
-        <UButton class="m-1" color="white" variant="soft" >{{row.speaker}}</UButton>
-        <template #panel>
-          <UCard>
-            <div class="max-w-xs min-w-[15rem] overflow-y-auto" style="max-height: 20rem; min-height: 10rem">
-
-            </div>
-          </UCard>
-        </template>
-      </UPopover>
-    </template>
 
     <template #actions-data="{ row }">
       <UPopover>

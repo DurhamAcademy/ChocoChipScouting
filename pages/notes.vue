@@ -5,15 +5,18 @@ import IncrementalButton from '~/components/IncrementalButton.vue'
 const { scoutingData } = databases.locals
 let db = scoutingData
 
+
 let data = ref({
   teamNumber: null,
   matchNumber: -1,
+  event: "",
   notes: "",
 })
 
 console.log(db)
 
 async function submit() {
+  data.value.event = window.localStorage.getItem("event") || ""
   let newDoc = db.post(data.value)
   await navigateTo("dashboard")
 }

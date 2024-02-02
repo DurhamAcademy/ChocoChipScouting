@@ -43,7 +43,6 @@ let impData = {
 
 
 let data = ref({
-  event: "",
   teamNumber: null,
   matchNumber: null,
   event: "",
