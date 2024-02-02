@@ -121,6 +121,13 @@ function toggleTag(index: number, indexOfTag: number) {
   }
 }
 
+function minMaxTeam(index: number ) {
+  if (rows.value[index].teamNumber > 9999)
+    rows.value[index].teamNumber = 9999
+  else if (rows.value[index].teamNumber < 0)
+      rows.value[index].teamNumber = 0
+}
+
 const {isOverDropZone} = useDropZone(dropZoneRef, onDrop) // variable that checks if file is being dragged over dropbox
 
 </script>
@@ -137,8 +144,8 @@ const {isOverDropZone} = useDropZone(dropZoneRef, onDrop) // variable that check
     </UCard>
     <UCard class="m-3">
       <UTable :rows="rows" :columns="[{key: 'size', label: 'File Size'}, {key: 'name', label: 'File Name'}, {key: 'type', label: 'File Type'}, {key: 'teamNum', label: 'Team #'}, {key: 'tags', label: 'Tags'}, {key: 'actions'}]">
-        <template #teamNum-data="{ row }">
-          <UInput v-model="row.teamNumber" placeholder="Team #" type="number" min="-1" max="9999"/>
+        <template #teamNum-data="{ row, index }">
+          <UInput v-model="row.teamNumber" placeholder="Team #" type="number" @change="minMaxTeam(index)"/>
         </template>
         <template #tags-data="{ row, index }">
           <UPopover>
