@@ -43,7 +43,7 @@ if (sessionState?.value?.userCtx?.roles?.indexOf('_admin') != -1)
 
 const events = ['2024test']
 
-const selectedEvent = ref(events[0])
+let selectedEvent = ref(window.localStorage.getItem("event"))
 </script>
 
 <template>
@@ -62,7 +62,7 @@ const selectedEvent = ref(events[0])
               {{usernameState}}
             </template>
             <UFormGroup class="inputDiv" label="Event" name="event">
-              <USelectMenu v-model="selectedEvent" :options="events" />
+              <USelectMenu :model-value="selectedEvent" :options="events" @update:model-value ="value => {window.localStorage.setItem('event', value)}"/>
             </UFormGroup>
             <template #footer>
               <UButton block label="Logout" square @click="logout"/>
