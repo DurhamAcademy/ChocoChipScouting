@@ -67,7 +67,7 @@ ENV NODE_TLS_REJECT_UNAUTHORIZED 0
 RUN NODE_TLS_REJECT_UNAUTHORIZED=0
 COPY .npmrc .
 COPY package.json .
-RUN ["bun", "install", "--ignore-scripts"]
+RUN ["bun", "install", "--ignore-scripts", "--no-progress"]
 
 FROM bun-install AS bun-prepare
 
