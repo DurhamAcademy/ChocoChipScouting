@@ -16,7 +16,7 @@ const tagsList = ["robot", "person", "strategy"] //idk what tags would be good
 
 let fileList = ref<(File|Blob)[]>([])
 let nameList = ref<(String)[]>([])
-let rows = ref<({ size: string; name: string; type: string; photoURL: string; teamNumber: number, tags: string[]; tagStyle: string[], extraNotes: string})[]>([])
+let rows = ref<({ name: string; type: string; size: string; photoURL: string; teamNumber: number, tags: string[]; tagStyle: string[], extraNotes: string})[]>([])
 
 let tagStyles = Array(tagsList.length)
 for (let i = 0; i < tagStyles.length; i++) {
@@ -72,7 +72,7 @@ async function imageProcessor(files: File[] | null) {
               fileList.value?.push(newFile)
               nameList.value.push(currentFile.name)
               let fileSize = (currentFile.size / (1024 * 1024)).toFixed(2)
-              rows.value.push({size: fileSize+" MB", name: file.name, type: realFileType, photoURL: URL.createObjectURL(currentFile), teamNumber: 0, tags: new Array(tagsList.length), tagStyle: tagStyles.map(item =>  { return item }), extraNotes: "" })
+              rows.value.push({name: file.name, type: realFileType, size: fileSize+" MB", photoURL: URL.createObjectURL(currentFile), teamNumber: 0, tags: new Array(tagsList.length), tagStyle: tagStyles.map(item =>  { return item }), extraNotes: "" })
             }
           })
         }
@@ -143,7 +143,7 @@ const {isOverDropZone} = useDropZone(dropZoneRef, onDrop) // variable that check
       </template>
     </UCard>
     <UCard class="m-3">
-      <UTable :rows="rows" :columns="[{key: 'size', label: 'File Size'}, {key: 'name', label: 'File Name'}, {key: 'type', label: 'File Type'}, {key: 'teamNum', label: 'Team #'}, {key: 'tags', label: 'Tags'}, {key: 'actions'}]">
+      <UTable :rows="rows" :columns="[{key: 'name', label: 'File Name'}, {key: 'type', label: 'File Type'}, {key: 'size', label: 'File Size'}, {key: 'teamNum', label: 'Team #'}, {key: 'tags', label: 'Tags'}, {key: 'actions'}]">
         <template #teamNum-data="{ row, index }">
           <UInput v-model="row.teamNumber" placeholder="Team #" type="number" @change="minMaxTeam(index)"/>
         </template>
