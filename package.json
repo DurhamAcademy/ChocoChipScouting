@@ -31,5 +31,6 @@
     "pouchdb-security-helper": "2.1.2",
     "sentiment": "^5.0.2",
     "vue-chart-3": "^3.1.8"
+    "heic2any": "0.0.4"
   }
 }
