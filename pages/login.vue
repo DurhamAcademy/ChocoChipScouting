@@ -3,61 +3,71 @@ import "../utils/authorization/Authorizer";
 import {couchDBBaseURL} from "~/utils/URIs"
 import {loginStateKey} from "~/utils/keys";
 
-var usersDB = new PouchDB(`${couchDBBaseURL}/_users`, {skip_setup: true});
+const usersDB = new PouchDB(`${couchDBBaseURL}/_users`, {skip_setup: true});
   let username = ref("");
   let password = ref("");
-  let repeatPassword = ref("")
-  let signUpPage = ref(false);
-  let passwordsMustMatch = ref(false);
   let error = ref(false)
 
 
 const {updateUsernameState}: { updateUsernameState: () => void } = inject(loginStateKey)!
 
-  async function login(username: string, password: string) {
-    try{
+async function login(username: string, password: string) {
+    try
+    {
       window.localStorage.setItem("event", selectedEvent.value)
-      var result = await usersDB.logIn(username, password)
-      if (result.ok) {
-        updateUsernameState()
-        navigateTo("/dashboard")
-      } else error.value = true
-    } catch (e) {
+
+      usersDB.logIn(username, password, async function (err, response) {
+        if (response) {
+          updateUsernameState()
+          navigateTo("/dashboard")
+        }
+        else if (err) {
+          let loginResult = await usersDB.logIn("admin", "password")
+          if(loginResult){
+            let getUserResult = await usersDB.getUser(username)
+            if (getUserResult && getUserResult.unaccessedAccount != undefined && getUserResult.unaccessedAccount) {
+              await unaccessedAccountReset(username, password)
+            }
+            else{
+              error.value = true
+            }
+          }
+          else{
+            error.value = true
+          }
+        }
+        else{
+          error.value = true
+        }
+      })
+
+    }
+    catch (e) {
       error.value = true
     }
   }
 
-  async function signUp(username: string, password: string, repeatPassword: string) {
-    if (password == repeatPassword) {
-      try {
-        let {ok} = await usersDB.signUp(username, password);
-        if (ok) {
-          signUpPage.value=false;
-          error.value=false
-        } else {
-          error.value = true;
-        }
-      } catch (e) {
-        error.value = true
-      }
-
-    } else {
-      validateInput()
-    }
+  async function unaccessedAccountReset(username: string, password: string){
+    usersDB.changePassword(username, password).then(() => {
+      usersDB.putUser(username, { metadata: { unaccessedAccount: false }}).then(() => {
+        usersDB.logOut().then(() =>{
+          usersDB.logIn(username, password).then(() =>{
+            updateUsernameState()
+            navigateTo("/dashboard")
+          }).catch(()=>{
+            error.value = true
+          }).catch(()=>{
+            error.value = true
+          })
+        }).catch(()=>{
+          error.value = true
+        })
+      })
+    }).finally(() => {
+      error.value = true
+    })
   }
 
-  function validateInput() {
-    try {
-      // noinspection RedundantIfStatementJS
-      if ((!signUpPage.value) || (password.value == repeatPassword.value)) {
-        passwordsMustMatch.value = false;
-      } else {
-        passwordsMustMatch.value = true;
-      }
-    } catch (e) {
-
-    }
-  }
 
 //also change in navbar
 const events = ['2024test', '2024trial']
@@ -74,7 +84,7 @@ const selectedEvent = ref(window.localStorage.getItem('event') != undefined ? wi
     <UCard>
       <template #header>
         <h2 class="font-semibold text-xl text-gray-900 dark:text-white leading-tight">
-          {{ (signUpPage) ? "Signup" : "Login" }}
+          {{ "Login" }}
         </h2>
       </template>
 
@@ -93,34 +103,14 @@ const selectedEvent = ref(window.localStorage.getItem('event') != undefined ? wi
         <UFormGroup class="inputDiv" label="Event" name="event" required>
           <USelectMenu v-model="selectedEvent" :options="events" />
         </UFormGroup>
-        <UFormGroup v-if="signUpPage"
-                    :error="error && 'You must enter an email'"
-                    label="Repeat Password"
-                    name="repeat-password"
-                    required>
-          <UInput v-model="repeatPassword"
-                  placeholder="Repeat password"
-                  required
-                  type="password"/>
-        </UFormGroup>
-        <p v-if="passwordsMustMatch">Passwords must match.</p>
-        <p v-if="error">An error occurred.</p>
         <UFormGroup class="inputDiv" style="padding-top: 10px">
-          <UButton v-if="!signUpPage"
+          <UButton
                   @click="
                   login(username, password)"
                    type="submit">Login
           </UButton>
         </UFormGroup>
-        <UFormGroup class="inputDiv">
-          <UButton v-if="signUpPage"
-                  @click="
-                  signUp(username,password,repeatPassword);"
-                   type="submit">Signup
-          </UButton>
-        </UFormGroup>
-        <p v-if="!signUpPage">Don't have an account? <a href="javascript:void(0)" @click="signUpPage=!signUpPage; repeatPassword=''">Signup</a>!</p>
-        <p v-if="signUpPage">Already have an account? <a href="javascript:void(0)" @click="signUpPage=!signUpPage; repeatPassword=''">Login</a>!</p>
+        <p v-if="error">An error occurred.</p>
       </UForm>
     </UCard>
   </UContainer>
