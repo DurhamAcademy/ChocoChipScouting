@@ -74,6 +74,26 @@
                   </template>
               </UPopover>
             </div>
+            <div style="position:absolute; left:5.7%; bottom: 2.15%">
+              <UPopover>
+              <UButton icon="i-heroicons-cog-6-tooth" square :size="'xl'" :variant="'ghost'" :color="'gray'"/>
+                  <template #panel>
+                    <UCard class="p-2">
+                      <template #header>
+                        <div class="max-w-32" style="color:black; overflow:hidden">
+                          {{usernameState}}
+                        </div>
+                      </template>
+                        <UFormGroup class="inputDiv" label="Event" name="event">
+                          <USelectMenu v-model="selectedEvent" :options="events" @update:model-value ="value => {updateEvent(value)}"/>
+                        </UFormGroup>
+                      <template #footer>
+                        <UButton block label="Logout" square @click="logout"/>
+                      </template>
+                    </UCard>
+                  </template>
+              </UPopover>
+            </div>
           </UCard>
         </div>
       </Transition>
