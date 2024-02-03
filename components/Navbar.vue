@@ -58,13 +58,13 @@ if (sessionState?.value?.userCtx?.roles?.indexOf('_admin') != -1)
         <UButton icon="i-heroicons-bars-3-20-solid" variant="ghost" @click="isOpen=!isOpen" :size="'xl'"/>
       </template>
       <UVerticalNavigation :links="links"/>
-      <div style="position:absolute; left:4%; bottom: 2%">
+      <div class="settingsPopupDiv">
         <UPopover>
           <UButton icon="i-heroicons-cog-6-tooth" square :size="'xl'" :variant="'ghost'" :color="'gray'"/>
           <template #panel>
             <UCard class="p-2">
               <template #header>
-                <div class="max-w-32" style="color:black; overflow:hidden">
+                <div class="usernameLabel max-w-32 text-zinc-900">
                   {{usernameState}}
                 </div>
               </template>

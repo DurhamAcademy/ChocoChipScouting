@@ -54,13 +54,13 @@
         <div v-show="width > 800" class="vis min-h-screen h-screen max-w-full">
           <UCard class="h-full" :ui="{rounded: 'rounded-none'}">
             <UVerticalNavigation :links="links"/>
-            <div style="position:absolute; left:5.7%; bottom: 2.15%">
+            <div class="settingsPopupDiv">
               <UPopover>
               <UButton icon="i-heroicons-cog-6-tooth" square :size="'xl'" :variant="'ghost'" :color="'gray'"/>
                   <template #panel>
                     <UCard class="p-2">
                       <template #header>
-                        <div class="max-w-32" style="color:black; overflow:hidden">
+                        <div class="usernameLabel text-zinc-900 max-w-32">
                           {{usernameState}}
                         </div>
                       </template>
