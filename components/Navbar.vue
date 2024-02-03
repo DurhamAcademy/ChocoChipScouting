@@ -58,33 +58,6 @@ if (sessionState?.value?.userCtx?.roles?.indexOf('_admin') != -1)
         <UButton icon="i-heroicons-bars-3-20-solid" variant="ghost" @click="isOpen=!isOpen" :size="'xl'"/>
       </template>
       <UVerticalNavigation :links="links"/>
-      <div class="settingsPopupDiv">
-        <UPopover>
-          <UButton icon="i-heroicons-cog-6-tooth" square :size="'xl'" :variant="'ghost'" :color="'gray'"/>
-          <template #panel>
-            <UCard class="p-2">
-              <template #header>
-                <div class="usernameLabel max-w-32 text-zinc-800">
-                  {{usernameState}}
-                </div>
-              </template>
-              <UFormGroup class="inputDiv" label="Event" name="event">
-                <USelectMenu v-model="selectedEvent" :options="events" @update:model-value ="value => {updateEvent(value)}"/>
-              </UFormGroup>
-              <template #footer>
-                <UButton block label="Logout" square @click="logout"/>
-              </template>
-            </UCard>
-          </template>
-        </UPopover>
-      </div>
-  </div>
-  <USlideover v-model="isOpen" side="left" :appear="!disableSidebar">
-    <UCard class="flex flex-col h-screen">
-      <template #header>
-        <UButton icon="i-heroicons-bars-3-20-solid" variant="ghost" @click="isOpen=!isOpen" :size="'xl'"/>
-      </template>
-      <UVerticalNavigation :links="links"/>
       <div style="position:absolute; left:4%; bottom: 2%">
         <UPopover>
           <UButton icon="i-heroicons-cog-6-tooth" square :size="'xl'" :variant="'ghost'" :color="'gray'"/>
