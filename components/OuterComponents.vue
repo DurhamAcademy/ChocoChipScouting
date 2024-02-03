@@ -7,14 +7,9 @@
   import type {VerticalNavigationLink} from "#ui/types";
   import type {Ref} from "@vue/reactivity";
   import type {UnwrapRef} from "vue";
+  import {couchDBBaseURL} from "~/utils/URIs";
 
-  const {loginState,usernameState, sessionState, logout}: {
-    logout: () => Promise<void>;
-    loginState: Ref<UnwrapRef<LoginState>>;
-    sessionState: Ref<UnwrapRef<PouchDB.Authentication.SessionResponse>>;
-    usernameState: Ref<UnwrapRef<string>>;
-    updateUsernameState: () => Promise<boolean>
-  } = inject(loginStateKey)!
+  const usersDB = new PouchDB(`${couchDBBaseURL}/_users`, {skip_setup: true});
 
   let {width, height} = useWindowSize()
 
@@ -25,21 +20,12 @@
     { label: "Matches", to: "/matches" },
     { label: "Teams", to: "/teams" },
     { label: "Competitions", to: "/competitions" },
-    { label: "Attachments", to: "/attachments" },
+    { label: "Attachments", to: "/attachments" }
   ]
-  watch(sessionState?.value?.userCtx, () => {
-    console.log("ran")
-    if(sessionState?.value?.userCtx?.roles?.includes("_admin")){
-      links.push({ label: "Users", to: "/users" })
-    }
-    else{
-      if(links.includes({ label: "Users", to: "/users" })){
-        links.splice(links.indexOf({ label: "Users", to: "/users" }, 1))
-      }
-    }
-  })
-  if (sessionState?.value?.userCtx?.roles?.indexOf('_admin') != -1)
+  let session = await usersDB.getSession()
+  if (session.userCtx.roles?.indexOf("_admin") != -1){
     links.push({ label: "Users", to: "/users" })
+  }
 
 </script>
 
