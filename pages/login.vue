@@ -8,13 +8,15 @@ const usersDB = new PouchDB(`${couchDBBaseURL}/_users`, {skip_setup: true});
   let password = ref("");
   let error = ref(false)
 
+const events = ['2024test', '2024trial']
+let selectedEvent = useState('selectedEvent', () => window.localStorage.getItem("event"))
 
 const {updateUsernameState}: { updateUsernameState: () => void } = inject(loginStateKey)!
 
 async function login(username: string, password: string) {
     try
     {
-      window.localStorage.setItem("event", selectedEvent.value)
+      window.localStorage.setItem("event", selectedEvent.value != null ? selectedEvent.value: "")
 
       usersDB.logIn(username, password, async function (err, response) {
         if (response) {
@@ -68,11 +70,6 @@ async function login(username: string, password: string) {
     })
   }
 
-
-//also change in navbar
-const events = ['2024test', '2024trial']
-
-const selectedEvent = ref(window.localStorage.getItem('event') != undefined ? window.localStorage.getItem('event') : events[0])
 </script>
 
 <template>
