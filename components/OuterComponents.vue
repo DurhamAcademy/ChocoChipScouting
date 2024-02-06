@@ -24,8 +24,8 @@
     { label: "Dashboard", to: "/dashboard" },
     { label: "Matches", to: "/matches" },
     { label: "Teams", to: "/teams" },
-    { label: "Competitions", to: "/competitions" },
     { label: "Attachments", to: "/attachments" },
+    { label: "Schedule", to: "/schedule" }
   ]
   watch(sessionState?.value?.userCtx, () => {
     console.log("ran")
