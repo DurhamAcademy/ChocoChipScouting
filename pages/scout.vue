@@ -21,11 +21,11 @@ const endgameOptions = ["None", "Parked", "Attempted Onstage", "Onstage", "Harmo
 let endgameIndex = [1, 0, 0, 0, 0]
 
 
-/*
-async function dataPull(team: integer): Promise<any>{
-  let refNum: integer = team;
+
+async function dataPull(entry: any): Promise<any>{
+  let refNum: any = entry;
   let urlNoNum: string = "https://www.thebluealliance.com/api/v3/frc";
-  let urlFinal: string = urlNoNum + refNum.toString();
+  let urlFinal: string = urlNoNum + "event/" + refNum + "/teams/simple";
   let grab: any;
   grab = await fetch(urlFinal);
   grab = await grab.json();
@@ -33,7 +33,7 @@ async function dataPull(team: integer): Promise<any>{
   grabParse = JSON.parse(grab);
   return grabParse.nickname;
 }
-*/
+
 
 /*const ph: any = dataPull(info.teamNum)();
 let parsed = JSON.parse(await ph);
