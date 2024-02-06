@@ -20,10 +20,12 @@ async function dataPull(entry: any): Promise<any>{
   console.log(teamList.toString())
   return;
 }
+let inputMatch: any;
 </script>
 
 <template>
-<u-button @click="dataPull('2016nytr')">hello world</u-button>
+<u-button @click="dataPull(inputMatch)">hello world</u-button>
+  <u-input v-model="inputMatch" placeholder="Match Number"></u-input>
 </template>
 
 <style scoped>
