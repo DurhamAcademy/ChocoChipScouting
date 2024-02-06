@@ -1,5 +1,10 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+/*
+Model Value: the number selected
+Max Value: the maximum value possible
+(implied min value): must be above 0, can be changed in code below if need be
+ */
 const props = defineProps<{
   modelValue: number,
   maxValue?: number,

@@ -1,6 +1,12 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 const emit = defineEmits(['update:modelValue'])
+/*
+Model Value: Array of numbers => 1 is selected, 0 is not selected
+Options: Array of strings => the labels for the buttons
+Connected Options: Array of numbers => matches the amount of buttons,
+ if two buttons have the same number in this array they can be selected at the same time
+ */
 const props = defineProps<{
   modelValue: Array<number>,
   options: Array<String>,
