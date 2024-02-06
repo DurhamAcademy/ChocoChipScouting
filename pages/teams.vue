@@ -96,23 +96,27 @@ function compileEndgames(teamArrays: Array<any>){
 
 const columns = [{
   key: 'team',
-  label: 'Team #'
+  label: 'Team #',
 }, {
   key: 'amp',
-  label: 'Average Amp Cycles'
+  label: 'Average Amp Cycles',
+  sortable: true
 }, {
   key: 'speaker',
-  label: 'Average Speaker Cycles'
+  label: 'Average Speaker Cycles',
+  sortable: true
 }, {
   key: 'mobility',
-  label: 'Mobility Success Rate'
+  label: 'Mobility Success Rate',
+  sortable: true
+}, {
+  key: 'sentiment',
+  label: 'Sentiment Analysis',
+  sortable: true
 }, {
   key: 'actions',
   label: 'Endgame'
-}, {
-  key: 'sentiment',
-  label: 'Sentiment Analysis'
-}, {
+},{
   key: 'dropdown'
 }]
 
@@ -121,6 +125,10 @@ const columns = [{
 
 <template>
 <OuterComponents>
+  <UCard>
+    <template #header>
+      <UInput></UInput>
+    </template>
   <UTable :rows="teamsData" :columns="columns">
 
     <template #actions-data="{ row }">
@@ -150,6 +158,7 @@ const columns = [{
     </template>
 
   </UTable>
+  </UCard>
 </OuterComponents>
 </template>
 
