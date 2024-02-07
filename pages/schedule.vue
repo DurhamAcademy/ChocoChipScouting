@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-/* TODO: @26spitzer store the matches as a list or something
+/* TODO: @26spitzer store the matches as an array or something
 example:
 matches = {
   { red: {8429: "insert name here", 4534: "", 6500: ""}, blue: {8738: "", 4561: "", 9042: ""} },
