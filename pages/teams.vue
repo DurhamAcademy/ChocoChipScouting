@@ -120,19 +120,12 @@ const columns = [{
   key: 'dropdown'
 }]
 
-let matchNum = ref<string>('')
-let teamNum = ref<string>('')
-let selectedFilters = ref<Array<{ id: number, name: any}>>([])
+let selectedFilters = ref<Array<{ id: number, content: any}>>([])
 const filterOptions = ref([
-  { id: 1, name: 'top 10 %' },
-  { id: 2, name: 'match' },
+  { id: 1, content: 'top 10%' },
 ])
 const extraFilterOptions = ["team", "match"]
-let dropdownVariants = ref(Array(extraFilterOptions.length)
-    .fill("")
-    .map(
-        () => "ghost"
-    ))
+
 
 </script>
 
@@ -140,32 +133,8 @@ let dropdownVariants = ref(Array(extraFilterOptions.length)
 <OuterComponents>
   <UCard>
     <template #header>
-        <UFormGroup class="pl-6 w-full">
-          <USelectMenu
-              v-model="selectedFilters"
-              by="id"
-              :options="filterOptions"
-              option-attribute="name"
-              multiple
-              searchable
-              searchable-placeholder="Search a person..."
-          >
-            <template #default>
-              <UButton color="gray" class="flex-1 justify-between">
-                <span class="text-slate-600" v-if="selectedFilters.length == 0">Edit Filters</span>
-                <div>
-                  <UBadge v-for="(filter, index) in selectedFilters" :label="filter.name" color="white" :ui="{ rounded: 'rounded-full' }"></UBadge>
-                </div>
-                <UIcon name="i-heroicons-adjustments-horizontal" class="w-5 h-5 transition-transform text-gray-400 dark:text-gray-500" :class="[open && 'transform rotate-90']" />
-              </UButton>
-            </template>
-            <template #label>
-
-            </template>
-            <template #option-empty="{ query }" class="w-full">
-              <UButton v-for="(option, index) in extraFilterOptions" :label="option + ': ' + query" :variant="dropdownVariants[index]" color="gray" @mouseover="dropdownVariants[index] = 'soft'" @mouseleave="dropdownVariants[index] = 'ghost'" @click="filterOptions.push({ id: filterOptions.length + 1, name: option + ': ' +  query})"></UButton>
-            </template>
-          </USelectMenu>
+        <UFormGroup class="w-full" block>
+          <FilterMultiSelect v-model="selectedFilters" :options="filterOptions" :extra-options="extraFilterOptions"></FilterMultiSelect>
         </UFormGroup>
     </template>
   <UTable :rows="teamsData" :columns="columns">
