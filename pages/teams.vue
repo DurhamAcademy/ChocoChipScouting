@@ -74,7 +74,6 @@ function analyzeNotes(teamArrays: Array<any>){
   let analysisTotal = 0
   for(let match of teamArrays){
     analysisTotal += sentiment.analyze(match.notes.notes, options).score
-    console.dir(sentiment.analyze(match.notes.notes, options))
   }
   return analysisTotal/teamArrays.length
 }

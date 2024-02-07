@@ -2,8 +2,8 @@
 import { computed } from 'vue'
 const emit = defineEmits(['update:modelValue'])
 const props = defineProps<{
-  modelValue: Array<{ id: number, content: string}>,
-  options: Array<{ id: number, content: string}>,
+  modelValue: Array<{ id: number, content: string, custom?: boolean}>,
+  options: Array<{ id: number, content: string, custom?: boolean}>,
   extraOptions?: Array<string>
   searchPlaceholder?: string,
   filterPlaceholder?: string,
@@ -14,9 +14,20 @@ const value = computed({
     return props.modelValue
   },
   set(value) {
+    for(let option of props.options){
+      let optionSelected = false
+      for(let selectedOption of value){
+        if(option.id == selectedOption.id)
+          optionSelected = true
+      }
+      if(!optionSelected && option.custom != undefined && option.custom){
+        props.options.splice(props.options.indexOf(option, 1))
+      }
+    }
     emit('update:modelValue', value)
   }
 })
+
 
 let dropdownVariants = ref<Array<string>>()
 if(props.extraOptions) {
@@ -28,7 +39,7 @@ if(props.extraOptions) {
 }
 
 function addFilter(filterOption: string, index: number, query: string){
-  props.options.push({ id: props.options.length + 1, content: filterOption + ': ' +  query})
+  props.options.push({ id: props.options.length + 1, content: filterOption + ': ' +  query, custom: true})
 }
 
 </script>
