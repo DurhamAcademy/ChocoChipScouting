@@ -2,8 +2,8 @@
 import { computed } from 'vue'
 const emit = defineEmits(['update:modelValue'])
 const props = defineProps<{
-  modelValue: Array<{ id: number, content: any}>,
-  options: Array<{ id: number, content: any}>,
+  modelValue: Array<{ id: number, content: string}>,
+  options: Array<{ id: number, content: string}>,
   extraOptions?: Array<string>
   searchPlaceholder?: string,
   filterPlaceholder?: string,
@@ -44,7 +44,7 @@ function addFilter(filterOption: string, index: number, query: string){
         :searchable-placeholder="searchPlaceholder != undefined ? searchPlaceholder: 'Search or Add Filter'"
     >
       <template #default>
-        <UButton color="gray" class="flex-1 justify-between">
+        <UButton color="gray" class="flex-1 justify-between min-h-9">
           <span class="text-slate-600" v-if="value.length == 0">{{filterPlaceholder != undefined ? filterPlaceholder: 'Edit Filters'}}</span>
           <div>
             <UBadge class="mr-1 pl-2.5 pr-2.5" v-for="filter in value" :label="filter.content" color="white" :ui="{ rounded: 'rounded-full' }"></UBadge>

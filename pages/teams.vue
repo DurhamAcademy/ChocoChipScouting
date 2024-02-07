@@ -14,6 +14,15 @@ let options = {
   }
 }
 
+const selectedFilters = ref<Array<{ id: number, content: string}>>([])
+watch(selectedFilters, () => {
+  tableSetup()
+})
+const filterOptions = ref([
+  { id: 1, content: 'top 10%' },
+])
+const extraFilterOptions = ["team", "match"]
+
 const { scoutingData } = databases.locals
 let db = scoutingData
 
@@ -34,11 +43,31 @@ for(let i  = 0; i < match.length; i++){
   }
 }
 
-let teamsData : Array<any> = []
+let teamsData= ref<Array<any>>([])
 
-for(let [key, value] of teamOrgMatches){
-  let arr = {team: key, amp:getAverageAmpCycles(value).toFixed(2), speaker:getAverageSpeakerCycles(value).toFixed(2), mobility:averageAuto(value).toFixed(2), sentiment: analyzeNotes(value).toFixed(2), endgame:compileEndgames(value)}
-  teamsData.push(arr)
+tableSetup()
+
+function tableSetup() {
+  teamsData.value.length = 0
+  tableLoop: for (let [key, value] of teamOrgMatches) {
+    if (selectedFilters.value.length > 0) {
+      for (let filter of selectedFilters.value) {
+        if (filter.content.startsWith("team:")) {
+          if (parseInt(filter.content.split(":")[1].trim()) != key)
+            continue tableLoop
+        }
+      }
+    }
+    let arr = {
+      team: key,
+      amp: getAverageAmpCycles(value).toFixed(2),
+      speaker: getAverageSpeakerCycles(value).toFixed(2),
+      mobility: averageAuto(value).toFixed(2),
+      sentiment: analyzeNotes(value).toFixed(2),
+      endgame: compileEndgames(value)
+    }
+    teamsData.value.push(arr)
+  }
 }
 
 function analyzeNotes(teamArrays: Array<any>){
@@ -119,12 +148,6 @@ const columns = [{
 },{
   key: 'dropdown'
 }]
-
-let selectedFilters = ref<Array<{ id: number, content: any}>>([])
-const filterOptions = ref([
-  { id: 1, content: 'top 10%' },
-])
-const extraFilterOptions = ["team", "match"]
 
 
 </script>
