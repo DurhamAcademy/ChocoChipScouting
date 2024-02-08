@@ -2,6 +2,7 @@
 import "../utils/authorization/Authorizer";
 import {couchDBBaseURL} from "~/utils/URIs"
 import {loginStateKey} from "~/utils/keys";
+import {useSelectedEvent} from "~/composables/useSelectedEvent";
 
 const usersDB = new PouchDB(`${couchDBBaseURL}/_users`, {skip_setup: true});
   let username = ref("");
@@ -9,15 +10,13 @@ const usersDB = new PouchDB(`${couchDBBaseURL}/_users`, {skip_setup: true});
   let error = ref(false)
 
 const events = ['2024test', '2024trial']
-let selectedEvent = useEvent()
+let selectedEvent = useSelectedEvent()
 
 const {updateUsernameState}: { updateUsernameState: () => void } = inject(loginStateKey)!
 
 async function login(username: string, password: string) {
     try
     {
-      window.localStorage.setItem("event", selectedEvent.value != null ? selectedEvent.value: "")
-
       usersDB.logIn(username, password, async function (err, response) {
         if (response) {
           updateUsernameState()
