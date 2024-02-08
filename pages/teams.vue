@@ -19,7 +19,8 @@ watch(selectedFilters, () => {
   tableSetup()
 })
 const filterOptions = ref([
-  { id: 1, content: 'top 10%' },
+  { id: 1, content: 'Has Climb' },
+  { id: 2, content: 'Has Auto' },
 ])
 const extraFilterOptions = ["team", "match"]
 
@@ -50,14 +51,7 @@ tableSetup()
 function tableSetup() {
   teamsData.value.length = 0
   tableLoop: for (let [key, value] of teamOrgMatches) {
-    if (selectedFilters.value.length > 0) {
-      for (let filter of selectedFilters.value) {
-        if (filter.content.startsWith("team:")) {
-          if (parseInt(filter.content.split(":")[1].trim()) != key)
-            continue tableLoop
-        }
-      }
-    }
+
     let arr = {
       team: key,
       amp: getAverageAmpCycles(value).toFixed(2),
@@ -65,6 +59,44 @@ function tableSetup() {
       mobility: averageAuto(value).toFixed(2),
       sentiment: analyzeNotes(value).toFixed(2),
       endgame: compileEndgames(value)
+    }
+
+    if (selectedFilters.value.length > 0) {
+      for (let filter of selectedFilters.value) {
+
+        if (filter.content.startsWith("team:")) {
+          if (parseInt(filter.content.split(":")[1].trim()) != key)
+            continue tableLoop
+        }
+
+        if(filter.id == 1){
+          let hasClimb = false
+          for(let match of value){
+            if(match.endgame.endgame.includes("Onstage") || match.endgame.endgame.includes("Attempted Onstage")){
+              hasClimb = true
+              break
+            }
+          }
+          if(!hasClimb){
+            continue tableLoop
+          }
+        }
+
+        if(filter.id == 2){
+          let hasAuto = false
+          for(let match of value){
+            console.log(match.auto)
+            if(match.auto.amp > 0 || match.auto.speaker > 0 || match.auto.mobility == true){
+              hasAuto = true
+              break
+            }
+          }
+          if(!hasAuto){
+            continue tableLoop
+          }
+        }
+
+      }
     }
     teamsData.value.push(arr)
   }
@@ -97,7 +129,7 @@ function getAverageAmpCycles(teamArrays: Array<any>){
 function averageAuto(teamArrays: Array<any>){
   let successfulMobilityCount = 0
   for(let match of teamArrays){
-    successfulMobilityCount += match.auto.leave ? 1 : 0
+    successfulMobilityCount += match.auto.mobility ? 1 : 0
   }
   return successfulMobilityCount/teamArrays.length
 }

@@ -52,7 +52,7 @@ let data = ref({
   auto: {
     speakerNA: 0,
     amp: 0,
-    leave: false,
+    mobility: false,
   },
   teleop: {
     amp: 0,
@@ -133,7 +133,7 @@ async function submit() {
           </div>
           <div>
             <br>
-            <BooleanButton v-model="data.auto.leave" :default-value="'Mobility'" :other-value="'Mobility'"
+            <BooleanButton v-model="data.auto.mobility" :default-value="'Mobility'" :other-value="'Mobility'"
                            style="margin:5px"></BooleanButton>
           </div>
         </div>

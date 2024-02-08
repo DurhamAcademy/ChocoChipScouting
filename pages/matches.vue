@@ -30,7 +30,7 @@ const headers = [
     children: [
       { title: 'Amp', align: 'end', value: 'auto.amp' },
       { title: 'Speaker', align: 'end', value: 'auto.speakerNA' },
-      { title: 'Mobility', align: 'end', value: 'auto.leave' }
+      { title: 'Mobility', align: 'end', value: 'auto.mobility' }
     ]
   }, {
     title: 'Tele-op',
