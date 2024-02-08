@@ -1,6 +1,13 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 const emit = defineEmits(['update:modelValue'])
+/*
+  Model Value => The selected filters, each containing an id, their content, and optionally if they are user created
+  Options => Pre-programmed filter options, each with an id and content
+  Extra options => Guidelines for user creation of filters. Array of strings. Becomes a button with extraOption ': ' user input
+  Search Placeholder => placeholder for search (user input). defaults to "Search or Add Filter"
+  Filter Placeholder => placeholder for filter (dropdown button). defaults to "Edit Filters"
+ */
 const props = defineProps<{
   modelValue: Array<{ id: number, content: string, custom?: boolean}>,
   options: Array<{ id: number, content: string, custom?: boolean}>,
