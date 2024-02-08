@@ -17,7 +17,7 @@ let route = useRoute()
 
 const events = ['2024test', '2024trial']
 
-const selectedEvent = useEvent()
+const selectedEvent = useSelectedEvent()
 
 function updateEvent(value: string) {
   window.localStorage.setItem("event", value)
