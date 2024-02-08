@@ -16,7 +16,7 @@ const {usernameState, sessionState, logout}: {
 
 const events = ['2024test', '2024trial']
 
-let selectedEvent = useState('selectedEvent', () => window.localStorage.getItem("event"))
+let selectedEvent = useEvent()
 
 let props = defineProps({
   scoutMode: {

@@ -9,7 +9,7 @@ const usersDB = new PouchDB(`${couchDBBaseURL}/_users`, {skip_setup: true});
   let error = ref(false)
 
 const events = ['2024test', '2024trial']
-let selectedEvent = useState('selectedEvent', () => window.localStorage.getItem("event"))
+let selectedEvent = useEvent()
 
 const {updateUsernameState}: { updateUsernameState: () => void } = inject(loginStateKey)!
 
