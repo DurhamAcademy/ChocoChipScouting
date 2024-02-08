@@ -1,15 +1,31 @@
 <script setup lang="ts">
 
-/* TODO: @26spitzer store the matches as an array or something
-example:
-matches = {
-  { red: {8429: "insert name here", 4534: "", 6500: ""}, blue: {8738: "", 4561: "", 9042: ""} },
-  { ... },
-  { ... },
-  ...
+
+const matchAlliances: any = {red: [], blue: []}
+
+const urlNoNum: string = "https://www.thebluealliance.com/api/v3/";
+async function findAlliances(eventKey: any, matchKey: any){
+  let urlFinal: string = urlNoNum + "team/frc6502/event/" + eventKey + "/matches";
+  let grab: any;
+  grab = await fetch(urlFinal, {
+    method: 'GET',
+    headers: {
+      'X-TBA-Auth-Key': "JBP0wpGwe79xWOVzDXWFKxgmFhZEmrIgVluq3PZf4z9OVcvROKTjnTrRu7D9rsUz"
+    }
+  });
+  grab = await grab.json();
+  console.log(grab[matchKey].alliances.blue.team_keys[1])
+  for (let i in grab[matchKey].alliances.red.team_keys){
+    console.log(i)
+    matchAlliances.red.push(grab[matchKey].alliances.red.team_keys[i])
+  }
+  for (let i in grab[matchKey].alliances.blue.team_keys){
+    matchAlliances.blue.push(grab[matchKey].alliances.blue.team_keys[i])
+  }
+  console.dir(matchAlliances)
 }
- */
-let matches = null
+
+
 
 async function dataPull(entry: any): Promise<any>{
   let refNum: any = entry;
@@ -26,11 +42,6 @@ async function dataPull(entry: any): Promise<any>{
   let teamList: any = []
   // TODO: @26spitzer maybe do some mapping? also you can use .team_number instead of .key
   for (let i in grab){
-    /*
-    let withFRC: any = grab[i].key;
-    let unFRC: any = withFRC.slice(3)
-    teamList.push(unFRC)
-     */
     teamList.push(grab[i].team_number)
   }
   console.log(teamList.toString())
@@ -41,7 +52,8 @@ let inputMatch: any;
 
 <template>
   <OuterComponents>
-    <u-button @click="dataPull(inputMatch)">hello world</u-button>
+    <u-button @click="dataPull(inputMatch)">Search Teams</u-button>
+    <u-button @click="findAlliances(inputMatch, 1)">Setup Screen</u-button>
     <u-input v-model="inputMatch" placeholder="Match Number"></u-input>
   </OuterComponents>
 </template>
