@@ -148,56 +148,46 @@ const columns = [{
   key: 'dropdown'
 }]
 
-const page = ref(1)
-//two constants for screen size
-const pageCount = ref(Math.floor((window.innerHeight - 236.5)/72.9375))
 
-const rows = computed(() => {
-  return teamsData.value.slice((page.value - 1) * pageCount.value, (page.value) * pageCount.value)
-})
 
 </script>
 
 <template>
 <OuterComponents>
-  <UCard class="max-h-dvh">
-    <template #header class="fixed">
+  <UCard class="max-h-dvh overflow-auto">
+    <template #header>
         <UFormGroup class="w-full" block>
           <FilterMultiSelect v-model="selectedFilters" :options="filterOptions" :extra-options="extraFilterOptions"></FilterMultiSelect>
         </UFormGroup>
     </template>
-      <UTable :rows="rows" :columns="columns" >
+      <UTable :rows="teamsData" :columns="columns" class="overflow-auto">
 
-      <template #actions-data="{ row }">
-        <UPopover>
-          <UButton class="m-1" color="blue" label="Chart" variant="soft" />
-          <template #panel>
-            <UCard>
-              <div class="max-w-xs min-w-[15rem] overflow-y-auto" style="max-height: 20rem; min-height: 10rem">
-                <PieChart :labels="row.endgame[0]" :data="row.endgame[1]"/>
-              </div>
-            </UCard>
-          </template>
-        </UPopover>
-      </template>
+        <template #actions-data="{ row }">
+          <UPopover>
+            <UButton class="m-1" color="blue" label="Chart" variant="soft" />
+            <template #panel>
+              <UCard>
+                <div class="max-w-xs min-w-[15rem] overflow-y-auto" style="max-height: 20rem; min-height: 10rem">
+                  <PieChart :labels="row.endgame[0]" :data="row.endgame[1]"/>
+                </div>
+              </UCard>
+            </template>
+          </UPopover>
+        </template>
 
-      <template #dropdown-data="{ row }">
-        <UPopover>
-          <UButton color="gray" variant="ghost" icon="i-heroicons-ellipsis-horizontal-20-solid" />
-          <template #panel>
-            <UCard>
-              <div class="max-w-full min-w-max overflow-y-auto" style="max-height: 20rem; min-height: 10rem">
+        <template #dropdown-data="{ row }">
+          <UPopover>
+            <UButton color="gray" variant="ghost" icon="i-heroicons-ellipsis-horizontal-20-solid" />
+            <template #panel>
+              <UCard>
+                <div class="max-w-full min-w-max overflow-y-auto" style="max-height: 20rem; min-height: 10rem">
 
-              </div>
-            </UCard>
-          </template>
-        </UPopover>
-      </template>
-
-    </UTable>
-    <div class="flex px-3 py-3.5 border-t border-gray-200 dark:border-gray-700">
-      <UPagination v-model="page" :page-count="pageCount" :total="teamsData.length" />
-    </div>
+                </div>
+              </UCard>
+            </template>
+          </UPopover>
+        </template>
+      </UTable>
   </UCard>
 </OuterComponents>
 </template>
