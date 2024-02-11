@@ -1,3 +1,5 @@
+import {getEventOptions} from "~/composables/getEventOptions";
+
 export const useSelectedEvent = () => {
-  return useState('selectedEvent', () => window.localStorage.getItem("event"))
+  return useState('selectedEvent', () => getEventOptions().value[0])
 }

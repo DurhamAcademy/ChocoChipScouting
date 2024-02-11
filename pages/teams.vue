@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import databases from "~/utils/databases";
 import Sentiment from 'sentiment';
+import {useSelectedEvent} from "~/composables/useSelectedEvent";
+import {getEventOptions} from "~/composables/getEventOptions";
 
 let sentiment = new Sentiment()
 let options = {
@@ -14,7 +16,10 @@ let options = {
   }
 }
 
-const selectedFilters = ref<Array<{ id: number, content: string}>>([])
+const events = getEventOptions().value
+let currentEvent = useSelectedEvent().value
+
+const selectedFilters = ref<Array<{ id: number, content: string}>>([{ id: 0, content: 'event: ' + currentEvent.value }])
 watch(selectedFilters, () => {
   tableSetup()
 })
@@ -36,12 +41,10 @@ let teamOrgMatches = new Map<number, Array<any>>()
 
 for(let i  = 0; i < match.length; i++){
   let currentMatch = (await match[i])
-  if(currentMatch.event == window.localStorage.getItem("event") || window.localStorage.getItem("event") == null) {
-    if (!teamOrgMatches.has(currentMatch.teamNumber))
-      teamOrgMatches.set(currentMatch.teamNumber, [currentMatch])
-    else
-      teamOrgMatches.get(currentMatch.teamNumber)!.push(currentMatch)
-  }
+  if (!teamOrgMatches.has(currentMatch.teamNumber))
+    teamOrgMatches.set(currentMatch.teamNumber, [currentMatch])
+  else
+    teamOrgMatches.get(currentMatch.teamNumber)!.push(currentMatch)
 }
 
 let teamsData= ref<Array<any>>([])
@@ -85,7 +88,6 @@ function tableSetup() {
         if(filter.id == 2){
           let hasAuto = false
           for(let match of value){
-            console.log(match.auto)
             if(match.auto.amp > 0 || match.auto.speaker > 0 || match.auto.mobility == true){
               hasAuto = true
               break
@@ -98,7 +100,6 @@ function tableSetup() {
 
       }
     }
-    teamsData.value.push(arr)
   }
 }
 

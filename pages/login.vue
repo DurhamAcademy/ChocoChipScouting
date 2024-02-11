@@ -3,14 +3,15 @@ import "../utils/authorization/Authorizer";
 import {couchDBBaseURL} from "~/utils/URIs"
 import {loginStateKey} from "~/utils/keys";
 import {useSelectedEvent} from "~/composables/useSelectedEvent";
+import {getEventOptions} from "~/composables/getEventOptions";
 
 const usersDB = new PouchDB(`${couchDBBaseURL}/_users`, {skip_setup: true});
   let username = ref("");
   let password = ref("");
   let error = ref(false)
 
-const events = ['2024test', '2024trial']
-let selectedEvent = useSelectedEvent()
+const events = getEventOptions().value
+const selectedEvent = useSelectedEvent()
 
 const {updateUsernameState}: { updateUsernameState: () => void } = inject(loginStateKey)!
 
