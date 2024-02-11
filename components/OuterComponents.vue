@@ -21,7 +21,8 @@ const events = ['2024test', '2024trial']
 const selectedEvent = useSelectedEvent()
 
 function updateEvent(value: string) {
-  useState('selectedEvent', () => value)
+  selectedEvent.value = value
+  window.localStorage.setItem('selectedEvent', value)
 }
 
 const {usernameState, sessionState, logout}: {

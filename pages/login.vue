@@ -98,7 +98,7 @@ async function login(username: string, password: string) {
                   type="password"/>
         </UFormGroup>
         <UFormGroup class="inputDiv" label="Event" name="event" required>
-          <USelectMenu v-model="selectedEvent" :options="events" />
+          <USelectMenu v-model="selectedEvent" :options="events" @change="window.localStorage.setItem('selectedEvent', selectedEvent)"/>
         </UFormGroup>
         <UFormGroup class="inputDiv" style="padding-top: 10px">
           <UButton

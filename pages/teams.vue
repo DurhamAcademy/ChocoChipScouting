@@ -17,16 +17,32 @@ let options = {
 }
 
 const events = getEventOptions().value
-let currentEvent = useSelectedEvent().value
+const currentEvent = useSelectedEvent()
 
-const selectedFilters = ref<Array<{ id: number, content: string}>>([{ id: 0, content: 'event: ' + currentEvent.value }])
+const currentEventFilter = { id: 0, content: 'event: ' + currentEvent.value }
+const selectedFilters = ref<Array<{ id: number, content: string}>>([currentEventFilter])
 watch(selectedFilters, () => {
   tableSetup()
 })
+watch(useSelectedEvent, () =>{
+  let skippedIndex = false
+  for(let index in events){
+    let i = parseInt(index)
+    if(events[i] != currentEvent.value){
+      if(skippedIndex) filterOptions.value.push({ id: filterOptions.value.length + i , content: 'event: ' + currentEvent.value})
+      else filterOptions.value.push({ id: filterOptions.value.length + i + 1, content: 'event: ' + currentEvent.value})
+    }
+    else{
+      skippedIndex = true
+    }
+  }
+})
 const filterOptions = ref([
+  { id: 0, content: 'event: ' + currentEvent.value},
   { id: 1, content: 'Has Climb' },
   { id: 2, content: 'Has Auto' },
 ])
+
 const extraFilterOptions = ["team", "match"]
 
 const { scoutingData } = databases.locals
@@ -93,6 +109,7 @@ function tableSetup() {
               break
             }
           }
+
           if(!hasAuto){
             continue tableLoop
           }
@@ -100,6 +117,7 @@ function tableSetup() {
 
       }
     }
+    teamsData.value.push(arr)
   }
 }
 
