@@ -16,19 +16,23 @@ const props = defineProps<{
   filterPlaceholder?: string,
 }>()
 
+let optionsArr = props.options.map( (value) => value )
+
 const value = computed({
   get() {
     return props.modelValue
   },
   set(value) {
-    for(let option of props.options){
+    console.dir(optionsArr)
+    console.dir(value)
+    for(let option of optionsArr){
       let optionSelected = false
       for(let selectedOption of value){
         if(option.id == selectedOption.id)
           optionSelected = true
       }
       if(!optionSelected && option.custom != undefined && option.custom){
-        props.options.splice(props.options.indexOf(option, 1))
+        optionsArr.splice(optionsArr.indexOf(option, 1))
       }
     }
     emit('update:modelValue', value)
@@ -46,7 +50,9 @@ if(props.extraOptions) {
 }
 
 function addFilter(filterOption: string, index: number, query: string){
-  props.options.push({ id: props.options.length + 1, content: filterOption + ': ' +  query, custom: true})
+  let customFilter = { id: optionsArr.length + 1, content: filterOption + ': ' +  query, custom: true}
+  optionsArr.push(customFilter)
+  value.value.push(customFilter)
 }
 
 </script>
@@ -55,7 +61,7 @@ function addFilter(filterOption: string, index: number, query: string){
     <USelectMenu
         v-model="value"
         by="id"
-        :options="options"
+        :options="optionsArr"
         option-attribute="content"
         multiple
         searchable

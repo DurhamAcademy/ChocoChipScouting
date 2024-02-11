@@ -17,6 +17,8 @@ enum GameTime {
 //The active tab used
 let gameTime = ref(GameTime.Autonomous)
 
+let selectedEvent = useSelectedEvent()
+
 
 // Selectable options for the Multi-Select component
 const endgameOptions = ["None", "Parked", "Attempted Onstage", "Onstage", "Harmony"]
@@ -91,7 +93,7 @@ function isValidNum() {
 }
 
 async function submit() {
-  data.value.event = window.localStorage.getItem("event") || ""
+  data.value.event = selectedEvent.value || ""
   let newDoc = db.post(data.value)
   await navigateTo("/matches")
 }

@@ -19,29 +19,23 @@ let options = {
 const events = getEventOptions().value
 const currentEvent = useSelectedEvent()
 
-const currentEventFilter = { id: 0, content: 'event: ' + currentEvent.value }
-const selectedFilters = ref<Array<{ id: number, content: string}>>([currentEventFilter])
+const currentEventFilter = { id: 2, content: 'event: ' + currentEvent.value, custom: false }
+const selectedFilters = ref<Array<{ id: number, content: string, custom: boolean}>>([currentEventFilter])
 watch(selectedFilters, () => {
   tableSetup()
 })
-watch(useSelectedEvent, () =>{
-  let skippedIndex = false
-  for(let index in events){
-    let i = parseInt(index)
-    if(events[i] != currentEvent.value){
-      if(skippedIndex) filterOptions.value.push({ id: filterOptions.value.length + i , content: 'event: ' + currentEvent.value})
-      else filterOptions.value.push({ id: filterOptions.value.length + i + 1, content: 'event: ' + currentEvent.value})
-    }
-    else{
-      skippedIndex = true
-    }
-  }
-})
-const filterOptions = ref([
-  { id: 0, content: 'event: ' + currentEvent.value},
-  { id: 1, content: 'Has Climb' },
-  { id: 2, content: 'Has Auto' },
-])
+let customOptions = ['Has Climb', 'Has Auto']
+for(let event of events){
+  customOptions.push(event)
+}
+const filterOptions = ref(
+    Array(customOptions.length)
+        .fill({ id: 0, content: "", custom: false})
+        .map(
+            (_, index) => ({ id: index, content: customOptions[index], custom: false})
+        )
+)
+
 
 const extraFilterOptions = ["team", "match"]
 
@@ -70,54 +64,71 @@ tableSetup()
 function tableSetup() {
   teamsData.value.length = 0
   tableLoop: for (let [key, value] of teamOrgMatches) {
-
-    let arr = {
-      team: key,
-      amp: getAverageAmpCycles(value).toFixed(2),
-      speaker: getAverageSpeakerCycles(value).toFixed(2),
-      mobility: averageAuto(value).toFixed(2),
-      sentiment: analyzeNotes(value).toFixed(2),
-      endgame: compileEndgames(value)
-    }
-
-    if (selectedFilters.value.length > 0) {
-      for (let filter of selectedFilters.value) {
-
-        if (filter.content.startsWith("team:")) {
-          if (parseInt(filter.content.split(":")[1].trim()) != key)
-            continue tableLoop
-        }
-
-        if(filter.id == 1){
-          let hasClimb = false
-          for(let match of value){
-            if(match.endgame.endgame.includes("Onstage") || match.endgame.endgame.includes("Attempted Onstage")){
-              hasClimb = true
-              break
-            }
-          }
-          if(!hasClimb){
-            continue tableLoop
-          }
-        }
-
-        if(filter.id == 2){
-          let hasAuto = false
-          for(let match of value){
-            if(match.auto.amp > 0 || match.auto.speaker > 0 || match.auto.mobility == true){
-              hasAuto = true
-              break
-            }
-          }
-
-          if(!hasAuto){
-            continue tableLoop
-          }
-        }
-
+    /*
+    Data is an array of all matches, associated with a team (key), for the event filters selected
+     */
+    let data: any = []
+    let allowedEvents = []
+    let allowedTeams = []
+    for(let filter of selectedFilters.value){
+      if(filter.content.startsWith("event:")){
+        allowedEvents.push(filter.content.split(":")[1].trim())
+      }
+      if(filter.content.startsWith("team:")){
+        allowedTeams.push(filter.content.split(":")[1].trim())
       }
     }
-    teamsData.value.push(arr)
+    if(allowedTeams.includes(key.toString()) || allowedTeams.length == 0){
+      for(let match of value){
+        if(allowedEvents.includes(match.event)){
+          data.push(match)
+          console.log(data)
+        }
+      }
+    }
+    /*
+    Goes through all remaining filters and applies their effects
+     */
+    for (let filter of selectedFilters.value) {
+
+      if(filter.id == 0){
+        let hasClimb = false
+        for(let match of data){
+          if(match.endgame.endgame.includes("Onstage") || match.endgame.endgame.includes("Attempted Onstage")){
+            hasClimb = true
+            break
+          }
+        }
+        if(!hasClimb){
+          continue tableLoop
+        }
+      }
+
+      if(filter.id == 1){
+        let hasAuto = false
+        for(let match of data){
+          if(match.auto.amp > 0 || match.auto.speaker > 0 || match.auto.mobility == true){
+            hasAuto = true
+            break
+          }
+        }
+        if(!hasAuto){
+          continue tableLoop
+        }
+      }
+
+    }
+    if(data.length > 0) {
+      let arr = {
+        team: key,
+        amp: getAverageAmpCycles(data).toFixed(2),
+        speaker: getAverageSpeakerCycles(data).toFixed(2),
+        mobility: averageAuto(data).toFixed(2),
+        sentiment: analyzeNotes(data).toFixed(2),
+        endgame: compileEndgames(data)
+      }
+      teamsData.value.push(arr)
+    }
   }
 }
 
