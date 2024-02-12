@@ -1,11 +1,12 @@
 <script setup lang="ts">
 
-
-const matchAlliances: any = {red: [], blue: []}
-
+const redMatchAlliances: any =  []
+const blueMatchAlliances: any = []
 const urlNoNum: string = "https://www.thebluealliance.com/api/v3/";
+let inputMatch: any;
+let assignment = new Map()
 async function findAlliances(eventKey: any, matchKey: any){
-  let urlFinal: string = urlNoNum + "team/frc6502/event/" + eventKey + "/matches";
+  let urlFinal: string = urlNoNum + "event/" + eventKey + "/matches";
   let grab: any;
   grab = await fetch(urlFinal, {
     method: 'GET',
@@ -14,15 +15,12 @@ async function findAlliances(eventKey: any, matchKey: any){
     }
   });
   grab = await grab.json();
-  console.log(grab[matchKey].alliances.blue.team_keys[1])
   for (let i in grab[matchKey].alliances.red.team_keys){
-    console.log(i)
-    matchAlliances.red.push(grab[matchKey].alliances.red.team_keys[i])
+    redMatchAlliances.push(grab[matchKey].alliances.red.team_keys[i])
   }
   for (let i in grab[matchKey].alliances.blue.team_keys){
-    matchAlliances.blue.push(grab[matchKey].alliances.blue.team_keys[i])
+    blueMatchAlliances.push(grab[matchKey].alliances.blue.team_keys[i])
   }
-  console.dir(matchAlliances)
 }
 
 
@@ -40,21 +38,34 @@ async function dataPull(entry: any): Promise<any>{
   });
   grab = await grab.json();
   let teamList: any = []
-  // TODO: @26spitzer maybe do some mapping? also you can use .team_number instead of .key
   for (let i in grab){
     teamList.push(grab[i].team_number)
   }
   console.log(teamList.toString())
   return;
 }
-let inputMatch: any;
+
+async function openAssign(eventKey2: any, matchKey2: any){
+  await findAlliances(eventKey2, matchKey2)
+  assignment.set(redMatchAlliances[0], null)
+  assignment.set(redMatchAlliances[1], null)
+  assignment.set(redMatchAlliances[2], null)
+  assignment.set(blueMatchAlliances[0], null)
+  assignment.set(blueMatchAlliances[1], null)
+  assignment.set(blueMatchAlliances[2], null)
+  console.dir(assignment)
+
+}
+
 </script>
 
 <template>
   <OuterComponents>
-    <u-button @click="dataPull(inputMatch)">Search Teams</u-button>
-    <u-button @click="findAlliances(inputMatch, 1)">Setup Screen</u-button>
-    <u-input v-model="inputMatch" placeholder="Match Number"></u-input>
+    <UButton @click="dataPull(inputMatch)">Search Teams</UButton>
+    <UButton @click="findAlliances(inputMatch, 1)">Setup Screen</UButton>
+    <UButton @click="openAssign(inputMatch, 1)"></UButton>
+    <UInput v-model="inputMatch" placeholder="Match Number"></UInput>
+    <UInput v-for="i in assignment" v-model="assignment[i]" placeholder="Scouter for {{assignment[i]}}"></UInput>
   </OuterComponents>
 </template>
 
