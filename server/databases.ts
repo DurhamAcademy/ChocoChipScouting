@@ -1,4 +1,4 @@
-import {couchDBBaseURL} from "../utils/URIs";
+import {couchDBBaseURL} from "~/utils/URIs";
 import PouchDB from "pouchdb"
 
 class LocalRemoteServerSideDatabaseSyncHolder<Content extends {} = {}> {
@@ -26,7 +26,7 @@ class LocalRemoteServerSideDatabaseSyncHolder<Content extends {} = {}> {
     }
 
     static databases = {
-        "attachments": new this<{name: string, team: number|undefined, author: string}>("attachment-db", false),
+        "attachments": new this<{ event: any; name: string; teamNumber: number; fileSize: string; author : string | undefined; tags: string[] ; extraNotes: string; dateUploaded: string }>("attachment-db", false),
         "scoutingData": new this<{points: number}>("scouting-data", false),
         "basic": new this<{}>("basic", false),
         "users": new this<{}>("_users", false)

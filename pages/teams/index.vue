@@ -2,6 +2,8 @@
 import databases from "~/utils/databases";
 import Sentiment from 'sentiment';
 
+let openAttachments = ref(false)
+
 let sentiment = new Sentiment()
 let options = {
   extras: {
@@ -36,6 +38,8 @@ for(let i  = 0; i < match.length; i++){
 
 let teamsData : Array<any> = []
 
+//key => team number
+//value => array of match data
 for(let [key, value] of teamOrgMatches){
   let arr = {team: key, amp:getAverageAmpCycles(value).toFixed(2), speaker:getAverageSpeakerCycles(value).toFixed(2), mobility:averageAuto(value).toFixed(2), sentiment: analyzeNotes(value).toFixed(2), endgame:compileEndgames(value)}
   teamsData.push(arr)
@@ -94,6 +98,11 @@ function compileEndgames(teamArrays: Array<any>){
   return [endgameOptionsArr, endgameDataArr]
 }
 
+async function view(teamNum: number) {
+  window.open(window.location.href+"/"+teamNum)
+  openAttachments.value = true
+}
+
 const columns = [{
   key: 'team',
   label: 'Team #'
@@ -113,6 +122,9 @@ const columns = [{
   key: 'sentiment',
   label: 'Sentiment Analysis'
 }, {
+  key: 'attachments',
+  label: 'Attachments'
+}, {
   key: 'dropdown'
 }]
 
@@ -121,35 +133,38 @@ const columns = [{
 
 <template>
 <OuterComponents>
-  <UTable :rows="teamsData" :columns="columns">
-
-    <template #actions-data="{ row }">
-      <UPopover>
-        <UButton class="m-1" color="blue" label="Chart" variant="soft" />
-        <template #panel>
-          <UCard>
-            <div class="max-w-xs min-w-[15rem] overflow-y-auto" style="max-height: 20rem; min-height: 10rem">
-              <PieChart :labels="row.endgame[0]" :data="row.endgame[1]"/>
-            </div>
-          </UCard>
+    <UTable :rows="teamsData" :columns="columns">
+        <template #actions-data="{ row }">
+          <UPopover>
+            <UButton class="m-1" color="blue" label="Chart" variant="soft" />
+            <template #panel>
+              <UCard>
+                <div class="max-w-xs min-w-[15rem] overflow-y-auto" style="max-height: 20rem; min-height: 10rem">
+                  <PieChart :labels="row.endgame[0]" :data="row.endgame[1]"/>
+                </div>
+              </UCard>
+            </template>
+          </UPopover>
         </template>
-      </UPopover>
-    </template>
 
-    <template #dropdown-data="{ row }">
-      <UPopover>
-        <UButton color="gray" variant="ghost" icon="i-heroicons-ellipsis-horizontal-20-solid" />
-        <template #panel>
-          <UCard>
-            <div class="max-w-full min-w-max overflow-y-auto" style="max-height: 20rem; min-height: 10rem">
-
-            </div>
-          </UCard>
+        <template #attachments-data="{ row }">
+          <UButton @click="view(row.team)" :label="'View Attachments For ' + row.team" variant="soft" color="yellow"/>
         </template>
-      </UPopover>
-    </template>
 
-  </UTable>
+        <template #dropdown-data="{ row }">
+          <UPopover>
+            <UButton color="gray" variant="ghost" icon="i-heroicons-ellipsis-horizontal-20-solid" />
+            <template #panel>
+              <UCard>
+                <div class="max-w-full min-w-max overflow-y-auto" style="max-height: 20rem; min-height: 10rem">
+
+                </div>
+              </UCard>
+            </template>
+          </UPopover>
+        </template>
+
+      </UTable>
 </OuterComponents>
 </template>
 

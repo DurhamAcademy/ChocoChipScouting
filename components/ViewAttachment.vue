@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {addHook} from "pirates";
 
-const props = defineProps({value: Boolean, name: String, author: String, team: Number, attachments: Array<String>})
+const props = defineProps({value: Boolean, name: String, author: String, teamNumber: Number, attachments: Array<String>})
 </script>
 
 <template>
@@ -10,7 +10,7 @@ const props = defineProps({value: Boolean, name: String, author: String, team: N
         <div class="flex justify-between">
           <div>
             <h1>{{(name.length==0)?'[No Name]':'Name: '+name}}</h1>
-            <h2>{{(team==0)?'[No Team #]':'Team #: '+team}}</h2>
+            <h2>{{(teamNumber==0)?'[No Team #]':'Team #: '+teamNumber}}</h2>
           </div>
 
           <UPopover mode="hover">
@@ -27,7 +27,7 @@ const props = defineProps({value: Boolean, name: String, author: String, team: N
         </div>
       </template>
       <div class="flex flex-col">
-        <img v-for="img of attachments" :src="img">
+        <NuxtImg v-for="img of attachments" :src="img"/>
       </div>
     </UCard>
 </template>
