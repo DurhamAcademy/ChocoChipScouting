@@ -1,6 +1,6 @@
 import {eventOptions} from "~/utils/eventOptions";
 
-export const useSelectedEvent = () => {
+export function useSelectedEvent(){
   let selectedEvent = useState('selectedEvent', () => {
     let getLocalStorageEvent =  window.localStorage.getItem('selectedEvent')
     return getLocalStorageEvent != null ? getLocalStorageEvent: eventOptions[0]
