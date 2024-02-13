@@ -180,7 +180,7 @@ const {isOverDropZone} = useDropZone(dropZoneRef, onDrop) // variable that check
             <UPopover mode="hover" :popper="{ placement: 'left-end'}">
               <UButton color="gray" variant="ghost" icon="i-heroicons-eye"/>
               <template #panel=" { close }">
-                <img :src="row.photoURL" class="h-48 w-100" alt="Selected Image" @mouseenter="close"/>
+                <NuxtImg :src="row.photoURL" class="h-48 w-100" alt="Selected Image" @mouseenter="close"/>
               </template>
             </UPopover>
             <UButton color="red" variant="ghost" icon="i-heroicons-trash" @click="rows.splice(index, 1)"/>

@@ -22,6 +22,7 @@ export default defineNuxtConfig({
   },
   modules: [
       '@nuxt/ui',
+      '@nuxt/image',
       (_options, nuxt) => {
         nuxt.hooks.hook('vite:extendConfig', (config) => {
           // @ts-expect-error

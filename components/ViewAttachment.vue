@@ -27,7 +27,7 @@ const props = defineProps({value: Boolean, name: String, author: String, team: N
         </div>
       </template>
       <div class="flex flex-col">
-        <img v-for="img of attachments" :src="img">
+        <NuxtImg v-for="img of attachments" :src="img"/>
       </div>
     </UCard>
 </template>
