@@ -116,7 +116,6 @@ const columns = [{
   key: 'dropdown'
 }]
 
-
 </script>
 
 <template>

@@ -1,4 +1,12 @@
 <script setup lang="ts">
+import databases from "~/utils/databases"
+
+/*
+Steps:
+1. get data from database
+  i.
+2. display data
+ */
 
 const redMatchAlliances: any =  ref([])
 const blueMatchAlliances: any = ref([])
@@ -29,6 +37,46 @@ async function findAlliances(eventKey: any, matchKey: any){
   }
 }
 
+// TODO: @26ru do some manipulation do get matches array to work
+let matches = [
+  {
+    red1: {team: 100, assignee: ""},
+    red2: {team: 1000, assignee: ""},
+    red3: {team: 1001, assignee: ""},
+    blue1: {team: 200, assignee: ""},
+    blue2: {team: 2000, assignee: ""},
+    blue3: {team: 2002, assignee: ""}
+  }, {
+    red1: {team: 300, assignee: ""},
+    red2: {team: 3000, assignee: ""},
+    red3: {team: 3003, assignee: ""},
+    blue1: {team: 400, assignee: ""},
+    blue2: {team: 4000, assignee: ""},
+    blue3: {team: 4004, assignee: ""}
+  }
+]
+
+let columns = [
+  {
+    key: 'red1',
+    label: 'Red 1'
+  }, {
+    key: 'red2',
+    label: 'Red 2'
+  }, {
+    key: 'red3',
+    label: 'Red 3'
+  }, {
+    key: 'blue1',
+    label: 'Blue 1'
+  }, {
+    key: 'blue2',
+    label: 'Blue 2'
+  }, {
+    key: 'blue3',
+    label: 'Blue 3'
+  }
+]
 
 /**
  * lists teams in event from TBA API
@@ -85,6 +133,18 @@ async function openAssign(eventKey2: any, matchKey2: any){
         <UButton @click="assignment.set(assignment[item], 'hello')">Assign Yourself</UButton>
       </div>
     </li>
+    <u-button @click="dataPull(inputMatch)">hello world</u-button>
+    <u-input v-model="inputMatch" placeholder="Match Number"></u-input>
+    <UTable :rows="matches" :columns="columns">
+      <template #red1-data="{ row }">
+        <div class="flex">
+          {{ row.red1.team }}
+          <div style="padding-left: 100px">
+            <UTextarea :rows="1" ></UTextarea>
+          </div>
+        </div>
+      </template>
+    </UTable>
   </OuterComponents>
 </template>
 
