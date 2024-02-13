@@ -62,7 +62,9 @@ if(props.extraOptions) {
 function addFilter(filterOption: string, index: number, query: string){
   let customFilter = { id: props.options.length + 1, content: filterOption + ': ' +  query, custom: true}
   props.options.push(customFilter)
-  value.value.push(customFilter)
+  let currentVal = value.value
+  currentVal.push(customFilter)
+  value.value = currentVal
 }
 
 </script>

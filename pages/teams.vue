@@ -23,6 +23,8 @@ const currentEventFilter = { id: 2, content: 'event: ' + currentEvent.value, cus
 const selectedFilters = ref<Array<{ id: number, content: string, custom: boolean}>>([currentEventFilter])
 watch(selectedFilters, () => {
   tableSetup()
+}, {
+  deep: true
 })
 let customOptions = ['Has Climb', 'Has Auto']
 for(let event of events){
@@ -82,7 +84,6 @@ function tableSetup() {
       for(let match of value){
         if(allowedEvents.includes(match.event)){
           data.push(match)
-          console.log(data)
         }
       }
     }
@@ -221,6 +222,8 @@ const columns = [{
         <UFormGroup class="w-full" block>
           <FilterMultiSelect v-model="selectedFilters" :options="filterOptions" :extra-options="extraFilterOptions"></FilterMultiSelect>
         </UFormGroup>
+      <UButton @click="console.log(selectedFilters)">
+      </UButton>
     </template>
       <UTable :rows="teamsData" :columns="columns" class="overflow-auto">
 
