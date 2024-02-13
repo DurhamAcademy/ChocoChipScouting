@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import databases from "~/utils/databases";
 import Sentiment from 'sentiment';
+import {eventOptions} from "~/utils/eventOptions";
 
 let sentiment = new Sentiment()
 let options = {
@@ -14,6 +15,32 @@ let options = {
   }
 }
 
+const events = eventOptions
+const currentEvent = localStorage.getItem('currentEvent') || eventOptions[0]
+
+let customOptions = ['Has Climb', 'Has Auto']
+for(let event of events){
+  customOptions.push('event: ' + event)
+}
+let currentEventID = customOptions.indexOf('event: ' + currentEvent)
+const filterOptions = ref(
+    Array(customOptions.length)
+        .fill({ id: 0, content: "", custom: false})
+        .map(
+            (_, index) => ({ id: index, content: customOptions[index], custom: false})
+        )
+)
+const currentEventFilter = { id: currentEventID, content: 'event: ' + currentEvent, custom: false }
+const selectedFilters = ref<Array<{ id: number, content: string, custom: boolean}>>([currentEventFilter])
+watch(selectedFilters, () => {
+  tableSetup()
+}, {
+  deep: true
+})
+
+
+const extraFilterOptions = ["team", "match"]
+
 const { scoutingData } = databases.locals
 let db = scoutingData
 
@@ -26,26 +53,88 @@ let teamOrgMatches = new Map<number, Array<any>>()
 
 for(let i  = 0; i < match.length; i++){
   let currentMatch = (await match[i])
-  if(currentMatch.event == window.localStorage.getItem("event") || window.localStorage.getItem("event") == null) {
-    if (!teamOrgMatches.has(currentMatch.teamNumber))
-      teamOrgMatches.set(currentMatch.teamNumber, [currentMatch])
-    else
-      teamOrgMatches.get(currentMatch.teamNumber)!.push(currentMatch)
-  }
+  if (!teamOrgMatches.has(currentMatch.teamNumber))
+    teamOrgMatches.set(currentMatch.teamNumber, [currentMatch])
+  else
+    teamOrgMatches.get(currentMatch.teamNumber)!.push(currentMatch)
 }
 
-let teamsData : Array<any> = []
+let teamsData= ref<Array<any>>([])
 
-for(let [key, value] of teamOrgMatches){
-  let arr = {team: key, amp:getAverageAmpCycles(value).toFixed(2), speaker:getAverageSpeakerCycles(value).toFixed(2), mobility:averageAuto(value).toFixed(2), sentiment: analyzeNotes(value).toFixed(2), endgame:compileEndgames(value)}
-  teamsData.push(arr)
+function tableSetup() {
+  teamsData.value.length = 0
+  tableLoop: for (let [key, value] of teamOrgMatches) {
+    /*
+    Data is an array of all matches, associated with a team (key), for the event filters selected
+     */
+    let data: any = []
+    let allowedEvents = []
+    let allowedTeams = []
+    for(let filter of selectedFilters.value){
+      if(filter.content.startsWith("event:")){
+        allowedEvents.push(filter.content.split(":")[1].trim())
+      }
+      if(filter.content.startsWith("team:")){
+        allowedTeams.push(filter.content.split(":")[1].trim())
+      }
+    }
+    if(allowedTeams.includes(key.toString()) || allowedTeams.length == 0){
+      for(let match of value){
+        if(allowedEvents.includes(match.event)){
+          data.push(match)
+        }
+      }
+    }
+    /*
+    Goes through all remaining filters and applies their effects
+     */
+    for (let filter of selectedFilters.value) {
+
+      if(filter.id == 0){
+        let hasClimb = false
+        for(let match of data){
+          if(match.endgame.endgame.includes("Onstage") || match.endgame.endgame.includes("Attempted Onstage")){
+            hasClimb = true
+            break
+          }
+        }
+        if(!hasClimb){
+          continue tableLoop
+        }
+      }
+
+      if(filter.id == 1){
+        let hasAuto = false
+        for(let match of data){
+          if(match.auto.amp > 0 || match.auto.speaker > 0 || match.auto.mobility == true){
+            hasAuto = true
+            break
+          }
+        }
+        if(!hasAuto){
+          continue tableLoop
+        }
+      }
+
+    }
+    if(data.length > 0) {
+      let arr = {
+        team: key,
+        amp: getAverageAmpCycles(data).toFixed(2),
+        speaker: getAverageSpeakerCycles(data).toFixed(2),
+        mobility: averageAuto(data).toFixed(2),
+        sentiment: analyzeNotes(data).toFixed(2),
+        endgame: compileEndgames(data)
+      }
+      teamsData.value.push(arr)
+    }
+  }
 }
 
 function analyzeNotes(teamArrays: Array<any>){
   let analysisTotal = 0
   for(let match of teamArrays){
     analysisTotal += sentiment.analyze(match.notes.notes, options).score
-    console.dir(sentiment.analyze(match.notes.notes, options))
   }
   return analysisTotal/teamArrays.length
 }
@@ -69,7 +158,7 @@ function getAverageAmpCycles(teamArrays: Array<any>){
 function averageAuto(teamArrays: Array<any>){
   let successfulMobilityCount = 0
   for(let match of teamArrays){
-    successfulMobilityCount += match.auto.leave ? 1 : 0
+    successfulMobilityCount += match.auto.mobility ? 1 : 0
   }
   return successfulMobilityCount/teamArrays.length
 }
@@ -96,60 +185,71 @@ function compileEndgames(teamArrays: Array<any>){
 
 const columns = [{
   key: 'team',
-  label: 'Team #'
+  label: 'Team #',
 }, {
   key: 'amp',
-  label: 'Average Amp Cycles'
+  label: 'Average Amp Cycles',
+  sortable: true
 }, {
   key: 'speaker',
-  label: 'Average Speaker Cycles'
+  label: 'Average Speaker Cycles',
+  sortable: true
 }, {
   key: 'mobility',
-  label: 'Mobility Success Rate'
+  label: 'Mobility Success Rate',
+  sortable: true
+}, {
+  key: 'sentiment',
+  label: 'Sentiment Analysis',
+  sortable: true
 }, {
   key: 'actions',
   label: 'Endgame'
-}, {
-  key: 'sentiment',
-  label: 'Sentiment Analysis'
-}, {
+},{
   key: 'dropdown'
 }]
 
 
+tableSetup()
 </script>
 
 <template>
 <OuterComponents>
-  <UTable :rows="teamsData" :columns="columns">
-
-    <template #actions-data="{ row }">
-      <UPopover>
-        <UButton class="m-1" color="blue" label="Chart" variant="soft" />
-        <template #panel>
-          <UCard>
-            <div class="max-w-xs min-w-[15rem] overflow-y-auto" style="max-height: 20rem; min-height: 10rem">
-              <PieChart :labels="row.endgame[0]" :data="row.endgame[1]"/>
-            </div>
-          </UCard>
-        </template>
-      </UPopover>
+  <UCard class="max-h-dvh overflow-auto">
+    <template #header>
+        <UFormGroup class="w-full" block>
+          <FilterMultiSelect v-model="selectedFilters" :options="filterOptions" :extra-options="extraFilterOptions"></FilterMultiSelect>
+        </UFormGroup>
     </template>
+      <UTable :rows="teamsData" :columns="columns" class="overflow-auto">
 
-    <template #dropdown-data="{ row }">
-      <UPopover>
-        <UButton color="gray" variant="ghost" icon="i-heroicons-ellipsis-horizontal-20-solid" />
-        <template #panel>
-          <UCard>
-            <div class="max-w-full min-w-max overflow-y-auto" style="max-height: 20rem; min-height: 10rem">
-
-            </div>
-          </UCard>
+        <template #actions-data="{ row }">
+          <UPopover>
+            <UButton class="m-1" color="blue" label="Chart" variant="soft" />
+            <template #panel>
+              <UCard>
+                <div class="max-w-xs min-w-[15rem] overflow-y-auto" style="max-height: 20rem; min-height: 10rem">
+                  <PieChart :labels="row.endgame[0]" :data="row.endgame[1]"/>
+                </div>
+              </UCard>
+            </template>
+          </UPopover>
         </template>
-      </UPopover>
-    </template>
 
-  </UTable>
+        <template #dropdown-data="{ row }">
+          <UPopover>
+            <UButton color="gray" variant="ghost" icon="i-heroicons-ellipsis-horizontal-20-solid" />
+            <template #panel>
+              <UCard>
+                <div class="max-w-full min-w-max overflow-y-auto" style="max-height: 20rem; min-height: 10rem">
+
+                </div>
+              </UCard>
+            </template>
+          </UPopover>
+        </template>
+      </UTable>
+  </UCard>
 </OuterComponents>
 </template>
 

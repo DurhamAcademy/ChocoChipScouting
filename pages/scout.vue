@@ -2,11 +2,12 @@
 import databases from "~/utils/databases"
 import IncrementalButton from '~/components/IncrementalButton.vue'
 import {URange} from "#components";
+import {eventOptions} from "~/utils/eventOptions";
 
 const {scoutingData} = databases.locals
 let db = scoutingData
 
-
+//An enum of tabs on the scout page
 enum GameTime {
   Autonomous = "Auto",
   Teleoperated = "Teleop",
@@ -14,10 +15,15 @@ enum GameTime {
   Notes = "Notes"
 }
 
+//The active tab used
 let gameTime = ref(GameTime.Autonomous)
 
+let selectedEvent = localStorage.getItem('currentEvent') || eventOptions[0]
 
+
+// Selectable options for the Multi-Select component
 const endgameOptions = ["None", "Parked", "Attempted Onstage", "Onstage", "Harmony"]
+const connectedOptions = [1, 2, 2, 3, 3]
 let endgameIndex = [1, 0, 0, 0, 0]
 
 
@@ -49,7 +55,7 @@ let data = ref({
   auto: {
     speakerNA: 0,
     amp: 0,
-    leave: false,
+    mobility: false,
   },
   teleop: {
     amp: 0,
@@ -88,7 +94,7 @@ function isValidNum() {
 }
 
 async function submit() {
-  data.value.event = window.localStorage.getItem("event") || ""
+  data.value.event = selectedEvent.value || ""
   let newDoc = db.post(data.value)
   await navigateTo("/matches")
 }
@@ -114,14 +120,8 @@ async function submit() {
         </div>
         <br>
         <UButtonGroup class="flex">
-          <UButton :label=GameTime.Autonomous block class="w-auto" enabled style="flex: 1"
-                   @click="gameTime= GameTime.Autonomous"/>
-          <UButton :label=GameTime.Teleoperated block class="w-auto" enabled style="flex: 1;"
-                   @click="gameTime= GameTime.Teleoperated"/>
-          <UButton :label=GameTime.Endgame block class="w-auto" enabled style="flex: 1;"
-                   @click="gameTime= GameTime.Endgame"/>
-          <UButton :label=GameTime.Notes block class="w-auto" enabled style="flex: 1;"
-                   @click="gameTime= GameTime.Notes"/>
+          <UButton v-for="gamePeriod of GameTime"  :label=gamePeriod block class="w-auto" enabled style="flex: 1"
+                   @click="gameTime=gamePeriod"/>
         </UButtonGroup>
       </template>
       <div v-if="gameTime == GameTime.Autonomous">
@@ -136,7 +136,7 @@ async function submit() {
           </div>
           <div>
             <br>
-            <BooleanButton v-model="data.auto.leave" :default-value="'Mobility'" :other-value="'Mobility'"
+            <BooleanButton v-model="data.auto.mobility" :default-value="'Mobility'" :other-value="'Mobility'"
                            style="margin:5px"></BooleanButton>
           </div>
         </div>
@@ -179,7 +179,7 @@ async function submit() {
           <br>
             <MultiSelect :model-value="endgameIndex" :options="endgameOptions"
                      @update:model-value="value => {updateEndgameOptions(value)}"
-                     :connected-options="[1, 2, 2, 3, 3]"></MultiSelect>
+                     :connected-options="connectedOptions"></MultiSelect>
        </div>
       <div v-if="gameTime == GameTime.Notes">
         <p>Rate (1-5)</p>

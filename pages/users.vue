@@ -33,7 +33,7 @@
     resetRoles = false
     usersDB.getSession(function(err, response){
       if(response){
-        if(response.userCtx.roles?.includes("Admin") || response.userCtx.roles?.includes("_admin")){
+        if(response.userCtx.roles?.includes("_admin")){
           adminAccount.value = true
         }
       }
@@ -43,7 +43,7 @@
 
   async function createUser() {
     let sessionRoles = await usersDB.getSession()
-    if(! (sessionRoles.userCtx.roles && (sessionRoles.userCtx.roles.includes("Admin") || sessionRoles.userCtx.roles.includes("_admin"))) ) return
+    if(! (sessionRoles.userCtx.roles && (sessionRoles.userCtx.roles.includes("_admin"))) ) return
     usersDB.signUp(username.value, "temp",
         {
           metadata: {
@@ -84,14 +84,14 @@
 
   async function editRoles(username: string, newRoles: Array<string>) {
     let sessionRoles = await usersDB.getSession()
-    if(! (sessionRoles.userCtx.roles && (sessionRoles.userCtx.roles.includes("Admin") || sessionRoles.userCtx.roles.includes("_admin"))) ) return
+    if(! (sessionRoles.userCtx.roles && (sessionRoles.userCtx.roles.includes("_admin"))) ) return
     await usersDB.putUser(username, {roles: newRoles})
   }
 
 
   async function deleteUser(username: string) {
     let sessionRoles = await usersDB.getSession()
-    if(! (sessionRoles.userCtx.roles && (sessionRoles.userCtx.roles.includes("Admin") || sessionRoles.userCtx.roles.includes("_admin"))) ) return
+    if(! (sessionRoles.userCtx.roles && (sessionRoles.userCtx.roles.includes("_admin"))) ) return
     usersDB.deleteUser(username, function (err, result) {
       if (err) {
         console.log(err.name)

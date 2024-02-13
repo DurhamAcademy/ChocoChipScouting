@@ -2,20 +2,21 @@
 import "../utils/authorization/Authorizer";
 import {couchDBBaseURL} from "~/utils/URIs"
 import {loginStateKey} from "~/utils/keys";
+import {eventOptions} from "~/utils/eventOptions";
 
 const usersDB = new PouchDB(`${couchDBBaseURL}/_users`, {skip_setup: true});
   let username = ref("");
   let password = ref("");
   let error = ref(false)
 
+const events = eventOptions
+const selectedEvent = window.localStorage.getItem("currentEvent") || eventOptions[0]
 
 const {updateUsernameState}: { updateUsernameState: () => void } = inject(loginStateKey)!
 
 async function login(username: string, password: string) {
     try
     {
-      window.localStorage.setItem("event", selectedEvent.value)
-
       usersDB.logIn(username, password, async function (err, response) {
         if (response) {
           updateUsernameState()
@@ -68,11 +69,6 @@ async function login(username: string, password: string) {
     })
   }
 
-
-//also change in navbar
-const events = ['2024test', '2024trial']
-
-const selectedEvent = ref(window.localStorage.getItem('event') != undefined ? window.localStorage.getItem('event') : events[0])
 </script>
 
 <template>
@@ -101,7 +97,7 @@ const selectedEvent = ref(window.localStorage.getItem('event') != undefined ? wi
                   type="password"/>
         </UFormGroup>
         <UFormGroup class="inputDiv" label="Event" name="event" required>
-          <USelectMenu v-model="selectedEvent" :options="events" />
+          <USelectMenu v-model="selectedEvent" :options="events" @update:v-model="value => {localStorage.setItem('currentEvent', value)}"/>
         </UFormGroup>
         <UFormGroup class="inputDiv" style="padding-top: 10px">
           <UButton
