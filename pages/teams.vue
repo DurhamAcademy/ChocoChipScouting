@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import databases from "~/utils/databases";
 import Sentiment from 'sentiment';
-import {useSelectedEvent} from "~/composables/useSelectedEvent";
 import {eventOptions} from "~/utils/eventOptions";
 
 let sentiment = new Sentiment()
@@ -17,9 +16,9 @@ let options = {
 }
 
 const events = eventOptions
-const currentEvent = useSelectedEvent()
+const currentEvent = eventOptions[0]
 
-const currentEventFilter = { id: 2, content: 'event: ' + currentEvent.value, custom: false }
+const currentEventFilter = { id: 2, content: 'event: ' + currentEvent, custom: false }
 const selectedFilters = ref<Array<{ id: number, content: string, custom: boolean}>>([currentEventFilter])
 watch(selectedFilters, () => {
   tableSetup()
