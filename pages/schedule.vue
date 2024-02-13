@@ -1,10 +1,10 @@
 <script setup lang="ts">
 
-const redMatchAlliances: any =  []
-const blueMatchAlliances: any = []
+const redMatchAlliances: any =  ref([])
+const blueMatchAlliances: any = ref([])
 const urlNoNum: string = "https://www.thebluealliance.com/api/v3/";
 let inputMatch: any;
-let assignment = new Map()
+let assignment = ref(new Map())
 async function findAlliances(eventKey: any, matchKey: any){
   let urlFinal: string = urlNoNum + "event/" + eventKey + "/matches";
   let grab: any;
@@ -16,10 +16,10 @@ async function findAlliances(eventKey: any, matchKey: any){
   });
   grab = await grab.json();
   for (let i in grab[matchKey].alliances.red.team_keys){
-    redMatchAlliances.push(grab[matchKey].alliances.red.team_keys[i])
+    redMatchAlliances.value.push(grab[matchKey].alliances.red.team_keys[i])
   }
   for (let i in grab[matchKey].alliances.blue.team_keys){
-    blueMatchAlliances.push(grab[matchKey].alliances.blue.team_keys[i])
+    blueMatchAlliances.value.push(grab[matchKey].alliances.blue.team_keys[i])
   }
 }
 
@@ -47,14 +47,13 @@ async function dataPull(entry: any): Promise<any>{
 
 async function openAssign(eventKey2: any, matchKey2: any){
   await findAlliances(eventKey2, matchKey2)
-  assignment.set(redMatchAlliances[0], null)
-  assignment.set(redMatchAlliances[1], null)
-  assignment.set(redMatchAlliances[2], null)
-  assignment.set(blueMatchAlliances[0], null)
-  assignment.set(blueMatchAlliances[1], null)
-  assignment.set(blueMatchAlliances[2], null)
-  console.dir(assignment)
-
+  assignment.value.set(redMatchAlliances.value[0], null)
+  assignment.value.set(redMatchAlliances.value[1], null)
+  assignment.value.set(redMatchAlliances.value[2], null)
+  assignment.value.set(blueMatchAlliances.value[0], null)
+  assignment.value.set(blueMatchAlliances.value[1], null)
+  assignment.value.set(blueMatchAlliances.value[2], null)
+  console.dir(assignment.value)
 }
 
 </script>
@@ -63,9 +62,15 @@ async function openAssign(eventKey2: any, matchKey2: any){
   <OuterComponents>
     <UButton @click="dataPull(inputMatch)">Search Teams</UButton>
     <UButton @click="findAlliances(inputMatch, 1)">Setup Screen</UButton>
-    <UButton @click="openAssign(inputMatch, 1)"></UButton>
+    <UButton @click="openAssign(inputMatch, 1)">Create Assignments</UButton>
+    <UButton @click="console.dir(assignment)">Check Assignment</UButton>
     <UInput v-model="inputMatch" placeholder="Match Number"></UInput>
-    <UInput v-for="i in assignment" v-model="assignment[i]" placeholder="Scouter for {{assignment[i]}}"></UInput>
+    <li v-for="item in assignment">
+      <div>
+        <UInput v-model="assignment[item]" placeholder="{{assignment[item]}}"> </UInput>
+        <UButton @click="assignment.set(assignment[item], 'hello')">Assign Yourself</UButton>
+      </div>
+    </li>
   </OuterComponents>
 </template>
 
