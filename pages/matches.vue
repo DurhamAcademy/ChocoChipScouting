@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import databases from "~/utils/databases"
+import {eventOptions} from "~/utils/eventOptions";
 const { scoutingData } = databases.locals
 
 const sortBy = ref([{ key: 'teamNumber', order: 'asc' }])
 
-const currentEvent = eventOptions[0]
+const currentEvent = localStorage.getItem('currentEvent') || eventOptions[0]
 
 let db = scoutingData
 

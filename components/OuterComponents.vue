@@ -7,6 +7,7 @@ import type {VerticalNavigationLink} from "#ui/types";
 import type {Ref} from "@vue/reactivity";
 import type {UnwrapRef} from "vue";
 import {couchDBBaseURL} from "~/utils/URIs";
+import {eventOptions} from "~/utils/eventOptions";
 
 const usersDB = new PouchDB(`${couchDBBaseURL}/_users`, {skip_setup: true});
 const session = await usersDB.getSession()
@@ -15,14 +16,11 @@ let {width, height} = useWindowSize()
 
 let route = useRoute()
 
-const events = ['2024test', '2024trial']
-
-const selectedEvent = useSelectedEvent()
-
-function updateEvent(value: string) {
-  selectedEvent.value = value
-  window.localStorage.setItem('selectedEvent', value)
-}
+const events = eventOptions
+let selectedEvent = ref(localStorage.getItem('currentEvent') || eventOptions[0])
+watch(selectedEvent, (value) => {
+  window.localStorage.setItem('currentEvent', value)
+})
 
 const {usernameState, sessionState, logout}: {
   logout: () => Promise<void>;
@@ -67,8 +65,7 @@ if (session.userCtx.roles?.indexOf("_admin") != -1) {
                       </div>
                     </template>
                     <UFormGroup class="inputDiv" label="Event" name="event">
-                      <USelectMenu v-model="selectedEvent" :options="events"
-                                   @update:model-value="value => {updateEvent(value)}"/>
+                      <USelectMenu v-model="selectedEvent" :options="events"/>
                     </UFormGroup>
                     <template #footer>
                       <UButton block label="Logout" square @click="logout"/>
