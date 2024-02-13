@@ -1,11 +1,10 @@
 <script setup lang="ts">
 import databases from "~/utils/databases"
-import {useSelectedEvent} from "~/composables/useSelectedEvent";
 const { scoutingData } = databases.locals
 
 const sortBy = ref([{ key: 'teamNumber', order: 'asc' }])
 
-const currentEvent = useSelectedEvent()
+const currentEvent = eventOptions[0]
 
 let db = scoutingData
 

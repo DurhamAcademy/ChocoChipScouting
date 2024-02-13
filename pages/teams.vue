@@ -16,9 +16,9 @@ let options = {
 }
 
 const events = eventOptions
-const currentEvent = useSelectedEvent()
+const currentEvent = eventOptions[0]
 
-const currentEventFilter = { id: 2, content: 'event: ' + currentEvent.value, custom: false }
+const currentEventFilter = { id: 2, content: 'event: ' + currentEvent, custom: false }
 const selectedFilters = ref<Array<{ id: number, content: string, custom: boolean}>>([currentEventFilter])
 watch(selectedFilters, () => {
   tableSetup()

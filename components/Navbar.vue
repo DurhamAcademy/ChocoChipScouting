@@ -2,8 +2,6 @@
 import LoginState from "~/utils/authorization/LoginState";
 import {loginStateKey} from "~/utils/keys";
 import SessionResponse = PouchDB.Authentication.SessionResponse;
-import {useSelectedEvent} from "~/composables/useSelectedEvent";
-
 const {usernameState, sessionState, logout}: {
   logout: () => Promise<void>;
   // noinspection TypeScriptUnresolvedReference
@@ -17,7 +15,7 @@ const {usernameState, sessionState, logout}: {
 
 const events = ['2024test', '2024trial']
 
-let selectedEvent = useSelectedEvent()
+let selectedEvent = eventOptions[0]
 
 let props = defineProps({
   scoutMode: {
