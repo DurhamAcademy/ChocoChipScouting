@@ -2,7 +2,7 @@
 import databases from "~/utils/databases";
 import Sentiment from 'sentiment';
 import {useSelectedEvent} from "~/composables/useSelectedEvent";
-import {getEventOptions} from "~/composables/getEventOptions";
+import {eventOptions} from "~/utils/eventOptions";
 
 let sentiment = new Sentiment()
 let options = {
@@ -16,7 +16,7 @@ let options = {
   }
 }
 
-const events = getEventOptions().value
+const events = eventOptions
 const currentEvent = useSelectedEvent()
 
 const currentEventFilter = { id: 2, content: 'event: ' + currentEvent.value, custom: false }

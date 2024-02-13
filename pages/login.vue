@@ -3,14 +3,14 @@ import "../utils/authorization/Authorizer";
 import {couchDBBaseURL} from "~/utils/URIs"
 import {loginStateKey} from "~/utils/keys";
 import {useSelectedEvent} from "~/composables/useSelectedEvent";
-import {getEventOptions} from "~/composables/getEventOptions";
+import {eventOptions} from "~/utils/eventOptions";
 
 const usersDB = new PouchDB(`${couchDBBaseURL}/_users`, {skip_setup: true});
   let username = ref("");
   let password = ref("");
   let error = ref(false)
 
-const events = getEventOptions().value
+const events = eventOptions
 const selectedEvent = useSelectedEvent()
 
 const {updateUsernameState}: { updateUsernameState: () => void } = inject(loginStateKey)!
@@ -98,7 +98,7 @@ async function login(username: string, password: string) {
                   type="password"/>
         </UFormGroup>
         <UFormGroup class="inputDiv" label="Event" name="event" required>
-          <USelectMenu v-model="selectedEvent" :options="events" @change="window.localStorage.setItem('selectedEvent', selectedEvent)"/>
+          <USelectMenu v-model="selectedEvent" :options="events"/>
         </UFormGroup>
         <UFormGroup class="inputDiv" style="padding-top: 10px">
           <UButton

@@ -7,7 +7,6 @@ import type {VerticalNavigationLink} from "#ui/types";
 import type {Ref} from "@vue/reactivity";
 import type {UnwrapRef} from "vue";
 import {couchDBBaseURL} from "~/utils/URIs";
-import {getEventOptions} from "~/composables/getEventOptions";
 
 const usersDB = new PouchDB(`${couchDBBaseURL}/_users`, {skip_setup: true});
 const session = await usersDB.getSession()
