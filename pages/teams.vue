@@ -26,7 +26,7 @@ watch(selectedFilters, () => {
 })
 let customOptions = ['Has Climb', 'Has Auto']
 for(let event of events){
-  customOptions.push(event)
+  customOptions.push('event: ' + event)
 }
 const filterOptions = ref(
     Array(customOptions.length)
