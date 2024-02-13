@@ -5,6 +5,12 @@ const blueMatchAlliances: any = ref([])
 const urlNoNum: string = "https://www.thebluealliance.com/api/v3/";
 let inputMatch: any;
 let assignment = ref(new Map())
+
+/**
+ * gets alliances in match from TBA API and creates an array for blue and another for red
+ * @param eventKey event key in format (year)(event code)
+ * @param matchKey match number, starts at 0 because of index
+ */
 async function findAlliances(eventKey: any, matchKey: any){
   let urlFinal: string = urlNoNum + "event/" + eventKey + "/matches";
   let grab: any;
@@ -24,7 +30,10 @@ async function findAlliances(eventKey: any, matchKey: any){
 }
 
 
-
+/**
+ * lists teams in event from TBA API
+ * @param entry event key in format (year)(event code)
+ */
 async function dataPull(entry: any): Promise<any>{
   let refNum: any = entry;
   let urlNoNum: string = "https://www.thebluealliance.com/api/v3/";
@@ -45,6 +54,11 @@ async function dataPull(entry: any): Promise<any>{
   return;
 }
 
+/**
+ * puts the teams into a map to have a scouter assigned (parameters same as findAlliances())
+ * @param eventKey2 event key in format (year)(event code)
+ * @param matchKey2 match number starting at 0 because of indexing
+ */
 async function openAssign(eventKey2: any, matchKey2: any){
   await findAlliances(eventKey2, matchKey2)
   assignment.value.set(redMatchAlliances.value[0], null)
