@@ -10,7 +10,7 @@ const usersDB = new PouchDB(`${couchDBBaseURL}/_users`, {skip_setup: true});
   let error = ref(false)
 
 const events = eventOptions
-const selectedEvent = eventOptions[0]
+const selectedEvent = window.localStorage.getItem("currentEvent") || eventOptions[0]
 
 const {updateUsernameState}: { updateUsernameState: () => void } = inject(loginStateKey)!
 
@@ -97,7 +97,7 @@ async function login(username: string, password: string) {
                   type="password"/>
         </UFormGroup>
         <UFormGroup class="inputDiv" label="Event" name="event" required>
-          <USelectMenu v-model="selectedEvent" :options="events"/>
+          <USelectMenu v-model="selectedEvent" :options="events" @update:v-model="value => {localStorage.setItem('currentEvent', value)}"/>
         </UFormGroup>
         <UFormGroup class="inputDiv" style="padding-top: 10px">
           <UButton

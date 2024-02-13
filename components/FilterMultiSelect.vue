@@ -49,7 +49,6 @@ const value = computed({
   }
 })
 
-
 let dropdownVariants = ref<Array<string>>()
 if(props.extraOptions) {
   dropdownVariants = ref(Array(props.extraOptions.length)

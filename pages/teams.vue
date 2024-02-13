@@ -16,19 +16,13 @@ let options = {
 }
 
 const events = eventOptions
-const currentEvent = eventOptions[0]
+const currentEvent = localStorage.getItem('currentEvent') || eventOptions[0]
 
-const currentEventFilter = { id: 2, content: 'event: ' + currentEvent, custom: false }
-const selectedFilters = ref<Array<{ id: number, content: string, custom: boolean}>>([currentEventFilter])
-watch(selectedFilters, () => {
-  tableSetup()
-}, {
-  deep: true
-})
 let customOptions = ['Has Climb', 'Has Auto']
 for(let event of events){
   customOptions.push('event: ' + event)
 }
+let currentEventID = customOptions.indexOf('event: ' + currentEvent)
 const filterOptions = ref(
     Array(customOptions.length)
         .fill({ id: 0, content: "", custom: false})
@@ -36,6 +30,13 @@ const filterOptions = ref(
             (_, index) => ({ id: index, content: customOptions[index], custom: false})
         )
 )
+const currentEventFilter = { id: currentEventID, content: 'event: ' + currentEvent, custom: false }
+const selectedFilters = ref<Array<{ id: number, content: string, custom: boolean}>>([currentEventFilter])
+watch(selectedFilters, () => {
+  tableSetup()
+}, {
+  deep: true
+})
 
 
 const extraFilterOptions = ["team", "match"]
@@ -59,8 +60,6 @@ for(let i  = 0; i < match.length; i++){
 }
 
 let teamsData= ref<Array<any>>([])
-
-tableSetup()
 
 function tableSetup() {
   teamsData.value.length = 0
@@ -211,7 +210,7 @@ const columns = [{
 }]
 
 
-
+tableSetup()
 </script>
 
 <template>
@@ -221,8 +220,6 @@ const columns = [{
         <UFormGroup class="w-full" block>
           <FilterMultiSelect v-model="selectedFilters" :options="filterOptions" :extra-options="extraFilterOptions"></FilterMultiSelect>
         </UFormGroup>
-      <UButton @click="console.log(selectedFilters)">
-      </UButton>
     </template>
       <UTable :rows="teamsData" :columns="columns" class="overflow-auto">
 

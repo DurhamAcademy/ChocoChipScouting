@@ -2,6 +2,7 @@
 import databases from "~/utils/databases"
 import IncrementalButton from '~/components/IncrementalButton.vue'
 import {URange} from "#components";
+import {eventOptions} from "~/utils/eventOptions";
 
 const {scoutingData} = databases.locals
 let db = scoutingData
@@ -17,7 +18,7 @@ enum GameTime {
 //The active tab used
 let gameTime = ref(GameTime.Autonomous)
 
-let selectedEvent = useSelectedEvent()
+let selectedEvent = localStorage.getItem('currentEvent') || eventOptions[0]
 
 
 // Selectable options for the Multi-Select component
