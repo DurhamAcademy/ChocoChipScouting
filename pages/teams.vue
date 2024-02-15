@@ -60,7 +60,6 @@ for(let i  = 0; i < match.length; i++){
     teamOrgMatches.get(team)!.push(currentMatch)
 }
 
-
 /*
 If there are two overlapping matches uses data from only one of them (very basic system needs improvement)
  */
@@ -80,26 +79,50 @@ for(let team of teamOrgMatches){
 
 let teamsData = ref<Array<any>>([])
 
-function tableSetup() {
+async function tableSetup() {
   teamsData.value.length = 0
+
+  /*
+  Creates two arrays that are filters applied on all data for team numbers and events (includes match number filter)
+   */
+  let allowedEvents = []
+  let allowedTeams = []
+  for (let filter of selectedFilters.value) {
+    if (filter.content.startsWith("event:")) {
+      allowedEvents.push(filter.content.split(":")[1].trim())
+    }
+    if (filter.content.startsWith("team:")) {
+      allowedTeams.push(filter.content.split(":")[1].trim())
+    }
+    if (filter.content.startsWith("match")) {
+      let tbaMatchData = await getEventMatches(currentEvent)
+      let userInput = parseInt(filter.content.split(':')[1].trim())
+      for(let match of tbaMatchData){
+        if(match.comp_level == "qm" && match.match_number == userInput){
+          for(let team of match.alliances.blue.team_keys){
+            let cleanedTeam = team.replace("frc", "")
+            if(!allowedTeams.includes(cleanedTeam)) {
+              allowedTeams.push(cleanedTeam)
+            }
+          }
+          for(let team of match.alliances.red.team_keys){
+            let cleanedTeam = team.replace("frc", "")
+            if(!allowedTeams.includes(cleanedTeam)) {
+              allowedTeams.push(cleanedTeam)
+            }
+          }
+        }
+      }
+    }
+  }
   tableLoop: for (let [key, value] of teamOrgMatches) {
     /*
     Data is an array of all matches, associated with a team (key), for the event filters selected
      */
     let data: any = []
-    let allowedEvents = []
-    let allowedTeams = []
-    for(let filter of selectedFilters.value){
-      if(filter.content.startsWith("event:")){
-        allowedEvents.push(filter.content.split(":")[1].trim())
-      }
-      if(filter.content.startsWith("team:")){
-        allowedTeams.push(filter.content.split(":")[1].trim())
-      }
-    }
-    if(allowedTeams.includes(key.toString()) || allowedTeams.length == 0){
-      for(let match of value){
-        if(allowedEvents.includes(match.event)){
+    if (allowedTeams.includes(key.toString()) || allowedTeams.length == 0) {
+      for (let match of value) {
+        if (allowedEvents.includes(match.event)) {
           data.push(match)
         }
       }
@@ -109,34 +132,33 @@ function tableSetup() {
      */
     for (let filter of selectedFilters.value) {
 
-      if(filter.id == 0){
+      if (filter.id == 0) {
         let hasClimb = false
-        for(let match of data){
-          if(match.endgame.endgame.includes("Onstage") || match.endgame.endgame.includes("Attempted Onstage")){
+        for (let match of data) {
+          if (match.endgame.endgame.includes("Onstage") || match.endgame.endgame.includes("Attempted Onstage")) {
             hasClimb = true
             break
           }
         }
-        if(!hasClimb){
+        if (!hasClimb) {
           continue tableLoop
         }
       }
 
-      if(filter.id == 1){
+      if (filter.id == 1) {
         let hasAuto = false
-        for(let match of data){
-          if(match.auto.amp > 0 || match.auto.speaker > 0 || match.auto.mobility == true){
+        for (let match of data) {
+          if (match.auto.amp > 0 || match.auto.speaker > 0 || match.auto.mobility == true) {
             hasAuto = true
             break
           }
         }
-        if(!hasAuto){
+        if (!hasAuto) {
           continue tableLoop
         }
       }
-
     }
-    if(data.length > 0) {
+    if (data.length > 0) {
       let arr = {
         team: key,
         amp: getAverageAmpCycles(data).toFixed(2),
