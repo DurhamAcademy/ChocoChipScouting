@@ -70,7 +70,7 @@ for(let team of teamOrgMatches){
     for (let i = 0; i < matches.length; i++) {
       let currMatch = matches[i].matchNumber
       if(matchNumbers.includes(currMatch)) {
-        teamOrgMatches.set(team[0], team[1].splice(i, 1))
+        teamOrgMatches.set(team[0], team[1].splice(team[1].indexOf(currMatch), 1))
       }
       else matchNumbers.push(currMatch)
     }
