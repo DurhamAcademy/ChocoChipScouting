@@ -106,8 +106,6 @@ function showCarousel() {
                 </template>
                 <template #footer>
                   <div class="font-sans text-xs opacity-35">
-                    <p>Name: {{attachmentsData[index].fileName}}</p>
-                    <p>Size: {{attachmentsData[index].fileSize}}</p>
                     <p>Event: {{attachmentsData[index].event}}</p>
                     <p>Author: {{attachmentsData[index].author}}</p>
                     <p>Date Uploaded: {{attachmentsData[index].dateUploaded}}</p>
