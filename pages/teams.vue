@@ -53,13 +53,32 @@ let teamOrgMatches = new Map<number, Array<any>>()
 
 for(let i  = 0; i < match.length; i++){
   let currentMatch = (await match[i])
-  if (!teamOrgMatches.has(currentMatch.teamNumber))
-    teamOrgMatches.set(currentMatch.teamNumber, [currentMatch])
+  let team = typeof currentMatch.teamNumber == "string" ? parseInt(currentMatch.teamNumber): currentMatch.teamNumber
+  if (!teamOrgMatches.has(team))
+    teamOrgMatches.set(team, [currentMatch])
   else
-    teamOrgMatches.get(currentMatch.teamNumber)!.push(currentMatch)
+    teamOrgMatches.get(team)!.push(currentMatch)
 }
 
-let teamsData= ref<Array<any>>([])
+
+/*
+If there are two overlapping matches uses data from only one of them (very basic system needs improvement)
+ */
+for(let team of teamOrgMatches){
+  let matches = teamOrgMatches.get(team[0])
+  let matchNumbers: number[] = []
+  if(matches) {
+    for (let i = 0; i < matches.length; i++) {
+      let currMatch = matches[i].matchNumber
+      if(matchNumbers.includes(currMatch)) {
+        teamOrgMatches.set(team[0], team[1].splice(i, 1))
+      }
+      else matchNumbers.push(currMatch)
+    }
+  }
+}
+
+let teamsData = ref<Array<any>>([])
 
 function tableSetup() {
   teamsData.value.length = 0
