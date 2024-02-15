@@ -21,13 +21,8 @@ export default defineNuxtConfig({
     transpile: ['vuetify'],
   },
   modules: [
+      '@nuxt/image',
       '@nuxt/ui',
-      (_options, nuxt) => {
-        nuxt.hooks.hook('vite:extendConfig', (config) => {
-          // @ts-expect-error
-          config.plugins.push(vuetify({autoImport: true}))
-        })
-      }
   ],
   buildModules: ['@nuxtjs/pwa'],
   pwa: {
