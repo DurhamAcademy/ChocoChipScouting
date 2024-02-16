@@ -19,7 +19,6 @@ const events = eventOptions.map((event) => event.replace(/[0-9]/g, ''))
 const currentEvent = localStorage.getItem('currentEvent') || eventOptions[0]
 const fetch = useFetch<Array<any>>("/api/eventMatches/" + currentEvent)
 
-let selectedMatchGraphs = ref(new Map())
 
 let customOptions = ['Has Climb', 'Has Auto']
 for(let event of events){
@@ -190,7 +189,7 @@ async function tableSetup() {
       }
     }
     if (data.length > 0) {
-      selectedMatchGraphs.value.set(key, data.length)
+      selectedMatchGraphs.value.set(key, [1, data.length])
       let arr = {
         team: key,
         amp: getAverageAmpCycles(data).toFixed(2),
@@ -322,7 +321,7 @@ tableSetup()
 
         <template #dropdown-data="{ row }">
           <UPopover>
-            <UButton color="gray" variant="ghost" icon="i-heroicons-ellipsis-horizontal-20-solid" />
+            <UButton color="gray" variant="ghost" icon="i-heroicons-ellipsis-horizontal-20-solid"/>
             <template #panel>
               <UCard>
                 <div class="max-w-full min-w-max overflow-y-auto" style="max-height: 20rem; min-height: 10rem">
@@ -331,7 +330,7 @@ tableSetup()
                       :active-button="{ variant: 'outline' }"
                       :inactive-button="{ color: 'gray' }"
                       :model-value="1"
-                      :total="selectedMatchGraphs.size"
+                      :total="100"
                   />
                 </div>
               </UCard>
