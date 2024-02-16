@@ -62,5 +62,8 @@ export default defineNuxtConfig({
       },
     },
   },
-  logLevel: "verbose"
+  logLevel: "verbose",
+  runtimeConfig:{
+    TBA_Key: process.env.TBA_KEY,
+  }
 })

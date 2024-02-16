@@ -17,6 +17,7 @@ let options = {
 
 const events = eventOptions
 const currentEvent = localStorage.getItem('currentEvent') || eventOptions[0]
+const fetch = useFetch<Array<any>>("/api/eventMatches/" + currentEvent)
 
 let customOptions = ['Has Climb', 'Has Auto']
 for(let event of events){
@@ -95,20 +96,23 @@ async function tableSetup() {
       allowedTeams.push(filter.content.split(":")[1].trim())
     }
     if (filter.content.startsWith("match")) {
-      let tbaMatchData = await getEventMatches(currentEvent)
-      let userInput = parseInt(filter.content.split(':')[1].trim())
-      for(let match of tbaMatchData){
-        if(match.comp_level == "qm" && match.match_number == userInput){
-          for(let team of match.alliances.blue.team_keys){
-            let cleanedTeam = team.replace("frc", "")
-            if(!allowedTeams.includes(cleanedTeam)) {
-              allowedTeams.push(cleanedTeam)
+      //TODO figure out async stuff
+      let tbaMatchData = fetch.data.value
+      if(tbaMatchData != null){
+        let userInput = parseInt(filter.content.split(':')[1].trim())
+        for(let match of tbaMatchData){
+          if(match.comp_level == "qm" && match.match_number == userInput){
+            for(let team of match.alliances.blue.team_keys){
+              let cleanedTeam = team.replace("frc", "")
+              if(!allowedTeams.includes(cleanedTeam)) {
+                allowedTeams.push(cleanedTeam)
+              }
             }
-          }
-          for(let team of match.alliances.red.team_keys){
-            let cleanedTeam = team.replace("frc", "")
-            if(!allowedTeams.includes(cleanedTeam)) {
-              allowedTeams.push(cleanedTeam)
+            for(let team of match.alliances.red.team_keys){
+              let cleanedTeam = team.replace("frc", "")
+              if(!allowedTeams.includes(cleanedTeam)) {
+                allowedTeams.push(cleanedTeam)
+              }
             }
           }
         }
