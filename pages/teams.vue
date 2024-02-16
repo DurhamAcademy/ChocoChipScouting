@@ -19,6 +19,7 @@ const events = eventOptions.map((event) => event.replace(/[0-9]/g, ''))
 const currentEvent = localStorage.getItem('currentEvent') || eventOptions[0]
 const fetch = useFetch<Array<any>>("/api/eventMatches/" + currentEvent)
 
+
 let customOptions = ['Has Climb', 'Has Auto']
 for(let event of events){
   customOptions.push('event: ' + event)
@@ -55,28 +56,46 @@ let teamOrgMatches = new Map<number, Array<any>>()
 for(let i  = 0; i < match.length; i++){
   let currentMatch = (await match[i])
   let team = typeof currentMatch.teamNumber == "string" ? parseInt(currentMatch.teamNumber): currentMatch.teamNumber
-  if (!teamOrgMatches.has(team))
+  if (!teamOrgMatches.has(team)) {
     teamOrgMatches.set(team, [currentMatch])
-  else
-    teamOrgMatches.get(team)!.push(currentMatch)
+  }
+  else {
+    let arr : Array<any> = teamOrgMatches.get(team)!
+    arr.push(currentMatch)
+    teamOrgMatches.set(team, arr)
+  }
 }
+
+
 
 /*
 If there are two overlapping matches uses data from only one of them (very basic system needs improvement)
  */
-for(let team of teamOrgMatches){
-  let matches = teamOrgMatches.get(team[0])
+
+for(let data of teamOrgMatches){
+  let matches = teamOrgMatches.get(data[0])
   let matchNumbers: number[] = []
   if(matches) {
     for (let i = 0; i < matches.length; i++) {
       let currMatch = matches[i].matchNumber
       if(matchNumbers.includes(currMatch)) {
-        teamOrgMatches.set(team[0], team[1].splice(team[1].indexOf(currMatch), 1))
+        for(let i = 0; i < data[1].length; i++){
+          if(data[1][i].matchNumber == currMatch){
+            let arr = teamOrgMatches.get(data[0])
+            if(arr != undefined){
+              arr.splice(i, 1)
+              teamOrgMatches.set(data[0], arr)
+            }
+            break
+          }
+        }
       }
       else matchNumbers.push(currMatch)
     }
   }
 }
+
+console.log(teamOrgMatches)
 
 let teamsData = ref<Array<any>>([])
 
@@ -301,11 +320,11 @@ tableSetup()
 
         <template #dropdown-data="{ row }">
           <UPopover>
-            <UButton color="gray" variant="ghost" icon="i-heroicons-ellipsis-horizontal-20-solid" />
+            <UButton color="gray" variant="ghost" icon="i-heroicons-ellipsis-horizontal-20-solid"/>
             <template #panel>
               <UCard>
                 <div class="max-w-full min-w-max overflow-y-auto" style="max-height: 20rem; min-height: 10rem">
-
+                  <h1>Match 1</h1>
                 </div>
               </UCard>
             </template>
