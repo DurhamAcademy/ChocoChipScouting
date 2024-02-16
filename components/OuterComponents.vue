@@ -12,6 +12,17 @@ import {eventOptions} from "~/utils/eventOptions";
 const usersDB = new PouchDB(`${couchDBBaseURL}/_users`, {skip_setup: true});
 const session = await usersDB.getSession()
 
+const colorMode = useColorMode()
+const isDark = computed({
+  get () {
+    return colorMode.value === 'dark'
+  },
+  set () {
+    colorMode.preference = colorMode.value === 'dark' ? 'light' : 'dark'
+  }
+})
+
+
 let {width, height} = useWindowSize()
 
 let route = useRoute()
@@ -67,6 +78,16 @@ if (session.userCtx.roles?.indexOf("_admin") != -1) {
                     <UFormGroup class="inputDiv" label="Event" name="event">
                       <USelectMenu v-model="selectedEvent" :options="events"/>
                     </UFormGroup>
+                    <br>
+                    <ClientOnly>
+                      <UButton
+                          :icon="isDark ? 'i-heroicons-moon-20-solid' : 'i-heroicons-sun-20-solid'"
+                          color="gray"
+                          variant="ghost"
+                          aria-label="Theme"
+                          @click="isDark = !isDark"
+                      />
+                    </ClientOnly>
                     <template #footer>
                       <UButton block label="Logout" square @click="logout"/>
                     </template>

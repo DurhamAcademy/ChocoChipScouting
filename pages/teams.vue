@@ -15,14 +15,15 @@ let options = {
   }
 }
 
-const events = eventOptions
+const events = eventOptions.map((event) => event.replace(/[0-9]/g, ''))
 const currentEvent = localStorage.getItem('currentEvent') || eventOptions[0]
+const fetch = useFetch<Array<any>>("/api/eventMatches/" + currentEvent)
 
 let customOptions = ['Has Climb', 'Has Auto']
 for(let event of events){
   customOptions.push('event: ' + event)
 }
-let currentEventID = customOptions.indexOf('event: ' + currentEvent)
+let currentEventID = customOptions.indexOf('event: ' + currentEvent.replace(/[0-9]/g, ''))
 const filterOptions = ref(
     Array(customOptions.length)
         .fill({ id: 0, content: "", custom: false})
@@ -30,7 +31,7 @@ const filterOptions = ref(
             (_, index) => ({ id: index, content: customOptions[index], custom: false})
         )
 )
-const currentEventFilter = { id: currentEventID, content: 'event: ' + currentEvent, custom: false }
+const currentEventFilter = { id: currentEventID, content: 'event: ' + currentEvent.replace(/[0-9]/g, ''), custom: false }
 const selectedFilters = ref<Array<{ id: number, content: string, custom: boolean}>>([currentEventFilter])
 watch(selectedFilters, () => {
   tableSetup()
@@ -53,34 +54,86 @@ let teamOrgMatches = new Map<number, Array<any>>()
 
 for(let i  = 0; i < match.length; i++){
   let currentMatch = (await match[i])
-  if (!teamOrgMatches.has(currentMatch.teamNumber))
-    teamOrgMatches.set(currentMatch.teamNumber, [currentMatch])
+  let team = typeof currentMatch.teamNumber == "string" ? parseInt(currentMatch.teamNumber): currentMatch.teamNumber
+  if (!teamOrgMatches.has(team))
+    teamOrgMatches.set(team, [currentMatch])
   else
-    teamOrgMatches.get(currentMatch.teamNumber)!.push(currentMatch)
+    teamOrgMatches.get(team)!.push(currentMatch)
 }
 
-let teamsData= ref<Array<any>>([])
+/*
+If there are two overlapping matches uses data from only one of them (very basic system needs improvement)
+ */
+for(let team of teamOrgMatches){
+  let matches = teamOrgMatches.get(team[0])
+  let matchNumbers: number[] = []
+  if(matches) {
+    for (let i = 0; i < matches.length; i++) {
+      let currMatch = matches[i].matchNumber
+      if(matchNumbers.includes(currMatch)) {
+        teamOrgMatches.set(team[0], team[1].splice(team[1].indexOf(currMatch), 1))
+      }
+      else matchNumbers.push(currMatch)
+    }
+  }
+}
 
-function tableSetup() {
+let teamsData = ref<Array<any>>([])
+
+async function tableSetup() {
   teamsData.value.length = 0
+
+  /*
+  Creates two arrays that are filters applied on all data for team numbers and events (includes match number filter)
+   */
+  let allowedEvents = []
+  let allowedTeams = []
+  let blueAlliance = []
+  let redAlliance = []
+  for (let filter of selectedFilters.value) {
+    if (filter.content.startsWith("event:")) {
+      allowedEvents.push(filter.content.split(":")[1].trim())
+    }
+    if (filter.content.startsWith("team:")) {
+      allowedTeams.push(filter.content.split(":")[1].trim())
+    }
+    if (filter.content.startsWith("match")) {
+      //TODO figure out async stuff
+      let tbaMatchData = fetch.data.value
+      if(tbaMatchData != null){
+        let userInput = parseInt(filter.content.split(':')[1].trim())
+        for(let match of tbaMatchData){
+          if(match.comp_level == "qm" && match.match_number == userInput){
+            for(let team of match.alliances.blue.team_keys){
+              let cleanedTeam = team.replace("frc", "")
+              if(!allowedTeams.includes(cleanedTeam)) {
+                allowedTeams.push(cleanedTeam)
+                blueAlliance.push(cleanedTeam)
+              }
+            }
+            for(let team of match.alliances.red.team_keys){
+              let cleanedTeam = team.replace("frc", "")
+              if(!allowedTeams.includes(cleanedTeam)) {
+                allowedTeams.push(cleanedTeam)
+                redAlliance.push(cleanedTeam)
+              }
+            }
+          }
+        }
+      }
+    }
+  }
   tableLoop: for (let [key, value] of teamOrgMatches) {
     /*
     Data is an array of all matches, associated with a team (key), for the event filters selected
      */
     let data: any = []
-    let allowedEvents = []
-    let allowedTeams = []
-    for(let filter of selectedFilters.value){
-      if(filter.content.startsWith("event:")){
-        allowedEvents.push(filter.content.split(":")[1].trim())
-      }
-      if(filter.content.startsWith("team:")){
-        allowedTeams.push(filter.content.split(":")[1].trim())
-      }
-    }
-    if(allowedTeams.includes(key.toString()) || allowedTeams.length == 0){
-      for(let match of value){
-        if(allowedEvents.includes(match.event)){
+    //if sorted by match apply alliance colors
+    let alliance = blueAlliance.includes(key.toString()) ? "bg-blue-100": redAlliance.includes(key.toString()) ? "bg-red-100": ""
+
+    if (allowedTeams.includes(key.toString()) || allowedTeams.length == 0) {
+      for (let match of value) {
+        if (allowedEvents.includes(match.event.replace(/[0-9]/g, ''))) {
           data.push(match)
         }
       }
@@ -90,44 +143,54 @@ function tableSetup() {
      */
     for (let filter of selectedFilters.value) {
 
-      if(filter.id == 0){
+      if (filter.id == 0) {
         let hasClimb = false
-        for(let match of data){
-          if(match.endgame.endgame.includes("Onstage") || match.endgame.endgame.includes("Attempted Onstage")){
+        for (let match of data) {
+          if (match.endgame.endgame.includes("Onstage") || match.endgame.endgame.includes("Attempted Onstage")) {
             hasClimb = true
             break
           }
         }
-        if(!hasClimb){
+        if (!hasClimb) {
           continue tableLoop
         }
       }
 
-      if(filter.id == 1){
+      if (filter.id == 1) {
         let hasAuto = false
-        for(let match of data){
-          if(match.auto.amp > 0 || match.auto.speaker > 0 || match.auto.mobility == true){
+        for (let match of data) {
+          if (match.auto.amp > 0 || match.auto.speaker > 0 || match.auto.mobility == true) {
             hasAuto = true
             break
           }
         }
-        if(!hasAuto){
+        if (!hasAuto) {
           continue tableLoop
         }
       }
-
     }
-    if(data.length > 0) {
+    if (data.length > 0) {
       let arr = {
         team: key,
         amp: getAverageAmpCycles(data).toFixed(2),
         speaker: getAverageSpeakerCycles(data).toFixed(2),
         mobility: averageAuto(data).toFixed(2),
         sentiment: analyzeNotes(data).toFixed(2),
-        endgame: compileEndgames(data)
+        endgame: compileEndgames(data),
+        class: alliance
       }
       teamsData.value.push(arr)
     }
+  }
+
+  //Defaults to the alliance colors being together if match filter is selected
+  if(redAlliance.length > 0 || blueAlliance.length > 0){
+    let sortedData = []
+    for(let team of teamsData.value){
+      if(team.class == "bg-blue-100") sortedData.unshift(team)
+      else sortedData.push(team)
+    }
+    teamsData.value = sortedData
   }
 }
 

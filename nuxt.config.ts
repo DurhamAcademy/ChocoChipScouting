@@ -29,32 +29,11 @@ export default defineNuxtConfig({
         })
       }
   ],
-  buildModules: ['@nuxtjs/pwa'],
-  pwa: {
-    manifest: {
-      name: 'Fire hydrant surveyor',
-      short_name: 'Hydrant Surveyor',
-      lang: 'en',
-      display: 'standalone',
-    },
-    workbox: {
-      enabled: true
-    }
-  },
   plugins: [
       '~/plugins/vuetify.ts'
   ],
   devtools: { enabled: true },
   ssr: false,
-  ui: {
-    global: true,
-    primary: "rose",
-    gray: "cool",
-    notifications: {
-      // Show toasts at the top right of the screen
-      position: 'top-0 right-0'
-    }
-  },
   vite: {
     vue: {
       template: {
@@ -62,5 +41,34 @@ export default defineNuxtConfig({
       },
     },
   },
-  logLevel: "verbose"
+  logLevel: "verbose",
+  runtimeConfig:{
+    TBA_Key: process.env.TBA_KEY,
+  },
+  colorMode: {
+    preference: 'light' //eventually we will add color mode preference
+  },
+  tailwindcss:{
+    config:{
+      theme: {
+        extend: {
+          colors: {
+            coral: {
+              '50': '#fef3f2',
+              '100': '#fee4e2',
+              '200': '#fececa',
+              '300': '#fcaca5',
+              '400': '#f88379',
+              '500': '#ee5245',
+              '600': '#db3527',
+              '700': '#b9281c',
+              '800': '#99251b',
+              '900': '#7f251d',
+              '950': '#450f0a',
+            }
+          }
+        }
+      }
+    }
+  }
 })

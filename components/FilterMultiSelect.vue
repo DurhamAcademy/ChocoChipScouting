@@ -32,16 +32,15 @@ const value = computed({
       }
     }
     for(let selectedOption of value){
-      if(!props.options.includes(selectedOption)){
+      if(!props.options.includes(selectedOption)) {
         let optionExists = false
-        for(let option in props.options){
-          if(props.options[2].id == selectedOption.id){
+        for (let option of props.options) {
+          if (option.id == selectedOption.id) {
             optionExists = true
           }
         }
         if(!optionExists){
           props.options.push(selectedOption)
-
         }
       }
     }

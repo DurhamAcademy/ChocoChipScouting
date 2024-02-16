@@ -49,9 +49,9 @@ let impData = {
 
 
 let data = ref({
+  event: "",
   teamNumber: null,
   matchNumber: null,
-  event: "",
   auto: {
     speakerNA: 0,
     amp: 0,
@@ -94,7 +94,7 @@ function isValidNum() {
 }
 
 async function submit() {
-  data.value.event = selectedEvent.value || ""
+  data.value.event = selectedEvent || ""
   let newDoc = db.post(data.value)
   await navigateTo("/matches")
 }
@@ -173,7 +173,7 @@ async function submit() {
           </div>
           <div>
             <h1 class="text-green-600 font-sans">Trap</h1>
-            <IncrementalButton v-model="data.endgame.trap" style="margin:5px"></IncrementalButton>
+            <IncrementalButton v-model="data.endgame.trap" :max-value="3" style="margin:5px"></IncrementalButton>
           </div>
           </div>
           <br>
