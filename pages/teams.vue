@@ -189,7 +189,6 @@ async function tableSetup() {
       }
     }
     if (data.length > 0) {
-      selectedMatchGraphs.value.set(key, [1, data.length])
       let arr = {
         team: key,
         amp: getAverageAmpCycles(data).toFixed(2),
@@ -326,12 +325,6 @@ tableSetup()
               <UCard>
                 <div class="max-w-full min-w-max overflow-y-auto" style="max-height: 20rem; min-height: 10rem">
                   <h1>Match 1</h1>
-                  <UPagination
-                      :active-button="{ variant: 'outline' }"
-                      :inactive-button="{ color: 'gray' }"
-                      :model-value="1"
-                      :total="100"
-                  />
                 </div>
               </UCard>
             </template>
