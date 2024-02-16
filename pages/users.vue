@@ -7,7 +7,7 @@
   let username = ref("")
 
   let roles = ref([[""]])
-  const roleOptions = ["Admin", "Coach", "Scout"]
+  const roleOptions = ["Coach", "Scout"]
   let prevRoles: string[][] = [[]]
   let resetRoles = false
 
