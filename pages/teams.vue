@@ -88,6 +88,8 @@ async function tableSetup() {
    */
   let allowedEvents = []
   let allowedTeams = []
+  let blueAlliance = []
+  let redAlliance = []
   for (let filter of selectedFilters.value) {
     if (filter.content.startsWith("event:")) {
       allowedEvents.push(filter.content.split(":")[1].trim())
@@ -106,12 +108,14 @@ async function tableSetup() {
               let cleanedTeam = team.replace("frc", "")
               if(!allowedTeams.includes(cleanedTeam)) {
                 allowedTeams.push(cleanedTeam)
+                blueAlliance.push(cleanedTeam)
               }
             }
             for(let team of match.alliances.red.team_keys){
               let cleanedTeam = team.replace("frc", "")
               if(!allowedTeams.includes(cleanedTeam)) {
                 allowedTeams.push(cleanedTeam)
+                redAlliance.push(cleanedTeam)
               }
             }
           }
@@ -124,6 +128,9 @@ async function tableSetup() {
     Data is an array of all matches, associated with a team (key), for the event filters selected
      */
     let data: any = []
+    //if sorted by match apply alliance colors
+    let alliance = blueAlliance.includes(key.toString()) ? "bg-blue-100": redAlliance.includes(key.toString()) ? "bg-red-100": ""
+
     if (allowedTeams.includes(key.toString()) || allowedTeams.length == 0) {
       for (let match of value) {
         if (allowedEvents.includes(match.event)) {
@@ -169,10 +176,21 @@ async function tableSetup() {
         speaker: getAverageSpeakerCycles(data).toFixed(2),
         mobility: averageAuto(data).toFixed(2),
         sentiment: analyzeNotes(data).toFixed(2),
-        endgame: compileEndgames(data)
+        endgame: compileEndgames(data),
+        class: alliance
       }
       teamsData.value.push(arr)
     }
+  }
+
+  //Defaults to the alliance colors being together if match filter is selected
+  if(redAlliance.length > 0 || blueAlliance.length > 0){
+    let sortedData = []
+    for(let team of teamsData.value){
+      if(team.class == "bg-blue-100") sortedData.unshift(team)
+      else sortedData.push(team)
+    }
+    teamsData.value = sortedData
   }
 }
 

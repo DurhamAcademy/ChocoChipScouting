@@ -173,7 +173,7 @@ async function submit() {
           </div>
           <div>
             <h1 class="text-green-600 font-sans">Trap</h1>
-            <IncrementalButton v-model="data.endgame.trap" style="margin:5px"></IncrementalButton>
+            <IncrementalButton v-model="data.endgame.trap" :max-value="3" style="margin:5px"></IncrementalButton>
           </div>
           </div>
           <br>
