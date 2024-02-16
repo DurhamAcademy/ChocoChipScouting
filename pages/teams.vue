@@ -15,7 +15,7 @@ let options = {
   }
 }
 
-const events = eventOptions
+const events = eventOptions.map((event) => event.replace(/[0-9]/g, ''))
 const currentEvent = localStorage.getItem('currentEvent') || eventOptions[0]
 const fetch = useFetch<Array<any>>("/api/eventMatches/" + currentEvent)
 
@@ -23,7 +23,7 @@ let customOptions = ['Has Climb', 'Has Auto']
 for(let event of events){
   customOptions.push('event: ' + event)
 }
-let currentEventID = customOptions.indexOf('event: ' + currentEvent)
+let currentEventID = customOptions.indexOf('event: ' + currentEvent.replace(/[0-9]/g, ''))
 const filterOptions = ref(
     Array(customOptions.length)
         .fill({ id: 0, content: "", custom: false})
@@ -31,7 +31,7 @@ const filterOptions = ref(
             (_, index) => ({ id: index, content: customOptions[index], custom: false})
         )
 )
-const currentEventFilter = { id: currentEventID, content: 'event: ' + currentEvent, custom: false }
+const currentEventFilter = { id: currentEventID, content: 'event: ' + currentEvent.replace(/[0-9]/g, ''), custom: false }
 const selectedFilters = ref<Array<{ id: number, content: string, custom: boolean}>>([currentEventFilter])
 watch(selectedFilters, () => {
   tableSetup()
@@ -133,7 +133,7 @@ async function tableSetup() {
 
     if (allowedTeams.includes(key.toString()) || allowedTeams.length == 0) {
       for (let match of value) {
-        if (allowedEvents.includes(match.event)) {
+        if (allowedEvents.includes(match.event.replace(/[0-9]/g, ''))) {
           data.push(match)
         }
       }
