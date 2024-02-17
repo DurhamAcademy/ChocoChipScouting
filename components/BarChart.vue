@@ -34,6 +34,7 @@ let backgroundColors = [
   'rgba(153, 102, 255, 0.2)',
   'rgba(201, 203, 207, 0.2)'
 ]
+
 if(props.backgroundColors)
   backgroundColors = props.backgroundColors
 
