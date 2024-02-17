@@ -48,26 +48,35 @@ let chartTitle = ref("Match " + currData.value.matchNumber)
 </script>
 
 <template>
-      <UCard class="max-w-96 w-96 whitespace-normal">
-        <div class="h-96 overflow-scroll">
+      <UCard>
+        <div class="h-80 overflow-scroll flex">
           <BarChart
-            class="flex-auto"
+            class="flex-auto w-80 mr-5"
             :labels="chartLabels"
             :data="chartData"
             :chart-title="chartTitle"
           ></BarChart>
-          <br>
-          <p class="font-bold">Notes: </p>
-          <p>{{rowData.notes[selectedMatch - 1]}}</p>
+          <div class="flex-auto whitespace-normal w-72 max-w-72">
+            <p class="font-bold">Auto & Endgame: </p>
+            <div>
+              <UBadge color="sky" variant="subtle" v-if="rowData.rawData[selectedMatch - 1].auto.mobility" class="mr-1.5 mt-2">Mobility</UBadge>
+              <UBadge color="indigo" variant="subtle" v-for="endgame in rowData.rawData[selectedMatch - 1].endgame.endgame" class="mr-1.5 mt-2"> {{ endgame }} </UBadge>
+            </div>
+            <br>
+            <p class="font-bold">Notes: </p>
+            <p>{{rowData.rawData[selectedMatch - 1].notes.notes}}</p>
+          </div>
         </div>
         <template #footer>
         <UPagination
             v-model="selectedMatch"
-            :total="rowData.notes.length"
+            :total="rowData.rawData.length"
             show-last
             show-first
             :page-count="1"
             :max="7"
+            :active-button="{ variant: 'outline' }"
+            :inactive-button="{ color: 'gray' }"
         />
         </template>
       </UCard>

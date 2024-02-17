@@ -185,7 +185,6 @@ async function tableSetup() {
         sentiment: analyzeNotes(data).toFixed(2),
         endgame: compileEndgames(data),
         class: alliance,
-        notes: compileNotes(data),
         rawData: data
       }
       teamsData.value.push(arr)
@@ -217,14 +216,6 @@ function getAverageSpeakerCycles(teamArrays: Array<any>){
     nonAveragedValue += teamArrays[i].auto.speakerNA + teamArrays[i].teleop.speakerNA + teamArrays[i].teleop.speakerA
   }
   return nonAveragedValue/teamArrays.length
-}
-
-function compileNotes(teamArrays: Array<any>){
-  let arr = []
-  for(let i = 0; i < teamArrays.length; i++){
-    arr.push(teamArrays[i].notes.notes)
-  }
-  return arr
 }
 
 function getAverageAmpCycles(teamArrays: Array<any>){
@@ -317,12 +308,12 @@ tableSetup()
         </template>
 
         <template #dropdown-data="{ row }">
-          <UPopover>
+          <UPopover :popper="{ placement: teamsData.indexOf(row) > teamsData.length/2 ? 'top-end': 'bottom-end' }">
             <UButton color="gray" variant="ghost" icon="i-heroicons-ellipsis-horizontal-20-solid"/>
             <template #panel>
               <div class="flex">
               <UCard class="flex-auto">
-                <div class="max-w-full min-w-max" style="height: 31rem; min-height: 10rem">
+                <div class="max-w-full min-w-max min-h-40">
                   <MatchVisualization :row-data="row"></MatchVisualization>
                 </div>
               </UCard>
