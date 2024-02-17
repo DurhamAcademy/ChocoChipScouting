@@ -11,7 +11,8 @@ let options = {
     'broke': -3.5,
     'disabled': -3.5,
     'quickly': 2,
-    'easily': 2
+    'easily': 2,
+    'dog': -3
   }
 }
 
