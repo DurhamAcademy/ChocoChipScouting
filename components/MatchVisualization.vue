@@ -83,7 +83,7 @@ let chartTitle = ref("Match " + currData.value.matchNumber)
               <UBadge color="indigo" variant="subtle" v-for="endgame in rowData.rawData[selectedMatch - 1].endgame.endgame" class="mr-1.5 mt-2"> {{ endgame }} </UBadge>
             </div>
             <p class="font-bold">Notes: </p>
-            <p class="pb-2.5">{{rowData.rawData[selectedMatch - 1].notes.notes}}</p>
+            <p class="pb-2.5">{{rowData.rawData[selectedMatch - 1].notes.notes == "" ? "None": rowData.rawData[selectedMatch - 1].notes.notes}}</p>
             <div>
               <span class="font-bold mr-2">Sentiment Analysis: </span>
               <UBadge :color="sentimentScore > 1 ? 'green': sentimentScore < -1 ? 'red' : 'gray'" :variant="sentimentScore < 1 && sentimentScore > -1 ? 'soft': 'subtle'">{{sentimentScore}}</UBadge>
