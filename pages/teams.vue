@@ -66,37 +66,6 @@ for(let i  = 0; i < match.length; i++){
   }
 }
 
-
-
-/*
-If there are two overlapping matches uses data from only one of them (very basic system needs improvement)
- */
-
-for(let data of teamOrgMatches){
-  let matches = teamOrgMatches.get(data[0])
-  let matchNumbers: number[] = []
-  if(matches) {
-    for (let i = 0; i < matches.length; i++) {
-      let currMatch = matches[i].matchNumber
-      if(matchNumbers.includes(currMatch)) {
-        for(let i = 0; i < data[1].length; i++){
-          if(data[1][i].matchNumber == currMatch){
-            let arr = teamOrgMatches.get(data[0])
-            if(arr != undefined){
-              arr.splice(i, 1)
-              teamOrgMatches.set(data[0], arr)
-            }
-            break
-          }
-        }
-      }
-      else matchNumbers.push(currMatch)
-    }
-  }
-}
-
-console.log(teamOrgMatches)
-
 let teamsData = ref<Array<any>>([])
 
 async function tableSetup() {
@@ -157,6 +126,25 @@ async function tableSetup() {
         }
       }
     }
+
+    /*
+    Removes match overlaps
+     */
+    let matchNumbers: number[] = []
+    for(let value of data){
+      let currMatch = value.matchNumber
+      if(matchNumbers.includes(currMatch)) {
+        for(let i = 0; i < data.length; i++){
+              if(data[i].matchNumber == currMatch){
+                data.splice(data.indexOf(data[i]), 1)
+                break
+              }
+        }
+      }
+      else matchNumbers.push(currMatch)
+    }
+
+
     /*
     Goes through all remaining filters and applies their effects
      */
@@ -196,7 +184,9 @@ async function tableSetup() {
         mobility: averageAuto(data).toFixed(2),
         sentiment: analyzeNotes(data).toFixed(2),
         endgame: compileEndgames(data),
-        class: alliance
+        class: alliance,
+        notes: compileNotes(data),
+        rawData: data
       }
       teamsData.value.push(arr)
     }
@@ -227,6 +217,14 @@ function getAverageSpeakerCycles(teamArrays: Array<any>){
     nonAveragedValue += teamArrays[i].auto.speakerNA + teamArrays[i].teleop.speakerNA + teamArrays[i].teleop.speakerA
   }
   return nonAveragedValue/teamArrays.length
+}
+
+function compileNotes(teamArrays: Array<any>){
+  let arr = []
+  for(let i = 0; i < teamArrays.length; i++){
+    arr.push(teamArrays[i].notes.notes)
+  }
+  return arr
 }
 
 function getAverageAmpCycles(teamArrays: Array<any>){
@@ -322,11 +320,13 @@ tableSetup()
           <UPopover>
             <UButton color="gray" variant="ghost" icon="i-heroicons-ellipsis-horizontal-20-solid"/>
             <template #panel>
-              <UCard>
-                <div class="max-w-full min-w-max overflow-y-auto" style="max-height: 20rem; min-height: 10rem">
-                  <h1>Match 1</h1>
+              <div class="flex">
+              <UCard class="flex-auto">
+                <div class="max-w-full min-w-max" style="height: 31rem; min-height: 10rem">
+                  <MatchVisualization :row-data="row"></MatchVisualization>
                 </div>
               </UCard>
+              </div>
             </template>
           </UPopover>
         </template>

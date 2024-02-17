@@ -1,0 +1,63 @@
+<template>
+  <BarChart :chartData="data" :options="options" :height="height || '300px'" :width="width || '300px'"/>
+</template>
+
+<script lang="ts" setup>
+import { BarChart } from 'vue-chart-3';
+import { Chart, registerables } from "chart.js";
+
+const props = defineProps<{
+  labels: Array<string>,
+  data: Array<number>,
+  chartTitle?: string
+  backgroundColors?: Array<string>,
+  suggestedMax?: number,
+  height?: string,
+  width?: string
+}>()
+
+watch(props, () => {
+  data.value.datasets[0].data = props.data
+  if(props.chartTitle) data.value.datasets[0].label = props.chartTitle
+}, {
+  deep: true
+})
+
+
+Chart.register(...registerables);
+
+let options = {
+  scales: {
+    y: {
+      suggestedMax: props.suggestedMax || 10,
+    }
+  }
+}
+
+const data = ref({
+  labels: props.labels,
+  datasets: [{
+    label: props.chartTitle || "",
+    data: props.data,
+    backgroundColor: [
+      'rgba(255, 99, 132, 0.2)',
+      'rgba(255, 159, 64, 0.2)',
+      'rgba(255, 205, 86, 0.2)',
+      'rgba(75, 192, 192, 0.2)',
+      'rgba(54, 162, 235, 0.2)',
+      'rgba(153, 102, 255, 0.2)',
+      'rgba(201, 203, 207, 0.2)'
+    ],
+    borderColor: [
+      'rgb(255, 99, 132)',
+      'rgb(255, 159, 64)',
+      'rgb(255, 205, 86)',
+      'rgb(75, 192, 192)',
+      'rgb(54, 162, 235)',
+      'rgb(153, 102, 255)',
+      'rgb(201, 203, 207)'
+    ],
+    borderWidth: 1
+  }]
+});
+</script>
