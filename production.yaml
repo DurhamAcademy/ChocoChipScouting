@@ -1,0 +1,63 @@
+name: "production_scouting_server"
+version: 1.0.0
+services:
+  server:
+    env_file: .env.webapp
+    restart: on-failure
+    image: ghcr.io/durhamacademy/nuxtscoutingsystem:main
+    depends_on:
+      couchdb:
+        condition: service_healthy
+      couch-db-setup:
+        condition: service_completed_successfully
+    ports:
+      - "80:3000"
+    links:
+      - couchdb:couchdb
+    environment:
+        - couchDBHostname=couchdb
+        - COUCHDB_SERVER_USER=${SERVER_USERNAME}
+        - COUCHDB_SERVER_PASSWORD=${SERVER_PASSWORD}
+    networks:
+      - intercom_network
+  couchdb:
+    env_file: .env.webapp
+    restart: on-failure
+    expose:
+      - '5984'
+    ports:
+      - '5984:5984'
+    environment:
+      - COUCHDB_USER=${SERVER_USERNAME}
+      - COUCHDB_PASSWORD=${SERVER_PASSWORD}
+    image: 'couchdb:3'
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5984"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    networks:
+      - intercom_network
+  couch-db-setup:
+    env_file: .env.webapp
+    restart: on-failure
+    depends_on:
+      couchdb:
+        condition: service_healthy
+    build:
+      target: setup
+      dockerfile_inline: |
+        FROM curlimages/curl:8.6.0 AS setup
+        CMD curl -s -X PUT http://${SERVER_USERNAME}:${SERVER_PASSWORD}@couchdb:5984/_users; \
+            curl -s -X PUT http://${SERVER_USERNAME}:${SERVER_PASSWORD}@couchdb:5984/_replicator; \
+            curl -s -X PUT http://${SERVER_USERNAME}:${SERVER_PASSWORD}@couchdb:5984/_global_changes; \
+            curl -s -X PUT http://${SERVER_USERNAME}:${SERVER_PASSWORD}@couchdb:5984/_node/nonode@nohost/_config/chttpd/enable_cors -d '"true"'; \
+            curl -s -X PUT http://${SERVER_USERNAME}:${SERVER_PASSWORD}@couchdb:5984/_node/nonode@nohost/_config/cors/origins -d '"*"'; \
+            curl -s -X PUT http://${SERVER_USERNAME}:${SERVER_PASSWORD}@couchdb:5984/_node/nonode@nohost/_config/cors/credentials -d '"true"'; \
+            curl -s -X PUT http://${SERVER_USERNAME}:${SERVER_PASSWORD}@couchdb:5984/_node/nonode@nohost/_config/cors/methods -d '"GET, PUT, POST, HEAD, DELETE"'; \
+            curl -s -X PUT http://${SERVER_USERNAME}:${SERVER_PASSWORD}@couchdb:5984/_node/nonode@nohost/_config/cors/headers -d '"accept, authorization, content-type, origin, referer, x-csrf-token"'
+    network_mode: service:couchdb
+networks:
+  intercom_network:
+    name: intercom
+    external: false

@@ -62,5 +62,13 @@ export default defineNuxtConfig({
       },
     },
   },
-  logLevel: "verbose"
+  logLevel: "verbose",
+  runtimeConfig: {
+    couchDB: {
+      serverAdminUser: {
+        username: process.env.COUCHDB_SERVER_USER,
+        password: process.env.COUCHDB_SERVER_PASSWORD
+      }
+    }
+  }
 })
