@@ -39,6 +39,7 @@ export default defineNitroPlugin((nitroApp) => {
                     let databaseInfo = await udb.info();
                     return databaseInfo
                 }))
+            await databases.databases.basic.remote.post({"serverSetupComplete": true})
         } finally {
             console.group("Database Info Responses")
             if (databaseInfoResponses !== undefined)

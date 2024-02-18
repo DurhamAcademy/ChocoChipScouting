@@ -32,8 +32,8 @@ export default defineNuxtConfig({
   buildModules: ['@nuxtjs/pwa'],
   pwa: {
     manifest: {
-      name: 'Fire hydrant surveyor',
-      short_name: 'Hydrant Surveyor',
+      name: 'DARC SIDE Webapp',
+      short_name: '6502 App',
       lang: 'en',
       display: 'standalone',
     },
@@ -45,7 +45,7 @@ export default defineNuxtConfig({
       '~/plugins/vuetify.ts'
   ],
   devtools: { enabled: true },
-  ssr: false,
+  ssr: true,
   ui: {
     global: true,
     primary: "rose",
@@ -65,6 +65,7 @@ export default defineNuxtConfig({
   logLevel: "verbose",
   runtimeConfig: {
     couchDB: {
+      hostname: (process.env.couchDBHostname===undefined)?process.env.couchDBHostname:"localhost",
       serverAdminUser: {
         username: process.env.COUCHDB_SERVER_USER,
         password: process.env.COUCHDB_SERVER_PASSWORD

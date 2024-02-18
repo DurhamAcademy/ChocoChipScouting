@@ -2,7 +2,7 @@ name: "production_scouting_server"
 version: 1.0.0
 services:
   server:
-    env_file: .env.webapp
+    env_file: .env
     restart: on-failure
     image: ghcr.io/durhamacademy/nuxtscoutingsystem:main
     depends_on:
@@ -21,7 +21,7 @@ services:
     networks:
       - intercom_network
   couchdb:
-    env_file: .env.webapp
+    env_file: .env
     restart: on-failure
     expose:
       - '5984'
@@ -38,8 +38,10 @@ services:
       retries: 5
     networks:
       - intercom_network
+    volumes:
+      - couchDB:/opt/couchdb/data
   couch-db-setup:
-    env_file: .env.webapp
+    env_file: .env
     restart: on-failure
     depends_on:
       couchdb:
@@ -61,3 +63,7 @@ networks:
   intercom_network:
     name: intercom
     external: false
+volumes:
+  couchDB:
+    driver: local
+    name: CouchDB_Volume
