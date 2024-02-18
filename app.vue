@@ -88,15 +88,7 @@ provide(loginStateKey, loginStateObject)
   <div class="min-h-screen min-w-screen">
       <v-app>
 <!--    <UContainer class="p-0 m-0">-->
-          <NuxtPage v-if="!loginFailed"/>
-          <UCard v-else>
-            <template #header>
-              Connection error
-            </template>
-            <template #default>
-              Your browser failed to connect to the database.
-            </template>
-          </UCard>
+          <NuxtPage/>
 <!--    </UContainer>-->
       </v-app>
     <UNotifications/>
