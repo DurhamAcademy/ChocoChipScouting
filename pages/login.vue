@@ -31,14 +31,17 @@ async function login(username: string, password: string) {
               await unaccessedAccountReset(username, password)
             }
             else{
+              console.dir(err)
               error.value = true
             }
           }
           else{
+            console.dir(err)
             error.value = true
           }
         }
         else{
+          console.dir(err)
           error.value = true
         }
       })
@@ -46,6 +49,7 @@ async function login(username: string, password: string) {
     }
     catch (e) {
       error.value = true
+      console.dir(e)
     }
   }
 
