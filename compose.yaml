@@ -105,4 +105,4 @@ networks:
 volumes:
   couchDB:
     driver: local
-    name: CouchDB Volume
+    name: CouchDB-Volume

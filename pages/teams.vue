@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import databases, {type ScoutingData} from "~/utils/databases";
 import IdMeta = PouchDB.Core.IdMeta;
-import databases from "~/utils/databases";
 import Sentiment from 'sentiment';
 import {eventOptions} from "~/utils/eventOptions";
 
@@ -106,7 +105,6 @@ for(let data of teamOrgMatches){
 
 console.log(teamOrgMatches)
 
-let teamsData = ref<Array<any>>([])
 
 async function tableSetup() {
   teamsData.value.length = 0
