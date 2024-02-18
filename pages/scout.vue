@@ -120,7 +120,7 @@ async function submit() {
         </div>
         <br>
         <UButtonGroup class="flex">
-          <UButton v-for="gamePeriod of GameTime"  :label=gamePeriod block class="w-auto" enabled style="flex: 1"
+          <UButton v-for="gamePeriod of GameTime" :variant="gameTime == gamePeriod ? 'solid': 'soft'" :label=gamePeriod block class="w-auto" enabled style="flex: 1"
                    @click="gameTime=gamePeriod"/>
         </UButtonGroup>
       </template>

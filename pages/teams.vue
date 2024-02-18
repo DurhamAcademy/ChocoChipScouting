@@ -2,6 +2,7 @@
 import databases from "~/utils/databases";
 import Sentiment from 'sentiment';
 import {eventOptions} from "~/utils/eventOptions";
+import AmpVisualization from "~/components/AmpVisualization.vue";
 
 let sentiment = new Sentiment()
 let options = {
@@ -257,7 +258,8 @@ function compileEndgames(teamArrays: Array<any>){
 
 const columns = [{
   key: 'team',
-  label: 'Team #',
+  label: 'Team',
+  sortable: true
 }, {
   key: 'amp',
   label: 'Average Amp Cycles',
@@ -281,6 +283,8 @@ const columns = [{
   key: 'dropdown'
 }]
 
+const graphOptions = ['Match Stats', 'Amp', 'Speaker']
+const selectedGraph = ref(graphOptions[0])
 
 tableSetup()
 </script>
@@ -314,12 +318,14 @@ tableSetup()
             <template #panel>
               <div class="flex">
               <UCard class="flex-auto">
-                <div class="max-w-full min-w-max min-h-40 flex">
-                  <MatchVisualization class="flex-auto" :row-data="row"></MatchVisualization>
-                  <UCard class="flex-auto ml-3.5">
-
-                  </UCard>
-                </div>
+                <template #header>
+                  <UButtonGroup>
+                    <UButton :variant="selectedGraph == label ? 'solid' : 'soft'"  v-for="label in graphOptions" @click="selectedGraph = label" :label="label"></UButton>
+                  </UButtonGroup>
+                </template>
+                <MatchVisualization v-if="selectedGraph == 'Match Stats'" :row-data="row"></MatchVisualization>
+                <AmpVisualization v-if="selectedGraph == 'Amp'" :row-data="row"></AmpVisualization>
+                <SpeakerVisualization v-if="selectedGraph == 'Speaker'" :row-data="row"></SpeakerVisualization>
               </UCard>
               </div>
             </template>
