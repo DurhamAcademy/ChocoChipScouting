@@ -115,7 +115,7 @@ async function login(username: string, password: string) {
                    type="submit">Login
           </UButton>
         </UFormGroup>
-        <p v-if="error">{{errorVal}}</p>
+        <p v-if="error">test</p>
       </UForm>
     </UCard>
   </UContainer>
