@@ -15,6 +15,8 @@ const selectedEvent = window.localStorage.getItem("currentEvent") || eventOption
 
 const {updateUsernameState}: { updateUsernameState: () => void } = inject(loginStateKey)!
 
+console.log("uploaded code")
+
 async function login(username: string, password: string) {
     try
     {
@@ -60,12 +62,15 @@ async function login(username: string, password: string) {
           usersDB.logIn(username, password).then(() =>{
             updateUsernameState()
             navigateTo("/dashboard")
-          }).catch(()=>{
+          }).catch((err)=>{
+            console.dir(err)
             error.value = true
-          }).catch(()=>{
+          }).catch((err)=>{
+            console.dir(err)
             error.value = true
           })
-        }).catch(()=>{
+        }).catch((err)=>{
+          console.dir(err)
           error.value = true
         })
       })
