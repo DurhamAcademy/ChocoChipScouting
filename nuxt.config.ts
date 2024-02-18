@@ -29,6 +29,18 @@ export default defineNuxtConfig({
         })
       }
   ],
+  buildModules: ['@nuxtjs/pwa'],
+  pwa: {
+    manifest: {
+      name: 'DARC SIDE Webapp',
+      short_name: '6502 App',
+      lang: 'en',
+      display: 'standalone',
+    },
+    workbox: {
+      enabled: true
+    }
+  },
   plugins: [
       '~/plugins/vuetify.ts'
   ],
@@ -44,6 +56,13 @@ export default defineNuxtConfig({
   logLevel: "verbose",
   runtimeConfig:{
     TBA_Key: process.env.TBA_KEY,
+    couchDB: {
+      hostname: (process.env.couchDBHostname===undefined)?process.env.couchDBHostname:"localhost",
+      serverAdminUser: {
+        username: process.env.COUCHDB_SERVER_USER,
+        password: process.env.COUCHDB_SERVER_PASSWORD
+      }
+    }
   },
   colorMode: {
     preference: 'light' //eventually we will add color mode preference

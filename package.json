@@ -12,10 +12,7 @@
   "devDependencies": {
     "@nuxt/devtools": "latest",
     "@types/pouchdb": "6.4.0",
-    "@types/sentiment": "^5.0.4",
-    "vite-plugin-node-polyfills": "^0.19.0",
-    "vite-plugin-vuetify": "^2.0.1",
-    "vuetify": "^3.4.10"
+    "@types/sentiment": "^5.0.4"
   },
   "dependencies": {
     "@nuxt/ui": "^2.10.0",
@@ -31,6 +28,9 @@
     "pouchdb-browser": "8.0.1",
     "pouchdb-security-helper": "2.1.2",
     "sentiment": "^5.0.2",
-    "vue-chart-3": "^3.1.8"
+    "vue-chart-3": "^3.1.8",
+    "vite-plugin-node-polyfills": "^0.19.0",
+    "vite-plugin-vuetify": "^2.0.1",
+    "vuetify": "^3.4.10"
   }
 }

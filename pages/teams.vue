@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import databases, {type ScoutingData} from "~/utils/databases";
+import IdMeta = PouchDB.Core.IdMeta;
 import databases from "~/utils/databases";
 import Sentiment from 'sentiment';
 import {eventOptions} from "~/utils/eventOptions";
@@ -47,11 +49,11 @@ const { scoutingData } = databases.locals
 let db = scoutingData
 
 const matches = (await db.allDocs()).rows
-let match = matches.map(async (doc) => {
+let match = matches.map(async (doc): Promise<ScoutingData & IdMeta> => {
   return await db.get(doc.id)
 })
 
-let teamOrgMatches = new Map<number, Array<any>>()
+let teamOrgMatches = new Map<number,[ScoutingData & IdMeta]>()
 
 for(let i  = 0; i < match.length; i++){
   let currentMatch = (await match[i])
@@ -71,6 +73,13 @@ for(let i  = 0; i < match.length; i++){
 /*
 If there are two overlapping matches uses data from only one of them (very basic system needs improvement)
  */
+let teamsData : Array<{
+  amp: string;
+  endgame: [Array<string>, Array<number>];
+  mobility: string;
+  speaker: string;
+  team: number
+}> = []
 
 for(let data of teamOrgMatches){
   let matches = teamOrgMatches.get(data[0])
@@ -221,7 +230,7 @@ function analyzeNotes(teamArrays: Array<any>){
   return analysisTotal/teamArrays.length
 }
 
-function getAverageSpeakerCycles(teamArrays: Array<any>){
+function getAverageSpeakerCycles(teamArrays: Array<ScoutingData>){
   let nonAveragedValue = 0
   for(let i = 0; i < teamArrays.length; i++){
     nonAveragedValue += teamArrays[i].auto.speakerNA + teamArrays[i].teleop.speakerNA + teamArrays[i].teleop.speakerA
@@ -229,7 +238,7 @@ function getAverageSpeakerCycles(teamArrays: Array<any>){
   return nonAveragedValue/teamArrays.length
 }
 
-function getAverageAmpCycles(teamArrays: Array<any>){
+function getAverageAmpCycles(teamArrays: Array<ScoutingData>){
   let nonAveragedValue = 0
   for(let i = 0; i < teamArrays.length; i++){
     nonAveragedValue += teamArrays[i].auto.amp + teamArrays[i].teleop.amp
@@ -237,7 +246,7 @@ function getAverageAmpCycles(teamArrays: Array<any>){
   return nonAveragedValue/teamArrays.length
 }
 
-function averageAuto(teamArrays: Array<any>){
+function averageAuto(teamArrays: Array<ScoutingData>): number {
   let successfulMobilityCount = 0
   for(let match of teamArrays){
     successfulMobilityCount += match.auto.mobility ? 1 : 0
@@ -245,7 +254,7 @@ function averageAuto(teamArrays: Array<any>){
   return successfulMobilityCount/teamArrays.length
 }
 
-function compileEndgames(teamArrays: Array<any>){
+function compileEndgames(teamArrays: Array<ScoutingData>): [Array<string>, Array<number>] {
   let endgameMap = new Map<string, number>();
   for(let i = 0; i < teamArrays.length; i++) {
     teamArrays[i].endgame.endgame.forEach(function (value: string) {

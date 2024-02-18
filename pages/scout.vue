@@ -48,7 +48,15 @@ let impData = {
   */
 
 
-let data = ref({
+let data: Ref<UnwrapRef<{
+  auto: { speakerNA: number; amp: number; leave: boolean };
+  notes: { efficiency: number; notes: string; reliability: number };
+  endgame: { endgame: string[]; trap: number };
+  teamNumber: null;
+  event: string;
+  matchNumber: null;
+  teleop: { speakerA: number; speakerNA: number; amp: number }
+}>> = ref({
   event: "",
   teamNumber: null,
   matchNumber: null,

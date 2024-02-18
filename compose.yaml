@@ -3,7 +3,6 @@ version: 1.0.0
 services:
   server:
     restart: on-failure
-#    container_name: "Nuxt"
     build:
       context: .
       dockerfile: Dockerfile
@@ -23,7 +22,6 @@ services:
       - intercom_network
   devserver:
     restart: on-failure
-
     build:
       context: .
       dockerfile: Dockerfile
@@ -88,6 +86,8 @@ services:
       retries: 5
     networks:
       - intercom_network
+    volumes:
+      - couchDB:/opt/couchdb/data
   couch-db-setup:
     restart: no
     depends_on:
@@ -102,3 +102,7 @@ networks:
   intercom_network:
     name: intercom
     external: false
+volumes:
+  couchDB:
+    driver: local
+    name: CouchDB Volume

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+
 let errorToast = useToast()
 
 onErrorCaptured((err) => {
@@ -9,25 +10,41 @@ onErrorCaptured((err) => {
   })
 })
 
+import PouchDB from "pouchdb"
 import "./utils/authorization/Authorizer"
 import LoginState from "~/utils/authorization/LoginState"
 import {loginStateKey} from "~/utils/keys";
 
-let pdb = new PouchDB(couchDBBaseURL + "/basic");
-let session = await pdb.getSession();
+console.log(couchDBBaseURL)
+let pdb = databases.databases.basic.remote
+let session: PouchDB.Authentication.SessionResponse | null = null;
+let loginFailed = false;
+let offlineReady = false;
+let offlinePDB = databases.databases.basic.local
+console.log(await offlinePDB.allDocs());
+try {
+  session = await pdb.getSession();
+} catch (e) {
+  // failed to login
+  console.error(e)
+  // see if there is a local database
 
-let loginState = ref((session.userCtx.name==null)?LoginState.loggedOut:LoginState.loggedIn)
+  // if ()
+  loginFailed=true;
+}
+
+let loginState = ref((session?.userCtx?.name==null)?LoginState.loggedOut:LoginState.loggedIn)
 let route = useRoute()
-if ((loginState.value === LoginState.loggedOut) && (route.matched[0].name != "login"))
+if ((session!=null) && (loginState.value === LoginState.loggedOut) && (route.matched[0].name != "login"))
   await navigateTo("/login")
 else if ((route.matched[0].name == 'index')) navigateTo("/dashboard")
 
 let sessionState = ref(session)
-let usernameState = ref(session.userCtx.name)
+let usernameState = ref(session?.userCtx?.name)
 
 async function updateUsernameState(): Promise<boolean> {
   session = await pdb.getSession()
-  if (session.ok) {
+  if ((session!=null) && (session.ok)) {
     loginState.value = (session.userCtx.name == null) ? LoginState.loggedOut : LoginState.loggedIn
     usernameState.value = session.userCtx.name;
     sessionState.value = session
@@ -71,7 +88,15 @@ provide(loginStateKey, loginStateObject)
   <div class="min-h-screen min-w-screen">
       <v-app>
 <!--    <UContainer class="p-0 m-0">-->
-          <NuxtPage/>
+          <NuxtPage v-if="!loginFailed"/>
+          <UCard v-else>
+            <template #header>
+              Connection error
+            </template>
+            <template #default>
+              Your browser failed to connect to the database.
+            </template>
+          </UCard>
 <!--    </UContainer>-->
       </v-app>
     <UNotifications/>
