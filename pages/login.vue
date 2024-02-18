@@ -20,6 +20,7 @@ console.log("uploaded code")
 async function login(username: string, password: string) {
     try
     {
+      console.log("testing")
       usersDB.logIn(username, password, async function (err, response) {
         if (response) {
           updateUsernameState()
