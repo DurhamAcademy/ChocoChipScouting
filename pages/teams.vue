@@ -314,8 +314,11 @@ tableSetup()
             <template #panel>
               <div class="flex">
               <UCard class="flex-auto">
-                <div class="max-w-full min-w-max min-h-40">
-                  <MatchVisualization :row-data="row"></MatchVisualization>
+                <div class="max-w-full min-w-max min-h-40 flex">
+                  <MatchVisualization class="flex-auto" :row-data="row"></MatchVisualization>
+                  <UCard class="flex-auto ml-3.5">
+
+                  </UCard>
                 </div>
               </UCard>
               </div>
