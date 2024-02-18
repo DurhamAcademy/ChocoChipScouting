@@ -15,12 +15,12 @@ const selectedEvent = window.localStorage.getItem("currentEvent") || eventOption
 
 const {updateUsernameState}: { updateUsernameState: () => void } = inject(loginStateKey)!
 
-console.log("uploaded code")
+let errorVal = ref("loaded")
 
 async function login(username: string, password: string) {
     try
     {
-      console.log("testing")
+      errorVal.value = "run login"
       usersDB.logIn(username, password, async function (err, response) {
         if (response) {
           updateUsernameState()
@@ -34,24 +34,22 @@ async function login(username: string, password: string) {
               await unaccessedAccountReset(username, password)
             }
             else{
-              console.dir(err)
+              if(err.error) errorVal.value = err.error.toString()
               error.value = true
             }
           }
           else{
-            console.dir(err)
+            if(err.error) errorVal.value = err.error.toString()
             error.value = true
           }
         }
         else{
-          console.dir(err)
           error.value = true
         }
       })
 
     }
     catch (e) {
-      error.value = true
       console.dir(e)
     }
   }
@@ -64,14 +62,14 @@ async function login(username: string, password: string) {
             updateUsernameState()
             navigateTo("/dashboard")
           }).catch((err)=>{
-            console.dir(err)
+            if(err.error) errorVal.value = err.error.toString()
             error.value = true
           }).catch((err)=>{
-            console.dir(err)
+            if(err.error) errorVal.value = err.error.toString()
             error.value = true
           })
         }).catch((err)=>{
-          console.dir(err)
+          if(err.error) errorVal.value = err.error.toString()
           error.value = true
         })
       })
@@ -117,7 +115,7 @@ async function login(username: string, password: string) {
                    type="submit">Login
           </UButton>
         </UFormGroup>
-        <p v-if="error">An error occurred.</p>
+        <p v-if="error">{{errorVal}}</p>
       </UForm>
     </UCard>
   </UContainer>
