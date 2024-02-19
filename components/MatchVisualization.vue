@@ -69,14 +69,27 @@ let chartTitle = ref("Match " + currData.value.matchNumber)
 
 <template>
       <UCard>
-        <div class="h-80 overflow-scroll flex">
-          <BarChart
-            class="flex-auto w-80 mr-5"
-            :labels="chartLabels"
-            :data="chartData"
-            :chart-title="chartTitle"
-          ></BarChart>
-          <div class="flex-auto whitespace-normal w-72 max-w-72">
+        <div class="h-80 flex">
+          <div class="flex-auto w-80 mr-5">
+            <BarChart
+                class="mb-1"
+                :labels="chartLabels"
+                :data="chartData"
+                :chart-title="chartTitle"
+                :height="'290px'"
+            ></BarChart>
+            <UPagination
+                v-model="selectedMatch"
+                :total="rowData.rawData.length"
+                show-last
+                show-first
+                :page-count="1"
+                :max="7"
+                :active-button="{ variant: 'outline' }"
+                :inactive-button="{ color: 'gray' }"
+            />
+          </div>
+          <div class="flex-auto whitespace-normal w-72 max-w-72 overflow-auto">
             <p class="font-bold">Auto & Endgame: </p>
             <div class="pb-2.5">
               <UBadge color="sky" variant="subtle" v-if="rowData.rawData[selectedMatch - 1].auto.mobility" class="mr-1.5 mt-2">Mobility</UBadge>
@@ -90,17 +103,5 @@ let chartTitle = ref("Match " + currData.value.matchNumber)
             </div>
           </div>
         </div>
-        <template #footer>
-        <UPagination
-            v-model="selectedMatch"
-            :total="rowData.rawData.length"
-            show-last
-            show-first
-            :page-count="1"
-            :max="16"
-            :active-button="{ variant: 'outline' }"
-            :inactive-button="{ color: 'gray' }"
-        />
-        </template>
       </UCard>
 </template>
