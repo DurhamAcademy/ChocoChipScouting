@@ -47,6 +47,7 @@ function calculateTeamAverageScore(team:number){
     }
     return totalScore/teamMatches.length
   }
+  //TODO some way of warning that this team didn't exist in data
   return -1
 }
 
