@@ -123,7 +123,7 @@ async function tableSetup() {
 
     if (allowedTeams.includes(key.toString()) || allowedTeams.length == 0) {
       for (let match of value) {
-        if (allowedEvents.includes(match.event.replace(/[0-9]/g, ''))) {
+        if (match.event != undefined && allowedEvents.includes( match.event.replace(/[0-9]/g, ''))) {
           data.push(match)
         }
       }
