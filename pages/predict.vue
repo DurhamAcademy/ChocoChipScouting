@@ -31,6 +31,29 @@ for(let i  = 0; i < match.length; i++){
     }
   }
 }
+for(let data of teamOrgMatches){
+  let matches = teamOrgMatches.get(data[0])
+  let matchNumbers: number[] = []
+  if(matches) {
+    for (let i = 0; i < matches.length; i++) {
+      let currMatch = matches[i].matchNumber
+      if(matchNumbers.includes(currMatch)) {
+        for(let i = 0; i < data[1].length; i++){
+          if(data[1][i].matchNumber == currMatch){
+            let arr = teamOrgMatches.get(data[0])
+            if(arr != undefined){
+              arr.splice(i, 1)
+              teamOrgMatches.set(data[0], arr)
+            }
+            break
+          }
+        }
+      }
+      else matchNumbers.push(currMatch)
+    }
+  }
+}
+
 
 let selectedBlueTeams = ref<Array<string>>(["", "", ""])
 let selectedRedTeams = ref<Array<string>>(["", "", ""])
@@ -47,7 +70,6 @@ function calculateTeamAverageScore(team:number){
     }
     return totalScore/teamMatches.length
   }
-  //TODO some way of warning that this team didn't exist in data
   return -1
 }
 
@@ -60,7 +82,16 @@ function predict(){
   }
   for(let team of selectedRedTeams.value){
     let teamNum = parseInt(team)
-    if(!Number.isNaN(teamNum)) redTotal += calculateTeamAverageScore(teamNum)
+    let score = 0
+    if(!Number.isNaN(teamNum)) {
+      score = calculateTeamAverageScore(teamNum)
+    }
+    if(score > 0){
+      redTotal += score
+    }
+    else if(score == -1){
+      //TODO some way of warning that this team didn't exist in data
+    }
   }
 
   let blueWinPercentage = blueTotal/(blueTotal+redTotal) * 100
@@ -94,7 +125,6 @@ function populateMatch(){
       }
     }
   }
-  console.log(selectedRedTeams.value)
 }
 
 </script>

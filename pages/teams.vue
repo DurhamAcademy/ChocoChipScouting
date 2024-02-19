@@ -95,7 +95,6 @@ for(let data of teamOrgMatches){
   }
 }
 
-console.log(teamOrgMatches)
 
 let teamsData = ref<Array<any>>([])
 
