@@ -6,6 +6,7 @@ import {useDropZone, useFileDialog} from '@vueuse/core'
 import LoginState from "~/utils/authorization/LoginState";
 import databases from "~/utils/databases"
 import heic2any from "heic2any"
+import {NuxtImg} from "#components";
 
 const { attachments } = databases.databases;
 const db = attachments.local;
@@ -180,7 +181,7 @@ const {isOverDropZone} = useDropZone(dropZoneRef, onDrop) // variable that check
             <UPopover mode="hover" :popper="{ placement: 'left-end'}">
               <UButton color="gray" variant="ghost" icon="i-heroicons-eye"/>
               <template #panel=" { close }">
-                <img :src="row.photoURL" class="h-48 w-100" alt="Selected Image" @mouseenter="close"/>
+                <NuxtImg :src="row.photoURL" class="h-48 w-100" alt="Selected Image" @mouseenter="close"/>
               </template>
             </UPopover>
             <UButton color="red" variant="ghost" icon="i-heroicons-trash" @click="rows.splice(index, 1)"/>
