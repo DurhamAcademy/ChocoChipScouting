@@ -48,7 +48,9 @@ let links: VerticalNavigationLink[] = [
   {label: "Dashboard", to: "/dashboard"},
   {label: "Matches", to: "/matches"},
   {label: "Teams", to: "/teams"},
-  {label: "Attachments", to: "/attachments"}
+  {label: "Attachments", to: "/attachments"},
+  { label: "Predict", to: "/predict" },
+
 ]
 if (session.userCtx.roles?.indexOf("_admin") != -1) {
   links.push({label: "Users", to: "/users"})

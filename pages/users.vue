@@ -121,7 +121,7 @@
 <template>
   <OuterComponents v-if="adminAccount">
     <div class="flex justify-center">
-      <UCard class="max-w-xl flex-grow m-5" style="overflow:visible">
+      <UCard class="max-w-xl flex-grow m-5 overflow-visible">
         <template #header>
           <div style="display:flex">
             <div style="flex:1">
