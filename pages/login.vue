@@ -21,7 +21,7 @@ async function login(username: string, password: string) {
     try
     {
       errorVal.value = "run login"
-      errorVal.value = JSON.stringify(usersDB.allDocs)
+      errorVal.value = JSON.stringify(await usersDB.allDocs())
       usersDB.logIn(username, password, async function (err, response) {
         if (response) {
           errorVal.value = "logged in"
