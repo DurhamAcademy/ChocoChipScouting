@@ -51,8 +51,8 @@ async function login(username: string, password: string) {
       })
 
     }
-    catch (e) {
-      errorVal.value = JSON.stringify(e)
+    catch (e : any) {
+      errorVal.value = e.toString()
     }
   }
 
