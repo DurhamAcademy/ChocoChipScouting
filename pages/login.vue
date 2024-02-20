@@ -23,6 +23,7 @@ async function login(username: string, password: string) {
       errorVal.value = "run login"
       usersDB.logIn(username, password, async function (err, response) {
         if (response) {
+          errorVal.value = "logged in"
           updateUsernameState()
           navigateTo("/dashboard")
         }
