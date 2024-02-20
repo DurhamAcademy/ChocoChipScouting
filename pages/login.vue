@@ -53,7 +53,7 @@ async function login(username: string, password: string) {
 
     }
     catch (e : any) {
-      errorVal.value = e.toString()
+      //errorVal.value = e.toString()
     }
   }
 
