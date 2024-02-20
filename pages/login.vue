@@ -5,6 +5,8 @@ import {loginStateKey} from "~/utils/keys";
 import {eventOptions} from "~/utils/eventOptions";
 import PouchDB from "pouchdb"
 
+let database = new PouchDB("scoutingData")
+
 const usersDB = new PouchDB(`${couchDBBaseURL}/_users`, {skip_setup: true});
   let username = ref("");
   let password = ref("");
@@ -16,6 +18,7 @@ const selectedEvent = window.localStorage.getItem("currentEvent") || eventOption
 const {updateUsernameState}: { updateUsernameState: () => void } = inject(loginStateKey)!
 
 let errorVal = ref("loaded")
+errorVal.value = JSON.stringify(database.allDocs())
 
 async function login(username: string, password: string) {
     try
