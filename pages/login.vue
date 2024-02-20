@@ -5,7 +5,7 @@ import {loginStateKey} from "~/utils/keys";
 import {eventOptions} from "~/utils/eventOptions";
 import PouchDB from "pouchdb"
 
-const usersDB = new PouchDB(`${couchDBBaseURL}/_users`, {skip_setup: true});
+const usersDB = new PouchDB(`${couchDBBaseURL}/basic`, {skip_setup: true});
   let username = ref("");
   let password = ref("");
   let error = ref(false)
