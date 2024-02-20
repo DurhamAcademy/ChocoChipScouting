@@ -1,5 +1,6 @@
 import {couchDBBaseURL} from "../utils/URIs";
 import PouchDB from "pouchdb"
+import type {Attachments, ScoutingData} from "~/utils/databases";
 
 class LocalRemoteServerSideDatabaseSyncHolder<Content extends {} = {}> {
     name: string
@@ -26,22 +27,19 @@ class LocalRemoteServerSideDatabaseSyncHolder<Content extends {} = {}> {
     }
 
     static databases = {
-        "attachments": new this<{name: string, team: number|undefined, author: string}>("attachment-db", false),
-        "scoutingData": new this<{points: number}>("scouting-data", false),
-        "basic": new this<{}>("basic", false),
-        "users": new this<{}>("_users", false)
+        "attachments": new LocalRemoteServerSideDatabaseSyncHolder<Attachments>("attachment-db", false),
+        "scoutingData": new LocalRemoteServerSideDatabaseSyncHolder<ScoutingData>("scouting-data", false),
+        "basic": new LocalRemoteServerSideDatabaseSyncHolder<{}>("basic", false)
     };
-    static locals = {
+    static locals= {
         "attachments": this.databases.attachments.local,
         "scoutingData": this.databases.scoutingData.local,
         "basic": this.databases.basic.local,
-        "users": this.databases.users.local,
     };
     static remotes = {
         "attachments": this.databases.attachments.remote,
         "scoutingData": this.databases.scoutingData.remote,
         "basic": this.databases.basic.remote,
-        "users": this.databases.users.remote,
     };
 }
 
