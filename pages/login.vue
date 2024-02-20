@@ -52,7 +52,7 @@ async function login(username: string, password: string) {
 
     }
     catch (e) {
-      console.dir(e)
+      errorVal.value = JSON.stringify(e)
     }
   }
 
