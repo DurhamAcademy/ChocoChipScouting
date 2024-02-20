@@ -27,6 +27,7 @@ async function login(username: string, password: string) {
           navigateTo("/dashboard")
         }
         else if (err) {
+          errorVal.value = "failed login"
           let loginResult = await usersDB.logIn("admin", "password")
           if(loginResult){
             let getUserResult = await usersDB.getUser(username)
