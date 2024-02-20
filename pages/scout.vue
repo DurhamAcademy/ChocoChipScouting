@@ -182,13 +182,18 @@ async function submit() {
                      :connected-options="connectedOptions"></MultiSelect>
        </div>
       <div v-if="gameTime == GameTime.Notes">
-        <div class="text-center">
-          <p class="text-gray-700 dark:text-gray-200 font-sans font-medium">Defense</p>
-          <div class="flex mt-1">
-            <UCheckbox class="flex-auto mt-0.5" v-model="data.notes.playedDefense"/>
-            <URange v-if="!(data.notes.playedDefense)" class="ml-3 mr-3 mt-1 flex-auto" disabled v-model="data.notes.defense" size="md" min="1" :max="5"/>
-            <URange v-if="data.notes.playedDefense" class="ml-3 mr-3 mt-1 flex-auto" v-model="data.notes.defense" size="md" min="1" :max="5"/>
-            <UBadge :label="data.notes.playedDefense ? data.notes.defense: 0" :variant="data.notes.playedDefense ? 'solid':'soft'"/>
+        <div class="flex">
+          <div class="flex-0 text-center">
+            <p class="flex-auto text-gray-700 dark:text-gray-200 font-sans font-medium">Defended</p>
+            <UCheckbox class="flex-auto mt-0.5 justify-center" v-model="data.notes.playedDefense"/>
+          </div>
+          <div class="flex-1 text-center">
+            <p class="text-gray-700 dark:text-gray-200 font-sans font-medium mr-5">Rating</p>
+            <div class="flex">
+              <URange v-if="!(data.notes.playedDefense)" class="ml-3 mr-3 mt-1 flex-auto" disabled v-model="data.notes.defense" size="md" min="1" :max="5"/>
+              <URange v-if="data.notes.playedDefense" class="ml-3 mr-3 mt-1 flex-auto" v-model="data.notes.defense" size="md" min="1" :max="5"/>
+              <UBadge class="flex-auto" :label="data.notes.playedDefense ? data.notes.defense: 0" :variant="data.notes.playedDefense ? 'solid':'soft'"/>
+            </div>
           </div>
         </div>
       </div>
