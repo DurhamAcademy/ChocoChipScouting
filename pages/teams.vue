@@ -96,6 +96,8 @@ for(let data of teamOrgMatches){
 }
 
 let test = ref(JSON.stringify(teamOrgMatches.get(6502)))
+let test1 = ref(JSON.stringify(teamOrgMatches.get(6502)))
+let test2 = ref(JSON.stringify(teamOrgMatches.get(6502)))
 
 
 async function tableSetup() {
@@ -108,6 +110,7 @@ async function tableSetup() {
   let allowedTeams = []
   let blueAlliance = []
   let redAlliance = []
+  test.value = JSON.stringify(selectedFilters.value)
   for (let filter of selectedFilters.value) {
     if (filter.content.startsWith("event:")) {
       allowedEvents.push(filter.content.split(":")[1].trim())
@@ -141,7 +144,7 @@ async function tableSetup() {
       }
     }
   }
-  test.value = JSON.stringify(allowedTeams)
+  test1.value = JSON.stringify(allowedEvents)
   tableLoop: for (let [key, value] of teamOrgMatches) {
     /*
     Data is an array of all matches, associated with a team (key), for the event filters selected
@@ -152,6 +155,7 @@ async function tableSetup() {
 
     if (allowedTeams.includes(key.toString()) || allowedTeams.length == 0) {
       for (let match of value) {
+        test2.value = match.event
         if (allowedEvents.includes(match.event.replace(/[0-9]/g, ''))) {
           data.push(match)
         }
@@ -333,6 +337,8 @@ tableSetup()
       </UTable>
   </UCard>
   <p>{{test}}</p>
+  <p>{{test1}}</p>
+  <p>{{test2}}</p>
 </OuterComponents>
 </template>
 
