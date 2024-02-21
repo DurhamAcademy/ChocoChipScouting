@@ -145,7 +145,7 @@ async function tableSetup() {
     /*
     Data is an array of all matches, associated with a team (key), for the event filters selected
      */
-    let data: any = []
+    let data: Array<ScoutingData & IdMeta> = []
     //if sorted by match apply alliance colors
     let alliance = blueAlliance.includes(key.toString()) ? "bg-blue-100": redAlliance.includes(key.toString()) ? "bg-red-100": ""
 
