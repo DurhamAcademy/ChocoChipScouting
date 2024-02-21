@@ -153,6 +153,7 @@ async function tableSetup() {
       for (let match of value) {
         if (allowedEvents.includes(match.event.replace(/[0-9]/g, ''))) {
           data.push(match)
+          //testing
           debug(JSON.stringify(data))
         }
       }
