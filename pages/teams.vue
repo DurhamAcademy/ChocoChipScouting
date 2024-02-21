@@ -220,6 +220,7 @@ async function tableSetup() {
 
 function debug(text:string){
   toast.add({ title: text })
+  toast.add({ title: "test" })
 }
 
 function analyzeNotes(teamArrays: Array<any>){
