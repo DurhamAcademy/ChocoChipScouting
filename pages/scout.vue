@@ -49,7 +49,7 @@ let impData = {
 
 
 let data: Ref<UnwrapRef<{
-  auto: { speakerNA: number; amp: number; leave: boolean };
+  auto: { speakerNA: number; amp: number; mobility: boolean };
   notes: { efficiency: number; notes: string; reliability: number };
   endgame: { endgame: string[]; trap: number };
   teamNumber: null;

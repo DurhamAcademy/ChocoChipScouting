@@ -9,7 +9,6 @@ const currentEvent = localStorage.getItem('currentEvent') || eventOptions[0]
 
 let db = scoutingData
 
-let test = ref("")
 
 const matche = (await db.allDocs()).rows
 let matc = matche.map(async (doc) => {
@@ -19,7 +18,6 @@ let matches = await Promise.all(matc)
 for (let i=matches.length-1; i>=0; i--) {
   if(matches[i].matchNumber === -1 || matches[i].matchNumber === null || (matches[i].event != currentEvent)){
     matches.splice(i, 1)
-    if(matches && matches[i] && matches[i].event) test.value = matches[i].event || "failed"
   }
 }
 const headers = [
@@ -85,7 +83,6 @@ const items = matches
         </UPopover>
       </template>
     </VDataTable>
-    <p>{{test}}</p>
   </OuterComponents>
 </template>
 <style scoped>

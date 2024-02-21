@@ -52,7 +52,7 @@ let match = matches.map(async (doc): Promise<ScoutingData & IdMeta> => {
   return await db.get(doc.id)
 })
 
-let teamOrgMatches = new Map<number,[ScoutingData & IdMeta]>()
+let teamOrgMatches = new Map<number,Array<ScoutingData & IdMeta>>()
 
 for(let i  = 0; i < match.length; i++){
   let currentMatch = (await match[i])
@@ -61,24 +61,18 @@ for(let i  = 0; i < match.length; i++){
     teamOrgMatches.set(team, [currentMatch])
   }
   else {
-    let arr : Array<any> = teamOrgMatches.get(team)!
+    let arr : Array<ScoutingData & IdMeta> = teamOrgMatches.get(team)!
     arr.push(currentMatch)
     teamOrgMatches.set(team, arr)
   }
 }
 
-
+let test = ref(JSON.stringify(teamOrgMatches))
 
 /*
 If there are two overlapping matches uses data from only one of them (very basic system needs improvement)
  */
-let teamsData : Array<{
-  amp: string;
-  endgame: [Array<string>, Array<number>];
-  mobility: string;
-  speaker: string;
-  team: number
-}> = []
+let teamsData : Array<any> = []
 
 for(let data of teamOrgMatches){
   let matches = teamOrgMatches.get(data[0])
@@ -103,11 +97,9 @@ for(let data of teamOrgMatches){
   }
 }
 
-console.log(teamOrgMatches)
-
 
 async function tableSetup() {
-  teamsData.value.length = 0
+  teamsData.length = 0
 
   /*
   Creates two arrays that are filters applied on all data for team numbers and events (includes match number filter)
@@ -205,18 +197,18 @@ async function tableSetup() {
         endgame: compileEndgames(data),
         class: alliance
       }
-      teamsData.value.push(arr)
+      teamsData.push(arr)
     }
   }
 
   //Defaults to the alliance colors being together if match filter is selected
   if(redAlliance.length > 0 || blueAlliance.length > 0){
     let sortedData = []
-    for(let team of teamsData.value){
+    for(let team of teamsData){
       if(team.class == "bg-blue-100") sortedData.unshift(team)
       else sortedData.push(team)
     }
-    teamsData.value = sortedData
+    teamsData = sortedData
   }
 }
 
@@ -339,6 +331,7 @@ tableSetup()
         </template>
       </UTable>
   </UCard>
+  <p>{{test}}</p>
 </OuterComponents>
 </template>
 
