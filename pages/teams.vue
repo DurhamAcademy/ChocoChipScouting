@@ -153,10 +153,10 @@ async function tableSetup() {
 
     if (allowedTeams.includes(key.toString()) || allowedTeams.length == 0) {
       for (let match of value) {
-        test2.value = "NEW MATCH: " + JSON.stringify(match)
         if (allowedEvents.includes(match.event.replace(/[0-9]/g, ''))) {
           data.push(match)
           test1.value = "pushed"
+          test2.value += "NEW MATCH: " + JSON.stringify(match)
         }
       }
     }
