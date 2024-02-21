@@ -37,8 +37,8 @@ const filterOptions = ref(
 )
 const currentEventFilter = { id: currentEventID, content: 'event: ' + currentEvent.replace(/[0-9]/g, ''), custom: false }
 const selectedFilters = ref<Array<{ id: number, content: string, custom: boolean}>>([currentEventFilter])
-watch(selectedFilters, () => {
-  tableSetup()
+watch(selectedFilters, async () => {
+  await tableSetup()
 }, {
   deep: true
 })
@@ -220,7 +220,6 @@ async function tableSetup() {
 
 function debug(text:string){
   toast.add({ title: text })
-  toast.add({ title: "test" })
 }
 
 function analyzeNotes(teamArrays: Array<any>){
@@ -302,7 +301,7 @@ const columns = [{
 }]
 
 
-tableSetup()
+await tableSetup()
 </script>
 
 <template>
