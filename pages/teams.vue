@@ -151,8 +151,10 @@ async function tableSetup() {
 
     if (allowedTeams.includes(key.toString()) || allowedTeams.length == 0) {
       for (let match of value) {
-        if (allowedEvents.includes(match.event.replace(/[0-9]/g, ''))) {
-          data.push(match)
+        if(match.event){
+          if (allowedEvents.includes(match.event.replace(/[0-9]/g, ''))) {
+            data.push(match)
+          }
         }
       }
     }
@@ -181,7 +183,7 @@ async function tableSetup() {
         debug("filter 1")
         let hasAuto = false
         for (let match of data) {
-          if (match.auto.amp > 0 || match.auto.speakerNA > 0 || match.auto.mobility == true) {
+          if (match.auto.amp > 0 || match.auto.speakerNA > 0 || match.auto.mobility) {
             hasAuto = true
             break
           }
