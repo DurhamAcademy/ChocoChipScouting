@@ -98,12 +98,12 @@ async function login(username: string, password: string) {
       </template>
 
       <UForm action="javascript:void(0);">
-        <UFormGroup label="Username" name="username" required>
+        <UFormGroup label="Username" name="username" autocomplete="username" required>
           <UInput required
                  v-model="username"
                   type="text"/>
         </UFormGroup>
-        <UFormGroup label="Password" name="password" required>
+        <UFormGroup label="Password" name="password" autocomplete="current-password" required>
           <UInput v-model="password"
                   placeholder="Password"
                   required
