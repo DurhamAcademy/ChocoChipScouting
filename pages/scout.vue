@@ -101,10 +101,13 @@ function isValidNum() {
   return (data.value.teamNumber != null) && (data.value.matchNumber != null) && (data.value.teamNumber > 0) && (data.value.matchNumber > 0) && (data.value.teamNumber < 10000)
 }
 
+let test = ref("")
+
 async function submit() {
   data.value.event = selectedEvent || ""
   let newDoc = db.post(data.value)
-  await navigateTo("/matches")
+  test.value = JSON.stringify(data.value)
+  //await navigateTo("/matches")
 }
 
 /* Good-looking square buttons but don't work horizontally why?
@@ -192,12 +195,12 @@ async function submit() {
       <div v-if="gameTime == GameTime.Notes">
         <p>Rate (1-5)</p>
         <br/>
-        <p>Reliability ({{ data.notes.reliability }})</p>
+        <p>Reliability ({{ data.value.notes.reliability }})</p>
         <br/>
         <URange v-model="data.notes.reliability" size="md" color="green" min="1" :max="5"/>
         <br/>
         <br/>
-        <p>Efficiency ({{data.notes.efficiency}})</p>
+        <p>Efficiency ({{data.value.notes.efficiency}})</p>
         <br/>
         <URange v-model="data.notes.efficiency" size="md" color="green" min="1" :max="5"/>
       </div>
@@ -214,6 +217,7 @@ async function submit() {
       </template>
     </UCard>
   </div>
+  <p>{{test}}</p>
 </template>
 
 <style scoped>
