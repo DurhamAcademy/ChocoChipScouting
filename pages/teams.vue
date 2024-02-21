@@ -149,10 +149,20 @@ async function tableSetup() {
      */
     let data: any = []
 
-    data.push(value)
 
     //if sorted by match apply alliance colors
     let alliance = blueAlliance.includes(key.toString()) ? "bg-blue-100": redAlliance.includes(key.toString()) ? "bg-red-100": ""
+
+    if (allowedTeams.includes(key.toString()) || allowedTeams.length == 0) {
+      for (let match of value) {
+        if (allowedEvents.includes(match.event.replace(/[0-9]/g, ''))) {
+          data.push(match)
+        }
+      }
+    }
+    /*
+    Goes through all remaining filters and applies their effects
+     */
     if (data.length > 0) {
       test.value += "true"
       let arr = {
