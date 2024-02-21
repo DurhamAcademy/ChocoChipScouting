@@ -4,6 +4,8 @@ import IdMeta = PouchDB.Core.IdMeta;
 import Sentiment from 'sentiment';
 import {eventOptions} from "~/utils/eventOptions";
 
+const toast = useToast()
+
 let sentiment = new Sentiment()
 let options = {
   extras: {
@@ -94,6 +96,8 @@ for(let data of teamOrgMatches){
     }
   }
 }
+
+let test = ref<Array<any>>(["testing"])
 
 
 async function tableSetup() {
@@ -186,6 +190,7 @@ async function tableSetup() {
       }
     }
     if (data.length > 0) {
+      test.value.push(JSON.stringify(data))
       let arr = {
         team: key,
         amp: getAverageAmpCycles(data).toFixed(2),
@@ -208,6 +213,10 @@ async function tableSetup() {
     }
     teamsData = sortedData
   }
+}
+
+function debug(){
+  for(let error of test.value) toast.add({ title: error })
 }
 
 function analyzeNotes(teamArrays: Array<any>){
@@ -328,6 +337,7 @@ tableSetup()
           </UPopover>
         </template>
       </UTable>
+    <UButton label="Show toast" @click="debug" />
   </UCard>
 </OuterComponents>
 </template>
