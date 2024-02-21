@@ -152,12 +152,11 @@ async function tableSetup() {
     let alliance = blueAlliance.includes(key.toString()) ? "bg-blue-100": redAlliance.includes(key.toString()) ? "bg-red-100": ""
 
     if (allowedTeams.includes(key.toString()) || allowedTeams.length == 0) {
-      test1.value = "true"
-      test.value = JSON.stringify(value)
       for (let match of value) {
-        test2.value = match.event
+        test2.value = "NEW MATCH: " + JSON.stringify(match)
         if (allowedEvents.includes(match.event.replace(/[0-9]/g, ''))) {
           data.push(match)
+          test1.value = "pushed"
         }
       }
     }
