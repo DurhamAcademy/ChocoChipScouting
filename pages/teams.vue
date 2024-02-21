@@ -156,10 +156,11 @@ async function tableSetup() {
         if (allowedEvents.includes(match.event.replace(/[0-9]/g, ''))) {
           data.push(match)
           test1.value = "pushed"
-          test2.value += "NEW MATCH: " + JSON.stringify(match)
+          test2.value = "NEW MATCH: " + JSON.stringify(match)
         }
       }
     }
+    test.value = JSON.stringify(test)
     /*
     Goes through all remaining filters and applies their effects
      */
