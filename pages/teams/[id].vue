@@ -88,9 +88,9 @@ function showCarousel(index: number) {
     <template #header>
       <Title>Team {{ route.params.id }} | Attachments</Title>
       <div>
-        <h1 class="font-extrabold text-4xl">Team {{ route.params.id }} Attachments</h1>
+        <h1 class="font-extrabold text-4xl ">Team {{ route.params.id }} Attachments</h1>
         <div class="flex mt-2">
-          <UInput placeholder="Filter Notes" icon="i-heroicons-magnifying-glass" class="w-40" v-model="filterInput"/> <!-- wip -->
+          <UInput placeholder="Filter Notes" icon="i-heroicons-magnifying-glass" color="primary" class="w-40" v-model="filterInput"/> <!-- wip -->
           <UPopover class="px-2">
             <UButton label="Filter Tags" trailing-icon="i-heroicons-adjustments-horizontal" variant="ghost"/>
             <template #panel>
@@ -109,7 +109,7 @@ function showCarousel(index: number) {
     </template>
     <template class="flex flex-wrap justify-center">
       <UModal v-model="openCarousel" fullscreen >
-        <UButton color="gray" icon="i-heroicons-x-mark" size="xl" class="absolute right-2 top-2" variant="ghost" @click="openCarousel=false "/>
+        <UButton icon="i-heroicons-x-mark" size="xl" class="absolute right-2 top-2" variant="ghost" @click="openCarousel=false "/>
           <UCarousel
               v-slot="{ item, index }"
               :items="displayURLs"
@@ -119,12 +119,14 @@ function showCarousel(index: number) {
 
       }"
               :prev-button="{
-        color: 'gray',
+        color: 'primary',
+        variant: 'ghost',
         icon: 'i-heroicons-arrow-left-20-solid',
         class: 'left-6'
       }"
               :next-button="{
-        color: 'gray',
+        color: 'primary',
+        variant: 'ghost',
         icon: 'i-heroicons-arrow-right-20-solid',
         class: 'right-6'
       }"
@@ -137,12 +139,12 @@ function showCarousel(index: number) {
               <template #header class="flex flex-wrap">
                 <div class="font-sans text-2xl flex flex-wrap" >
                   <h1 v-if="tempCarouselData[index].notes != ''" >{{ tempCarouselData[index].notes }}</h1>
-                  <h1 v-else class="opacity-50">No Notes</h1>
+                  <h1 v-else class="text-primary-300">No Notes</h1>
                 </div>
               </template>
               <template class="flex flex-wrap">
-                <UBadge v-if="tempCarouselData[index].tagList.length != 0" v-for="tag in tempCarouselData[index].tagList" :label="tag" class="bg-gray-500 m-0.5 rounded-2xl h-7 px-3" variant="solid"/>
-                <h1 v-else class="font-sans text-lg opacity-50">No Tags</h1>
+                <UBadge v-if="tempCarouselData[index].tagList.length != 0" v-for="tag in tempCarouselData[index].tagList" :label="tag" class="m-0.5 rounded-2xl h-7 px-3 primary-900" variant="soft" />
+                <h1 v-else class="font-sans text-lg text-primary-300">No Tags</h1>
               </template>
               <template #footer>
                 <div class="font-sans text-xs opacity-35">
@@ -154,7 +156,7 @@ function showCarousel(index: number) {
             </UCard>
           </UCarousel>
       </UModal>
-      <UContainer v-if="filteredAttachmentsData.length != 0" v-for="(attachment, index) in filteredAttachmentsData" :key="index"  class="m-2 bg-cover bg-center min-w-60 w-1/4 h-80 rounded-2xl md:px-0 lg:px-0 sm:px-0 px-0 flex flex-col justify-end" :style="{ backgroundImage: 'url(' + attachment.attachmentURL + ')'}" @mouseover="attachmentHovered[index] = true" @mouseleave="attachmentHovered[index] = false" @click="showCarousel(index)">
+      <UContainer v-if="filteredAttachmentsData.length != 0" v-for="(attachment, index) in filteredAttachmentsData" :key="index"  class="m-2 bg-cover bg-center min-w-60 w-7/24 h-80 rounded-2xl md:px-0 lg:px-0 sm:px-0 px-0 flex flex-col justify-end" :style="{ backgroundImage: 'url(' + attachment.attachmentURL + ')'}" @mouseover="attachmentHovered[index] = true" @mouseleave="attachmentHovered[index] = false" @click="showCarousel(index)">
           <UContainer v-show="attachmentHovered[index]" class="lg:px-0 sm:px-0 px-0 m-0 h-30 max-w-7xl ">
             <UCard class="rounded-t-none rounded-b-2xl bg-white" :style="{ backgroundColor: 'rgba(255, 255, 255, 0.7)' }">
                 <div class="flex flex-wrap">
@@ -165,7 +167,7 @@ function showCarousel(index: number) {
 
                   <!--
                   <UPopover>
-                    <UButton icon="i-heroicons-pencil-square" variant="ghost" color="gray" class="ml-1"/>
+                    <UButton icon="i-heroicons-pencil-square" variant="ghost" color="primary" class="ml-1"/>
                     <template #panel>
                       <UInput :model-value="attachment.notes" @change=""/>
                     </template>
@@ -173,10 +175,10 @@ function showCarousel(index: number) {
                   -->
                 </div>
               <div class="flex flex-wrap">
-                <UBadge v-for="tag in attachment.tagList" :label="tag" class="bg-gray-500 m-0.5 rounded-2xl h-7 px-3" variant="solid"/>
+                <UBadge v-for="tag in attachment.tagList" :label="tag" class="m-0.5 rounded-2xl h-7 px-3" variant="soft" color="primary"/>
                 <!--
                 <UPopover>
-                  <UButton icon="i-heroicons-tag" variant="ghost" color="gray" class="ml-1"/>
+                  <UButton icon="i-heroicons-tag" variant="ghost" color="primary" class="ml-1"/>
                   <template #panel>
                      add or remove tags
                   </template>
