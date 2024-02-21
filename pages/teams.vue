@@ -110,7 +110,6 @@ async function tableSetup() {
   let allowedTeams = []
   let blueAlliance = []
   let redAlliance = []
-  test.value = JSON.stringify(selectedFilters.value)
   for (let filter of selectedFilters.value) {
     if (filter.content.startsWith("event:")) {
       allowedEvents.push(filter.content.split(":")[1].trim())
@@ -144,7 +143,6 @@ async function tableSetup() {
       }
     }
   }
-  test1.value = JSON.stringify(allowedEvents)
   tableLoop: for (let [key, value] of teamOrgMatches) {
     /*
     Data is an array of all matches, associated with a team (key), for the event filters selected
@@ -153,6 +151,8 @@ async function tableSetup() {
     //if sorted by match apply alliance colors
     let alliance = blueAlliance.includes(key.toString()) ? "bg-blue-100": redAlliance.includes(key.toString()) ? "bg-red-100": ""
 
+    test.value = allowedTeams.length.toString()
+    test1.value = key.toString()
     if (allowedTeams.includes(key.toString()) || allowedTeams.length == 0) {
       for (let match of value) {
         test2.value = match.event
