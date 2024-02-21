@@ -101,13 +101,11 @@ function isValidNum() {
   return (data.value.teamNumber != null) && (data.value.matchNumber != null) && (data.value.teamNumber > 0) && (data.value.matchNumber > 0) && (data.value.teamNumber < 10000)
 }
 
-let test = ref("")
-
 async function submit() {
   data.value.event = selectedEvent || ""
+  //SHOULD THIS BE AN AWAIT TODO
   let newDoc = db.post(data.value)
-  test.value = JSON.stringify(data.value)
-  //await navigateTo("/matches")
+  await navigateTo("/matches")
 }
 
 /* Good-looking square buttons but don't work horizontally why?
@@ -217,7 +215,6 @@ async function submit() {
       </template>
     </UCard>
   </div>
-  <p>{{test}}</p>
 </template>
 
 <style scoped>

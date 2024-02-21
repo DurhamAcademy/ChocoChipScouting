@@ -67,8 +67,6 @@ for(let i  = 0; i < match.length; i++){
   }
 }
 
-let test = ref(JSON.stringify(teamOrgMatches.get(6502)))
-
 /*
 If there are two overlapping matches uses data from only one of them (very basic system needs improvement)
  */
@@ -96,6 +94,8 @@ for(let data of teamOrgMatches){
     }
   }
 }
+
+let test = ref(JSON.stringify(teamOrgMatches.get(6502)))
 
 
 async function tableSetup() {
@@ -141,6 +141,7 @@ async function tableSetup() {
       }
     }
   }
+  test.value = JSON.stringify(allowedTeams)
   tableLoop: for (let [key, value] of teamOrgMatches) {
     /*
     Data is an array of all matches, associated with a team (key), for the event filters selected
