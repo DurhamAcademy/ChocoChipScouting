@@ -181,7 +181,7 @@ async function tableSetup() {
         debug("filter 1")
         let hasAuto = false
         for (let match of data) {
-          if (match.auto.amp > 0 || match.auto.speaker > 0 || match.auto.mobility == true) {
+          if (match.auto.amp > 0 || match.auto.speakerNA > 0 || match.auto.mobility == true) {
             hasAuto = true
             break
           }
@@ -191,6 +191,7 @@ async function tableSetup() {
         }
       }
     }
+    debug("lost")
     debug(JSON.stringify(data))
     if (data.length > 0) {
       let arr = {
