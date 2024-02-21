@@ -9,9 +9,9 @@ const route = useRoute()
 
 // display stuff
 const attachmentsData = ref<({ attachmentURL: string; attachmentID: string; tagList: string[]; notes: string; fileName: string; fileSize: string; event: string; author: string | undefined; dateUploaded: string; attachmentHovered: boolean})[]>([])
-const filteredAttachmentsData = ref<({ attachmentURL: string; attachmentID: string; tagList: string[]; notes: string; fileName: string; fileSize: string; event: string; author: string | undefined; dateUploaded: string; attachmentHovered: boolean})[]>([])
+let filteredAttachmentsData = ref<({ attachmentURL: string; attachmentID: string; tagList: string[]; notes: string; fileName: string; fileSize: string; event: string; author: string | undefined; dateUploaded: string; attachmentHovered: boolean})[]>([])
 const tempCarouselData = ref<({ attachmentURL: string; attachmentID: string; tagList: string[]; notes: string; fileName: string; fileSize: string; event: string; author: string | undefined; dateUploaded: string; attachmentHovered: boolean})[]>([])
-const attachmentsURLs = ref<string[]>([])
+let attachmentsURLs = ref<string[]>([])
 const displayURLs = ref<string[]>([])
 const possibleTags = ref<string[]>([])
 const tagStyles = ref<string[]>([])
@@ -47,9 +47,11 @@ allDocs.rows.forEach(async (row) => {
 filteredAttachmentsData.value = attachmentsData.value
 
 // updating stuff when values change
-watchEffect(() => {
-  attachmentsURLs.value = attachmentsData.value.map(item => item.attachmentURL);
-  filteredAttachmentsData.value = attachmentsData.value.filter(attachment => {
+attachmentsURLs = computed(() => {
+  return attachmentsData.value.map(item => item.attachmentURL)
+})
+filteredAttachmentsData = computed(() => {
+  return attachmentsData.value.filter(attachment => {
     return attachment.notes.toLowerCase().includes(filterInput.value.toLowerCase());
   }).filter(attachment => {
     return filterTags.value.every(tag => attachment.tagList.includes(tag))
