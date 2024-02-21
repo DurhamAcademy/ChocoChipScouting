@@ -156,11 +156,9 @@ async function tableSetup() {
         if (allowedEvents.includes(match.event.replace(/[0-9]/g, ''))) {
           test2.value = JSON.stringify(match)
           data.push(match)
+          test.value = data[0]
         }
       }
-    }
-    for(let thing of data){
-      test.value = JSON.stringify(thing)
     }
     /*
     Goes through all remaining filters and applies their effects
