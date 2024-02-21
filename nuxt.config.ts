@@ -64,6 +64,10 @@ export default defineNuxtConfig({
       }
     }
   },
+  sourcemap: {
+    server: true,
+    client: true
+  },
   colorMode: {
     preference: 'light' //eventually we will add color mode preference
   },
