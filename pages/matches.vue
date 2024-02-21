@@ -18,6 +18,7 @@ for (let i=matches.length-1; i>=0; i--) {
   if(matches[i].matchNumber === -1 || matches[i].matchNumber === null || (matches[i].event != currentEvent)) matches.splice(i, 1)
 }
 
+
 const headers = [
   {
     title: 'Info',
@@ -53,6 +54,7 @@ const headers = [
   }
 ]
 
+
 const items = matches
 
 </script>
@@ -67,15 +69,17 @@ const items = matches
         v-model:sort-by="sortBy"
     >
       <template v-slot:item.notes="row">
-        <UPopover>
+        <UPopover :popper="{ offsetDistance: 15 }">
           <UButton class="-m-2.5" color="yellow" label="Notes" variant="soft"/>
           <template #panel>
-              <div class="max-w-lg min-w-[15rem] overflow-y-auto" style="max-height: 20rem; min-height: 10rem">
-                <div class="whitespace-normal break-all">Notes: {{row.value.notes}}</div>
+              <UContainer class="m-auto max-w-lg min-w-[15rem] overflow-y-auto" style="max-height: 20rem; min-height: 10rem">
                 <br>
-                <p>Reliability: {{ row.value.reliability }}</p>
-                <p>Efficiency: {{ row.value.efficiency }}</p>
-              </div>
+                <div class="whitespace-normal break-all"> Notes: {{row.value.notes}}</div>
+                <br>
+                <p> Reliability: {{ row.value.reliability }}</p>
+                <p> Efficiency: {{ row.value.efficiency }}</p>
+                <br>
+              </UContainer>
           </template>
         </UPopover>
       </template>
