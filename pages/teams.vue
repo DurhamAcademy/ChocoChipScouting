@@ -153,17 +153,17 @@ async function tableSetup() {
       for (let match of value) {
         if (allowedEvents.includes(match.event.replace(/[0-9]/g, ''))) {
           data.push(match)
-          //testing
-          debug(JSON.stringify(data))
         }
       }
     }
+    debug(JSON.stringify(data))
     /*
     Goes through all remaining filters and applies their effects
      */
     for (let filter of selectedFilters.value) {
 
       if (filter.id == 0) {
+        debug("filter 0")
         let hasClimb = false
         for (let match of data) {
           if (match.endgame.endgame.includes("Onstage") || match.endgame.endgame.includes("Attempted Onstage")) {
@@ -177,6 +177,7 @@ async function tableSetup() {
       }
 
       if (filter.id == 1) {
+        debug("filter 1")
         let hasAuto = false
         for (let match of data) {
           if (match.auto.amp > 0 || match.auto.speaker > 0 || match.auto.mobility == true) {
