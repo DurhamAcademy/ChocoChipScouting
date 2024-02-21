@@ -104,21 +104,23 @@ async function login(username: string, password: string) {
       <UForm action="javascript:void(0);">
         <UFormGroup label="Username" name="username" autocomplete="username" required>
           <UInput required
-                 v-model="username"
+                  :disabled="loading"
+                  v-model="username"
                   type="text"/>
         </UFormGroup>
         <UFormGroup label="Password" name="password" autocomplete="current-password" required>
           <UInput v-model="password"
                   placeholder="Password"
                   required
+                  :disabled="loading"
                   type="password"/>
         </UFormGroup>
         <UFormGroup class="inputDiv" label="Event" name="event" required>
-          <USelectMenu v-model="selectedEvent" :options="events" @update:v-model="value => {localStorage.setItem('currentEvent', value)}"/>
+          <USelectMenu :disabled="loading" v-model="selectedEvent" :options="events" @update:v-model="value => {localStorage.setItem('currentEvent', value)}"/>
         </UFormGroup>
         <UFormGroup class="inputDiv" style="padding-top: 10px">
           <UButton
-              loading=""
+              :loading="loading"
                   @click="
                   login(username, password)"
                    type="submit">Login
