@@ -132,8 +132,8 @@ function showCarousel(index: number) {
               class="w-full h-11/12 m-auto"
           >
 
-            <NuxtImg :src="item" draggable="false" class="object-contain" />
-            <UCard class="bg-white rounded-2xl m-2 lg:min-w-64 md:min-w-48 sm:min-w-24">
+            <NuxtImg :src="item" draggable="false" class="object-contain overflow-hidden" />
+            <UCard class="bg-white rounded-2xl m-2 lg:min-w-64 md:min-w-48 sm:min-w-24 overflow-hidden">
               <template #header class="flex flex-wrap">
                 <div class="font-sans text-2xl flex flex-wrap" >
                   <h1 v-if="tempCarouselData[index].notes != ''" >{{ tempCarouselData[index].notes }}</h1>
