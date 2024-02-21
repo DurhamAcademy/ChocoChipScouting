@@ -10,6 +10,8 @@ const usersDB = new PouchDB(`${couchDBBaseURL}/basic`, {skip_setup: true});
   let username = ref("");
   let password = ref("");
   let error = ref(false)
+let loading = ref(false)
+
 
 const events = eventOptions
 const selectedEvent = window.localStorage.getItem("currentEvent") || eventOptions[0]
@@ -22,7 +24,9 @@ async function login(username: string, password: string) {
     try
     {
       errorVal.value = "run login"
+      loading.value = true
       usersDB.logIn(username, password, async function (err, response) {
+        loading.value=false
         if (response) {
           errorVal.value = "logged in"
           updateUsernameState()
@@ -114,6 +118,7 @@ async function login(username: string, password: string) {
         </UFormGroup>
         <UFormGroup class="inputDiv" style="padding-top: 10px">
           <UButton
+              loading=""
                   @click="
                   login(username, password)"
                    type="submit">Login

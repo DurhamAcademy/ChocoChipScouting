@@ -71,6 +71,7 @@ provide(loginStateKey, loginStateObject)
 
 <template>
   <div class="min-h-screen min-w-screen">
+    <LazyNuxtLoadingIndicator/>
       <v-app>
 <!--    <UContainer class="p-0 m-0">-->
           <NuxtPage/>
