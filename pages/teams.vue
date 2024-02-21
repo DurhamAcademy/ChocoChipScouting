@@ -154,9 +154,7 @@ async function tableSetup() {
     if (allowedTeams.includes(key.toString()) || allowedTeams.length == 0) {
       for (let match of value) {
         if (allowedEvents.includes(match.event.replace(/[0-9]/g, ''))) {
-          test2.value = JSON.stringify(match)
           data.push(match)
-          test.value = data[0]
         }
       }
     }
@@ -192,6 +190,7 @@ async function tableSetup() {
       }
     }
     if (data.length > 0) {
+      test.value = "true"
       let arr = {
         team: key,
         amp: getAverageAmpCycles(data).toFixed(2),

@@ -29,18 +29,6 @@ export default defineNuxtConfig({
         })
       }
   ],
-  buildModules: ['@nuxtjs/pwa'],
-  pwa: {
-    manifest: {
-      name: 'DARC SIDE Webapp',
-      short_name: '6502 App',
-      lang: 'en',
-      display: 'standalone',
-    },
-    workbox: {
-      enabled: true
-    }
-  },
   plugins: [
       '~/plugins/vuetify.ts'
   ],
