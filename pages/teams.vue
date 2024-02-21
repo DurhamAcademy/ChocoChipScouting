@@ -160,7 +160,7 @@ async function tableSetup() {
         }
       }
     }
-    test.value = JSON.stringify(data)
+    if(data[0]) test.value = JSON.stringify(data[0])
     /*
     Goes through all remaining filters and applies their effects
      */
