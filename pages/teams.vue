@@ -52,9 +52,6 @@ let match = matches.map(async (doc): Promise<ScoutingData & IdMeta> => {
   return await db.get(doc.id)
 })
 
-let test = ref(JSON.stringify(match))
-
-
 let teamOrgMatches = new Map<number,Array<ScoutingData & IdMeta>>()
 
 for(let i  = 0; i < match.length; i++){
@@ -69,6 +66,8 @@ for(let i  = 0; i < match.length; i++){
     teamOrgMatches.set(team, arr)
   }
 }
+
+let test = ref(JSON.stringify(teamOrgMatches.get(6502)))
 
 /*
 If there are two overlapping matches uses data from only one of them (very basic system needs improvement)
