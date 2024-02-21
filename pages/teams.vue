@@ -190,7 +190,7 @@ async function tableSetup() {
       }
     }
     if (data.length > 0) {
-      test.value = "true"
+      test.value += "true"
       let arr = {
         team: key,
         amp: getAverageAmpCycles(data).toFixed(2),
