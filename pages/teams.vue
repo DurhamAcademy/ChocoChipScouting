@@ -151,6 +151,7 @@ async function tableSetup() {
     //if sorted by match apply alliance colors
     let alliance = blueAlliance.includes(key.toString()) ? "bg-blue-100": redAlliance.includes(key.toString()) ? "bg-red-100": ""
 
+    //test
     if (allowedTeams.includes(key.toString()) || allowedTeams.length == 0) {
       for (let match of value) {
         test2.value = "NEW MATCH: " + JSON.stringify(match)
