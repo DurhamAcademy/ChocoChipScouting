@@ -5,7 +5,7 @@ import {loginStateKey} from "~/utils/keys";
 import {eventOptions} from "~/utils/eventOptions";
 import PouchDB from "pouchdb"
 
-const usersDB = new PouchDB(`${couchDBBaseURL}/_users`, {skip_setup: true});
+const usersDB = new PouchDB(`${couchDBBaseURL}/basic`, {skip_setup: true});
   let username = ref("");
   let password = ref("");
   let error = ref(false)
@@ -23,10 +23,12 @@ async function login(username: string, password: string) {
       errorVal.value = "run login"
       usersDB.logIn(username, password, async function (err, response) {
         if (response) {
+          errorVal.value = "logged in"
           updateUsernameState()
           navigateTo("/dashboard")
         }
         else if (err) {
+          errorVal.value = "failed login"
           let loginResult = await usersDB.logIn("admin", "password")
           if(loginResult){
             let getUserResult = await usersDB.getUser(username)
@@ -49,8 +51,8 @@ async function login(username: string, password: string) {
       })
 
     }
-    catch (e) {
-      console.dir(e)
+    catch (e : any) {
+      errorVal.value = e.toString()
     }
   }
 
@@ -115,7 +117,7 @@ async function login(username: string, password: string) {
                    type="submit">Login
           </UButton>
         </UFormGroup>
-        <p v-if="error">test</p>
+        <p>{{ errorVal }}</p>
       </UForm>
     </UCard>
   </UContainer>
