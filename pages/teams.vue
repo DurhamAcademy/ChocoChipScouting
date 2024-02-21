@@ -148,47 +148,11 @@ async function tableSetup() {
     Data is an array of all matches, associated with a team (key), for the event filters selected
      */
     let data: any = []
+
+    data.push(value)
+
     //if sorted by match apply alliance colors
     let alliance = blueAlliance.includes(key.toString()) ? "bg-blue-100": redAlliance.includes(key.toString()) ? "bg-red-100": ""
-
-    if (allowedTeams.includes(key.toString()) || allowedTeams.length == 0) {
-      for (let match of value) {
-        if (allowedEvents.includes(match.event.replace(/[0-9]/g, ''))) {
-          data.push(match)
-        }
-      }
-    }
-    /*
-    Goes through all remaining filters and applies their effects
-     */
-    for (let filter of selectedFilters.value) {
-
-      if (filter.id == 0) {
-        let hasClimb = false
-        for (let match of data) {
-          if (match.endgame.endgame.includes("Onstage") || match.endgame.endgame.includes("Attempted Onstage")) {
-            hasClimb = true
-            break
-          }
-        }
-        if (!hasClimb) {
-          continue tableLoop
-        }
-      }
-
-      if (filter.id == 1) {
-        let hasAuto = false
-        for (let match of data) {
-          if (match.auto.amp > 0 || match.auto.speaker > 0 || match.auto.mobility == true) {
-            hasAuto = true
-            break
-          }
-        }
-        if (!hasAuto) {
-          continue tableLoop
-        }
-      }
-    }
     if (data.length > 0) {
       test.value += "true"
       let arr = {
