@@ -157,6 +157,7 @@ async function tableSetup() {
       }
     }
     debug(JSON.stringify(data))
+    debug("test")
     /*
     Goes through all remaining filters and applies their effects
      */
