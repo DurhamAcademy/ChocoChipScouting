@@ -340,7 +340,6 @@ tableSetup()
           </UPopover>
         </template>
       </UTable>
-    <UButton label="Show toast" @click="debug" />
   </UCard>
 </OuterComponents>
 </template>
