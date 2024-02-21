@@ -1,8 +1,11 @@
 <script setup lang="ts">
 import databases from "~/utils/databases"
+import {eventOptions} from "~/utils/eventOptions";
 const { scoutingData } = databases.locals
 
 const sortBy = ref([{ key: 'teamNumber', order: 'asc' }])
+
+const currentEvent = localStorage.getItem('currentEvent') || eventOptions[0]
 
 let db = scoutingData
 
@@ -12,7 +15,7 @@ let matc = matche.map(async (doc) => {
 })
 let matches = await Promise.all(matc)
 for (let i=matches.length-1; i>=0; i--) {
-  if(matches[i].matchNumber === -1 || matches[i].matchNumber === null || (matches[i].event != window.localStorage.getItem("event") || window.localStorage.getItem("event") == null)) matches.splice(i, 1)
+  if(matches[i].matchNumber === -1 || matches[i].matchNumber === null || (matches[i].event != currentEvent)) matches.splice(i, 1)
 }
 
 const headers = [
@@ -30,7 +33,7 @@ const headers = [
     children: [
       { title: 'Amp', align: 'end', value: 'auto.amp' },
       { title: 'Speaker', align: 'end', value: 'auto.speakerNA' },
-      { title: 'Mobility', align: 'end', value: 'auto.leave' }
+      { title: 'Mobility', align: 'end', value: 'auto.mobility' }
     ]
   }, {
     title: 'Tele-op',

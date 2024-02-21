@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import {addHook} from "pirates";
+import {NuxtImg} from "#components";
 
 const props = defineProps({value: Boolean, name: String, author: String, teamNumber: Number, attachments: Array<String>})
 </script>

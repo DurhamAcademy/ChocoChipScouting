@@ -35,7 +35,6 @@ services:
           target: /usr/src/nuxt3-app
           ignore:
             - node_modules
-            - bun.lockb
             - .npmrc
             - .gitignore
             - compose.yaml
