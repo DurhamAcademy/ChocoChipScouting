@@ -95,9 +95,9 @@ for(let data of teamOrgMatches){
   }
 }
 
-let test = ref(JSON.stringify(teamOrgMatches.get(6502)))
-let test1 = ref(JSON.stringify(teamOrgMatches.get(6502)))
-let test2 = ref(JSON.stringify(teamOrgMatches.get(6502)))
+let test = ref("")
+let test1 = ref("")
+let test2 = ref("")
 
 
 async function tableSetup() {
