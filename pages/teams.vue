@@ -97,8 +97,6 @@ for(let data of teamOrgMatches){
   }
 }
 
-let test = ref<Array<any>>(["testing"])
-
 
 async function tableSetup() {
   teamsData.length = 0
@@ -155,7 +153,6 @@ async function tableSetup() {
       for (let match of value) {
         if (allowedEvents.includes(match.event.replace(/[0-9]/g, ''))) {
           data.push(match)
-          test.value.push(JSON.stringify(data))
         }
       }
     }
@@ -190,8 +187,8 @@ async function tableSetup() {
         }
       }
     }
+    debug(JSON.stringify(data))
     if (data.length > 0) {
-      test.value.push(JSON.stringify(data))
       let arr = {
         team: key,
         amp: getAverageAmpCycles(data).toFixed(2),
@@ -216,8 +213,8 @@ async function tableSetup() {
   }
 }
 
-function debug(){
-  for(let error of test.value) toast.add({ title: error })
+function debug(text:string){
+  toast.add({ title: text })
 }
 
 function analyzeNotes(teamArrays: Array<any>){
