@@ -155,12 +155,12 @@ async function tableSetup() {
       for (let match of value) {
         if (allowedEvents.includes(match.event.replace(/[0-9]/g, ''))) {
           data.push(match)
-          test1.value = "pushed"
-          test2.value = "NEW MATCH: " + JSON.stringify(match)
         }
       }
     }
-    if(data[0]) test.value = JSON.stringify(data[0])
+    for(let thing of data){
+      test.value = "NEW DATA" + JSON.stringify(thing) + "\n"
+    }
     /*
     Goes through all remaining filters and applies their effects
      */
@@ -215,6 +215,7 @@ async function tableSetup() {
     }
     teamsData = sortedData
   }
+  if(teamsData[0]) test1.value = "TEAMS DATA" + JSON.stringify(teamsData[0])
 }
 
 function analyzeNotes(teamArrays: Array<any>){
