@@ -95,10 +95,6 @@ for(let data of teamOrgMatches){
   }
 }
 
-let test = ref("")
-let test1 = ref("")
-let test2 = ref("")
-
 
 async function tableSetup() {
   teamsData.length = 0
@@ -148,8 +144,6 @@ async function tableSetup() {
     Data is an array of all matches, associated with a team (key), for the event filters selected
      */
     let data: any = []
-
-
     //if sorted by match apply alliance colors
     let alliance = blueAlliance.includes(key.toString()) ? "bg-blue-100": redAlliance.includes(key.toString()) ? "bg-red-100": ""
 
@@ -163,8 +157,35 @@ async function tableSetup() {
     /*
     Goes through all remaining filters and applies their effects
      */
+    for (let filter of selectedFilters.value) {
+
+      if (filter.id == 0) {
+        let hasClimb = false
+        for (let match of data) {
+          if (match.endgame.endgame.includes("Onstage") || match.endgame.endgame.includes("Attempted Onstage")) {
+            hasClimb = true
+            break
+          }
+        }
+        if (!hasClimb) {
+          continue tableLoop
+        }
+      }
+
+      if (filter.id == 1) {
+        let hasAuto = false
+        for (let match of data) {
+          if (match.auto.amp > 0 || match.auto.speaker > 0 || match.auto.mobility == true) {
+            hasAuto = true
+            break
+          }
+        }
+        if (!hasAuto) {
+          continue tableLoop
+        }
+      }
+    }
     if (data.length > 0) {
-      test.value += "true"
       let arr = {
         team: key,
         amp: getAverageAmpCycles(data).toFixed(2),
@@ -187,7 +208,6 @@ async function tableSetup() {
     }
     teamsData = sortedData
   }
-  if(teamsData[0]) test1.value = JSON.stringify(teamsData[0])
 }
 
 function analyzeNotes(teamArrays: Array<any>){
@@ -309,9 +329,6 @@ tableSetup()
         </template>
       </UTable>
   </UCard>
-  <p>{{test}}</p>
-  <p>{{test1}}</p>
-  <p>{{test2}}</p>
 </OuterComponents>
 </template>
 
