@@ -96,7 +96,7 @@ function showCarousel(index: number) {
             <template #panel>
               <UCard class="min-w-32 max-w-64 flex flex-wrap justify-center">
                 <template #header>
-                  <h1>Choose Tags To Filter</h1>
+                  <h1 class="font-sans text-lg font-bold opacity-50">Choose Tags To Filter</h1>
                 </template>
                 <template #default>
                   <UButton v-for="(tag, index) in possibleTags" :label="tag" class="flex-grow justify center" style="margin:5px" :variant="tagStyles[index]" :ui="{ rounded: 'rounded-full' }" @click="toggleTag(index)"/>
@@ -137,17 +137,17 @@ function showCarousel(index: number) {
             <NuxtImg :src="item" draggable="false" class="object-contain overflow-hidden" />
             <UCard class="bg-white rounded-2xl m-2 lg:min-w-64 md:min-w-48 min-w-24 overflow-hidden">
               <template #header class="flex flex-wrap">
-                <div class="font-sans text-2xl flex flex-wrap" >
+                <div class="font-sans text-2xl flex flex-wrap font-bold" >
                   <h1 v-if="tempCarouselData[index].notes != ''" >{{ tempCarouselData[index].notes }}</h1>
-                  <h1 v-else class="text-primary-300">No Notes</h1>
+                  <h1 v-else class="font-sans opacity-50">No Notes</h1>
                 </div>
               </template>
               <template class="flex flex-wrap">
                 <UBadge v-if="tempCarouselData[index].tagList.length != 0" v-for="tag in tempCarouselData[index].tagList" :label="tag" class="m-0.5 rounded-2xl h-7 px-3 primary-900" variant="soft" />
-                <h1 v-else class="font-sans text-lg text-primary-300">No Tags</h1>
+                <h1 v-else class="font-sans text-lg opacity-50 font-bold">No Tags</h1>
               </template>
               <template #footer>
-                <div class="font-sans text-xs opacity-35">
+                <div class="font-sans text-xs opacity-40 font-medium">
                   <p>Event: {{tempCarouselData[index].event}}</p>
                   <p>Author: {{tempCarouselData[index].author}}</p>
                   <p>Date Uploaded: {{tempCarouselData[index].dateUploaded}}</p>
@@ -157,7 +157,7 @@ function showCarousel(index: number) {
           </UCarousel>
       </UModal>
       <UContainer v-if="filteredAttachmentsData.length != 0" v-for="(attachment, index) in filteredAttachmentsData" :key="index"  class="m-2 bg-cover bg-center min-w-60 w-7/24 h-80 rounded-2xl md:px-0 lg:px-0 sm:px-0 px-0 flex flex-col justify-end" :style="{ backgroundImage: 'url(' + attachment.attachmentURL + ')'}" @mouseover="attachmentHovered[index] = true" @mouseleave="attachmentHovered[index] = false" @click="showCarousel(index)">
-          <UContainer v-show="attachmentHovered[index]" class="lg:px-0 sm:px-0 px-0 m-0 h-30 max-w-7xl ">
+          <UContainer v-show="attachmentHovered[index]" class="lg:px-0 sm:px-0 px-0 m-0 h-30 max-w-7xl">
             <UCard class="rounded-t-none rounded-b-2xl bg-white" :style="{ backgroundColor: 'rgba(255, 255, 255, 0.7)' }">
                 <div class="flex flex-wrap">
                   <div class="font-sans text-2xl flex flex-wrap" >
