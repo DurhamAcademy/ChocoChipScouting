@@ -67,9 +67,9 @@ let data = ref({
     endgame: [endgameOptions[0]]
   },
   notes: {
-    efficiency: 1,
+    playedDefense: false,
+    defense: 3,
     notes: "",
-    reliability: 1
   }
 })
 
@@ -120,18 +120,18 @@ async function submit() {
         </div>
         <br>
         <UButtonGroup class="flex">
-          <UButton v-for="gamePeriod of GameTime"  :label=gamePeriod block class="w-auto" enabled style="flex: 1"
+          <UButton v-for="gamePeriod of GameTime" :variant="gameTime == gamePeriod ? 'solid': 'soft'" :label=gamePeriod block class="w-auto" enabled style="flex: 1"
                    @click="gameTime=gamePeriod"/>
         </UButtonGroup>
       </template>
       <div v-if="gameTime == GameTime.Autonomous">
         <div class="flex" style="text-align:center">
           <div>
-            <h1 class="text-green-600 font-sans">Amp</h1>
+            <h1 class="font-sans text-gray-700 dark:text-gray-200 font-medium">Amp</h1>
             <IncrementalButton v-model="data.auto.amp" style="margin:5px"></IncrementalButton>
           </div>
           <div>
-            <h1 class="text-green-600 font-sans">Speaker</h1>
+            <h1 class="text-gray-700 dark:text-gray-200 font-sans font-medium">Speaker</h1>
             <IncrementalButton v-model="data.auto.speakerNA" style="margin:5px"></IncrementalButton>
           </div>
           <div>
@@ -144,15 +144,15 @@ async function submit() {
       <div v-if="gameTime == GameTime.Teleoperated">
         <div class="flex" style="text-align:center">
           <div>
-            <h1 class="text-green-600 font-sans">Amp</h1>
+            <h1 class="text-gray-700 dark:text-gray-200 font-sans font-medium">Amp</h1>
             <IncrementalButton v-model="data.teleop.amp" style="margin:5px"></IncrementalButton>
           </div>
           <div>
-            <h1 class="text-green-600 font-sans">SpeakerNA</h1>
+            <h1 class="text-gray-700 dark:text-gray-200 font-sans font-medium">Speaker</h1>
             <IncrementalButton v-model="data.teleop.speakerNA" style="margin:5px"></IncrementalButton>
           </div>
           <div>
-            <h1 class="text-green-600 font-sans">SpeakerA</h1>
+            <h1 class="text-gray-700 dark:text-gray-200 font-sans font-medium">Speaker+</h1>
             <IncrementalButton v-model="data.teleop.speakerA" style="margin:5px"></IncrementalButton>
           </div>
         </div>
@@ -160,19 +160,19 @@ async function submit() {
       <div v-if="gameTime == GameTime.Endgame">
         <div class="flex" style="text-align:center">
           <div>
-            <h1 class="text-green-600 font-sans">Amp</h1>
+            <h1 class="text-gray-700 dark:text-gray-200 font-sans font-medium">Amp</h1>
             <IncrementalButton v-model="data.teleop.amp" style="margin:5px"></IncrementalButton>
           </div>
           <div>
-            <h1 class="text-green-600 font-sans">SpeakerNA</h1>
+            <h1 class="text-gray-700 dark:text-gray-200 font-sans font-medium">Speaker</h1>
             <IncrementalButton v-model="data.teleop.speakerNA" style="margin:5px"></IncrementalButton>
           </div>
           <div>
-            <h1 class="text-green-600 font-sans">SpeakerA</h1>
+            <h1 class="text-gray-700 dark:text-gray-200 font-sans font-medium">Speaker+</h1>
             <IncrementalButton v-model="data.teleop.speakerA" style="margin:5px"></IncrementalButton>
           </div>
           <div>
-            <h1 class="text-green-600 font-sans">Trap</h1>
+            <h1 class="text-gray-700 dark:text-gray-200 font-sans font-medium">Trap</h1>
             <IncrementalButton v-model="data.endgame.trap" :max-value="3" style="margin:5px"></IncrementalButton>
           </div>
           </div>
@@ -182,24 +182,28 @@ async function submit() {
                      :connected-options="connectedOptions"></MultiSelect>
        </div>
       <div v-if="gameTime == GameTime.Notes">
-        <p>Rate (1-5)</p>
-        <br/>
-        <p>Reliability ({{ data.notes.reliability }})</p>
-        <br/>
-        <URange v-model="data.notes.reliability" size="md" color="green" min="1" :max="5"/>
-        <br/>
-        <br/>
-        <p>Efficiency ({{data.notes.efficiency}})</p>
-        <br/>
-        <URange v-model="data.notes.efficiency" size="md" color="green" min="1" :max="5"/>
+        <div class="flex">
+          <div class="flex-0 text-center">
+            <p class="flex-auto text-gray-700 dark:text-gray-200 font-sans font-medium">Defended</p>
+            <UCheckbox class="flex-auto mt-0.5 justify-center" v-model="data.notes.playedDefense"/>
+          </div>
+          <div class="flex-1 text-center">
+            <p class="text-gray-700 dark:text-gray-200 font-sans font-medium mr-5">Rating</p>
+            <div class="flex">
+              <URange v-if="!(data.notes.playedDefense)" class="ml-3 mr-3 mt-1 flex-auto" disabled v-model="data.notes.defense" size="md" min="1" :max="5"/>
+              <URange v-if="data.notes.playedDefense" class="ml-3 mr-3 mt-1 flex-auto" v-model="data.notes.defense" size="md" min="1" :max="5"/>
+              <UBadge class="flex-auto" :label="data.notes.playedDefense ? data.notes.defense: 0" :variant="data.notes.playedDefense ? 'solid':'soft'"/>
+            </div>
+          </div>
+        </div>
       </div>
       <template #footer>
         <UTextarea v-model="data.notes.notes" color="yellow" placeholder="Notes..."/>
         <br/>
         <div class="flex justify-between">
           <div>
-            <UButton class="m-1" color="rose" label="Cancel" to="/dashboard" type="reset" variant="outline"/>
-            <UButton class="m-1" color="green" label="Submit" type="submit" variant="solid" :disabled="!isValidNum()"
+            <UButton class="m-1" color="coral" label="Cancel" to="/dashboard" type="reset" variant="outline"/>
+            <UButton class="m-1" label="Submit" type="submit" variant="solid" :disabled="!isValidNum()"
                      @click="submit"/>
           </div>
         </div>
