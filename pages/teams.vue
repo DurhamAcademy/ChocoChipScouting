@@ -1,10 +1,13 @@
 <script setup lang="ts">
-import databases from "~/utils/databases";
+import databases, {type ScoutingData} from "~/utils/databases";
+import IdMeta = PouchDB.Core.IdMeta;
 import Sentiment from 'sentiment';
 import {eventOptions} from "~/utils/eventOptions";
 import AmpVisualization from "~/components/AmpVisualization.vue";
 import MatchVisualization from "~/components/MatchVisualization.vue";
 import SpeakerVisualization from "~/components/SpeakerVisualization.vue";
+
+const toast = useToast()
 
 let sentiment = new Sentiment()
 let options = {
@@ -38,8 +41,8 @@ const filterOptions = ref(
 )
 const currentEventFilter = { id: currentEventID, content: 'event: ' + currentEvent.replace(/[0-9]/g, ''), custom: false }
 const selectedFilters = ref<Array<{ id: number, content: string, custom: boolean}>>([currentEventFilter])
-watch(selectedFilters, () => {
-  tableSetup()
+watch(selectedFilters, async () => {
+  await tableSetup()
 }, {
   deep: true
 })
@@ -51,11 +54,11 @@ const { scoutingData } = databases.locals
 let db = scoutingData
 
 const matches = (await db.allDocs()).rows
-let match = matches.map(async (doc) => {
+let match = matches.map(async (doc): Promise<ScoutingData & IdMeta> => {
   return await db.get(doc.id)
 })
 
-let teamOrgMatches = new Map<number, Array<any>>()
+let teamOrgMatches = new Map<number,Array<ScoutingData & IdMeta>>()
 
 for(let i  = 0; i < match.length; i++){
   let currentMatch = (await match[i])
@@ -64,7 +67,7 @@ for(let i  = 0; i < match.length; i++){
     teamOrgMatches.set(team, [currentMatch])
   }
   else {
-    let arr : Array<any> = teamOrgMatches.get(team)!
+    let arr : Array<ScoutingData & IdMeta> = teamOrgMatches.get(team)!
     arr.push(currentMatch)
     teamOrgMatches.set(team, arr)
   }
@@ -73,7 +76,7 @@ for(let i  = 0; i < match.length; i++){
 let teamsData = ref<Array<any>>([])
 
 async function tableSetup() {
-  teamsData.value.length = 0
+  teamsData.length = 0
 
   /*
   Creates two arrays that are filters applied on all data for team numbers and events (includes match number filter)
@@ -119,7 +122,7 @@ async function tableSetup() {
     /*
     Data is an array of all matches, associated with a team (key), for the event filters selected
      */
-    let data: any = []
+    let data: Array<ScoutingData & IdMeta> = []
     //if sorted by match apply alliance colors
     let alliance = blueAlliance.includes(key.toString()) ? "bg-blue-100": redAlliance.includes(key.toString()) ? "bg-red-100": ""
 
@@ -170,7 +173,7 @@ async function tableSetup() {
       if (filter.id == 1) {
         let hasAuto = false
         for (let match of data) {
-          if (match.auto.amp > 0 || match.auto.speaker > 0 || match.auto.mobility == true) {
+          if (match.auto.amp > 0 || match.auto.speakerNA > 0 || match.auto.mobility) {
             hasAuto = true
             break
           }
@@ -191,19 +194,23 @@ async function tableSetup() {
         class: alliance,
         rawData: data
       }
-      teamsData.value.push(arr)
+      teamsData.push(arr)
     }
   }
 
   //Defaults to the alliance colors being together if match filter is selected
   if(redAlliance.length > 0 || blueAlliance.length > 0){
     let sortedData = []
-    for(let team of teamsData.value){
+    for(let team of teamsData){
       if(team.class == "bg-blue-100") sortedData.unshift(team)
       else sortedData.push(team)
     }
-    teamsData.value = sortedData
+    teamsData = sortedData
   }
+}
+
+function debug(text:string){
+  toast.add({ title: text })
 }
 
 function analyzeNotes(teamArrays: Array<any>){
@@ -214,7 +221,7 @@ function analyzeNotes(teamArrays: Array<any>){
   return analysisTotal/teamArrays.length
 }
 
-function getAverageSpeakerCycles(teamArrays: Array<any>){
+function getAverageSpeakerCycles(teamArrays: Array<ScoutingData>){
   let nonAveragedValue = 0
   for(let i = 0; i < teamArrays.length; i++){
     nonAveragedValue += teamArrays[i].auto.speakerNA + teamArrays[i].teleop.speakerNA + teamArrays[i].teleop.speakerA
@@ -222,7 +229,7 @@ function getAverageSpeakerCycles(teamArrays: Array<any>){
   return nonAveragedValue/teamArrays.length
 }
 
-function getAverageAmpCycles(teamArrays: Array<any>){
+function getAverageAmpCycles(teamArrays: Array<ScoutingData>){
   let nonAveragedValue = 0
   for(let i = 0; i < teamArrays.length; i++){
     nonAveragedValue += teamArrays[i].auto.amp + teamArrays[i].teleop.amp
@@ -230,7 +237,7 @@ function getAverageAmpCycles(teamArrays: Array<any>){
   return nonAveragedValue/teamArrays.length
 }
 
-function averageAuto(teamArrays: Array<any>){
+function averageAuto(teamArrays: Array<ScoutingData>): number {
   let successfulMobilityCount = 0
   for(let match of teamArrays){
     successfulMobilityCount += match.auto.mobility ? 1 : 0
@@ -238,7 +245,7 @@ function averageAuto(teamArrays: Array<any>){
   return successfulMobilityCount/teamArrays.length
 }
 
-function compileEndgames(teamArrays: Array<any>){
+function compileEndgames(teamArrays: Array<ScoutingData>): [Array<string>, Array<number>] {
   let endgameMap = new Map<string, number>();
   for(let i = 0; i < teamArrays.length; i++) {
     teamArrays[i].endgame.endgame.forEach(function (value: string) {
@@ -288,7 +295,7 @@ const columns = [{
 const graphOptions = ['Match Stats', 'Amp', 'Speaker']
 const selectedGraph = ref(graphOptions[0])
 
-tableSetup()
+await tableSetup()
 </script>
 
 <template>

@@ -48,7 +48,15 @@ let impData = {
   */
 
 
-let data = ref({
+let data: Ref<UnwrapRef<{
+  auto: { speakerNA: number; amp: number; mobility: boolean };
+  notes: { efficiency: number; notes: string; reliability: number };
+  endgame: { endgame: string[]; trap: number };
+  teamNumber: null;
+  event: string;
+  matchNumber: null;
+  teleop: { speakerA: number; speakerNA: number; amp: number }
+}>> = ref({
   event: "",
   teamNumber: null,
   matchNumber: null,
@@ -95,6 +103,7 @@ function isValidNum() {
 
 async function submit() {
   data.value.event = selectedEvent || ""
+  //SHOULD THIS BE AN AWAIT TODO
   let newDoc = db.post(data.value)
   await navigateTo("/matches")
 }

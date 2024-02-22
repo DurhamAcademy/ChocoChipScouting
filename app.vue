@@ -9,10 +9,12 @@ onErrorCaptured((err) => {
   })
 })
 
-import "./utils/authorization/Authorizer"
+
+import auth from "./utils/authorization/Authorizer"
 import LoginState from "~/utils/authorization/LoginState"
 import {loginStateKey} from "~/utils/keys";
 
+PouchDB.plugin(auth)
 let pdb = new PouchDB(couchDBBaseURL + "/basic");
 let session = await pdb.getSession();
 
@@ -69,6 +71,7 @@ provide(loginStateKey, loginStateObject)
 
 <template>
   <div class="min-h-screen min-w-screen">
+    <LazyNuxtLoadingIndicator/>
       <v-app>
 <!--    <UContainer class="p-0 m-0">-->
           <NuxtPage/>

@@ -71,23 +71,25 @@ if (session.userCtx.roles?.indexOf("_admin") != -1) {
                 <template #panel>
                   <UCard class="p-2">
                     <template #header>
-                      <div class="usernameLabel text-zinc-900 max-w-32">
-                        {{ usernameState }}
-                      </div>
+                        <div class="usernameLabel flex-auto mt-1.5 text-zinc-900 max-w-32">
+                          {{ usernameState }}
+                        </div>
                     </template>
                     <UFormGroup class="inputDiv" label="Event" name="event">
                       <USelectMenu v-model="selectedEvent" :options="events"/>
                     </UFormGroup>
                     <br>
-                    <ClientOnly>
-                      <UButton
+                    <UFormGroup class="inputDiv" label="Style" name="event">
+                      <ClientOnly>
+                        <UButton
                           :icon="isDark ? 'i-heroicons-moon-20-solid' : 'i-heroicons-sun-20-solid'"
                           color="gray"
                           variant="ghost"
                           aria-label="Theme"
                           @click="isDark = !isDark"
-                      />
-                    </ClientOnly>
+                        />
+                      </ClientOnly>
+                    </UFormGroup>
                     <template #footer>
                       <UButton block label="Logout" square @click="logout"/>
                     </template>

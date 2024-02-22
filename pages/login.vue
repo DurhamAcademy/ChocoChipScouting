@@ -1,23 +1,31 @@
 <script setup lang="ts">
-import "../utils/authorization/Authorizer";
+import PouchDB from "pouchdb"
+import auth from "../utils/authorization/Authorizer";
 import {couchDBBaseURL} from "~/utils/URIs"
 import {loginStateKey} from "~/utils/keys";
 import {eventOptions} from "~/utils/eventOptions";
 
-const usersDB = new PouchDB(`${couchDBBaseURL}/_users`, {skip_setup: true});
+PouchDB.plugin(auth)
+const usersDB = new PouchDB(`${couchDBBaseURL}/basic`, {skip_setup: true});
   let username = ref("");
   let password = ref("");
   let error = ref(false)
+let loading = ref(false)
+
 
 const events = eventOptions
 const selectedEvent = window.localStorage.getItem("currentEvent") || eventOptions[0]
 
 const {updateUsernameState}: { updateUsernameState: () => void } = inject(loginStateKey)!
 
+let errorVal = ref("")
+
 async function login(username: string, password: string) {
     try
     {
+      loading.value = true
       usersDB.logIn(username, password, async function (err, response) {
+        loading.value=false
         if (response) {
           updateUsernameState()
           navigateTo("/dashboard")
@@ -30,10 +38,12 @@ async function login(username: string, password: string) {
               await unaccessedAccountReset(username, password)
             }
             else{
+              if(err.error) errorVal.value = err.error.toString()
               error.value = true
             }
           }
           else{
+            if(err.error) errorVal.value = err.error.toString()
             error.value = true
           }
         }
@@ -43,7 +53,7 @@ async function login(username: string, password: string) {
       })
 
     }
-    catch (e) {
+    catch (e : any) {
       error.value = true
     }
   }
@@ -55,12 +65,15 @@ async function login(username: string, password: string) {
           usersDB.logIn(username, password).then(() =>{
             updateUsernameState()
             navigateTo("/dashboard")
-          }).catch(()=>{
+          }).catch((err)=>{
+            if(err.error) errorVal.value = err.error.toString()
             error.value = true
-          }).catch(()=>{
+          }).catch((err)=>{
+            if(err.error) errorVal.value = err.error.toString()
             error.value = true
           })
-        }).catch(()=>{
+        }).catch((err)=>{
+          if(err.error) errorVal.value = err.error.toString()
           error.value = true
         })
       })
@@ -85,28 +98,31 @@ async function login(username: string, password: string) {
       </template>
 
       <UForm action="javascript:void(0);">
-        <UFormGroup label="Username" name="username" required>
+        <UFormGroup label="Username" name="username" autocomplete="username" required>
           <UInput required
-                 v-model="username"
+                  :disabled="loading"
+                  v-model="username"
                   type="text"/>
         </UFormGroup>
-        <UFormGroup label="Password" name="password" required>
+        <UFormGroup label="Password" name="password" autocomplete="current-password" required>
           <UInput v-model="password"
                   placeholder="Password"
                   required
+                  :disabled="loading"
                   type="password"/>
         </UFormGroup>
         <UFormGroup class="inputDiv" label="Event" name="event" required>
-          <USelectMenu v-model="selectedEvent" :options="events" @update:v-model="value => {localStorage.setItem('currentEvent', value)}"/>
+          <USelectMenu :disabled="loading" v-model="selectedEvent" :options="events" @update:v-model="value => {localStorage.setItem('currentEvent', value)}"/>
         </UFormGroup>
         <UFormGroup class="inputDiv" style="padding-top: 10px">
           <UButton
+              :loading="loading"
                   @click="
                   login(username, password)"
                    type="submit">Login
           </UButton>
         </UFormGroup>
-        <p v-if="error">An error occurred.</p>
+        <p>{{ errorVal }}</p>
       </UForm>
     </UCard>
   </UContainer>
