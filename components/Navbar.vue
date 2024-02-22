@@ -40,7 +40,7 @@ console.log(sessionState?.value?.userCtx?.roles)
 if (sessionState?.value?.userCtx?.roles?.indexOf('_admin') != -1)
   links.push({ label: "Users", to: "/users" })
 
-const events = ['2024test', '2024trial']
+const events = ['2024test', '2024trial', '2023ncash']
 
 let selectedEvent = ref(window.localStorage.getItem("event"))
 

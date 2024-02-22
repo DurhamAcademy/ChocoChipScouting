@@ -20,25 +20,31 @@ class LocalRemoteDatabaseSyncHolder<Content extends {} = {}> {
     static databases: {
         attachments: LocalRemoteDatabaseSyncHolder<{ event: any; name: string; teamNumber: number; fileSize: string; author : string | undefined; tags: string[] ; extraNotes: string }>;
         scoutingData: LocalRemoteDatabaseSyncHolder<{ event: any; teamNumber: any; matchNumber: any }>;
+        scheduleData: LocalRemoteDatabaseSyncHolder<{ event: any; teams: any; assignees: any; }>;
         basic: LocalRemoteDatabaseSyncHolder<{}> } = {
         "attachments": new LocalRemoteDatabaseSyncHolder<{ event: any; name: string; teamNumber: number; fileSize: string; author : string | undefined; tags: string[] ; extraNotes: string }>("attachment-db"),
         "scoutingData": new LocalRemoteDatabaseSyncHolder<{ event: any; teamNumber: number; matchNumber: number }>("scouting-data"),
+        "scheduleData": new LocalRemoteDatabaseSyncHolder<{event: any; teams: any; assignees: any}>("schedule-data"),
         "basic": new LocalRemoteDatabaseSyncHolder<{}>("basic")
     };
     static locals: {
         attachments: PouchDB.Database<{ event: any; name: string; teamNumber: number; fileSize: string; author : string | undefined; tags: string[] ; extraNotes: string }>;
         scoutingData: PouchDB.Database<{ event: any; teamNumber: any; matchNumber: any}>;
+        scheduleData: PouchDB.Database<{ event: any; teams: any; assignees: any; }>;
         basic: PouchDB.Database<{}> } = {
         "attachments": this.databases.attachments.local,
         "scoutingData": this.databases.scoutingData.local,
+        "scheduleData": this.databases.scheduleData.local,
         "basic": this.databases.basic.local,
     };
     static remotes: {
         attachments: PouchDB.Database<{ event: any; name: string; teamNumber: number; fileSize: string; author : string | undefined; tags: string[] ; extraNotes: string }>;
         scoutingData: PouchDB.Database<{ event: any; teamNumber: any; matchNumber: any}>;
+        scheduleData: PouchDB.Database<{ event: any; teams: any; assignees: any; }>;
         basic: PouchDB.Database<{}> } = {
         "attachments": this.databases.attachments.remote,
         "scoutingData": this.databases.scoutingData.remote,
+        "scheduleData": this.databases.scheduleData.remote,
         "basic": this.databases.basic.remote,
     };
 }

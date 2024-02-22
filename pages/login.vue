@@ -70,7 +70,7 @@ async function login(username: string, password: string) {
 
 
 //also change in navbar
-const events = ['2024test', '2024trial']
+const events = ['2024test', '2024trial', '2023ncash']
 
 const selectedEvent = ref(window.localStorage.getItem('event') != undefined ? window.localStorage.getItem('event') : events[0])
 </script>
