@@ -3,6 +3,8 @@ import databases from "~/utils/databases";
 import Sentiment from 'sentiment';
 import {eventOptions} from "~/utils/eventOptions";
 import AmpVisualization from "~/components/AmpVisualization.vue";
+import MatchVisualization from "~/components/MatchVisualization.vue";
+import SpeakerVisualization from "~/components/SpeakerVisualization.vue";
 
 let sentiment = new Sentiment()
 let options = {
