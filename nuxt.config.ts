@@ -4,18 +4,33 @@ import vuetify, { transformAssetUrls } from 'vite-plugin-vuetify'
 
 
 export default defineNuxtConfig({
+  webpack: {
+    aggressiveCodeRemoval: true,
+    optimization: {
+      minimize: true,
+      splitChunks: {
+        chunks: 'initial',
+        cacheGroups: {
+          vendor: {
+            name: 'node_vendors',
+            test: /[\\/]node_modules[\\/]/,
+          },
+        },
+      },
+    }
+  },
   app: {
     head: {
       script: [
         {
           textContent: "window.global = window;"
-        },
-        {
-          src: "https://cdn.jsdelivr.net/npm/pouchdb@8.0.1/dist/pouchdb.js"
-        },
-        {
-          src: "https://github.com/pouchdb-community/pouchdb-authentication/releases/download/v1.1.3/pouchdb.authentication.min.js"
         }
+        // {
+        //   src: "https://cdn.jsdelivr.net/npm/pouchdb@8.0.1/dist/pouchdb.js"
+        // },
+        // {
+        //   src: "https://github.com/pouchdb-community/pouchdb-authentication/releases/download/v1.1.3/pouchdb.authentication.min.js"
+        // }
       ]
     }
   },
@@ -49,8 +64,8 @@ export default defineNuxtConfig({
   plugins: [
       '~/plugins/vuetify.ts'
   ],
-  devtools: {enabled: false },
-  ssr: false,
+  devtools: {enabled: true },
+  ssr: true,
   vite: {
     vue: {
       template: {

@@ -4,6 +4,7 @@ import {useInfiniteScroll} from '@vueuse/core'
 import AddButton from "~/components/AddButton.vue";
 import {useRoute} from "vue-router";
 import databases from "~/utils/databases"
+
 const { attachments } = databases.locals
 
 const db = attachments;
@@ -12,19 +13,17 @@ var total = info.doc_count
 var rowId = ""
 console.log(info, total)
 
-async function getDocsPaged(amount: integer, startingAt: integer): Promise<(PouchDB.Core.ExistingDocument<{name: string, team: number | undefined, author: string}>)[]> {
+async function getDocsPaged(amount: number, startingAt: number): Promise<(PouchDB.Core.ExistingDocument<{name: string, team: number | undefined, author: string}>)[]> {
   let docs = await db.allDocs({limit:amount, skip: startingAt, include_docs: true});
   // noinspection TypeScriptValidateTypes
   return docs.rows.map((doc) => doc.doc).filter((doc) => {
-    let a = doc!
-    return a
-  })
+    return doc!
+  });
 }
 
 const el = ref<HTMLElement>()
 
-const data = ref((await getDocsPaged(40, 0)).map((b)=>{return {name: b.name, team: b.team, author: b.author, id: b._id}}))
-
+const {pending, data} = useAsyncData("documents-data", async()=>(await getDocsPaged(40, 0)).map((b)=>{return {name: b.name, team: b.team, author: b.author, id: b._id}}))
 useInfiniteScroll(
     el,
     async (state) => {
@@ -48,9 +47,9 @@ let route = ref(useRoute())
 const router = useRouter()
 router.afterEach(()=>{route.value = useRoute()})
 const isAttach = route.value.matched.find((match)=>match.name=="attachments-id") !== undefined
-const showModal = ref<boolean>(isAttach)
-const hideAll = ref((route.value.matched.length!==1) && (!isAttach))
-const isOpen = ref(false)
+const showModal = useState<boolean>("show-modal", ()=>isAttach)
+const hideAll = useState<boolean>("hide-all", ()=>(route.value.matched.length!==1) && (!isAttach))
+const isOpen = useState<boolean>("is-open",false)
 async function view(id: string) {
   await navigateTo("/attachments/"+id)
 }

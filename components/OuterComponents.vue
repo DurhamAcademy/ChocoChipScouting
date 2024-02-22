@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import PouchDB from "pouchdb";
 import {useWindowSize} from "@vueuse/core";
 import LoginState from "~/utils/authorization/LoginState";
 import {loginStateKey} from "~/utils/keys";

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import PouchDB from "pouchdb"
+import PouchDB from "pouchdb";
 import auth from "../utils/authorization/Authorizer";
 import {couchDBBaseURL} from "~/utils/URIs"
 import {loginStateKey} from "~/utils/keys";
@@ -14,11 +14,11 @@ let loading = ref(false)
 
 
 const events = eventOptions
-const selectedEvent = useAsyncData<String>("currentEvent", ()=>window.localStorage.getItem("currentEvent") || eventOptions[0]);
+const selectedEvent = useState<String>("currentEvent", ()=>window?.localStorage?.getItem("currentEvent") || eventOptions[0]);
 
 const {updateUsernameState}: { updateUsernameState: () => void } = inject(loginStateKey)!
 
-let errorVal = ref("loaded")
+let errorVal = useState("error-val",()=>"loaded")
 
 async function login(username: string, password: string) {
     try
