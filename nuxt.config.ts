@@ -1,6 +1,8 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 import vuetify, { transformAssetUrls } from 'vite-plugin-vuetify'
 
+
+
 export default defineNuxtConfig({
   app: {
     head: {
@@ -29,10 +31,25 @@ export default defineNuxtConfig({
         })
       }
   ],
+  buildModules: ['@nuxtjs/pwa'],
+  pwa: {
+    manifest: {
+      name: 'DARC SIDE Webapp',
+      short_name: '6502 App',
+      lang: 'en',
+      display: 'standalone',
+    },
+    meta: {
+      theme_color: "#ee5245"
+    },
+    workbox: {
+      enabled: true
+    }
+  },
   plugins: [
       '~/plugins/vuetify.ts'
   ],
-  devtools: { enabled: true },
+  devtools: {enabled: false },
   ssr: false,
   vite: {
     vue: {

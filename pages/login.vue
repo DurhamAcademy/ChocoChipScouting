@@ -14,7 +14,7 @@ let loading = ref(false)
 
 
 const events = eventOptions
-const selectedEvent = window.localStorage.getItem("currentEvent") || eventOptions[0]
+const selectedEvent = useAsyncData<String>("currentEvent", ()=>window.localStorage.getItem("currentEvent") || eventOptions[0]);
 
 const {updateUsernameState}: { updateUsernameState: () => void } = inject(loginStateKey)!
 
