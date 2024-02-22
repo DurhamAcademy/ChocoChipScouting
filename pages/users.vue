@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import {couchDBBaseURL} from "~/utils/URIs";
 
-  const usersDB = new PouchDB(`${couchDBBaseURL}/_users`, {skip_setup: true});
+  const usersDB = new PouchDB(`${couchDBBaseURL}/basic`, {skip_setup: true});
 
 
   let username = ref("")
