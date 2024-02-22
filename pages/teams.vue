@@ -158,15 +158,12 @@ async function tableSetup() {
         }
       }
     }
-    debug(JSON.stringify(data))
-    debug("test")
     /*
     Goes through all remaining filters and applies their effects
      */
     for (let filter of selectedFilters.value) {
 
       if (filter.id == 0) {
-        debug("filter 0")
         let hasClimb = false
         for (let match of data) {
           if (match.endgame.endgame.includes("Onstage") || match.endgame.endgame.includes("Attempted Onstage")) {
@@ -180,7 +177,6 @@ async function tableSetup() {
       }
 
       if (filter.id == 1) {
-        debug("filter 1")
         let hasAuto = false
         for (let match of data) {
           if (match.auto.amp > 0 || match.auto.speakerNA > 0 || match.auto.mobility) {
@@ -193,8 +189,6 @@ async function tableSetup() {
         }
       }
     }
-    debug("lost")
-    debug(JSON.stringify(data))
     if (data.length > 0) {
       let arr = {
         team: key,

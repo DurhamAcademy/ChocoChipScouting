@@ -23,17 +23,14 @@ let errorVal = ref("loaded")
 async function login(username: string, password: string) {
     try
     {
-      errorVal.value = "run login"
       loading.value = true
       usersDB.logIn(username, password, async function (err, response) {
         loading.value=false
         if (response) {
-          errorVal.value = "logged in"
           updateUsernameState()
           navigateTo("/dashboard")
         }
         else if (err) {
-          errorVal.value = "failed login"
           let loginResult = await usersDB.logIn("admin", "password")
           if(loginResult){
             let getUserResult = await usersDB.getUser(username)
@@ -57,8 +54,7 @@ async function login(username: string, password: string) {
 
     }
     catch (e : any) {
-      errorVal.value = "failed initial login"
-      //test
+      error.value = true
     }
   }
 
