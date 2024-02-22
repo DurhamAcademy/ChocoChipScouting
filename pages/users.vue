@@ -1,6 +1,9 @@
 <script setup lang="ts">
+  import PouchDB from "pouchdb"
+  import auth from "../utils/authorization/Authorizer";
   import {couchDBBaseURL} from "~/utils/URIs";
 
+  PouchDB.plugin(auth)
   const usersDB = new PouchDB(`${couchDBBaseURL}/basic`, {skip_setup: true});
 
 
