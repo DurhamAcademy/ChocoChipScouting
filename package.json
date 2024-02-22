@@ -32,6 +32,7 @@
     "vue-chart-3": "^3.1.8",
     "vite-plugin-node-polyfills": "^0.19.0",
     "vite-plugin-vuetify": "^2.0.1",
-    "vuetify": "^3.4.10"
+    "vuetify": "^3.4.10",
+    "nuxt-precompress": "0.5.9"
   }
 }
