@@ -18,7 +18,7 @@ const selectedEvent = window.localStorage.getItem("currentEvent") || eventOption
 
 const {updateUsernameState}: { updateUsernameState: () => void } = inject(loginStateKey)!
 
-let errorVal = ref("loaded")
+let errorVal = ref("")
 
 async function login(username: string, password: string) {
     try
