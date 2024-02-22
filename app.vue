@@ -77,7 +77,7 @@ provide(loginStateKey, loginStateObject)
           <NuxtPage/>
 <!--    </UContainer>-->
       </v-app>
-    <UNotifications/>
+    <LazyUNotifications/>
   </div>
 </template>
 
