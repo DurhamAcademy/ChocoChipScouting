@@ -7,6 +7,8 @@ PouchDB.plugin(auth)
 const usersDB = new PouchDB(`${couchDBBaseURL}/basic`, {skip_setup: true});
 
 
+
+
   let username = ref("")
 
   let roles = ref([[""]])
@@ -19,28 +21,33 @@ const usersDB = new PouchDB(`${couchDBBaseURL}/basic`, {skip_setup: true});
   let userArr = ref([[""]])
 
   async function setup() {
-    resetRoles = true
-    userArr.value.length = 0
-    roles.value.length = 0
-    prevRoles.length = 0
-    let docs = await usersDB.allDocs()
-    for(let user of docs.rows){
-      if(user.id.includes("org.couchdb.user:")){
-        let userInfo = await usersDB.getUser(user.id.split(":")[1])
-        userArr.value.push([user.id.split(":")[1]])
-        if(userInfo.roles) roles.value.push(userInfo.roles)
-        else roles.value.push([])
-      }
-    }
-    prevRoles = Array.from(roles.value)
-    resetRoles = false
-    usersDB.getSession(function(err, response){
-      if(response){
-        if(response.userCtx.roles?.includes("_admin")){
-          adminAccount.value = true
+    try {
+      resetRoles = true
+      userArr.value.length = 0
+      roles.value.length = 0
+      prevRoles.length = 0
+      let docs = await usersDB.allDocs()
+      for (let user of docs.rows) {
+        if (user.id.includes("org.couchdb.user:")) {
+          let userInfo = await usersDB.getUser(user.id.split(":")[1])
+          userArr.value.push([user.id.split(":")[1]])
+          if (userInfo.roles) roles.value.push(userInfo.roles)
+          else roles.value.push([])
         }
       }
-    })
+      prevRoles = Array.from(roles.value)
+      resetRoles = false
+      usersDB.getSession(function (err, response) {
+        if (response) {
+          if (response.userCtx.roles?.includes("_admin")) {
+            adminAccount.value = true
+          }
+        }
+      })
+    }
+    finally{
+
+    }
   }
   setup()
 
