@@ -8,7 +8,7 @@ import databases from "~/utils/databases"
 const { attachments } = databases.locals
 
 const db = attachments;
-var info = await db.info();
+var info = db.info();
 var total = info.doc_count
 var rowId = ""
 console.log(info, total)

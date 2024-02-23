@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import databases from "~/utils/databases"
 import IncrementalButton from '~/components/IncrementalButton.vue'
-import {URange} from "#components";
 import {eventOptions} from "~/utils/eventOptions";
 
 const {scoutingData} = databases.locals
