@@ -5,9 +5,7 @@ import {couchDBBaseURL} from "~/utils/URIs"
 
 PouchDB.plugin(auth)
 const usersDB = new PouchDB(`${couchDBBaseURL}/basic`, {skip_setup: true});
-
-
-
+const toast = useToast()
 
   let username = ref("")
 
@@ -46,10 +44,14 @@ const usersDB = new PouchDB(`${couchDBBaseURL}/basic`, {skip_setup: true});
       })
     }
     finally{
-
+      debug("fail")
     }
   }
   setup()
+
+function debug(text:string){
+  toast.add({ title: text })
+}
 
   async function createUser() {
     let sessionRoles = await usersDB.getSession()
