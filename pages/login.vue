@@ -18,7 +18,7 @@ const selectedEvent = useState<String>("currentEvent", ()=>window?.localStorage?
 
 const {updateUsernameState}: { updateUsernameState: () => void } = inject(loginStateKey)!
 
-let errorVal = useState("error-val",()=>"loaded")
+let errorVal = useState("error-val",()=>"")
 
 async function login(username: string, password: string) {
     try
