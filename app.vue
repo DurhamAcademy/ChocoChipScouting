@@ -71,6 +71,7 @@ provide(loginStateKey, loginStateObject)
 </script>
 
 <template>
+  <NuxtPwaManifest/>
   <div class="min-h-screen min-w-screen">
     <LazyNuxtLoadingIndicator/>
       <v-app>

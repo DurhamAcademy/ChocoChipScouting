@@ -1,42 +1,36 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 import vuetify, { transformAssetUrls } from 'vite-plugin-vuetify'
 
-
+var sw = true;
 
 export default defineNuxtConfig({
-  // webpack: {
-  //   aggressiveCodeRemoval: true,
-  //   optimization: {
-  //     minimize: true,
-  //     splitChunks: {
-  //       chunks: 'initial',
-  //       cacheGroups: {
-  //         vendor: {
-  //           name: 'node_vendors',
-  //           test: /[\\/]node_modules[\\/]/,
-  //         }
-  //       }
-  //     }
-  //   },
-  // },
-  // nitro: {
-  //   compressPublicAssets: {
-  //     brotli: true,
-  //     gzip: true
-  //   },
-  // },
+  webpack: {
+    aggressiveCodeRemoval: true,
+    optimization: {
+      minimize: true,
+      splitChunks: {
+        chunks: 'initial',
+        cacheGroups: {
+          vendor: {
+            name: 'node_vendors',
+            test: /[\\/]node_modules[\\/]/,
+          }
+        }
+      }
+    },
+  },
+  nitro: {
+    compressPublicAssets: {
+      brotli: true,
+      gzip: true
+    },
+  },
   app: {
     head: {
       script: [
         {
           textContent: "window.global = window;"
         }
-        // {
-        //   src: "https://cdn.jsdelivr.net/npm/pouchdb@8.0.1/dist/pouchdb.js"
-        // },
-        // {
-        //   src: "https://github.com/pouchdb-community/pouchdb-authentication/releases/download/v1.1.3/pouchdb.authentication.min.js"
-        // }
       ]
     }
   },
@@ -46,7 +40,7 @@ export default defineNuxtConfig({
   },
   modules: [
       '@nuxt/image',
-    '@nuxtjs/pwa',
+    '@vite-pwa/nuxt',
     '@nuxt/ui',
       (_options, nuxt) => {
         nuxt.hooks.hook('vite:extendConfig', (config) => {
@@ -56,6 +50,7 @@ export default defineNuxtConfig({
       },
 
   ],
+
   // speedkit: {
   //
   //   detection: {
@@ -107,29 +102,68 @@ export default defineNuxtConfig({
   //     vimeo: 'https://i.vimeocdn.com',
   //   }
   // },
-  buildModules: [
+  // buildModules: [
   //     'nuxt-speedkit',
   //     '@nuxtjs/pwa'
-  ],
+  // ],
   pwa: {
+    strategies: sw ? 'injectManifest' : 'generateSW',
+    srcDir: sw ? 'service-worker' : undefined,
+    filename: sw ? 'sw.ts' : undefined,
+    registerType: 'autoUpdate',
     manifest: {
-      name: 'DARC SIDE Webapp',
-      short_name: '6502 App',
-      lang: 'en',
-      display: 'standalone'
-    },
-    meta: {
-      name:"DARC SIDE App",
-      theme_color: "#ee5245"
+      name: 'DARC SIDE Scouting Webapp',
+      short_name: '6502 Scout',
+      theme_color: '#ffffff',
+      icons: [
+        {
+          src: 'icon_192x192.png',
+          sizes: '192x192',
+          type: 'image/png',
+        },
+        {
+          src: 'icon.png',
+          sizes: '512x512',
+          type: 'image/png',
+        },
+        {
+          src: 'icon.png',
+          sizes: '512x512',
+          type: 'image/png',
+          purpose: 'any maskable',
+        },
+      ],
     },
     workbox: {
-      enabled: true
-    }
+      globPatterns: ['**/*.{js,css,html,png,svg,ico}'],
+    },
+    injectManifest: {
+      globPatterns: ['**/*.{js,css,html,png,svg,ico}'],
+    },
+    client: {
+      installPrompt: true,
+      // you don't need to include this: only for testing purposes
+      // if enabling periodic sync for update use 1 hour or so (periodicSyncForUpdates: 3600)
+      periodicSyncForUpdates: 20,
+    },
+    devOptions: {
+      enabled: true,
+      suppressWarnings: true,
+      navigateFallback: '/',
+      navigateFallbackAllowlist: [/^\/$/],
+      type: 'module',
+    },
   },
   plugins: [
       '~/plugins/vuetify.ts'
   ],
-  devtools: {enabled: true},
+  devtools: {
+    enabled: true,
+
+    timeline: {
+      enabled: true
+    }
+  },
   ssr: true,
   vite: {
     vue: {
