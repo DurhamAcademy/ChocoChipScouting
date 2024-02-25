@@ -170,8 +170,8 @@ export default defineNuxtConfig({
     vue: {
       template: {
         transformAssetUrls,
-      },
-    },
+      }
+    }
   },
   logLevel: "verbose",
   runtimeConfig:{
