@@ -21,7 +21,7 @@ export default defineNuxtConfig({
   },
   nitro: {
     compressPublicAssets: {
-      // brotli: true,
+      brotli: false,
       gzip: true
     },
   },
@@ -82,26 +82,26 @@ export default defineNuxtConfig({
   //
   // },
   //
-  // image: {
-  //   screens: {
-  //     default: 320,
-  //     xxs: 480,
-  //     xs: 576,
-  //     sm: 768,
-  //     md: 996,
-  //     lg: 1200,
-  //     xl: 1367,
-  //     xxl: 1600,
-  //     '4k': 1921
-  //   },
-  //
-  //   domains: ['img.youtube.com', 'i.vimeocdn.com'],
-  //
-  //   alias: {
-  //     youtube: 'https://img.youtube.com',
-  //     vimeo: 'https://i.vimeocdn.com',
-  //   }
-  // },
+  image: {
+    screens: {
+      default: 320,
+      xxs: 480,
+      xs: 576,
+      sm: 768,
+      md: 996,
+      lg: 1200,
+      xl: 1367,
+      xxl: 1600,
+      '4k': 1921
+    },
+
+    domains: ['img.youtube.com', 'i.vimeocdn.com'],
+
+    alias: {
+      youtube: 'https://img.youtube.com',
+      vimeo: 'https://i.vimeocdn.com',
+    }
+  },
   // buildModules: [
   //     'nuxt-speedkit',
   //     '@nuxtjs/pwa'
