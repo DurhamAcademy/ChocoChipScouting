@@ -20,6 +20,7 @@ export default defineNuxtConfig({
     },
   },
   nitro: {
+    preset: 'bun',
     compressPublicAssets: {
       brotli: false,
       gzip: true
