@@ -136,6 +136,7 @@ export default defineNuxtConfig({
     },
     workbox: {
       globPatterns: ['**/*.{js,css,html,png,svg,ico}'],
+
     },
     injectManifest: {
       globPatterns: ['**/*.{js,css,html,png,svg,ico}'],
