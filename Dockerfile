@@ -90,14 +90,13 @@ COPY ./server ./server
 COPY ./components ./components
 COPY ./utils ./utils
 COPY ./plugins ./plugins
+COPY ./service-worker ./service-worker
 
 #ENTRYPOINT ["bash"]
 RUN ["bun", "--bun", "run", "postinstall"]
 
 FROM files AS build
 ENV NODE_ENV development
-
-COPY ./service-worker ./service-worker
 
 RUN ["bun", "--bun", "run", "build"]
 
