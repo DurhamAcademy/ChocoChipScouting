@@ -21,7 +21,7 @@ export default defineNuxtConfig({
   },
   nitro: {
     compressPublicAssets: {
-      brotli: true,
+      // brotli: true,
       gzip: true
     },
   },
@@ -114,7 +114,7 @@ export default defineNuxtConfig({
     manifest: {
       name: 'DARC SIDE Scouting Webapp',
       short_name: '6502 Scout',
-      theme_color: '#ffffff',
+      theme_color: '#ee5245',
       icons: [
         {
           src: 'icon_192x192.png',
@@ -149,7 +149,7 @@ export default defineNuxtConfig({
     devOptions: {
       enabled: true,
       suppressWarnings: true,
-      navigateFallback: '/',
+      navigateFallback: '/dashboard',
       navigateFallbackAllowlist: [/^\/$/],
       type: 'module',
     },
