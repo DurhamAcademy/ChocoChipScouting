@@ -25,6 +25,7 @@ const toast = useToast()
       roles.value.length = 0
       prevRoles.length = 0
       let docs = await usersDB.allDocs()
+      debug(JSON.stringify(docs))
       for (let user of docs.rows) {
         if (user.id.includes("org.couchdb.user:")) {
           let userInfo = await usersDB.getUser(user.id.split(":")[1])
@@ -43,7 +44,7 @@ const toast = useToast()
         }
       })
     }
-    finally{
+    catch{
       debug("fail")
     }
   }
