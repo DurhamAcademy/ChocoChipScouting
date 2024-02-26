@@ -47,7 +47,6 @@ const toast = useToast()
       debug("fail")
     }
   }
-  setup()
 
 function debug(text:string){
   toast.add({ title: text })
@@ -128,6 +127,7 @@ function debug(text:string){
     key: 'delete',
   }]
 
+setup()
 </script>
 
 <template>
