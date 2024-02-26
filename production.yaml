@@ -2,34 +2,37 @@ name: "production_scouting_server"
 version: 1.0.0
 services:
   server:
-    env_file: .env
+    env_file: .serverenvfile
     restart: on-failure
-    image: ghcr.io/durhamacademy/nuxtscoutingsystem:main
+    build:
+      dockerfile: Dockerfile
+      context: .
+      target: production
     depends_on:
       couchdb:
         condition: service_healthy
       couch-db-setup:
         condition: service_completed_successfully
     ports:
-      - "80:3000"
+      - "3000:3000"
     links:
       - couchdb:couchdb
     environment:
-        - couchDBHostname=couchdb
-        - COUCHDB_SERVER_USER=${SERVER_USERNAME}
-        - COUCHDB_SERVER_PASSWORD=${SERVER_PASSWORD}
+      - couchDBHostname=couchdb
+      - COUCHDB_SERVER_USER=${SERVER_USERNAME}
+      - COUCHDB_SERVER_PASSWORD=${SERVER_PASSWORD}
     networks:
       - intercom_network
   couchdb:
-    env_file: .env
+    env_file: .serverenvfile
     restart: on-failure
     expose:
       - '5984'
-    ports:
-      - '5984:5984'
     environment:
       - COUCHDB_USER=${SERVER_USERNAME}
       - COUCHDB_PASSWORD=${SERVER_PASSWORD}
+    ports:
+      - '5984:5984'
     image: 'couchdb:3'
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:5984"]
@@ -41,7 +44,7 @@ services:
     volumes:
       - couchDB:/opt/couchdb/data
   couch-db-setup:
-    env_file: .env
+    env_file: .serverenvfile
     restart: on-failure
     depends_on:
       couchdb:
