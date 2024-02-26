@@ -94,7 +94,7 @@ async function tableSetup() {
     }
     if (filter.content.startsWith("match")) {
       //TODO figure out async stuff
-      let tbaMatchData = fetch.data.value
+      let tbaMatchData = await fetch.data.value
       if(tbaMatchData != null){
         let userInput = parseInt(filter.content.split(':')[1].trim())
         for(let match of tbaMatchData){
