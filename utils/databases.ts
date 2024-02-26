@@ -20,7 +20,7 @@ class LocalRemoteDatabaseSyncHolder<Content extends {} = {}> {
     }
 
     static databases = {
-        "attachments": new LocalRemoteDatabaseSyncHolder<Attachments>("attachment-db"),
+        "attachments": new LocalRemoteDatabaseSyncHolder<Attachments>("attachments"),
         "scoutingData": new LocalRemoteDatabaseSyncHolder<ScoutingData>("scouting-data"),
         "basic": new LocalRemoteDatabaseSyncHolder<{}>("basic")
     };

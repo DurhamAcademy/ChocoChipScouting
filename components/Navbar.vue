@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import LoginState from "~/utils/authorization/LoginState";
 import {loginStateKey} from "~/utils/keys";
-import SessionResponse = PouchDB.Authentication.SessionResponse;
+import PouchDB from "pouchdb";
 import {eventOptions} from "~/utils/eventOptions";
 const {usernameState, sessionState, logout}: {
   logout: () => Promise<void>;
