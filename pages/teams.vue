@@ -73,7 +73,7 @@ for(let i  = 0; i < match.length; i++){
   }
 }
 
-let teamsData = ref<Array<any>>([])
+let teamsData = ref<any>([])
 
 async function tableSetup() {
   teamsData.value.length = 0
