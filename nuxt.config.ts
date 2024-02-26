@@ -176,7 +176,7 @@ export default defineNuxtConfig({
   },
   logLevel: "verbose",
   runtimeConfig:{
-    TBA_Key: process.env.TBA_KEY,
+    TBA_KEY: process.env.TBA_KEY,
     couchDB: {
       hostname: (process.env.couchDBHostname===undefined)?process.env.couchDBHostname:"localhost",
       serverAdminUser: {
