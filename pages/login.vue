@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import PouchDB from "pouchdb"
+import PouchDB from "pouchdb";
 import auth from "../utils/authorization/Authorizer";
 import {couchDBBaseURL} from "~/utils/URIs"
 import {loginStateKey} from "~/utils/keys";
@@ -14,11 +14,11 @@ let loading = ref(false)
 
 
 const events = eventOptions
-const selectedEvent = window.localStorage.getItem("currentEvent") || eventOptions[0]
+const selectedEvent = useState<String>("currentEvent", ()=>window?.localStorage?.getItem("currentEvent") || eventOptions[0]);
 
 const {updateUsernameState}: { updateUsernameState: () => void } = inject(loginStateKey)!
 
-let errorVal = ref("")
+let errorVal = useState("error-val",()=>"")
 
 async function login(username: string, password: string) {
     try
@@ -85,47 +85,47 @@ async function login(username: string, password: string) {
 </script>
 
 <template>
-  <UContainer :ui="{
+  <LazyUContainer :ui="{
   'base': 'mx-auto',
   'padding': 'p-4 sm:p-6 lg:p-8',
   'constrained': 'max-w-sm'
   }">
-    <UCard>
+    <LazyUCard>
       <template #header>
         <h2 class="font-semibold text-xl text-gray-900 dark:text-white leading-tight">
           {{ "Login" }}
         </h2>
       </template>
 
-      <UForm action="javascript:void(0);">
-        <UFormGroup label="Username" name="username" autocomplete="username" required>
+      <LazyUForm action="javascript:void(0);">
+        <LazyUFormGroup label="Username" name="username" autocomplete="username" required>
           <UInput required
                   :disabled="loading"
                   v-model="username"
                   type="text"/>
-        </UFormGroup>
-        <UFormGroup label="Password" name="password" autocomplete="current-password" required>
-          <UInput v-model="password"
+        </LazyUFormGroup>
+        <LazyUFormGroup label="Password" name="password" autocomplete="current-password" required>
+          <LazyUInput v-model="password"
                   placeholder="Password"
                   required
                   :disabled="loading"
                   type="password"/>
-        </UFormGroup>
-        <UFormGroup class="inputDiv" label="Event" name="event" required>
-          <USelectMenu :disabled="loading" v-model="selectedEvent" :options="events" @update:v-model="value => {localStorage.setItem('currentEvent', value)}"/>
-        </UFormGroup>
-        <UFormGroup class="inputDiv" style="padding-top: 10px">
-          <UButton
+        </LazyUFormGroup>
+        <LazyUFormGroup class="inputDiv" label="Event" name="event" required>
+          <LazyUSelectMenu :disabled="loading" v-model="selectedEvent" :options="events" @update:v-model="value => {localStorage.setItem('currentEvent', value)}"/>
+        </LazyUFormGroup>
+        <LazyUFormGroup class="inputDiv" style="padding-top: 10px">
+          <LazyUButton
               :loading="loading"
                   @click="
                   login(username, password)"
                    type="submit">Login
-          </UButton>
-        </UFormGroup>
+          </LazyUButton>
+        </LazyUFormGroup>
         <p>{{ errorVal }}</p>
-      </UForm>
-    </UCard>
-  </UContainer>
+      </LazyUForm>
+    </LazyUCard>
+  </LazyUContainer>
 </template>
 
 <style scoped>
