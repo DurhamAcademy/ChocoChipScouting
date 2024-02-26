@@ -194,7 +194,7 @@ async function tableSetup() {
         class: alliance,
         rawData: data
       }
-      debug(JSON.stringify(teamsData.value))
+      teamsData.value.push(arr)
     }
   }
 
