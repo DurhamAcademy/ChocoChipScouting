@@ -21,6 +21,7 @@ const toast = useToast()
   async function setup() {
     let docs = await usersDB.allDocs()
     debug(JSON.stringify(docs))
+    debug("test")
     try {
       resetRoles = true
       userArr.value.length = 0
