@@ -2,6 +2,7 @@
 import PouchDB from "pouchdb"
 import auth from "../utils/authorization/Authorizer";
 import {couchDBBaseURL} from "~/utils/URIs"
+import {useLazyAsyncData} from "#app";
 
 PouchDB.plugin(auth)
 const usersDB = new PouchDB(`${couchDBBaseURL}/_users`, {skip_setup: true});
@@ -22,7 +23,6 @@ let userArr = ref([[""]])
 async function setup() {
   try {
     let docs = await usersDB.allDocs()
-    debug("get stuff")
     resetRoles = true
     userArr.value.length = 0
     roles.value.length = 0
@@ -35,7 +35,6 @@ async function setup() {
         else roles.value.push([])
       }
     }
-    debug("do shit")
     prevRoles = Array.from(roles.value)
     resetRoles = false
     usersDB.getSession(function (err, response) {
@@ -45,6 +44,7 @@ async function setup() {
         }
       }
     })
+    return userArr
   }
   catch{
     debug("fail")
@@ -161,7 +161,7 @@ const columns = [{
   key: 'delete',
 }]
 
-setup()
+const { pending, data: res } = await useLazyAsyncData('res', () => setup())
 </script>
 
 <template>
@@ -182,7 +182,7 @@ setup()
           </div>
           </template>
         <template #default>
-          <UTable :rows="userArr" :columns="columns">
+          <UTable :rows="userArr" :columns="columns" :loading="pending" :loading-state="{ icon: 'i-heroicons-arrow-path-20-solid', label: 'Loading...' }">
             <template #user-data="{ row }">
               <p>{{ row[0] }}</p>
             </template>
