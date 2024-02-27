@@ -46,9 +46,9 @@ async function login(username: string, password: string) {
 
 <template>
   <html>
-  <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
-  </head>
+    <head>
+      <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+    </head>
   </html>
   <LazyUContainer :ui="{
   'base': 'mx-auto',
