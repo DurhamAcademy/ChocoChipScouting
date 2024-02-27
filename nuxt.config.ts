@@ -119,7 +119,7 @@ export default defineNuxtConfig({
       theme_color: '#ee5245',
       icons: [
         {
-          src: 'icon_192x192.png',
+          src: 'darcsidelogo.png',
           sizes: '192x192',
           type: 'image/png',
         },
