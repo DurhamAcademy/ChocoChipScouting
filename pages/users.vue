@@ -8,6 +8,7 @@ const usersDB = new PouchDB(`${couchDBBaseURL}/basic`, {skip_setup: true});
 
 
   let username = ref("")
+  let password = ref("")
 
   let roles = ref([[""]])
   const roleOptions = ["Coach", "Scout"]
@@ -44,10 +45,8 @@ const usersDB = new PouchDB(`${couchDBBaseURL}/basic`, {skip_setup: true});
   }
   setup()
 
-  async function createUser() {
-    let sessionRoles = await usersDB.getSession()
-    if(! (sessionRoles.userCtx.roles && (sessionRoles.userCtx.roles.includes("_admin"))) ) return
-    usersDB.signUp(username.value, "temp",
+  async function signUp() {
+    usersDB.signUp(username.value, password.value,
         {
           metadata: {
             unaccessedAccount: true
@@ -65,7 +64,41 @@ const usersDB = new PouchDB(`${couchDBBaseURL}/basic`, {skip_setup: true});
             console.log("User created")
             setup()
           }
-        });
+        }
+    );
+  }
+
+  async function changePassword() {
+    usersDB.changePassword(username.value, password.value,
+        {
+
+        }, function(err, response) {
+          if(err) {
+            console.log(err)
+          } else {
+            console.log("Password changed")
+            setup()
+          }
+        }
+    )
+  }
+
+  async function userManage() {
+    let sessionRoles = await usersDB.getSession()
+    if(! (sessionRoles.userCtx.roles && (sessionRoles.userCtx.roles.includes("_admin"))) ) return
+    usersDB.getUser(username.value,
+        {
+
+        }, function (err, response) {
+          if(err) {
+            if(err.name == 'not_found') {
+              signUp()
+            }
+          } else {
+            changePassword()
+          }
+        }
+    )
   }
 
   watch(roles.value, (value, oldValue, onCleanup) => {
@@ -90,7 +123,6 @@ const usersDB = new PouchDB(`${couchDBBaseURL}/basic`, {skip_setup: true});
     if(! (sessionRoles.userCtx.roles && (sessionRoles.userCtx.roles.includes("_admin"))) ) return
     await usersDB.putUser(username, {roles: newRoles})
   }
-
 
   async function deleteUser(username: string) {
     let sessionRoles = await usersDB.getSession()
@@ -127,11 +159,14 @@ const usersDB = new PouchDB(`${couchDBBaseURL}/basic`, {skip_setup: true});
       <UCard class="max-w-xl flex-grow m-5" style="overflow:visible">
         <template #header>
           <div style="display:flex">
-            <div style="flex:1">
+            <div style="flex:0.75">
               <UInput v-model="username" placeholder="Username"/>
             </div>
-            <div style="flex:.5;padding-left:5px">
-              <UButton :label="'Create User'" @click="createUser" block></UButton>
+            <div style="flex:1;padding-left:5px">
+            <UInput v-model="password" placeholder="Password"/>
+            </div>
+            <div style="flex:.6;padding-left:5px">
+              <UButton :label="'Add/Edit User'" @click="userManage" block></UButton>
             </div>
           </div>
           </template>
