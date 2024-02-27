@@ -45,10 +45,10 @@ watch(selectedEvent, (value) => {
 })
 
 let links: VerticalNavigationLink[] = [
-  {label: "Dashboard", to: "/dashboard"},
-  {label: "Matches", to: "/matches"},
-  {label: "Teams", to: "/teams"},
-  {label: "Attachments", to: "/attachments"}
+  { label: "Dashboard", to: "/dashboard" },
+  { label: "Matches", to: "/matches" },
+  { label: "Teams", to: "/teams" },
+  { label: "Attachments", to: "/attachments" }
 ]
 if (sessionState.value.userCtx.roles?.indexOf("_admin") != -1) {
   links.push({label: "Users", to: "/users"})
