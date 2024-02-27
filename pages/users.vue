@@ -4,8 +4,8 @@ import auth from "../utils/authorization/Authorizer";
 import {couchDBBaseURL} from "~/utils/URIs"
 
 PouchDB.plugin(auth)
-const usersDB = new PouchDB(`${couchDBBaseURL}/basic`, {skip_setup: true});
-
+const usersDB = new PouchDB(`${couchDBBaseURL}/_users`, {skip_setup: true});
+const toast = useToast()
 
   let username = ref("")
   let password = ref("")
@@ -20,30 +20,38 @@ const usersDB = new PouchDB(`${couchDBBaseURL}/basic`, {skip_setup: true});
   let userArr = ref([[""]])
 
   async function setup() {
-    resetRoles = true
-    userArr.value.length = 0
-    roles.value.length = 0
-    prevRoles.length = 0
-    let docs = await usersDB.allDocs()
-    for(let user of docs.rows){
-      if(user.id.includes("org.couchdb.user:")){
-        let userInfo = await usersDB.getUser(user.id.split(":")[1])
-        userArr.value.push([user.id.split(":")[1]])
-        if(userInfo.roles) roles.value.push(userInfo.roles)
-        else roles.value.push([])
-      }
-    }
-    prevRoles = Array.from(roles.value)
-    resetRoles = false
-    usersDB.getSession(function(err, response){
-      if(response){
-        if(response.userCtx.roles?.includes("_admin")){
-          adminAccount.value = true
+    try {
+      let docs = await usersDB.allDocs()
+      resetRoles = true
+      userArr.value.length = 0
+      roles.value.length = 0
+      prevRoles.length = 0
+      for (let user of docs.rows) {
+        if (user.id.includes("org.couchdb.user:")) {
+          let userInfo = await usersDB.getUser(user.id.split(":")[1])
+          userArr.value.push([user.id.split(":")[1]])
+          if (userInfo.roles) roles.value.push(userInfo.roles)
+          else roles.value.push([])
         }
       }
-    })
+      prevRoles = Array.from(roles.value)
+      resetRoles = false
+      usersDB.getSession(function (err, response) {
+        if (response) {
+          if (response.userCtx.roles?.includes("_admin")) {
+            adminAccount.value = true
+          }
+        }
+      })
+    }
+    catch{
+      debug("fail")
+    }
   }
-  setup()
+
+function debug(text:string){
+  toast.add({ title: text })
+}
 
   async function signUp() {
     usersDB.signUp(username.value, password.value,
@@ -151,6 +159,7 @@ const usersDB = new PouchDB(`${couchDBBaseURL}/basic`, {skip_setup: true});
     key: 'delete',
   }]
 
+setup()
 </script>
 
 <template>

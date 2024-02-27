@@ -73,10 +73,10 @@ for(let i  = 0; i < match.length; i++){
   }
 }
 
-let teamsData = ref<Array<any>>([])
+let teamsData = ref<any>([])
 
 async function tableSetup() {
-  teamsData.length = 0
+  teamsData.value.length = 0
 
   /*
   Creates two arrays that are filters applied on all data for team numbers and events (includes match number filter)
@@ -94,7 +94,8 @@ async function tableSetup() {
     }
     if (filter.content.startsWith("match")) {
       //TODO figure out async stuff
-      let tbaMatchData = fetch.data.value
+      let tbaMatchData = await fetch.data.value
+      debug(JSON.stringify(await fetch.data.value))
       if(tbaMatchData != null){
         let userInput = parseInt(filter.content.split(':')[1].trim())
         for(let match of tbaMatchData){
@@ -194,18 +195,18 @@ async function tableSetup() {
         class: alliance,
         rawData: data
       }
-      teamsData.push(arr)
+      teamsData.value.push(arr)
     }
   }
 
   //Defaults to the alliance colors being together if match filter is selected
   if(redAlliance.length > 0 || blueAlliance.length > 0){
     let sortedData = []
-    for(let team of teamsData){
+    for(let team of teamsData.value){
       if(team.class == "bg-blue-100") sortedData.unshift(team)
       else sortedData.push(team)
     }
-    teamsData = sortedData
+    teamsData.value = sortedData
   }
 }
 
@@ -326,16 +327,16 @@ await tableSetup()
             <UButton color="gray" variant="ghost" icon="i-heroicons-ellipsis-horizontal-20-solid"/>
             <template #panel>
               <div class="flex">
-              <UCard class="flex-auto">
-                <template #header>
-                  <UButtonGroup>
-                    <UButton :variant="selectedGraph == label ? 'solid' : 'soft'"  v-for="label in graphOptions" @click="selectedGraph = label" :label="label"></UButton>
-                  </UButtonGroup>
-                </template>
-                <MatchVisualization v-if="selectedGraph == 'Match Stats'" :row-data="row"></MatchVisualization>
-                <AmpVisualization v-if="selectedGraph == 'Amp'" :row-data="row"></AmpVisualization>
-                <SpeakerVisualization v-if="selectedGraph == 'Speaker'" :row-data="row"></SpeakerVisualization>
-              </UCard>
+                <UCard class="flex-auto">
+                  <template #header>
+                    <UButtonGroup>
+                      <UButton :variant="selectedGraph == label ? 'solid' : 'soft'"  v-for="label in graphOptions" @click="selectedGraph = label" :label="label"></UButton>
+                    </UButtonGroup>
+                  </template>
+                  <MatchVisualization v-if="selectedGraph == 'Match Stats'" :row-data="row"></MatchVisualization>
+                  <AmpVisualization v-if="selectedGraph == 'Amp'" :row-data="row"></AmpVisualization>
+                  <SpeakerVisualization v-if="selectedGraph == 'Speaker'" :row-data="row"></SpeakerVisualization>
+                </UCard>
               </div>
             </template>
           </UPopover>
