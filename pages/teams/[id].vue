@@ -188,7 +188,10 @@ function showCarousel(index: number) {
             </UCard>
           </UContainer>
       </UContainer>
-      <p v-else class="font-sans text-lg font-bold opacity-70">Placeholder for sad not found cookie image or something</p>
+      <div v-else class="opacity-50">
+        <NuxtImg src="/sadcookie.png" height="400" width="400" />
+        <h1 class="font-sans text-xl font-bold text-center">No Images</h1>
+      </div>
     </template>
   </UCard>
 </template>
