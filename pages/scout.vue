@@ -115,7 +115,7 @@ async function submit() {
 
 <template>
   <Navbar scout-mode></Navbar>
-  <div class="flex justify-center">
+  <div class="flex flex-wrap justify-center">
     <UCard class="max-w-xl flex-grow m-5 ">
       <template #header>
         <div style="display:flex">
