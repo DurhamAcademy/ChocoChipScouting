@@ -54,19 +54,6 @@ if (sessionState.value.userCtx.roles?.indexOf("_admin") != -1) {
   links.push({label: "Users", to: "/users"})
 }
 
-function isMobile() {
-  const regex = /Mobi|Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i;
-  return regex.test(navigator.userAgent);
-}
-
-let mobile = ref(isMobile())
-
-const toast = useToast()
-function debug(text:string){
-  toast.add({ title: text })
-}
-debug(navigator.userAgent)
-
 </script>
 
 <template>
@@ -85,7 +72,7 @@ debug(navigator.userAgent)
             <UVerticalNavigation :links="links"/>
             <div class="settingsPopupDiv">
               <UButton
-                  v-if="mobile"
+                  v-if="false"
                   icon="i-heroicons-arrow-small-left"
                   color="gray"
                   variant="ghost"
@@ -93,7 +80,7 @@ debug(navigator.userAgent)
                   square @click="router.back()"
               />
               <UButton
-                  v-if="mobile"
+                  v-if="false"
                   icon="i-heroicons-arrow-small-right"
                   color="gray"
                   variant="ghost"
@@ -101,14 +88,14 @@ debug(navigator.userAgent)
                   square @click="router.forward()"
               />
               <UButton
-                  v-if="mobile"
+                  v-if="false"
                   icon="i-heroicons-arrow-path"
                   color="gray" variant="ghost"
                   block square
                   @click="navigateTo('dashboard')"
               />
               <UButton
-                  v-if="mobile"
+                  v-if="false"
                   icon="i-heroicons-home"
                   color="gray" variant="ghost"
                   block square
