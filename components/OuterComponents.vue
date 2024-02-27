@@ -54,6 +54,13 @@ if (sessionState.value.userCtx.roles?.indexOf("_admin") != -1) {
   links.push({label: "Users", to: "/users"})
 }
 
+function isMobile() {
+  const regex = /Mobi|Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i;
+  return regex.test(navigator.userAgent);
+}
+
+let mobile = ref(isMobile())
+
 </script>
 
 <template>
@@ -66,7 +73,8 @@ if (sessionState.value.userCtx.roles?.indexOf("_admin") != -1) {
           <UCard class="h-full" :ui="{rounded: 'rounded-none'}">
             <UVerticalNavigation :links="links"/>
             <div class="settingsPopupDiv">
-              <UButton label="Back"
+              <UButton
+                  v-if="mobile"
                   icon="i-heroicons-arrow-small-left"
                   color="gray"
                   variant="ghost"
@@ -74,24 +82,26 @@ if (sessionState.value.userCtx.roles?.indexOf("_admin") != -1) {
                   square @click="router.back()"
               />
               <UButton
+                  v-if="mobile"
                   icon="i-heroicons-arrow-small-right"
                   color="gray"
                   variant="ghost"
                   block
-                  label="Forward"
                   square @click="router.forward()"
               />
-              <UButton label="Reload"
-                       icon="i-heroicons-arrow-path"
-                       color="gray" variant="ghost"
-                       block square
-                       @click="navigateTo('dashboard')"
+              <UButton
+                  v-if="mobile"
+                  icon="i-heroicons-arrow-path"
+                  color="gray" variant="ghost"
+                  block square
+                  @click="navigateTo('dashboard')"
               />
-              <UButton label="Home"
-                       icon="i-heroicons-home"
-                       color="gray" variant="ghost"
-                       block square
-                       @click="navigateTo('dashboard')"
+              <UButton
+                  v-if="mobile"
+                  icon="i-heroicons-home"
+                  color="gray" variant="ghost"
+                  block square
+                  @click="navigateTo('dashboard')"
               />
               <UPopover>
                 <UButton icon="i-heroicons-cog-6-tooth" square :size="'xl'" :variant="'ghost'" :color="'gray'"/>
