@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import {useOnline} from "@vueuse/core";
+
 let errorToast = useToast()
 
 onErrorCaptured((err) => {
@@ -28,13 +30,18 @@ else if ((route.matched[0].name == 'index')) navigateTo("/dashboard")
 let sessionState = ref(session)
 let usernameState = useState("username", ()=>(session.userCtx.name))
 
+let online = useOnline()
+
 async function updateUsernameState(): Promise<boolean> {
   session = await pdb.getSession()
   if (session.ok) {
     loginState.value = (session.userCtx.name == null) ? LoginState.loggedOut : LoginState.loggedIn
     usernameState.value = session.userCtx.name;
     sessionState.value = session
-  } else return false
+  } else if (!online.value) {
+    return true
+  }
+    else return false
   return true
 }
 
