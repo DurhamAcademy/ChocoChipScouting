@@ -38,7 +38,6 @@ let links: VerticalNavigationLink[] = [
   { label: "Dashboard", to: "/dashboard" },
   { label: "Matches", to: "/matches" },
   { label: "Teams", to: "/teams" },
-  { label: "Attachments", to: "/attachments" },
 ]
 console.log(sessionState?.value?.userCtx?.roles)
 if (sessionState?.value?.userCtx?.roles?.indexOf('_admin') != -1)

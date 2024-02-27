@@ -7,10 +7,8 @@ import AddButton from "~/components/AddButton.vue";
 import type {VerticalNavigationLink} from "#ui/types";
 import type {Ref} from "@vue/reactivity";
 import type {UnwrapRef} from "vue";
-import {couchDBBaseURL} from "~/utils/URIs";
 import {eventOptions} from "~/utils/eventOptions";
 
-const usersDB = new PouchDB(`${couchDBBaseURL}/_users`, {skip_setup: true});
 const {usernameState, sessionState, logout}: {
   logout: () => Promise<void>;
   // noinspection TypeScriptUnresolvedReference
@@ -48,7 +46,6 @@ let links: VerticalNavigationLink[] = [
   { label: "Dashboard", to: "/dashboard" },
   { label: "Matches", to: "/matches" },
   { label: "Teams", to: "/teams" },
-  { label: "Attachments", to: "/attachments" }
 ]
 if (sessionState.value.userCtx.roles?.indexOf("_admin") != -1) {
   links.push({label: "Users", to: "/users"})
