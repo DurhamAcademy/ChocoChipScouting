@@ -36,6 +36,7 @@ const isDark = computed({
 let {width, height} = useWindowSize()
 
 let route = useRoute()
+let router = useRouter()
 
 const events = eventOptions
 let selectedEvent = ref(localStorage.getItem('currentEvent') || eventOptions[0])
@@ -65,6 +66,33 @@ if (sessionState.value.userCtx.roles?.indexOf("_admin") != -1) {
           <UCard class="h-full" :ui="{rounded: 'rounded-none'}">
             <UVerticalNavigation :links="links"/>
             <div class="settingsPopupDiv">
+              <UButton label="Back"
+                  icon="i-heroicons-arrow-small-left"
+                  color="gray"
+                  variant="ghost"
+                  block
+                  square @click="router.back()"
+              />
+              <UButton
+                  icon="i-heroicons-arrow-small-right"
+                  color="gray"
+                  variant="ghost"
+                  block
+                  label="Forward"
+                  square @click="router.forward()"
+              />
+              <UButton label="Reload"
+                       icon="i-heroicons-arrow-path"
+                       color="gray" variant="ghost"
+                       block square
+                       @click="navigateTo('dashboard')"
+              />
+              <UButton label="Home"
+                       icon="i-heroicons-home"
+                       color="gray" variant="ghost"
+                       block square
+                       @click="navigateTo('dashboard')"
+              />
               <UPopover>
                 <UButton icon="i-heroicons-cog-6-tooth" square :size="'xl'" :variant="'ghost'" :color="'gray'"/>
                 <template #panel>
@@ -84,7 +112,7 @@ if (sessionState.value.userCtx.roles?.indexOf("_admin") != -1) {
                           :icon="isDark ? 'i-heroicons-moon-20-solid' : 'i-heroicons-sun-20-solid'"
                           color="gray"
                           variant="ghost"
-                          aria-label="Theme"
+                          label="Theme"
                           @click="isDark = !isDark"
                         />
                       </ClientOnly>
