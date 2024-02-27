@@ -70,11 +70,6 @@ debug(navigator.userAgent)
 </script>
 
 <template>
-  <html>
-    <head>
-      <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
-    </head>
-  </html>
   <div class="flex min-h-screen w-screen flex-col">
     <Navbar class="flex-grow basis-auto" :disable-sidebar="width > 800"/>
     <div
