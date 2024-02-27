@@ -180,7 +180,7 @@ setup()
           </div>
           </template>
         <template #default>
-          <UTable :rows="userArr" :columns="columns">
+          <UTable :rows="['']" :columns="columns">
             <template #user-data="{ row }">
               <p>{{ row[0] }}</p>
             </template>
