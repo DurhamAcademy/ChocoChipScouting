@@ -45,10 +45,10 @@ watch(selectedEvent, (value) => {
 })
 
 let links: VerticalNavigationLink[] = [
-  {label: "Dashboard", to: "/dashboard"},
-  {label: "Matches", to: "/matches"},
-  {label: "Teams", to: "/teams"},
-  {label: "Attachments", to: "/attachments"}
+  { label: "Dashboard", to: "/dashboard" },
+  { label: "Matches", to: "/matches" },
+  { label: "Teams", to: "/teams" },
+  { label: "Attachments", to: "/attachments" }
 ]
 if (sessionState.value.userCtx.roles?.indexOf("_admin") != -1) {
   links.push({label: "Users", to: "/users"})
@@ -57,11 +57,6 @@ if (sessionState.value.userCtx.roles?.indexOf("_admin") != -1) {
 </script>
 
 <template>
-  <html>
-    <head>
-      <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
-    </head>
-  </html>
   <div class="flex min-h-screen w-screen flex-col">
     <Navbar class="flex-grow basis-auto" :disable-sidebar="width > 800"/>
     <div

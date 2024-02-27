@@ -172,7 +172,7 @@ setup()
               <UInput v-model="username" placeholder="Username"/>
             </div>
             <div style="flex:1;padding-left:5px">
-            <UInput v-model="password" placeholder="Password"/>
+            <UInput v-model="password" type="password" placeholder="Password"/>
             </div>
             <div style="flex:.6;padding-left:5px">
               <UButton :label="'Add/Edit User'" @click="userManage" block></UButton>
