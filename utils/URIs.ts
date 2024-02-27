@@ -7,7 +7,7 @@ if (typeof window !== 'undefined') {
         port = 6984
         protocol = "https://"
     }
-    couchDBBaseURL = `${protocol}${window.location.hostname}:5984`;
+    couchDBBaseURL = `${protocol}${window.location.hostname}:${port}`;
 } else {
     if (process.env.couchDBHostname !== undefined) {
         couchDBBaseURL = `http://${process.env.couchDBHostname}:5984`;
