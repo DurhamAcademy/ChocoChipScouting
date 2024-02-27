@@ -30,57 +30,17 @@ async function login(username: string, password: string) {
           updateUsernameState()
           navigateTo("/dashboard")
         }
-        else if (err) {
-          let loginResult = await usersDB.logIn("admin", "password")
-          if(loginResult){
-            let getUserResult = await usersDB.getUser(username)
-            if (getUserResult && getUserResult.unaccessedAccount != undefined && getUserResult.unaccessedAccount) {
-              await unaccessedAccountReset(username, password)
-            }
-            else{
-              if(err.error) errorVal.value = err.error.toString()
-              error.value = true
-            }
-          }
-          else{
-            if(err.error) errorVal.value = err.error.toString()
-            error.value = true
-          }
-        }
         else{
           error.value = true
         }
       })
-
     }
     catch (e : any) {
       error.value = true
     }
   }
 
-  async function unaccessedAccountReset(username: string, password: string){
-    usersDB.changePassword(username, password).then(() => {
-      usersDB.putUser(username, { metadata: { unaccessedAccount: false }}).then(() => {
-        usersDB.logOut().then(() =>{
-          usersDB.logIn(username, password).then(() =>{
-            updateUsernameState()
-            navigateTo("/dashboard")
-          }).catch((err)=>{
-            if(err.error) errorVal.value = err.error.toString()
-            error.value = true
-          }).catch((err)=>{
-            if(err.error) errorVal.value = err.error.toString()
-            error.value = true
-          })
-        }).catch((err)=>{
-          if(err.error) errorVal.value = err.error.toString()
-          error.value = true
-        })
-      })
-    }).finally(() => {
-      error.value = true
-    })
-  }
+
 
 </script>
 
