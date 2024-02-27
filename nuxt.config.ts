@@ -25,6 +25,7 @@ export default defineNuxtConfig({
       brotli: false,
       gzip: true
     },
+
   },
   app: {
     head: {
