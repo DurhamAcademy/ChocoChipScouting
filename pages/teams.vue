@@ -6,8 +6,11 @@ import {eventOptions} from "~/utils/eventOptions";
 import AmpVisualization from "~/components/AmpVisualization.vue";
 import MatchVisualization from "~/components/MatchVisualization.vue";
 import SpeakerVisualization from "~/components/SpeakerVisualization.vue";
+import {useWindowSize} from "@vueuse/core";
 
 const toast = useToast()
+let {width, height} = useWindowSize()
+let modalOpen = ref(false)
 
 let sentiment = new Sentiment()
 let options = {
@@ -323,7 +326,7 @@ await tableSetup()
         </template>
 
         <template #dropdown-data="{ row }">
-          <UPopover :popper="{ placement: teamsData.indexOf(row) > teamsData.length/2 ? 'top-end': 'bottom-end' }">
+          <UPopover v-if=" width > 800" :popper="{ placement: teamsData.indexOf(row) > teamsData.length/2 ? 'top-end': 'bottom-end' }">
             <UButton color="gray" variant="ghost" icon="i-heroicons-ellipsis-horizontal-20-solid"/>
             <template #panel>
               <div class="flex">
@@ -340,6 +343,24 @@ await tableSetup()
               </div>
             </template>
           </UPopover>
+          <div v-else>
+            <UButton color="gray" variant="ghost" icon="i-heroicons-ellipsis-horizontal-20-solid" @click="modalOpen = true"/>
+
+            <UModal v-model="modalOpen">
+              <div class="flex">
+                <UCard class="flex-auto">
+                  <template #header>
+                    <UButtonGroup>
+                      <UButton :variant="selectedGraph == label ? 'solid' : 'soft'"  v-for="label in graphOptions" @click="selectedGraph = label" :label="label"></UButton>
+                    </UButtonGroup>
+                  </template>
+                  <MatchVisualization v-if="selectedGraph == 'Match Stats'" :row-data="row"></MatchVisualization>
+                  <AmpVisualization v-if="selectedGraph == 'Amp'" :row-data="row"></AmpVisualization>
+                  <SpeakerVisualization v-if="selectedGraph == 'Speaker'" :row-data="row"></SpeakerVisualization>
+                </UCard>
+              </div>
+            </UModal>
+          </div>
         </template>
       </UTable>
   </UCard>
