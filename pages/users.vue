@@ -167,14 +167,14 @@ setup()
     <div class="flex justify-center">
       <UCard class="max-w-xl flex-grow m-5" style="overflow:visible">
         <template #header>
-          <div style="display:flex">
-            <div style="flex:0.75">
+          <div class="flex">
+            <div class="flex-auto">
               <UInput v-model="username" placeholder="Username"/>
             </div>
-            <div style="flex:1;padding-left:5px">
+            <div class="flex-auto pl-2.5">
             <UInput v-model="password" type="password" placeholder="Password"/>
             </div>
-            <div style="flex:.6;padding-left:5px">
+            <div class="flex-auto pl-2.5">
               <UButton :label="'Add/Edit User'" @click="userManage" block></UButton>
             </div>
           </div>
