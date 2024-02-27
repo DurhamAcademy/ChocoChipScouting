@@ -11,7 +11,16 @@ import {couchDBBaseURL} from "~/utils/URIs";
 import {eventOptions} from "~/utils/eventOptions";
 
 const usersDB = new PouchDB(`${couchDBBaseURL}/_users`, {skip_setup: true});
-const session = await usersDB.getSession()
+const {usernameState, sessionState, logout}: {
+  logout: () => Promise<void>;
+  // noinspection TypeScriptUnresolvedReference
+  loginState: Ref<UnwrapRef<LoginState>>;
+  // noinspection TypeScriptUnresolvedReference
+  sessionState: Ref<UnwrapRef<PouchDB.Authentication.SessionResponse>>;
+  // noinspection TypeScriptUnresolvedReference
+  usernameState: Ref<UnwrapRef<string>>;
+  updateUsernameState: () => Promise<boolean>
+} = inject(loginStateKey)!
 
 const colorMode = useColorMode()
 const isDark = computed({
@@ -34,24 +43,13 @@ watch(selectedEvent, (value) => {
   window.localStorage.setItem('currentEvent', value)
 })
 
-const {usernameState, sessionState, logout}: {
-  logout: () => Promise<void>;
-  // noinspection TypeScriptUnresolvedReference
-  loginState: Ref<UnwrapRef<LoginState>>;
-  // noinspection TypeScriptUnresolvedReference
-  sessionState: Ref<UnwrapRef<PouchDB.Authentication.SessionResponse>>;
-  // noinspection TypeScriptUnresolvedReference
-  usernameState: Ref<UnwrapRef<string>>;
-  updateUsernameState: () => Promise<boolean>
-} = inject(loginStateKey)!
-
 let links: VerticalNavigationLink[] = [
   {label: "Dashboard", to: "/dashboard"},
   {label: "Matches", to: "/matches"},
   {label: "Teams", to: "/teams"},
   {label: "Attachments", to: "/attachments"}
 ]
-if (session.userCtx.roles?.indexOf("_admin") != -1) {
+if (sessionState.value.userCtx.roles?.indexOf("_admin") != -1) {
   links.push({label: "Users", to: "/users"})
 }
 
