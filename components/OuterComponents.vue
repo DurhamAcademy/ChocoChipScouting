@@ -61,12 +61,11 @@ function isMobile() {
 
 let mobile = ref(isMobile())
 
-debug(navigator.userAgent)
-
 const toast = useToast()
 function debug(text:string){
   toast.add({ title: text })
 }
+debug(navigator.userAgent)
 
 </script>
 
