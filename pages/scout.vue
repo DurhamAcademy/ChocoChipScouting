@@ -17,7 +17,8 @@ enum GameTime {
 //The active tab used
 let gameTime = ref(GameTime.Autonomous)
 
-let selectedEvent = localStorage.getItem('currentEvent') || eventOptions[0]
+let selectedEvent = eventOptions[0]
+if (typeof window !== 'undefined') selectedEvent = localStorage.getItem('currentEvent') || eventOptions[0]
 
 
 // Selectable options for the Multi-Select component

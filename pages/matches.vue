@@ -5,7 +5,8 @@ const { scoutingData } = databases.locals
 
 const sortBy = ref([{ key: 'teamNumber', order: 'asc' }])
 
-const currentEvent = localStorage.getItem('currentEvent') || eventOptions[0]
+let currentEvent = eventOptions[0]
+if (typeof window !== 'undefined') currentEvent = localStorage.getItem('currentEvent') || eventOptions[0]
 
 let db = scoutingData
 
@@ -78,9 +79,7 @@ const items = matches
                 <br>
                 <div class="whitespace-normal break-all"> Notes: {{row.value.notes}}</div>
                 <br>
-                <p> Reliability: {{ row.value.reliability }}</p>
-                <p> Efficiency: {{ row.value.efficiency }}</p>
-                <br>
+                <p v-if="row.value.playedDefense"> Defense: {{ row.value.defense }}</p>
               </UContainer>
           </template>
         </UPopover>

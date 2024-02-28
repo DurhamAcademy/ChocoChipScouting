@@ -50,7 +50,7 @@ let borderColors = [
 if(props.borderColors)
   borderColors = props.borderColors
 
-Chart.register(...registerables);
+if(registerables) Chart.register(...registerables);
 
 let options = {
   scales: {

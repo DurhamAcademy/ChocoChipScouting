@@ -14,7 +14,10 @@ let loading = ref(false)
 
 
 const events = eventOptions
-const selectedEvent = useState<String>("currentEvent", ()=>window?.localStorage?.getItem("currentEvent") || eventOptions[0]);
+const selectedEvent = useState<String>("currentEvent", () => {
+  if (typeof window !== 'undefined') return localStorage.getItem('currentEvent') || eventOptions[0]
+  return eventOptions[0]
+});
 
 const {updateUsernameState}: { updateUsernameState: () => void } = inject(loginStateKey)!
 

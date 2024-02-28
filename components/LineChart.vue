@@ -11,7 +11,7 @@ const props = defineProps<{
   defaultShown?: Array<boolean>
 }>()
 
-Chart.register(...registerables);
+if(registerables) Chart.register(...registerables);
 
 let shownLines = []
 if(props.defaultShown == undefined){
