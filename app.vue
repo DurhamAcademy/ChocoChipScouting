@@ -20,6 +20,7 @@ import {loginStateKey} from "~/utils/keys";
 PouchDB.plugin(auth)
 let pdb = new PouchDB(couchDBBaseURL + "/basic");
 let session = await pdb.getSession();
+console.dir(session)
 
 let loginState = useState<LoginState>("login-state", ()=>{
   return (session.userCtx.name==null) ? LoginState.loggedOut: LoginState.loggedIn
