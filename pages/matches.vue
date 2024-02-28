@@ -5,7 +5,8 @@ const { scoutingData } = databases.locals
 
 const sortBy = ref([{ key: 'teamNumber', order: 'asc' }])
 
-const currentEvent = localStorage.getItem('currentEvent') || eventOptions[0]
+let currentEvent = eventOptions[0]
+if (typeof window !== 'undefined') currentEvent = localStorage.getItem('currentEvent') || eventOptions[0]
 
 let db = scoutingData
 

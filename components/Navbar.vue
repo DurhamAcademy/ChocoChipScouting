@@ -15,7 +15,8 @@ const {usernameState, sessionState, logout}: {
 } = inject(loginStateKey)!
 
 const events = eventOptions
-let selectedEvent = ref(localStorage.getItem('currentEvent') || eventOptions[0])
+let selectedEvent = ref(eventOptions[0])
+if (typeof window !== 'undefined') selectedEvent.value = localStorage.getItem('currentEvent') || eventOptions[0]
 watch(selectedEvent, (value) => {
   window.localStorage.setItem('currentEvent', value)
 })

@@ -17,7 +17,8 @@ enum GameTime {
 //The active tab used
 let gameTime = ref(GameTime.Autonomous)
 
-let selectedEvent = localStorage.getItem('currentEvent') || eventOptions[0]
+let selectedEvent = eventOptions[0]
+if (typeof window !== 'undefined') selectedEvent = localStorage.getItem('currentEvent') || eventOptions[0]
 
 
 // Selectable options for the Multi-Select component
@@ -166,7 +167,7 @@ async function submit() {
         </div>
       </div>
       <div v-if="gameTime == GameTime.Endgame">
-        <div class="flex" style="text-align:center">
+        <div class="flex text-center text-wrap">
           <div>
             <h1 class="text-gray-700 dark:text-gray-200 font-sans font-medium">Amp</h1>
             <IncrementalButton v-model="data.teleop.amp" style="margin:5px"></IncrementalButton>

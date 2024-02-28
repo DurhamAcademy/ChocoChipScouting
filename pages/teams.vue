@@ -362,7 +362,7 @@ await tableSetup()
 
             <UModal v-model="modalOpen">
               <div class="flex">
-                <UCard class="flex-auto whitespace-normal break-all">
+                <UCard class="flex-auto">
                   <template #header>
                     <UButtonGroup>
                       <UButton :variant="selectedGraph == label ? 'solid' : 'soft'"  v-for="label in graphOptions" @click="() => {selectedGraph = label; modalOpen = true}" :label="label"></UButton>
