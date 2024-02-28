@@ -3,7 +3,8 @@
 import databases from "~/utils/databases";
 import {eventOptions} from "~/utils/eventOptions";
 
-const currentEvent = localStorage.getItem('currentEvent') || eventOptions[0]
+let currentEvent = eventOptions[0]
+if (typeof window !== 'undefined') currentEvent = localStorage.getItem('currentEvent') || eventOptions[0]
 
 const fetch = useFetch<Array<any>>("/api/eventMatches/" + currentEvent)
 
@@ -58,7 +59,7 @@ for(let data of teamOrgMatches){
 let selectedBlueTeams = ref<Array<string>>(["", "", ""])
 let selectedRedTeams = ref<Array<string>>(["", "", ""])
 
-let winningTeam = ref("Red")
+let winningTeamColor = ref("")
 let winningPercentage = ref(50)
 
 function calculateTeamAverageScore(team:number){
@@ -78,17 +79,22 @@ function predict(){
   let redTotal = 0
   for(let team of selectedBlueTeams.value){
     let teamNum = parseInt(team)
-    if(!Number.isNaN(teamNum)) blueTotal += calculateTeamAverageScore(teamNum)
+    let score = 0
+    if(!Number.isNaN(teamNum))
+      score += calculateTeamAverageScore(teamNum)
+    if(score > 0)
+      blueTotal += score
+    else if(score == -1){
+
+    }
   }
   for(let team of selectedRedTeams.value){
     let teamNum = parseInt(team)
     let score = 0
-    if(!Number.isNaN(teamNum)) {
+    if(!Number.isNaN(teamNum))
       score = calculateTeamAverageScore(teamNum)
-    }
-    if(score > 0){
+    if(score > 0)
       redTotal += score
-    }
     else if(score == -1){
       //TODO some way of warning that this team didn't exist in data
     }
@@ -96,15 +102,15 @@ function predict(){
 
   let blueWinPercentage = blueTotal/(blueTotal+redTotal) * 100
   if(blueWinPercentage > 50){
-    winningTeam.value = "Blue Alliance"
+    winningTeamColor.value = "bg-blue-100 rounded-lg"
     winningPercentage.value = blueWinPercentage
   }
   else if(blueWinPercentage < 50){
-    winningTeam.value = "Red Alliance"
+    winningTeamColor.value = "bg-red-100 rounded-lg"
     winningPercentage.value = 100 - blueWinPercentage
   }
   else{
-    winningTeam.value = "Tie"
+    winningTeamColor.value = ""
     winningPercentage.value = blueWinPercentage
   }
 }
@@ -152,9 +158,11 @@ function populateMatch(){
           <UInput v-model="selectedRedTeams[2]" class="flex-auto ml-2.5" placeholder="Team #"></UInput>
         </UContainer>
         <template #footer>
-          <p>{{winningTeam}}</p>
-          <p>{{winningPercentage.toFixed(2)}}</p>
-
+          <UContainer :class="winningTeamColor">
+            <div class="text-center">
+              <p class="font-semibold">{{winningPercentage.toFixed(2)}}</p>
+            </div>
+          </UContainer>
         </template>
       </UCard>
     </div>
