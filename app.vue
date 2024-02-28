@@ -21,11 +21,7 @@ PouchDB.plugin(auth)
 let pdb = new PouchDB(couchDBBaseURL + "/basic");
 let session = await pdb.getSession();
 
-console.dir(session)
-
 let loginState = useState<LoginState>("login-state", ()=>{
-  console.log(session.userCtx.name==null)
-  console.log((session.userCtx.name==null) ? LoginState.loggedOut: LoginState.loggedIn )
   return (session.userCtx.name==null) ? LoginState.loggedOut: LoginState.loggedIn
 });
 let route = useRoute()
