@@ -194,7 +194,7 @@ async function tableSetup() {
         mobility: averageAuto(data).toFixed(2),
         sentiment: analyzeNotes(data).toFixed(2),
         endgame: compileEndgames(data),
-        defense: averageDefensiveScore(data),
+        defense: averageDefensiveScore(data).toFixed(2),
         class: alliance,
         rawData: data
       }
