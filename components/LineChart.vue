@@ -1,7 +1,7 @@
 <script setup lang="ts">
 
 import { LineChart } from 'vue-chart-3';
-import { Chart, registerables } from "chart.js/auto";
+import { Chart, registerables } from "chart.js";
 
 const props = defineProps<{
   labels: Array<string>,
