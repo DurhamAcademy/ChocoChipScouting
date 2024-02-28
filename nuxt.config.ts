@@ -119,7 +119,7 @@ export default defineNuxtConfig({
       theme_color: '#ee5245',
       icons: [
         {
-          src: 'icon_192x192.png',
+          src: 'darcsidelogo.png',
           sizes: '192x192',
           type: 'image/png',
         },
@@ -177,9 +177,9 @@ export default defineNuxtConfig({
   },
   logLevel: "verbose",
   runtimeConfig:{
-    TBA_Key: process.env.TBA_KEY,
+    tbaKey: process.env.NUXT_TBA_KEY,
     couchDB: {
-      hostname: (process.env.couchDBHostname===undefined)?process.env.couchDBHostname:"localhost",
+      hostname: (process.env.couchDBHostname === undefined) ? process.env.couchDBHostname:"localhost",
       serverAdminUser: {
         username: process.env.COUCHDB_SERVER_USER,
         password: process.env.COUCHDB_SERVER_PASSWORD

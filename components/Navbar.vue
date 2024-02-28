@@ -15,7 +15,8 @@ const {usernameState, sessionState, logout}: {
 } = inject(loginStateKey)!
 
 const events = eventOptions
-let selectedEvent = ref(localStorage.getItem('currentEvent') || eventOptions[0])
+let selectedEvent = ref(eventOptions[0])
+if (typeof window !== 'undefined') selectedEvent.value = localStorage.getItem('currentEvent') || eventOptions[0]
 watch(selectedEvent, (value) => {
   window.localStorage.setItem('currentEvent', value)
 })
@@ -38,7 +39,6 @@ let links: VerticalNavigationLink[] = [
   { label: "Dashboard", to: "/dashboard" },
   { label: "Matches", to: "/matches" },
   { label: "Teams", to: "/teams" },
-  { label: "Attachments", to: "/attachments" },
 ]
 console.log(sessionState?.value?.userCtx?.roles)
 if (sessionState?.value?.userCtx?.roles?.indexOf('_admin') != -1)
