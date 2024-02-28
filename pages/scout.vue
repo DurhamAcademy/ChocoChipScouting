@@ -166,7 +166,7 @@ async function submit() {
         </div>
       </div>
       <div v-if="gameTime == GameTime.Endgame">
-        <div class="flex" style="text-align:center">
+        <div class="flex" style="text-align:center; margin:5px">
           <div>
             <h1 class="text-gray-700 dark:text-gray-200 font-sans font-medium">Amp</h1>
             <IncrementalButton v-model="data.teleop.amp" style="margin:5px"></IncrementalButton>
@@ -185,7 +185,7 @@ async function submit() {
           </div>
           </div>
           <br>
-            <MultiSelect style="margin:5px" :model-value="endgameIndex" :options="endgameOptions"
+            <MultiSelect :model-value="endgameIndex" :options="endgameOptions"
                      @update:model-value="value => {updateEndgameOptions(value)}"
                      :connected-options="connectedOptions"></MultiSelect>
        </div>
