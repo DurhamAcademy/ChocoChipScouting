@@ -26,7 +26,8 @@ let options = {
 }
 
 const events = eventOptions.map((event) => event.replace(/[0-9]/g, ''))
-const currentEvent = localStorage.getItem('currentEvent') || eventOptions[0]
+let currentEvent = eventOptions[0]
+if (typeof window !== 'undefined') currentEvent = localStorage.getItem('currentEvent') || eventOptions[0]
 const fetch = useFetch<Array<any>>("/api/eventMatches/" + currentEvent)
 
 
@@ -195,6 +196,7 @@ async function tableSetup() {
         mobility: averageAuto(data).toFixed(2),
         sentiment: analyzeNotes(data).toFixed(2),
         endgame: compileEndgames(data),
+        defense: averageDefensiveScore(data),
         class: alliance,
         rawData: data
       }
@@ -215,6 +217,14 @@ async function tableSetup() {
 
 function debug(text:string){
   toast.add({ title: text })
+}
+
+function averageDefensiveScore(teamArrays: Array<any>){
+  let total = 0
+  for(let match of teamArrays){
+    if(match.notes.playedDefense) total += match.notes.defense
+  }
+  return total / teamArrays.length
 }
 
 function analyzeNotes(teamArrays: Array<any>){
@@ -290,6 +300,10 @@ const columns = [{
   label: 'Sentiment Analysis',
   sortable: true
 }, {
+  key: 'defense',
+  label: 'Defensive Score',
+  sortable: true
+}, {
   key: 'actions',
   label: 'Endgame'
 },{
@@ -348,7 +362,7 @@ await tableSetup()
 
             <UModal v-model="modalOpen">
               <div class="flex">
-                <UCard class="flex-auto overflow-x-scroll">
+                <UCard class="flex-auto whitespace-normal break-all">
                   <template #header>
                     <UButtonGroup>
                       <UButton :variant="selectedGraph == label ? 'solid' : 'soft'"  v-for="label in graphOptions" @click="() => {selectedGraph = label; modalOpen = true}" :label="label"></UButton>
