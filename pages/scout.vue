@@ -166,7 +166,7 @@ async function submit() {
         </div>
       </div>
       <div v-if="gameTime == GameTime.Endgame">
-        <div class="flex" style="text-align:center; margin:5px">
+        <div class="flex text-center flex-wrap">
           <div>
             <h1 class="text-gray-700 dark:text-gray-200 font-sans font-medium">Amp</h1>
             <IncrementalButton v-model="data.teleop.amp" style="margin:5px"></IncrementalButton>
