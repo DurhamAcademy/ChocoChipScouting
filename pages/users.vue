@@ -167,7 +167,7 @@ const { pending, data: res } = await useLazyAsyncData('res', () => setup())
 <template>
   <OuterComponents v-if="adminAccount">
     <div class="flex justify-center">
-      <UCard class="max-w-xl flex-grow m-5" style="overflow:visible">
+      <UCard class="max-w-xl flex-grow m-5 overflow-visible">
         <template #header>
           <div class="flex">
             <div class="flex-auto">
