@@ -117,7 +117,7 @@ async function submit() {
 <template>
   <Navbar scout-mode></Navbar>
   <div class="flex justify-center">
-    <UCard class="max-w-xl flex-grow m-5 ">
+    <UCard class="max-w-xl flex-grow m-5">
       <template #header>
         <div style="display:flex">
           <div style="flex:1">
@@ -186,7 +186,7 @@ async function submit() {
           </div>
           </div>
           <br>
-            <MultiSelect :model-value="endgameIndex" :options="endgameOptions"
+            <MultiSelect style="margin:5px" :model-value="endgameIndex" :options="endgameOptions"
                      @update:model-value="value => {updateEndgameOptions(value)}"
                      :connected-options="connectedOptions"></MultiSelect>
        </div>
