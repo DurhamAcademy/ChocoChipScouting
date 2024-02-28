@@ -1,5 +1,6 @@
 export default defineEventHandler(async (event) => {
     const eventKey = getRouterParam(event, 'event')
+    //test
     let config = useRuntimeConfig();
     console.dir(config)
     if (config.tbaKey != undefined) {
