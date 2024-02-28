@@ -68,7 +68,7 @@ const items = matches
         :items="items"
         item-key="name"
         density="compact"
-        items-per-page="5"
+        items-per-page="10"
         v-model:sort-by="sortBy"
     >
       <template v-slot:item.notes="row">
