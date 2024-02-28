@@ -12,7 +12,7 @@ const props = defineProps<{
   backgroundColors?: Array<any>
 }>()
 
-Chart.register(...registerables);
+if(registerables) Chart.register(...registerables);
 
 let pieChartColors = ['#77CEFF', '#0079AF', '#123E6B', '#97B0C4', '#A5C8ED']
 if(props.backgroundColors)
