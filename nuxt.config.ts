@@ -177,9 +177,9 @@ export default defineNuxtConfig({
   },
   logLevel: "verbose",
   runtimeConfig:{
-    TBA_KEY: process.env.TBA_KEY,
+    TBA_KEY: "HEHE TESTING",
     couchDB: {
-      hostname: (process.env.couchDBHostname===undefined)?process.env.couchDBHostname:"localhost",
+      hostname: (process.env.couchDBHostname === undefined) ? process.env.couchDBHostname:"localhost",
       serverAdminUser: {
         username: process.env.COUCHDB_SERVER_USER,
         password: process.env.COUCHDB_SERVER_PASSWORD
