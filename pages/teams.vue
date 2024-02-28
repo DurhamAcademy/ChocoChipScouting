@@ -348,10 +348,10 @@ await tableSetup()
 
             <UModal v-model="modalOpen">
               <div class="flex">
-                <UCard class="flex-auto">
+                <UCard class="flex-auto overflow-x-scroll">
                   <template #header>
                     <UButtonGroup>
-                      <UButton :variant="selectedGraph == label ? 'solid' : 'soft'"  v-for="label in graphOptions" @click="selectedGraph = label" :label="label"></UButton>
+                      <UButton :variant="selectedGraph == label ? 'solid' : 'soft'"  v-for="label in graphOptions" @click="() => {selectedGraph = label; modalOpen = true}" :label="label"></UButton>
                     </UButtonGroup>
                   </template>
                   <MatchVisualization v-if="selectedGraph == 'Match Stats'" :row-data="row"></MatchVisualization>
