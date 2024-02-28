@@ -1,6 +1,6 @@
 export default defineEventHandler(async (event) => {
     const eventKey = getRouterParam(event, 'event')
-    let config = useRuntimeConfig()
+    let config = useRuntimeConfig();
     if (config.TBA_KEY != undefined) {
         let urlNoNum: string = "https://www.thebluealliance.com/api/v3/";
         let urlFinal: string = urlNoNum + "event/" + eventKey + "/matches";
