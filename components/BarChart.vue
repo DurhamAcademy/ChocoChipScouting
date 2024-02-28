@@ -4,7 +4,7 @@
 
 <script lang="ts" setup>
 import { BarChart } from 'vue-chart-3';
-import { Chart, registerables } from "chart.js";
+import { Chart, registerables } from "chart.js/auto";
 
 const props = defineProps<{
   labels: Array<string>,

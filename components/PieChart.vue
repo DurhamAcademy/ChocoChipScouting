@@ -4,7 +4,7 @@
 
 <script lang="ts" setup>
 import { DoughnutChart } from 'vue-chart-3';
-import { Chart, registerables } from "chart.js";
+import { Chart, registerables } from "chart.js/auto";
 
 const props = defineProps<{
   labels: Array<string>,
@@ -12,7 +12,7 @@ const props = defineProps<{
   backgroundColors?: Array<any>
 }>()
 
-if(registerables) Chart.register(...registerables);
+Chart.register(...registerables);
 
 let pieChartColors = ['#77CEFF', '#0079AF', '#123E6B', '#97B0C4', '#A5C8ED']
 if(props.backgroundColors)
