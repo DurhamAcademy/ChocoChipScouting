@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import {useOnline} from "@vueuse/core";
+
 let errorToast = useToast()
 
 onErrorCaptured((err) => {
@@ -9,21 +11,30 @@ onErrorCaptured((err) => {
   })
 })
 
-import "./utils/authorization/Authorizer"
+
+import PouchDB from "pouchdb";
+import auth from "./utils/authorization/Authorizer"
 import LoginState from "~/utils/authorization/LoginState"
 import {loginStateKey} from "~/utils/keys";
 
+PouchDB.plugin(auth)
 let pdb = new PouchDB(couchDBBaseURL + "/basic");
 let session = await pdb.getSession();
 
-let loginState = ref((session.userCtx.name==null)?LoginState.loggedOut:LoginState.loggedIn)
+let loginState = useState<LoginState>("login-state", ()=>{
+  console.log(session.userCtx.name==null)
+  console.log((session.userCtx.name==null) ? LoginState.loggedOut: LoginState.loggedIn )
+  return (session.userCtx.name==null) ? LoginState.loggedOut: LoginState.loggedIn
+});
 let route = useRoute()
 if ((loginState.value === LoginState.loggedOut) && (route.matched[0].name != "login"))
   await navigateTo("/login")
 else if ((route.matched[0].name == 'index')) navigateTo("/dashboard")
 
 let sessionState = ref(session)
-let usernameState = ref(session.userCtx.name)
+let usernameState = useState("username", ()=>(session.userCtx.name))
+
+let online = useOnline()
 
 async function updateUsernameState(): Promise<boolean> {
   session = await pdb.getSession()
@@ -31,7 +42,10 @@ async function updateUsernameState(): Promise<boolean> {
     loginState.value = (session.userCtx.name == null) ? LoginState.loggedOut : LoginState.loggedIn
     usernameState.value = session.userCtx.name;
     sessionState.value = session
-  } else return false
+  } else if (!online.value) {
+    return true
+  }
+    else return false
   return true
 }
 
@@ -68,13 +82,15 @@ provide(loginStateKey, loginStateObject)
 </script>
 
 <template>
+  <NuxtPwaManifest/>
   <div class="min-h-screen min-w-screen">
+    <LazyNuxtLoadingIndicator/>
       <v-app>
 <!--    <UContainer class="p-0 m-0">-->
           <NuxtPage/>
 <!--    </UContainer>-->
       </v-app>
-    <UNotifications/>
+    <LazyUNotifications/>
   </div>
 </template>
 

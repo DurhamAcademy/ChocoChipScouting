@@ -1,3 +1,5 @@
+import PouchDB from "pouchdb"
+
 class LocalRemoteDatabaseSyncHolder<Content extends {} = {}> {
     name: string
     local: PouchDB.Database<Content>
@@ -17,26 +19,43 @@ class LocalRemoteDatabaseSyncHolder<Content extends {} = {}> {
         PouchDB.sync(this.local, this.remote, {live: true, retry: true,})
     }
 
-    static databases: { attachments: LocalRemoteDatabaseSyncHolder<{ event: string; name: string; teamNumber: number; fileSize: string; author : string | undefined; tags: string[] ; extraNotes: string }>; scoutingData: LocalRemoteDatabaseSyncHolder<{ event: string; teamNumber: number; matchNumber: number }>; basic: LocalRemoteDatabaseSyncHolder<{}> } = {
-        "attachments": new LocalRemoteDatabaseSyncHolder<{ event: string; name: string; teamNumber: number; fileSize: string; author : string | undefined; tags: string[] ; extraNotes: string }>("attachment-db"),
-        "scoutingData": new LocalRemoteDatabaseSyncHolder<{ event: string; teamNumber: number; matchNumber: number }>("scouting-data"),
+    static databases = {
+        "attachments": new LocalRemoteDatabaseSyncHolder<Attachments>("attachments"),
+        "scoutingData": new LocalRemoteDatabaseSyncHolder<ScoutingData>("scouting-data"),
         "basic": new LocalRemoteDatabaseSyncHolder<{}>("basic")
     };
-    static locals: { attachments: PouchDB.Database<{ event: string; name: string; teamNumber: number; fileSize: string; author : string | undefined; tags: string[] ; extraNotes: string }>; scoutingData: PouchDB.Database<{ event: string; teamNumber: number; matchNumber: number}>; basic: PouchDB.Database<{}> } = {
+    static locals= {
         "attachments": this.databases.attachments.local,
         "scoutingData": this.databases.scoutingData.local,
         "basic": this.databases.basic.local,
     };
-    static remotes: { attachments: PouchDB.Database<{ event: string; name: string; teamNumber: number; fileSize: string; author : string | undefined; tags: string[] ; extraNotes: string }>; scoutingData: PouchDB.Database<{ event: string; teamNumber: number; matchNumber: number}>; basic: PouchDB.Database<{}> } = {
+    static remotes = {
         "attachments": this.databases.attachments.remote,
         "scoutingData": this.databases.scoutingData.remote,
         "basic": this.databases.basic.remote,
     };
 }
 
+export type ScoutingData = {
+    auto: {speakerNA: number; amp: number; mobility: boolean};
+    notes: {efficiency: number; notes: string; reliability: number};
+    endgame: {endgame: string[]; trap: number};
+    teamNumber: number;
+    event: string;
+    matchNumber: number;
+    teleop: {speakerA: number; speakerNA: number; amp: number};
+}
+
+export type Attachments = {
+    name: string;
+    team: number;
+    author: string | undefined;
+}
+
 for (const database of Object.values(LocalRemoteDatabaseSyncHolder.databases)) {
     database.sync()
 }
+
 
 export default {
     databases: LocalRemoteDatabaseSyncHolder.databases,

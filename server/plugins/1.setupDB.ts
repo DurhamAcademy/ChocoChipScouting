@@ -1,24 +1,25 @@
-// `nuxt/kit` is a helper subpath import you can use when defining local modules
-// that means you do not need to add `@nuxt/kit` to your project's dependencies
-import {defineNuxtModule} from 'nuxt/kit'
 import databases from "~/server/databases";
 import PouchDB from "pouchdb";
 import SecurityHelper from "pouchdb-security-helper"
 
 PouchDB.plugin(SecurityHelper)
 
+
 export default defineNitroPlugin((nitroApp) => {
     // @ts-ignore
     nitroApp.hooks.hookOnce('request', async function () {
+        var config = useRuntimeConfig();
+        console.dir(config)
         let databaseInfoResponses
         try {
             databaseInfoResponses = await Promise.all(Object.values(databases.databases)
                 .map((database) => database.name)
                 .map((name) => {
-                    console.log(name)
+                    console.log("name")
+                    console.log(config.couchDB.serverAdminUser.username)
                     return new PouchDB(`http://${process.env.couchDBHostname}:5984/` + name, {
                         name: name,
-                        auth: {username: "admin", password: "password"}
+                        auth: {username: config.couchDB.serverAdminUser.username, password: config.couchDB.serverAdminUser.password}
                     })
                 })
                 .map(async (db) => {
@@ -41,6 +42,7 @@ export default defineNitroPlugin((nitroApp) => {
                     let databaseInfo = await udb.info();
                     return databaseInfo
                 }))
+            await databases.databases.basic.remote.post({"serverSetupComplete": true})
         } finally {
             console.group("Database Info Responses")
             if (databaseInfoResponses !== undefined)

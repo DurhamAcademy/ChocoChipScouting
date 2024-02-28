@@ -1,115 +1,95 @@
 <script setup lang="ts">
-import "../utils/authorization/Authorizer";
+import PouchDB from "pouchdb";
+import auth from "../utils/authorization/Authorizer";
 import {couchDBBaseURL} from "~/utils/URIs"
 import {loginStateKey} from "~/utils/keys";
 import {eventOptions} from "~/utils/eventOptions";
 
-const usersDB = new PouchDB(`${couchDBBaseURL}/_users`, {skip_setup: true});
+PouchDB.plugin(auth)
+const usersDB = new PouchDB(`${couchDBBaseURL}/basic`, {skip_setup: true});
   let username = ref("");
   let password = ref("");
   let error = ref(false)
+let loading = ref(false)
+
 
 const events = eventOptions
-const selectedEvent = window.localStorage.getItem("currentEvent") || eventOptions[0]
+const selectedEvent = useState<String>("currentEvent", () => {
+  if (typeof window !== 'undefined') return localStorage.getItem('currentEvent') || eventOptions[0]
+  return eventOptions[0]
+});
 
 const {updateUsernameState}: { updateUsernameState: () => void } = inject(loginStateKey)!
+
+let errorVal = useState("error-val",()=>"")
 
 async function login(username: string, password: string) {
     try
     {
+      loading.value = true
       usersDB.logIn(username, password, async function (err, response) {
+        loading.value=false
         if (response) {
           updateUsernameState()
           navigateTo("/dashboard")
-        }
-        else if (err) {
-          let loginResult = await usersDB.logIn("admin", "password")
-          if(loginResult){
-            let getUserResult = await usersDB.getUser(username)
-            if (getUserResult && getUserResult.unaccessedAccount != undefined && getUserResult.unaccessedAccount) {
-              await unaccessedAccountReset(username, password)
-            }
-            else{
-              error.value = true
-            }
-          }
-          else{
-            error.value = true
-          }
         }
         else{
           error.value = true
         }
       })
-
     }
-    catch (e) {
+    catch (e : any) {
       error.value = true
     }
   }
 
-  async function unaccessedAccountReset(username: string, password: string){
-    usersDB.changePassword(username, password).then(() => {
-      usersDB.putUser(username, { metadata: { unaccessedAccount: false }}).then(() => {
-        usersDB.logOut().then(() =>{
-          usersDB.logIn(username, password).then(() =>{
-            updateUsernameState()
-            navigateTo("/dashboard")
-          }).catch(()=>{
-            error.value = true
-          }).catch(()=>{
-            error.value = true
-          })
-        }).catch(()=>{
-          error.value = true
-        })
-      })
-    }).finally(() => {
-      error.value = true
-    })
-  }
+
 
 </script>
 
 <template>
-  <UContainer :ui="{
+  <html><head><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/></head></html>
+  <LazyUContainer :ui="{
   'base': 'mx-auto',
   'padding': 'p-4 sm:p-6 lg:p-8',
   'constrained': 'max-w-sm'
   }">
-    <UCard>
+    <LazyUCard>
       <template #header>
         <h2 class="font-semibold text-xl text-gray-900 dark:text-white leading-tight">
           {{ "Login" }}
         </h2>
       </template>
 
-      <UForm action="javascript:void(0);">
-        <UFormGroup label="Username" name="username" required>
+      <LazyUForm action="javascript:void(0);">
+        <LazyUFormGroup label="Username" name="username" autocomplete="username" required>
           <UInput required
-                 v-model="username"
+                  :disabled="loading"
+                  v-model="username"
                   type="text"/>
-        </UFormGroup>
-        <UFormGroup label="Password" name="password" required>
-          <UInput v-model="password"
+        </LazyUFormGroup>
+        <LazyUFormGroup label="Password" name="password" autocomplete="current-password" required>
+          <LazyUInput v-model="password"
                   placeholder="Password"
                   required
+                  :disabled="loading"
                   type="password"/>
-        </UFormGroup>
-        <UFormGroup class="inputDiv" label="Event" name="event" required>
-          <USelectMenu v-model="selectedEvent" :options="events" @update:v-model="value => {localStorage.setItem('currentEvent', value)}"/>
-        </UFormGroup>
-        <UFormGroup class="inputDiv" style="padding-top: 10px">
-          <UButton
+        </LazyUFormGroup>
+        <LazyUFormGroup class="inputDiv" label="Event" name="event" required>
+          <LazyUSelectMenu :disabled="loading" v-model="selectedEvent" :options="events" @update:v-model="value => {localStorage.setItem('currentEvent', value)}"/>
+        </LazyUFormGroup>
+        <LazyUFormGroup class="inputDiv" style="padding-top: 10px">
+          <LazyUButton
+              :loading="loading"
                   @click="
                   login(username, password)"
                    type="submit">Login
-          </UButton>
-        </UFormGroup>
-        <p v-if="error">An error occurred.</p>
-      </UForm>
-    </UCard>
-  </UContainer>
+          </LazyUButton>
+        </LazyUFormGroup>
+        <p>{{ errorVal }}</p>
+      </LazyUForm>
+    </LazyUCard>
+  </LazyUContainer>
 </template>
 
 <style scoped>
