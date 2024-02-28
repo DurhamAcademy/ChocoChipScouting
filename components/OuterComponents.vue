@@ -65,36 +65,31 @@ if (sessionState.value.userCtx.roles?.indexOf("_admin") != -1) {
           <UCard class="h-full" :ui="{rounded: 'rounded-none'}">
             <UVerticalNavigation :links="links"/>
             <div class="settingsPopupDiv">
+              <div class="flex">
+                <UButton
+                  v-if="false"
+                    icon="i-heroicons-arrow-small-left"
+                    color="gray"
+                    variant="ghost"
+                    block
+                    square @click="router.back()"
+                />
+                <UButton
+                  v-if="false"
+                    icon="i-heroicons-arrow-small-right"
+                    color="gray"
+                    variant="ghost"
+                    block
+                    square @click="router.forward()"
+                />
               <UButton
                   v-if="false"
-                  icon="i-heroicons-arrow-small-left"
-                  color="gray"
-                  variant="ghost"
-                  block
-                  square @click="router.back()"
-              />
-              <UButton
-                  v-if="false"
-                  icon="i-heroicons-arrow-small-right"
-                  color="gray"
-                  variant="ghost"
-                  block
-                  square @click="router.forward()"
-              />
-              <UButton
-                  v-if="false"
-                  icon="i-heroicons-arrow-path"
-                  color="gray" variant="ghost"
-                  block square
-                  @click="navigateTo('dashboard')"
-              />
-              <UButton
-                  v-if="false"
-                  icon="i-heroicons-home"
-                  color="gray" variant="ghost"
-                  block square
-                  @click="navigateTo('dashboard')"
-              />
+                         icon="i-heroicons-home"
+                         color="gray" variant="ghost"
+                         block square
+                         @click="navigateTo('dashboard')"
+                />
+              </div>
               <UPopover>
                 <UButton icon="i-heroicons-cog-6-tooth" square :size="'xl'" :variant="'ghost'" :color="'gray'"/>
                 <template #panel>
