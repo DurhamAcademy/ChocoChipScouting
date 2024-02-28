@@ -78,9 +78,7 @@ const items = matches
                 <br>
                 <div class="whitespace-normal break-all"> Notes: {{row.value.notes}}</div>
                 <br>
-                <p> Reliability: {{ row.value.reliability }}</p>
-                <p> Efficiency: {{ row.value.efficiency }}</p>
-                <br>
+                <p v-if="row.value.playedDefense"> Defense: {{ row.value.defense }}</p>
               </UContainer>
           </template>
         </UPopover>
