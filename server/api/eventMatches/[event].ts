@@ -11,6 +11,7 @@ export default defineEventHandler(async (event) => {
                 'X-TBA-Auth-Key': config.TBA_Key
             }
         });
+        return config.TBA_Key
          return await grab.json();
     }
     else{
