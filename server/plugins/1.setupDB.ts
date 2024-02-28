@@ -15,7 +15,7 @@ export default defineNitroPlugin((nitroApp) => {
             databaseInfoResponses = await Promise.all(Object.values(databases.databases)
                 .map((database) => database.name)
                 .map((name) => {
-                    console.log(name)
+                    console.log("name")
                     console.log(config.couchDB.serverAdminUser.username)
                     return new PouchDB(`http://${process.env.couchDBHostname}:5984/` + name, {
                         name: name,
