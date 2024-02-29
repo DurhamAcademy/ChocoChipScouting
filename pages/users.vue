@@ -14,7 +14,6 @@ let password = ref("")
 let roles = ref([[""]])
 const roleOptions = ["Coach", "Scout"]
 
-let adminAccount = ref(true)
 let updatingRoles = false
 
 let userArr = ref([[""]])
@@ -39,8 +38,6 @@ async function setup() {
         else roles.value.push([])
       }
     })
-
-    adminAccount.value = await checkSession()
     return userArr
   }
   catch{
@@ -163,7 +160,7 @@ const { pending, data: res } = await useLazyAsyncData('res', () => setup())
 </script>
 
 <template>
-  <OuterComponents v-if="adminAccount">
+  <OuterComponents>
     <div class="flex justify-center overflow-y-scroll">
       <UCard class="max-w-xl flex-grow m-5 overflow-visible">
         <template #header>
