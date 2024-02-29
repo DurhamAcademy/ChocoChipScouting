@@ -50,7 +50,8 @@ function debug(text:string){
 }
 
 async function signUp() {
-  if(await checkSession()){
+  let sessionRoles = await usersDB.getSession()
+  if(!(sessionRoles.userCtx.roles && (sessionRoles.userCtx.roles.includes("_admin")))) return
     usersDB.signUp(username.value, password.value,
         {
           metadata: {
@@ -71,11 +72,11 @@ async function signUp() {
           }
         }
     );
-  }
 }
 
 async function changePassword() {
-  if(await checkSession()) {
+  let sessionRoles = await usersDB.getSession()
+  if(!(sessionRoles.userCtx.roles && (sessionRoles.userCtx.roles.includes("_admin")))) return
     usersDB.changePassword(username.value, password.value,
         {}, function (err, response) {
           if (err) {
@@ -86,30 +87,22 @@ async function changePassword() {
           }
         }
     )
-  }
 }
 
 async function userManage() {
-  if(await checkSession()) {
-    usersDB.getUser(username.value,
-        {}, function (err, response) {
-          if (err) {
-            if (err.name == 'not_found') {
-              signUp()
-            }
-          } else {
-            changePassword()
+  let sessionRoles = await usersDB.getSession()
+  if(!(sessionRoles.userCtx.roles && (sessionRoles.userCtx.roles.includes("_admin")))) return
+  usersDB.getUser(username.value,
+      {}, function (err, response) {
+        if (err) {
+          if (err.name == 'not_found') {
+            signUp()
           }
+        } else {
+          changePassword()
         }
-    )
-  }
-}
-
-function checkSession(): Promise<boolean>{
-  return new Promise(async resolve => {
-    let sessionRoles = await usersDB.getSession()
-    return !!(sessionRoles.userCtx.roles && (sessionRoles.userCtx.roles.includes("_admin")));
-  })
+      }
+  )
 }
 
 watch(roles.value, (value) => {
