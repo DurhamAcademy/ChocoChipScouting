@@ -365,12 +365,13 @@ await tableSetup()
 
             <UModal v-model="modalOpen">
               <div class="flex">
-                <UCard class="flex-auto flex-wrap">
+                <UCard class="flex-auto">
                   <template #header>
                     <UButtonGroup>
                       <UButton :variant="selectedGraph == label ? 'solid' : 'soft'"  v-for="label in graphOptions" @click="() => {selectedGraph = label; modalOpen = true}" :label="label"></UButton>
                     </UButtonGroup>
                   </template>
+
                   <MatchVisualization v-if="selectedGraph == 'Match Stats'" :row-data="row"></MatchVisualization>
                   <AmpVisualization v-if="selectedGraph == 'Amp'" :row-data="row"></AmpVisualization>
                   <SpeakerVisualization v-if="selectedGraph == 'Speaker'" :row-data="row"></SpeakerVisualization>
