@@ -64,6 +64,7 @@ const items = matches
 <template>
   <OuterComponents>
     <VDataTable
+        class="max-h-dvh overflow-auto"
         :headers="headers"
         :items="items"
         item-key="name"
