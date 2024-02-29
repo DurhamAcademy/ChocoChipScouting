@@ -22,6 +22,14 @@ const selectedMatch = ref(1)
 
 props.rowData.rawData.sort(compareMatchNumbers)
 
+const toast = useToast()
+
+function debug(text:string){
+  toast.add({ title: text })
+}
+
+debug(JSON.stringify(props.rowData))
+
 function compareMatchNumbers(a: any, b: any){
   //TODO i hate this work around rly need to fix this
   let matchA = typeof a.matchNumber == "string" ? parseInt(a.matchNumber): a.matchNumber
