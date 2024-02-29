@@ -8,7 +8,7 @@ import databases from "~/utils/databases"
 const { attachments } = databases.locals
 
 const db = attachments;
-var info = await db.info();
+var info = db.info();
 var total = info.doc_count
 var rowId = ""
 console.log(info, total)
@@ -18,13 +18,12 @@ async function getDocsPaged(amount: number, startingAt: number): Promise<(PouchD
   // noinspection TypeScriptValidateTypes
   return docs.rows.map((doc) => doc.doc).filter((doc) => {
     return doc!
-  })
+  });
 }
 
 const el = ref<HTMLElement>()
 
-const data = ref((await getDocsPaged(40, 0)).map((b)=>{return {name: b.name, teamNumber: b.teamNumber, author: b.author, id: b._id}}))
-
+const {pending, data} = useAsyncData("documents-data", async()=>(await getDocsPaged(40, 0)).map((b)=>{return {name: b.name, teamNumber: b.teamNumber, author: b.author, id: b._id}}))
 useInfiniteScroll(
     el,
     async (state) => {
@@ -47,9 +46,9 @@ let route = ref(useRoute())
 const router = useRouter()
 router.afterEach(()=>{route.value = useRoute()})
 const isAttach = route.value.matched.find((match)=>match.name=="attachments-id") !== undefined
-const showModal = ref<boolean>(isAttach)
-const hideAll = ref((route.value.matched.length!==1) && (!isAttach))
-const isOpen = ref(false)
+const showModal = useState<boolean>("show-modal", ()=>isAttach)
+const hideAll = useState<boolean>("hide-all", ()=>(route.value.matched.length!==1) && (!isAttach))
+const isOpen = useState<boolean>("is-open",false)
 async function view(id: string) {
   await navigateTo("/attachments/"+id)
 }

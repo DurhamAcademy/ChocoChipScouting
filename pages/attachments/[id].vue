@@ -22,7 +22,7 @@ async function view(id: string) {
     URL.revokeObjectURL(modalAttachment)
   }
   modalName.value = doc.name;
-  modalAuthor.value = doc.author;
+  modalAuthor.value = (doc.author!=undefined)?doc.author:"";
   if (!Number.isNaN(Number.parseInt(String(doc.teamNumber)))) {
     modalTeam.value = Number.parseInt(String(doc.teamNumber));
   } else {
