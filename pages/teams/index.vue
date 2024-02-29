@@ -164,10 +164,10 @@ async function tableSetup() {
       let currMatch = value.matchNumber
       if(matchNumbers.includes(currMatch)) {
         for(let i = 0; i < data.length; i++){
-              if(data[i].matchNumber == currMatch){
-                data.splice(data.indexOf(data[i]), 1)
-                break
-              }
+          if(data[i].matchNumber == currMatch){
+            data.splice(data.indexOf(data[i]), 1)
+            break
+          }
         }
       }
       else matchNumbers.push(currMatch)
@@ -272,11 +272,10 @@ function compileEndgames(teamArrays: Array<ScoutingData>): [Array<string>, Array
   let endgameMap = new Map<string, number>();
   for(let i = 0; i < teamArrays.length; i++) {
     teamArrays[i].endgame.endgame.forEach(function (value: string) {
-        if (endgameMap.has(value)) {
-          endgameMap.set(value, endgameMap.get(value)! + 1)
-        } else
-          endgameMap.set(value, 1)
-
+      if (endgameMap.has(value)) {
+        endgameMap.set(value, endgameMap.get(value)! + 1)
+      } else
+        endgameMap.set(value, 1)
     })
   }
   let endgameOptionsArr : Array<string> = []
@@ -327,17 +326,18 @@ await tableSetup()
 </script>
 
 <template>
-<OuterComponents>
+  <OuterComponents>
     <UCard class="max-h-dvh overflow-auto">
-    <template #header>
+      <template #header>
         <UFormGroup class="w-full" block>
           <FilterMultiSelect v-model="selectedFilters" :options="filterOptions" :extra-options="extraFilterOptions"></FilterMultiSelect>
         </UFormGroup>
-    </template>
+      </template>
       <UTable :rows="teamsData" :columns="columns" class="overflow-auto">
+
         <template #actions-data="{ row }">
           <UPopover>
-            <UButton class="m-1" label="Chart" variant="soft" />
+            <UButton class="m-1" color="blue" label="Chart" variant="soft" />
             <template #panel>
               <UCard>
                 <div class="max-w-xs min-w-[15rem] overflow-y-auto" style="max-height: 20rem; min-height: 10rem">
@@ -347,7 +347,6 @@ await tableSetup()
             </template>
           </UPopover>
         </template>
-
         <template #buttons-data="{ row }">
           <div class="flex">
             <UButton @click="view(row.team)" icon="i-heroicons-paper-clip" variant="ghost"/>
