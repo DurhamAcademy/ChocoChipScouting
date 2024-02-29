@@ -69,7 +69,7 @@ let chartTitle = ref("Match " + currData.value.matchNumber)
 
 <template>
       <UCard>
-        <div class="h-80 flex-wrap flex">
+        <div class="flex-wrap flex">
           <div class="flex-auto w-80 mr-5">
             <BarChart
                 class="mb-1"
