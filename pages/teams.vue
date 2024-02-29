@@ -7,6 +7,7 @@ import AmpVisualization from "~/components/AmpVisualization.vue";
 import MatchVisualization from "~/components/MatchVisualization.vue";
 import SpeakerVisualization from "~/components/SpeakerVisualization.vue";
 import {useWindowSize} from "@vueuse/core";
+import MiscPopup from "~/components/MiscPopup.vue";
 
 const toast = useToast()
 let {width, height} = useWindowSize()
@@ -63,17 +64,29 @@ let match = matches.map(async (doc): Promise<ScoutingData & IdMeta> => {
 })
 
 let teamOrgMatches = new Map<number,Array<ScoutingData & IdMeta>>()
+let extraNotes = new Map<number, Array<string>>()
 
 for(let i  = 0; i < match.length; i++){
   let currentMatch = (await match[i])
-  let team = typeof currentMatch.teamNumber == "string" ? parseInt(currentMatch.teamNumber): currentMatch.teamNumber
-  if (!teamOrgMatches.has(team)) {
-    teamOrgMatches.set(team, [currentMatch])
+  if(currentMatch.matchNumber != -1) {
+    let team = typeof currentMatch.teamNumber == "string" ? parseInt(currentMatch.teamNumber) : currentMatch.teamNumber
+    if (!teamOrgMatches.has(team)) {
+      teamOrgMatches.set(team, [currentMatch])
+    } else {
+      let arr: Array<ScoutingData & IdMeta> = teamOrgMatches.get(team)!
+      arr.push(currentMatch)
+      teamOrgMatches.set(team, arr)
+    }
   }
-  else {
-    let arr : Array<ScoutingData & IdMeta> = teamOrgMatches.get(team)!
-    arr.push(currentMatch)
-    teamOrgMatches.set(team, arr)
+  else if(currentMatch.notes.notes != undefined){
+    let team = typeof currentMatch.teamNumber == "string" ? parseInt(currentMatch.teamNumber) : currentMatch.teamNumber
+    if (!extraNotes.has(team)) {
+      extraNotes.set(team, [currentMatch.notes.notes])
+    } else {
+      let arr: Array<string> = extraNotes.get(team)!
+      arr.push(currentMatch.notes.notes)
+      extraNotes.set(team, arr)
+    }
   }
 }
 
@@ -137,6 +150,9 @@ async function tableSetup() {
       }
     }
 
+    let teamExtraNotes = extraNotes.get(key)
+    if(teamExtraNotes == undefined) teamExtraNotes = []
+
     /*
     Removes match overlaps
      */
@@ -196,7 +212,8 @@ async function tableSetup() {
         endgame: compileEndgames(data),
         defense: averageDefensiveScore(data).toFixed(2),
         class: alliance,
-        rawData: data
+        rawData: data,
+        extraNotes: teamExtraNotes
       }
       teamsData.value.push(arr)
     }
@@ -308,7 +325,7 @@ const columns = [{
   key: 'dropdown'
 }]
 
-const graphOptions = ['Match Stats', 'Amp', 'Speaker']
+const graphOptions = ['Match Stats', 'Amp', 'Speaker', 'Misc']
 const selectedGraph = ref(graphOptions[0])
 
 await tableSetup()
@@ -351,6 +368,7 @@ await tableSetup()
                   <MatchVisualization v-if="selectedGraph == 'Match Stats'" :row-data="row"></MatchVisualization>
                   <AmpVisualization v-if="selectedGraph == 'Amp'" :row-data="row"></AmpVisualization>
                   <SpeakerVisualization v-if="selectedGraph == 'Speaker'" :row-data="row"></SpeakerVisualization>
+                  <MiscPopup v-if="selectedGraph == 'Misc'" :row-data="row"></MiscPopup>
                 </UCard>
               </div>
             </template>
