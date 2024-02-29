@@ -157,7 +157,7 @@ const {isOverDropZone} = useDropZone(dropZoneRef, onDrop) // variable that check
       <UTable :rows="rows" :columns="[{key: 'fileName', label: 'File Name'}, {key: 'fileType', label: 'File Type'}, {key: 'fileSize', label: 'File Size'}, {key: 'teamNum', label: 'Team # (-1 for misc)'}, {key: 'tags', label: 'Tags'}, {key: 'actions'}]">
         <template #teamNum-data="{ row, index }">
           <div class="flex ">
-            <UInput v-model="row.teamNumber" placeholder="Team #" type="number" @change="minMaxTeam(index)"/>
+            <UInput class="min-w-20" v-model="row.teamNumber" placeholder="Team #" type="number" @change="minMaxTeam(index)"/>
             <UTooltip text="Apply team # to all">
               <UButton @click="changeAllTeams(index)" icon="i-heroicons-arrows-up-down" style="margin-left:5px" variant="ghost"/>
             </UTooltip>
