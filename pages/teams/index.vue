@@ -137,6 +137,7 @@ async function tableSetup() {
     }
   }
   tableLoop: for (let [key, value] of teamOrgMatches) {
+    if(key == undefined) continue
     /*
     Data is an array of all matches, associated with a team (key), for the event filters selected
      */
