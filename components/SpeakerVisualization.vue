@@ -88,7 +88,7 @@ let rows = [{
 
 <template>
   <UCard>
-    <div class="h-80 overflow-scroll flex">
+    <div class="width=device-width flex-auto overflow-scroll flex">
       <LineChart
           class="w-80 mr-5"
           :data="[matchScores, autoMatchScores]"
