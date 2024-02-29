@@ -387,6 +387,7 @@ await tableSetup()
                   <MatchVisualization v-if="selectedGraph == 'Match Stats'" :row-data="row"></MatchVisualization>
                   <AmpVisualization v-if="selectedGraph == 'Amp'" :row-data="row"></AmpVisualization>
                   <SpeakerVisualization v-if="selectedGraph == 'Speaker'" :row-data="row"></SpeakerVisualization>
+                  <MiscPopup v-if="selectedGraph == 'Misc'" :row-data="row"></MiscPopup>
                 </UCard>
               </div>
             </UModal>
