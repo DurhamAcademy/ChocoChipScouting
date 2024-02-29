@@ -208,7 +208,6 @@ async function tableSetup() {
         amp: getAverageAmpCycles(data).toFixed(2),
         speaker: getAverageSpeakerCycles(data).toFixed(2),
         mobility: averageAuto(data).toFixed(2),
-        sentiment: analyzeNotes(data).toFixed(2),
         endgame: compileEndgames(data),
         defense: averageDefensiveScore(data).toFixed(2),
         class: alliance,
@@ -240,14 +239,6 @@ function averageDefensiveScore(teamArrays: Array<any>){
     if(match.notes.playedDefense) total += match.notes.defense
   }
   return total / teamArrays.length
-}
-
-function analyzeNotes(teamArrays: Array<any>){
-  let analysisTotal = 0
-  for(let match of teamArrays){
-    analysisTotal += sentiment.analyze(match.notes.notes, options).score
-  }
-  return analysisTotal/teamArrays.length
 }
 
 function getAverageSpeakerCycles(teamArrays: Array<ScoutingData>){
@@ -309,10 +300,6 @@ const columns = [{
 }, {
   key: 'mobility',
   label: 'Mobility Success Rate',
-  sortable: true
-}, {
-  key: 'sentiment',
-  label: 'Sentiment Analysis',
   sortable: true
 }, {
   key: 'defense',
