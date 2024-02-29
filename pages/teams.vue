@@ -377,12 +377,12 @@ await tableSetup()
                   <SpeakerVisualization v-if="selectedGraph == 'Speaker'" :row-data="row"></SpeakerVisualization>
                   <MiscPopup v-if="selectedGraph == 'Misc'" :row-data="row"></MiscPopup>
                   <UButton
-                      icon="i-heroicons-arrow-down-left"
+                      icon="i-heroicons-x-circle"
                       size="md"
                       color="primary"
                       circle
                       variant="solid"
-                      class="absolute right-5 bottom-5"
+                      class="absolute right-4 bottom-5"
                       @click="modalOpen[teamsData.indexOf(row)] = false"
                   />
                 </UCard>
