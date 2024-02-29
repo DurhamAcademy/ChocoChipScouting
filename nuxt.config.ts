@@ -167,7 +167,7 @@ export default defineNuxtConfig({
       enabled: true
     }
   },
-  ssr: true,
+  ssr: false,
   vite: {
     vue: {
       template: {
