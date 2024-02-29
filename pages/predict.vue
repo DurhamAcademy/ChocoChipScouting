@@ -120,17 +120,34 @@ function predict(){
 }
 
 let matchNumber = ref<number>()
+let playoffNumber = ref<number>()
 
 function populateMatch(){
   let tbaMatchData = fetch.data.value
-  if(tbaMatchData != null) {
-    for (let compMatch of tbaMatchData) {
-      if(compMatch.comp_level == "qm" && compMatch.match_number == matchNumber.value) {
-        for(let i = 0; i < compMatch.alliances.blue.team_keys.length; i++) {
-          selectedBlueTeams.value[i] = compMatch.alliances.blue.team_keys[i].replace("frc", "")
+  if(matchNumber.value != undefined && matchNumber.value.toString() != '') {
+    if (tbaMatchData != null) {
+      for (let compMatch of tbaMatchData) {
+        if (compMatch.comp_level == "qm" && compMatch.match_number == matchNumber.value) {
+          for (let i = 0; i < compMatch.alliances.blue.team_keys.length; i++) {
+            selectedBlueTeams.value[i] = compMatch.alliances.blue.team_keys[i].replace("frc", "")
+          }
+          for (let i = 0; i < compMatch.alliances.red.team_keys.length; i++) {
+            selectedRedTeams.value[i] = compMatch.alliances.red.team_keys[i].replace("frc", "")
+          }
         }
-        for(let i = 0; i < compMatch.alliances.red.team_keys.length; i++) {
-          selectedRedTeams.value[i] = compMatch.alliances.red.team_keys[i].replace("frc", "")
+      }
+    }
+  }
+  else if(playoffNumber.value != undefined){
+    if (tbaMatchData != null) {
+      for (let compMatch of tbaMatchData) {
+        if (compMatch.comp_level == "sf" && compMatch.set_number == playoffNumber.value) {
+          for (let i = 0; i < compMatch.alliances.blue.team_keys.length; i++) {
+            selectedBlueTeams.value[i] = compMatch.alliances.blue.team_keys[i].replace("frc", "")
+          }
+          for (let i = 0; i < compMatch.alliances.red.team_keys.length; i++) {
+            selectedRedTeams.value[i] = compMatch.alliances.red.team_keys[i].replace("frc", "")
+          }
         }
       }
     }
@@ -146,7 +163,7 @@ function populateMatch(){
         <template #header>
           <div class="flex">
             <UInput v-model="matchNumber" class="flex-auto" placeholder="Match #"></UInput>
-            <UInput class="flex-auto ml-2.5" placeholder="Playoff #"></UInput>
+            <UInput v-model="playoffNumber" class="flex-auto ml-2.5" placeholder="Playoff #"></UInput>
             <UButton class="ml-2.5 flex-0" label="Auto Fill" @click="populateMatch"></UButton>
             <UButton class="ml-2.5 flex-1" label="Predict" @click="predict"></UButton>
           </div>
