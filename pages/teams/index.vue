@@ -369,7 +369,7 @@ await tableSetup()
               </template>
             </UPopover>
             <div v-else>
-              <UButton variant="ghost" color="gray" icon="i-heroicons-document-chart-bar"/>
+              <UButton variant="ghost" color="gray" icon="i-heroicons-document-chart-bar" @click="modalOpen[teamsData.indexOf(row)] = true"/>
               <UModal v-model="modalOpen[teamsData.indexOf(row)]">
                 <div class="flex">
                   <UCard class="flex-auto">
