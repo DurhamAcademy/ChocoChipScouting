@@ -13,8 +13,6 @@ let password = ref("")
 
 let roles = ref([[""]])
 const roleOptions = ["Coach", "Scout"]
-let prevRoles: string[][] = [[]]
-let resetRoles = false
 
 let adminAccount = ref(false)
 
@@ -23,20 +21,21 @@ let userArr = ref([[""]])
 async function setup() {
   try {
     let docs = await usersDB.allDocs()
-    resetRoles = true
     userArr.value.length = 0
     roles.value.length = 0
-    prevRoles.length = 0
+    let rolePromises = []
     for (let user of docs.rows) {
       if (user.id.includes("org.couchdb.user:")) {
-        let userInfo = await usersDB.getUser(user.id.split(":")[1])
         userArr.value.push([user.id.split(":")[1]])
+        rolePromises.push(Promise.resolve(usersDB.getUser(user.id.split(":")[1])))
+      }
+    }
+    Promise.all(rolePromises).then((promiseValues) => {
+      for(let userInfo of promiseValues) {
         if (userInfo.roles) roles.value.push(userInfo.roles)
         else roles.value.push([])
       }
-    }
-    prevRoles = Array.from(roles.value)
-    resetRoles = false
+    })
     usersDB.getSession(function (err, response) {
       if (response) {
         if (response.userCtx.roles?.includes("_admin")) {
@@ -111,20 +110,9 @@ async function userManage() {
   )
 }
 
-watch(roles.value, (value, oldValue, onCleanup) => {
-  if(!resetRoles) {
-    for (let i = 0; i < value.length; i++) {
-      let updateRoles = false
-      for (let j = 0; j < value[i].length; j++) {
-        if (value[i][j] != prevRoles[i][j]) {
-          updateRoles = true
-        }
-      }
-      if (updateRoles) {
-        if (userArr.value[i][0]) editRoles(userArr.value[i][0], value[i])
-      }
-    }
-    prevRoles = Array.from(value)
+watch(roles.value, (value) => {
+  for(let i = 0; i < value.length; i++){
+    editRoles(userArr.value[i][0], value[i])
   }
 })
 
@@ -145,6 +133,7 @@ async function deleteUser(username: string) {
       for (let i = 0; i < userArr.value.length; i++) {
         if (userArr.value[i].includes(username)) {
           userArr.value.splice(i, 1)
+          roles.value.splice(i, 1)
         }
       }
     }
@@ -169,17 +158,17 @@ const { pending, data: res } = await useLazyAsyncData('res', () => setup())
     <div class="flex justify-center">
       <UCard class="max-w-xl flex-grow m-5 overflow-visible">
         <template #header>
-          <div class="flex">
-            <div class="flex-auto">
-              <UInput v-model="username" placeholder="Username"/>
-            </div>
-            <div class="flex-auto pl-2.5">
-            <UInput v-model="password" type="password" placeholder="Password"/>
-            </div>
-            <div class="flex-auto pl-2.5">
+          <UForm class="flex">
+            <UFormGroup class="flex-auto">
+              <UInput v-model="username" autocomplete="off" placeholder="Username"/>
+            </UFormGroup>
+            <UFormGroup class="flex-auto pl-2.5">
+            <UInput v-model="password" autocomplete="off" type="password" placeholder="Password"/>
+            </UFormGroup>
+            <UFormGroup class="flex-auto pl-2.5">
               <UButton :label="'Add/Edit User'" @click="userManage" block></UButton>
-            </div>
-          </div>
+            </UFormGroup>
+          </UForm>
           </template>
         <template #default>
           <UTable :rows="userArr" :columns="columns" :loading="pending" :loading-state="{ icon: 'i-heroicons-arrow-path-20-solid', label: 'Loading...' }">
