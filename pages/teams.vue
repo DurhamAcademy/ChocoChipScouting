@@ -378,12 +378,11 @@ await tableSetup()
                   <MiscPopup v-if="selectedGraph == 'Misc'" :row-data="row"></MiscPopup>
                     <UButton
                         icon="i-heroicons-arrow-down-left"
-                        size="sm"
+                        size="md"
                         color="primary"
                         circle
                         variant="solid"
-                        position="relative"
-                        top="40px" left="50px"
+                        class="absolute justify-start bottom-1"
                         @click="modalOpen[teamsData.indexOf(row)] = false"
                     />
                 </UCard>
