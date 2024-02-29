@@ -19,15 +19,6 @@
         </div>
       </LazyUCard>
       <LazyUSkeleton class="w-full h-32 my-5"></LazyUSkeleton>
-      <LazyUCard class="my-5">
-        <div class="m-1 flex items-center space-x-4">
-          <LazyUSkeleton class="h-12 w-12" :ui="{ rounded: 'rounded-full' }" />
-          <div class="space-y-2 flex-grow">
-            <LazyUSkeleton class="h-4 w-full" />
-            <LazyUSkeleton class="h-4 w-full" />
-          </div>
-        </div>
-      </LazyUCard>
     </div>
   </OuterComponents>
 </template>
