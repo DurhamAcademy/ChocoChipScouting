@@ -41,16 +41,15 @@ export default defineNuxtConfig({
 
   },
   modules: [
-      '@nuxt/image',
+    '@nuxt/image',
     '@vite-pwa/nuxt',
     '@nuxt/ui',
-      (_options, nuxt) => {
-        nuxt.hooks.hook('vite:extendConfig', (config) => {
-          // @ts-expect-error
-          config.plugins.push(vuetify({autoImport: true}))
-        })
-      },
-
+    (_options, nuxt) => {
+      nuxt.hooks.hook('vite:extendConfig', (config) => {
+        // @ts-expect-error
+        config.plugins.push(vuetify({ autoImport: true }))
+      })
+    },
   ],
 
   // speedkit: {

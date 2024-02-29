@@ -7,6 +7,7 @@ import LoginState from "~/utils/authorization/LoginState";
 import databases from "~/utils/databases"
 import heic2any from "heic2any"
 import {NuxtImg} from "#components";
+import {eventOptions} from "~/utils/eventOptions";
 
 const { attachments } = databases.databases;
 const db = attachments.local;
@@ -14,6 +15,9 @@ const date = new Date().toDateString()
 
 const dropZoneRef = ref<HTMLDivElement>()
 const tagsList = ["robot", "person", "strategy", "auto", "logo", "food"] //idk what tags would be good
+
+let selectedEvent = eventOptions[0]
+if (typeof window !== 'undefined') selectedEvent = localStorage.getItem('currentEvent') || eventOptions[0]
 
 let fileList = ref<(File|Blob)[]>([])
 let nameList = ref<(String)[]>([])
@@ -92,7 +96,7 @@ let {usernameState, logout}: {
 async function submit() {
   for (let i = 0; i < rows.value.length; i++) {
     const docObject = {
-      event: window.localStorage.getItem("event") || "",
+      event: selectedEvent,
       name: rows.value[i].fileName,
       teamNumber: rows.value[i].teamNumber,
       fileSize: rows.value[i].fileSize,

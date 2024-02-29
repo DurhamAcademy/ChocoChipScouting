@@ -80,31 +80,33 @@ function showCarousel(index: number) {
   openCarousel.value = true
 }
 
+async function goBack() {
+  navigateTo("/teams/")
+}
 
 </script>
 
 <template>
   <UCard>
     <template #header>
+      <UButton class="absolute left-2 top-2" variant="ghost" size="xl" icon="i-heroicons-arrow-left" @click="goBack"/>
       <Title>Team {{ route.params.id }} | Attachments</Title>
-      <div>
-        <h1 class="font-extrabold text-4xl ">Team {{ route.params.id }} Attachments</h1>
-        <div class="flex mt-2">
-          <UInput placeholder="Filter Notes" icon="i-heroicons-magnifying-glass" color="primary" class="w-40" v-model="filterInput"/> <!-- wip -->
-          <UPopover class="px-2">
-            <UButton label="Filter Tags" trailing-icon="i-heroicons-adjustments-horizontal" variant="ghost"/>
-            <template #panel>
-              <UCard class="min-w-32 max-w-64 flex flex-wrap justify-center">
-                <template #header>
-                  <h1 class="font-sans text-lg font-bold opacity-50">Choose Tags To Filter</h1>
-                </template>
-                <template #default>
-                  <UButton v-for="(tag, index) in possibleTags" :label="tag" class="flex-grow justify center" style="margin:5px" :variant="tagStyles[index]" :ui="{ rounded: 'rounded-full' }" @click="toggleTag(index)"/>
-                </template>
-              </UCard>
-            </template>
-          </UPopover>
-        </div>
+      <h1 class="font-extrabold text-4xl text-center">Team {{ route.params.id }} Attachments</h1>
+      <div class="flex mt-2 justify-center">
+        <UInput placeholder="Filter Notes" icon="i-heroicons-magnifying-glass" color="primary" class="w-40" v-model="filterInput"/> <!-- wip -->
+        <UPopover class="px-2">
+          <UButton label="Filter Tags" trailing-icon="i-heroicons-adjustments-horizontal" variant="ghost"/>
+          <template #panel>
+            <UCard class="min-w-32 max-w-64 flex flex-wrap justify-center">
+              <template #header>
+                <h1 class="font-sans text-lg font-bold opacity-50">Choose Tags To Filter</h1>
+              </template>
+              <template #default>
+                <UButton v-for="(tag, index) in possibleTags" :label="tag" class="flex-grow justify center" style="margin:5px" :variant="tagStyles[index]" :ui="{ rounded: 'rounded-full' }" @click="toggleTag(index)"/>
+              </template>
+            </UCard>
+          </template>
+        </UPopover>
       </div>
     </template>
     <template class="flex flex-wrap justify-center">
