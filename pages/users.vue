@@ -15,6 +15,7 @@ let roles = ref([[""]])
 const roleOptions = ["Coach", "Scout"]
 
 let adminAccount = ref(false)
+let updatingRoles = false
 
 let userArr = ref([[""]])
 
@@ -30,12 +31,15 @@ async function setup() {
         rolePromises.push(Promise.resolve(usersDB.getUser(user.id.split(":")[1])))
       }
     }
+    updatingRoles = true
     Promise.all(rolePromises).then((promiseValues) => {
       for(let userInfo of promiseValues) {
+        if(promiseValues.indexOf(userInfo) == promiseValues.length - 1) updatingRoles = false
         if (userInfo.roles) roles.value.push(userInfo.roles)
         else roles.value.push([])
       }
     })
+
     usersDB.getSession(function (err, response) {
       if (response) {
         if (response.userCtx.roles?.includes("_admin")) {
@@ -111,8 +115,12 @@ async function userManage() {
 }
 
 watch(roles.value, (value) => {
-  for(let i = 0; i < value.length; i++){
-    editRoles(userArr.value[i][0], value[i])
+  if(!updatingRoles) {
+    let promiseArr = []
+    for (let i = 0; i < value.length; i++) {
+      promiseArr.push(Promise.resolve(editRoles(userArr.value[i][0], value[i])))
+    }
+    Promise.all(promiseArr)
   }
 })
 
@@ -155,7 +163,7 @@ const { pending, data: res } = await useLazyAsyncData('res', () => setup())
 
 <template>
   <OuterComponents v-if="adminAccount">
-    <div class="flex justify-center">
+    <div class="flex justify-center overflow-y-scroll">
       <UCard class="max-w-xl flex-grow m-5 overflow-visible">
         <template #header>
           <UForm class="flex">
