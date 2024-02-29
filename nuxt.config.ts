@@ -4,6 +4,17 @@ import vuetify, { transformAssetUrls } from 'vite-plugin-vuetify'
 var sw = true;
 
 export default defineNuxtConfig({
+  modules: [
+    '@nuxt/image',
+    '@vite-pwa/nuxt',
+    '@nuxt/ui',
+    (_options, nuxt) => {
+      nuxt.hooks.hook('vite:extendConfig', (config) => {
+        // @ts-expect-error
+        config.plugins.push(vuetify({autoImport: true}))
+      })
+    },
+  ],
   webpack: {
     aggressiveCodeRemoval: true,
     optimization: {
@@ -40,18 +51,6 @@ export default defineNuxtConfig({
     transpile: ['vuetify'],
 
   },
-  modules: [
-    '@nuxt/image',
-    '@vite-pwa/nuxt',
-    '@nuxt/ui',
-    (_options, nuxt) => {
-      nuxt.hooks.hook('vite:extendConfig', (config) => {
-        // @ts-expect-error
-        config.plugins.push(vuetify({ autoImport: true }))
-      })
-    },
-  ],
-
   // speedkit: {
   //
   //   detection: {

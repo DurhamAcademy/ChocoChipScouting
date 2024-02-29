@@ -84,14 +84,14 @@ let rows = [{
 
 <template>
   <UCard>
-    <div class="h-80 overflow-scroll flex">
+    <div class="flex flex-auto flex-wrap width=device-width">
       <LineChart
-          class="w-80 mr-5"
+          class="mr-5"
           :data="[matchScores, autoMatchScores]"
           :labels="matchNums"
           :chart-titles="chartTitles"
       ></LineChart>
-      <div class="flex-auto whitespace-normal w-72 max-w-72">
+      <div class="flex-auto whitespace-normal">
         <UTable :rows="rows" :columns="columns">
 
         </UTable>

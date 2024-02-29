@@ -8,8 +8,8 @@ const props = defineProps<{
 
 <template>
   <UCard>
-    <div class="flex h-80">
-      <div class="flex-auto w-80 whitespace-normal break-all overflow-y-scroll mr-5">
+    <div class="flex flex-auto width=device-width flex-wrap">
+      <div class="flex-auto width=devicewidth whitespace-normal break-all overflow-y-scroll mr-5">
         <div class="text-center mb-1">
           <p class="font-bold text-slate-900">Extra Notes</p>
         </div>
