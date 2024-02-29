@@ -7,16 +7,21 @@ import LoginState from "~/utils/authorization/LoginState";
 import databases from "~/utils/databases"
 import heic2any from "heic2any"
 import {NuxtImg} from "#components";
+import {eventOptions} from "~/utils/eventOptions";
 
 const { attachments } = databases.databases;
 const db = attachments.local;
+const date = new Date().toDateString()
 
 const dropZoneRef = ref<HTMLDivElement>()
 const tagsList = ["robot", "person", "strategy", "auto", "logo", "food"] //idk what tags would be good
 
+let selectedEvent = eventOptions[0]
+if (typeof window !== 'undefined') selectedEvent = localStorage.getItem('currentEvent') || eventOptions[0]
+
 let fileList = ref<(File|Blob)[]>([])
 let nameList = ref<(String)[]>([])
-let rows = ref<({ fileName: string; fileType: string; fileSize: string; photoURL: string; teamNumber: number, tags: string[]; tagStyle: string[], extraNotes: string})[]>([])
+let rows = ref<({ fileName: string; fileType: string; fileSize: string; photoURL: string; teamNumber: number, tags: string[]; tagStyle: string[], extraNotes: string, dateUploaded: string})[]>([])
 
 let tagStyles = Array(tagsList.length)
 for (let i = 0; i < tagStyles.length; i++) {
@@ -71,7 +76,7 @@ async function imageProcessor(files: File[] | null) {
             success(newFile: File | Blob) {
               fileList.value?.push(newFile)
               let fileSize = (currentFile.size / (1024 * 1024)).toFixed(2)
-              rows.value.push({ fileName: file.name, fileType: realFileType, fileSize: fileSize+" MB", photoURL: URL.createObjectURL(currentFile), teamNumber: -1, tags: new Array(tagsList.length), tagStyle: tagStyles.map(item =>  { return item }), extraNotes: "" })
+              rows.value.push({ fileName: file.name, fileType: realFileType, fileSize: fileSize+" MB", photoURL: URL.createObjectURL(currentFile), teamNumber: -1, tags: new Array(tagsList.length), tagStyle: tagStyles.map(item =>  { return item }), extraNotes: "", dateUploaded: date })
             }
           })
         }
@@ -91,15 +96,15 @@ let {usernameState, logout}: {
 async function submit() {
   for (let i = 0; i < rows.value.length; i++) {
     const docObject = {
-      event: window.localStorage.getItem("event") || "",
+      event: selectedEvent,
       name: rows.value[i].fileName,
       teamNumber: rows.value[i].teamNumber,
       fileSize: rows.value[i].fileSize,
       author: usernameState.value,
-      tags: rows.value[i].tags,
-      extraNotes: rows.value[i].extraNotes
+      tags: rows.value[i].tags.filter(str => str.trim() !== ""),
+      extraNotes: rows.value[i].extraNotes,
+      dateUploaded: rows.value[i].dateUploaded
   };
-  console.log(docObject)
   let doc = await db.post(docObject)
   console.info(doc)
   let rev=doc.rev;

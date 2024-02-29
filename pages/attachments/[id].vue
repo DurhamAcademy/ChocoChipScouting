@@ -23,8 +23,8 @@ async function view(id: string) {
   }
   modalName.value = doc.name;
   modalAuthor.value = (doc.author!=undefined)?doc.author:"";
-  if (!Number.isNaN(Number.parseInt(String(doc.team)))) {
-    modalTeam.value = Number.parseInt(String(doc.team));
+  if (!Number.isNaN(Number.parseInt(String(doc.teamNumber)))) {
+    modalTeam.value = Number.parseInt(String(doc.teamNumber));
   } else {
     modalTeam.value = undefined;
   }
@@ -48,7 +48,7 @@ if (!Array.isArray(route.params.id))
 </script>
 
 <template>
-  <ViewAttachment :name="modalName" :author="modalAuthor" :team="modalTeam" :attachments="modalAttachments"/>
+  <ViewAttachment :name="modalName" :author="modalAuthor" :teamNumber="modalTeam" :attachments="modalAttachments"/>
 </template>
 
 <style scoped>

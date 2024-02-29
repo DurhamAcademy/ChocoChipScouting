@@ -195,6 +195,9 @@ export default defineNuxtConfig({
     config:{
       theme: {
         extend: {
+          width: {
+            '7/24': '29.1666666667%',
+          },
           colors: {
             coral: {
               '50': '#fef3f2',

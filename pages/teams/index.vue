@@ -13,6 +13,8 @@ const toast = useToast()
 let {width, height} = useWindowSize()
 let modalOpen = ref([])
 
+let openAttachments = ref(false)
+
 let sentiment = new Sentiment()
 let options = {
   extras: {
@@ -135,6 +137,7 @@ async function tableSetup() {
     }
   }
   tableLoop: for (let [key, value] of teamOrgMatches) {
+    if(key == undefined) continue
     /*
     Data is an array of all matches, associated with a team (key), for the event filters selected
      */
@@ -273,7 +276,6 @@ function compileEndgames(teamArrays: Array<ScoutingData>): [Array<string>, Array
         endgameMap.set(value, endgameMap.get(value)! + 1)
       } else
         endgameMap.set(value, 1)
-
     })
   }
   let endgameOptionsArr : Array<string> = []
@@ -283,6 +285,11 @@ function compileEndgames(teamArrays: Array<ScoutingData>): [Array<string>, Array
     endgameDataArr.push(value)
   })
   return [endgameOptionsArr, endgameDataArr]
+}
+
+async function view(teamNum: number) {
+  navigateTo("/teams/"+teamNum)
+  openAttachments.value = true
 }
 
 const columns = [{
@@ -308,8 +315,8 @@ const columns = [{
 }, {
   key: 'actions',
   label: 'Endgame'
-},{
-  key: 'dropdown'
+}, {
+  key: 'buttons',
 }]
 
 const graphOptions = ['Match Stats', 'Amp', 'Speaker', 'Misc']
@@ -340,59 +347,60 @@ await tableSetup()
             </template>
           </UPopover>
         </template>
+        <template #buttons-data="{ row }">
+          <div class="flex">
+            <UButton @click="view(row.team)" icon="i-heroicons-paper-clip" variant="ghost"/>
+            <UPopover v-if=" width > 800" :popper="{ placement: teamsData.indexOf(row) > teamsData.length/2 ? 'top-end': 'bottom-end' }">
+              <UButton variant="ghost" icon="i-heroicons-document-chart-bar"/>
+              <template #panel>
+                <div class="flex">
+                  <UCard class="flex-auto">
+                    <template #header>
+                      <UButtonGroup>
+                        <UButton :variant="selectedGraph == label ? 'solid' : 'soft'"  v-for="label in graphOptions" @click="selectedGraph = label" :label="label"></UButton>
+                      </UButtonGroup>
+                    </template>
+                    <MatchVisualization v-if="selectedGraph == 'Match Stats'" :row-data="row"></MatchVisualization>
+                    <AmpVisualization v-if="selectedGraph == 'Amp'" :row-data="row"></AmpVisualization>
+                    <SpeakerVisualization v-if="selectedGraph == 'Speaker'" :row-data="row"></SpeakerVisualization>
+                    <MiscPopup v-if="selectedGraph == 'Misc'" :row-data="row"></MiscPopup>
+                  </UCard>
+                </div>
+              </template>
+            </UPopover>
+            <div v-else>
+              <UButton color="gray" variant="ghost" icon="i-heroicons-ellipsis-horizontal-20-solid" @click="modalOpen[teamsData.indexOf(row)] = true"/>
 
-        <template #dropdown-data="{ row }">
-          <UPopover v-if=" width > 800" :popper="{ placement: teamsData.indexOf(row) > teamsData.length/2 ? 'top-end': 'bottom-end' }">
-            <UButton color="gray" variant="ghost" icon="i-heroicons-ellipsis-horizontal-20-solid"/>
-            <template #panel>
-              <div class="flex">
-                <UCard class="flex-auto">
-                  <template #header>
-                    <UButtonGroup>
-                      <UButton :variant="selectedGraph == label ? 'solid' : 'soft'"  v-for="label in graphOptions" @click="selectedGraph = label" :label="label"></UButton>
-                    </UButtonGroup>
-                  </template>
-                  <MatchVisualization v-if="selectedGraph == 'Match Stats'" :row-data="row"></MatchVisualization>
-                  <AmpVisualization v-if="selectedGraph == 'Amp'" :row-data="row"></AmpVisualization>
-                  <SpeakerVisualization v-if="selectedGraph == 'Speaker'" :row-data="row"></SpeakerVisualization>
-                  <MiscPopup v-if="selectedGraph == 'Misc'" :row-data="row"></MiscPopup>
-                </UCard>
-              </div>
-            </template>
-          </UPopover>
-          <div v-else>
-            <UButton color="gray" variant="ghost" icon="i-heroicons-ellipsis-horizontal-20-solid" @click="modalOpen[teamsData.indexOf(row)] = true"/>
-
-            <UModal v-model="modalOpen[teamsData.indexOf(row)]">
-              <div class="flex">
-                <UCard class="flex-auto">
-                  <template #header>
-                    <UButtonGroup>
-                      <UButton :variant="selectedGraph == label ? 'solid' : 'soft'"  v-for="label in graphOptions" @click="() => {selectedGraph = label; modalOpen[teamsData.indexOf(row)] = true}" :label="label"></UButton>
-                    </UButtonGroup>
-                  </template>
-
-                  <MatchVisualization v-if="selectedGraph == 'Match Stats'" :row-data="row"></MatchVisualization>
-                  <AmpVisualization v-if="selectedGraph == 'Amp'" :row-data="row"></AmpVisualization>
-                  <SpeakerVisualization v-if="selectedGraph == 'Speaker'" :row-data="row"></SpeakerVisualization>
-                  <MiscPopup v-if="selectedGraph == 'Misc'" :row-data="row"></MiscPopup>
-                  <UButton
-                      icon="i-heroicons-x-circle"
-                      size="md"
-                      color="primary"
-                      circle
-                      variant="solid"
-                      class="absolute right-4 bottom-5"
-                      @click="modalOpen[teamsData.indexOf(row)] = false"
-                  />
-                </UCard>
-              </div>
-            </UModal>
+              <UModal v-model="modalOpen[teamsData.indexOf(row)]">
+                <div class="flex">
+                  <UCard class="flex-auto">
+                    <template #header>
+                      <UButtonGroup>
+                        <UButton :variant="selectedGraph == label ? 'solid' : 'soft'"  v-for="label in graphOptions" @click="() => {selectedGraph = label; modalOpen[teamsData.indexOf(row)] = true}" :label="label"></UButton>
+                      </UButtonGroup>
+                    </template>
+                    <MatchVisualization v-if="selectedGraph == 'Match Stats'" :row-data="row"></MatchVisualization>
+                    <AmpVisualization v-if="selectedGraph == 'Amp'" :row-data="row"></AmpVisualization>
+                    <SpeakerVisualization v-if="selectedGraph == 'Speaker'" :row-data="row"></SpeakerVisualization>
+                    <MiscPopup v-if="selectedGraph == 'Misc'" :row-data="row"></MiscPopup><UButton
+                        icon="i-heroicons-arrow-down-left"
+                        size="md"
+                        color="primary"
+                        circle
+                        variant="solid"
+                        class="absolute right-5 bottom-5"
+                        @click="modalOpen[teamsData.indexOf(row)] = false"
+                    />
+                  </UCard>
+                </div>
+              </UModal>
+            </div>
           </div>
+
         </template>
       </UTable>
-    </UCard>
-  </OuterComponents>
+      </UCard>
+</OuterComponents>
 </template>
 
 <style scoped>
