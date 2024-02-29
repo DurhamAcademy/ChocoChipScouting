@@ -382,7 +382,7 @@ await tableSetup()
                         color="primary"
                         circle
                         variant="solid"
-                        class="absolute justify-end bottom-5"
+                        class="absolute right-5 bottom-5"
                         @click="modalOpen[teamsData.indexOf(row)] = false"
                     />
                 </UCard>

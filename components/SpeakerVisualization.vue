@@ -90,12 +90,12 @@ let rows = [{
   <UCard>
     <div class="width=device-width flex-auto flex-wrap flex">
       <LineChart
-          class="w-80 mr-5"
+          class="mr-5"
           :data="[matchScores, autoMatchScores]"
           :labels="matchNums"
           :chart-titles="chartTitles"
       ></LineChart>
-      <div class="flex-auto whitespace-normal w-72 max-w-72">
+      <div class="flex-auto whitespace-normal">
         <UTable :rows="rows" :columns="columns"/>
       </div>
     </div>
