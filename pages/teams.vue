@@ -376,6 +376,15 @@ await tableSetup()
                   <AmpVisualization v-if="selectedGraph == 'Amp'" :row-data="row"></AmpVisualization>
                   <SpeakerVisualization v-if="selectedGraph == 'Speaker'" :row-data="row"></SpeakerVisualization>
                   <MiscPopup v-if="selectedGraph == 'Misc'" :row-data="row"></MiscPopup>
+                    <UButton
+                        icon="i-heroicons-arrow-down-left"
+                        size="md"
+                        color="primary"
+                        circle
+                        variant="solid"
+                        class="absolute right-5 bottom-5"
+                        @click="modalOpen[teamsData.indexOf(row)] = false"
+                    />
                 </UCard>
               </div>
             </UModal>
