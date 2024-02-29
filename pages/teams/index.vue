@@ -382,7 +382,7 @@ await tableSetup()
                     <AmpVisualization v-if="selectedGraph == 'Amp'" :row-data="row"></AmpVisualization>
                     <SpeakerVisualization v-if="selectedGraph == 'Speaker'" :row-data="row"></SpeakerVisualization>
                     <MiscPopup v-if="selectedGraph == 'Misc'" :row-data="row"></MiscPopup><UButton
-                        icon="i-heroicons-arrow-down-left"
+                        icon="i-heroicons-x-mark"
                         size="md"
                         color="primary"
                         circle
