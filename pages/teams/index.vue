@@ -349,9 +349,9 @@ await tableSetup()
         </template>
         <template #buttons-data="{ row }">
           <div class="flex">
-            <UButton @click="view(row.team)" icon="i-heroicons-paper-clip" variant="ghost"/>
+            <UButton @click="view(row.team)" icon="i-heroicons-paper-clip" color="gray" variant="ghost"/>
             <UPopover v-if=" width > 800" :popper="{ placement: teamsData.indexOf(row) > teamsData.length/2 ? 'top-end': 'bottom-end' }">
-              <UButton variant="ghost" icon="i-heroicons-document-chart-bar"/>
+              <UButton variant="ghost" color="gray" icon="i-heroicons-document-chart-bar"/>
               <template #panel>
                 <div class="flex">
                   <UCard class="flex-auto">
@@ -369,7 +369,7 @@ await tableSetup()
               </template>
             </UPopover>
             <div v-else>
-              <UButton variant="ghost" icon="i-heroicons-document-chart-bar"/>
+              <UButton variant="ghost" color="gray" icon="i-heroicons-document-chart-bar"/>
               <UModal v-model="modalOpen[teamsData.indexOf(row)]">
                 <div class="flex">
                   <UCard class="flex-auto">
