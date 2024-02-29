@@ -17,7 +17,7 @@ const props = defineProps<{
           <p class="font-semibold">Note {{rowData.extraNotes.indexOf(note) + 1}}:</p>
           <p class="mb-4">{{note}}</p>
         </div>
-        <div v-if="rowData.extraNotes.length == 0">
+        <div v-if="rowData.extraNotes.length == 0" class="mt-2 text-center">
           <p>There are no extra notes for this team :(</p>
         </div>
       </div>
