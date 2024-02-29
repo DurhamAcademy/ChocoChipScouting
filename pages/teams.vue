@@ -11,7 +11,7 @@ import MiscPopup from "~/components/MiscPopup.vue";
 
 const toast = useToast()
 let {width, height} = useWindowSize()
-let modalOpen = ref(false)
+let modalOpen = ref([])
 
 let sentiment = new Sentiment()
 let options = {
@@ -361,14 +361,14 @@ await tableSetup()
             </template>
           </UPopover>
           <div v-else>
-            <UButton color="gray" variant="ghost" icon="i-heroicons-ellipsis-horizontal-20-solid" @click="modalOpen = true"/>
+            <UButton color="gray" variant="ghost" icon="i-heroicons-ellipsis-horizontal-20-solid" @click="modalOpen[teamsData.indexOf(row)] = true"/>
 
-            <UModal v-model="modalOpen">
+            <UModal v-model="modalOpen[teamsData.indexOf(row)]">
               <div class="flex">
                 <UCard class="flex-auto">
                   <template #header>
                     <UButtonGroup>
-                      <UButton :variant="selectedGraph == label ? 'solid' : 'soft'"  v-for="label in graphOptions" @click="() => {selectedGraph = label; modalOpen = true}" :label="label"></UButton>
+                      <UButton :variant="selectedGraph == label ? 'solid' : 'soft'"  v-for="label in graphOptions" @click="() => {selectedGraph = label; modalOpen[teamsData.indexOf(row)] = true}" :label="label"></UButton>
                     </UButtonGroup>
                   </template>
 
