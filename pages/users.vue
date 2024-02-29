@@ -14,7 +14,7 @@ let password = ref("")
 let roles = ref([[""]])
 const roleOptions = ["Coach", "Scout"]
 
-let adminAccount = ref(false)
+let adminAccount = ref(true)
 let updatingRoles = false
 
 let userArr = ref([[""]])
@@ -40,13 +40,7 @@ async function setup() {
       }
     })
 
-    usersDB.getSession(function (err, response) {
-      if (response) {
-        if (response.userCtx.roles?.includes("_admin")) {
-          adminAccount.value = true
-        }
-      }
-    })
+    adminAccount.value = await checkSession()
     return userArr
   }
   catch{
@@ -59,59 +53,66 @@ function debug(text:string){
 }
 
 async function signUp() {
-  usersDB.signUp(username.value, password.value,
-      {
-        metadata: {
-          unaccessedAccount: true
-        }
-      }, function (err, response) {
-        if (err) {
-          if (err.name === 'conflict') {
-            console.log("Username already exists")
-          } else if (err.name === 'forbidden') {
-            console.log("Invalid name")
-          } else {
-            console.log(err.name)
+  if(await checkSession()){
+    usersDB.signUp(username.value, password.value,
+        {
+          metadata: {
+            unaccessedAccount: true
           }
-        } else {
-          console.log("User created")
-          setup()
+        }, function (err, response) {
+          if (err) {
+            if (err.name === 'conflict') {
+              console.log("Username already exists")
+            } else if (err.name === 'forbidden') {
+              console.log("Invalid name")
+            } else {
+              console.log(err.name)
+            }
+          } else {
+            console.log("User created")
+            setup()
+          }
         }
-      }
-  );
+    );
+  }
 }
 
 async function changePassword() {
-  usersDB.changePassword(username.value, password.value,
-      {
-
-      }, function(err, response) {
-        if(err) {
-          console.log(err)
-        } else {
-          console.log("Password changed")
-          setup()
+  if(await checkSession()) {
+    usersDB.changePassword(username.value, password.value,
+        {}, function (err, response) {
+          if (err) {
+            console.log(err)
+          } else {
+            console.log("Password changed")
+            setup()
+          }
         }
-      }
-  )
+    )
+  }
 }
 
 async function userManage() {
-  let sessionRoles = await usersDB.getSession()
-  if(! (sessionRoles.userCtx.roles && (sessionRoles.userCtx.roles.includes("_admin"))) ) return
-  usersDB.getUser(username.value,
-      {
-
-      }, function (err, response) {
-        if(err) {
-          if(err.name == 'not_found') {
-            signUp()
+  if(await checkSession()) {
+    usersDB.getUser(username.value,
+        {}, function (err, response) {
+          if (err) {
+            if (err.name == 'not_found') {
+              signUp()
+            }
+          } else {
+            changePassword()
           }
-        } else {
-          changePassword()
         }
-      }
-  )
+    )
+  }
+}
+
+function checkSession(): Promise<boolean>{
+  return new Promise(async resolve => {
+    let sessionRoles = await usersDB.getSession()
+    return !!(sessionRoles.userCtx.roles && (sessionRoles.userCtx.roles.includes("_admin")));
+  })
 }
 
 watch(roles.value, (value) => {
