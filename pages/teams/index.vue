@@ -337,7 +337,7 @@ await tableSetup()
 
         <template #actions-data="{ row }">
           <UPopover>
-            <UButton class="m-1" color="blue" label="Chart" variant="soft" />
+            <UButton class="m-1" label="Chart" variant="soft" />
             <template #panel>
               <UCard>
                 <div class="max-w-xs min-w-[15rem] overflow-y-auto" style="max-height: 20rem; min-height: 10rem">
