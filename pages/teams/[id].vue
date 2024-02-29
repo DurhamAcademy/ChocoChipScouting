@@ -90,7 +90,6 @@ async function goBack() {
   <UCard>
     <template #header>
       <UButton class="absolute left-2 top-2" variant="ghost" size="xl" icon="i-heroicons-arrow-left" @click="goBack"/>
-      <Title>Team {{ route.params.id }} | Attachments</Title>
       <h1 class="font-extrabold text-4xl text-center">Team {{ route.params.id }} Attachments</h1>
       <div class="flex mt-2 justify-center">
         <UInput placeholder="Filter Notes" icon="i-heroicons-magnifying-glass" color="primary" class="w-40" v-model="filterInput"/> <!-- wip -->
