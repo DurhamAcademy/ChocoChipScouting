@@ -74,29 +74,33 @@ function calculateTeamAverageScore(team:number){
   return -1
 }
 
+let teamsFound = ref([[false, false, false], [false, false, false]])
+
 function predict(){
   let blueTotal = 0
   let redTotal = 0
   for(let team of selectedBlueTeams.value){
     let teamNum = parseInt(team)
     let score = 0
+    teamsFound.value[0][selectedBlueTeams.value.indexOf(team)] = false
     if(!Number.isNaN(teamNum))
       score += calculateTeamAverageScore(teamNum)
     if(score > 0)
       blueTotal += score
     else if(score == -1){
-
+      teamsFound.value[0][selectedBlueTeams.value.indexOf(team)] = true
     }
   }
   for(let team of selectedRedTeams.value){
     let teamNum = parseInt(team)
     let score = 0
+    teamsFound.value[1][selectedRedTeams.value.indexOf(team)] = false
     if(!Number.isNaN(teamNum))
       score = calculateTeamAverageScore(teamNum)
     if(score > 0)
       redTotal += score
     else if(score == -1){
-      //TODO some way of warning that this team didn't exist in data
+      teamsFound.value[1][selectedRedTeams.value.indexOf(team)] = true
     }
   }
 
@@ -148,14 +152,38 @@ function populateMatch(){
           </div>
         </template>
         <UContainer class="flex bg-blue-100 p-5">
-          <UInput v-model="selectedBlueTeams[0]" class="flex-auto" placeholder="Team #"></UInput>
-          <UInput v-model="selectedBlueTeams[1]" class="flex-auto ml-2.5" placeholder="Team #"></UInput>
-          <UInput v-model="selectedBlueTeams[2]" class="flex-auto ml-2.5" placeholder="Team #"></UInput>
+          <UInput v-model="selectedBlueTeams[0]" class="flex-1" placeholder="Team #">
+            <template #trailing>
+              <span v-if="teamsFound[0][0]" class="text-red-400 dark:text-red-600 text-xs">not found</span>
+            </template>
+          </UInput>
+          <UInput v-model="selectedBlueTeams[1]" class="flex-1 ml-2.5" placeholder="Team #">
+            <template #trailing>
+              <span v-if="teamsFound[0][1]" class="text-red-400 dark:text-red-600 text-xs">not found</span>
+            </template>
+          </UInput>
+          <UInput v-model="selectedBlueTeams[2]" class="flex-1 ml-2.5" placeholder="Team #">
+            <template #trailing>
+              <span v-if="teamsFound[0][2]" class="text-red-400 dark:text-red-600 text-xs">not found</span>
+            </template>
+          </UInput>
         </UContainer>
         <UContainer class="flex bg-red-100 p-5">
-          <UInput v-model="selectedRedTeams[0]" class="flex-auto" placeholder="Team #"></UInput>
-          <UInput v-model="selectedRedTeams[1]" class="flex-auto ml-2.5" placeholder="Team #"></UInput>
-          <UInput v-model="selectedRedTeams[2]" class="flex-auto ml-2.5" placeholder="Team #"></UInput>
+          <UInput v-model="selectedRedTeams[0]" class="flex-1" placeholder="Team #">
+            <template #trailing>
+              <span v-if="teamsFound[1][0]" class="text-red-400 dark:text-red-600 text-xs">not found</span>
+            </template>
+          </UInput>
+          <UInput v-model="selectedRedTeams[1]" class="flex-1 ml-2.5" placeholder="Team #">
+            <template #trailing>
+              <span v-if="teamsFound[1][1]" class="text-red-400 dark:text-red-600 text-xs">not found</span>
+            </template>
+          </UInput>
+          <UInput v-model="selectedRedTeams[2]" class="flex-1 ml-2.5" placeholder="Team #">
+            <template #trailing>
+              <span v-if="teamsFound[1][2]" class="text-red-400 dark:text-red-600 text-xs">not found</span>
+            </template>
+          </UInput>
         </UContainer>
         <template #footer>
           <UContainer :class="winningTeamColor">
