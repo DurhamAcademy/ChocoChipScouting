@@ -97,9 +97,13 @@ async function userManage() {
         if (err) {
           if (err.name == 'not_found') {
             signUp()
+            username.value = ""
+            password.value = ""
           }
         } else {
           changePassword()
+          username.value = ""
+          password.value = ""
         }
       }
   )
