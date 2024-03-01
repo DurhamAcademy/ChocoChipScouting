@@ -17,8 +17,12 @@ enum GameTime {
 //The active tab used
 let gameTime = ref(GameTime.Autonomous)
 
-let selectedEvent = eventOptions[0]
-if (typeof window !== 'undefined') selectedEvent = localStorage.getItem('currentEvent') || eventOptions[0]
+const events = eventOptions
+let selectedEvent = ref(eventOptions[0])
+if (typeof window !== 'undefined') selectedEvent.value = localStorage.getItem('currentEvent') || eventOptions[0]
+watch(selectedEvent, (value) => {
+  window.localStorage.setItem('currentEvent', value)
+})
 
 
 // Selectable options for the Multi-Select component
@@ -102,7 +106,7 @@ function isValidNum() {
 }
 
 async function submit() {
-  data.value.event = selectedEvent || ""
+  data.value.event = selectedEvent.value || eventOptions[0]
   //SHOULD THIS BE AN AWAIT TODO
   let newDoc = db.post(data.value)
   await navigateTo("/matches")
@@ -120,10 +124,13 @@ async function submit() {
     <UCard class="max-w-xl flex-grow m-5">
       <template #header>
         <div style="display:flex">
-          <div style="flex:1">
+          <UFormGroup class="flex-1">
+            <USelectMenu v-model="selectedEvent" :options="events"/>
+          </UFormGroup>
+          <div class="flex-0 pl-2">
             <UInput v-model="data.teamNumber" placeholder="Team #"></UInput>
           </div>
-          <div style="flex:1;padding-left:5px">
+          <div class="flex-0 pl-2">
             <UInput v-model="data.matchNumber" placeholder="Match #"></UInput>
           </div>
         </div>
