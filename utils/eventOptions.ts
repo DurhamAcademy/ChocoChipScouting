@@ -1,1 +1,1 @@
-export const eventOptions = ['2024ncwak']
+export const eventOptions = ['2024ncwak', '24debug']
