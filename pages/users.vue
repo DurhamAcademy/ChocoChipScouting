@@ -68,6 +68,8 @@ async function signUp() {
             }
           } else {
             console.log("User created")
+            username.value = ""
+            password.value = ""
             setup()
           }
         }
@@ -83,6 +85,8 @@ async function changePassword() {
             console.log(err)
           } else {
             console.log("Password changed")
+            username.value = ""
+            password.value = ""
             setup()
           }
         }
@@ -97,13 +101,9 @@ async function userManage() {
         if (err) {
           if (err.name == 'not_found') {
             signUp()
-            username.value = ""
-            password.value = ""
           }
         } else {
           changePassword()
-          username.value = ""
-          password.value = ""
         }
       }
   )
