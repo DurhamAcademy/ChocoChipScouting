@@ -124,15 +124,15 @@ async function submit() {
     <UCard class="max-w-xl flex-grow m-5">
       <template #header>
         <div style="display:flex">
+          <div class="flex-0 pr-2">
+            <UInput v-model="data.teamNumber" placeholder="Team #"></UInput>
+          </div>
+          <div class="flex-0 pr-2">
+            <UInput v-model="data.matchNumber" placeholder="Match #"></UInput>
+          </div>
           <UFormGroup class="flex-1">
             <USelectMenu v-model="selectedEvent" :options="events"/>
           </UFormGroup>
-          <div class="flex-0 pl-2">
-            <UInput v-model="data.teamNumber" placeholder="Team #"></UInput>
-          </div>
-          <div class="flex-0 pl-2">
-            <UInput v-model="data.matchNumber" placeholder="Match #"></UInput>
-          </div>
         </div>
         <br>
         <UButtonGroup class="flex">
