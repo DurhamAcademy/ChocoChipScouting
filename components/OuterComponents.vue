@@ -8,6 +8,7 @@ import type {VerticalNavigationLink} from "#ui/types";
 import type {Ref} from "@vue/reactivity";
 import type {UnwrapRef} from "vue";
 import {eventOptions} from "~/utils/eventOptions";
+import {couchDBBaseURL} from "~/utils/URIs";
 
 const {usernameState, sessionState, logout}: {
   logout: () => Promise<void>;
@@ -52,6 +53,13 @@ let links: VerticalNavigationLink[] = [
 ]
 if (sessionState.value.userCtx.roles?.indexOf("_admin") != -1) {
   links.push({label: "Users", to: "/users"})
+}
+
+const remoteDB = new PouchDB(`${couchDBBaseURL}/basic`, {skip_setup: true});
+const localDB = new PouchDB('basic', {skip_setup: true, name:'basic'})
+
+async function sync(){
+  localDB.sync(remoteDB)
 }
 
 </script>
@@ -115,6 +123,9 @@ if (sessionState.value.userCtx.roles?.indexOf("_admin") != -1) {
                         />
                       </ClientOnly>
                     </UFormGroup>
+                    <UButton @click="sync">
+                      Sync Databases
+                    </UButton>
                     <template #footer>
                       <UButton block label="Logout" square @click="logout"/>
                     </template>
