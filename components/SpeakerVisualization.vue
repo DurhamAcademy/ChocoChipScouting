@@ -94,6 +94,7 @@ let rows = [{
           :data="[matchScores, autoMatchScores]"
           :labels="matchNums"
           :chart-titles="chartTitles"
+          :suggested-max="20"
       ></LineChart>
       <div class="flex-auto whitespace-normal">
         <UTable :rows="rows" :columns="columns"/>
