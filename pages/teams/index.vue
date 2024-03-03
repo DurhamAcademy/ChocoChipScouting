@@ -387,7 +387,7 @@ await tableSetup()
                         color="primary"
                         circle
                         variant="solid"
-                        class="absolute right-8 top-8"
+                        class="absolute right-6 top-6"
                         @click="modalOpen[teamsData.indexOf(row)] = false"
                     />
                   </UCard>
