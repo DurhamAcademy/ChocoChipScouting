@@ -17,7 +17,7 @@ async function sync(){
 
 <template>
   <OuterComponents>
-    <UButton class="mt-3" @click="sync" :disabled="syncDisable">
+    <UButton class="ml-3 mt-3" @click="sync" :disabled="syncDisable">
       Sync Databases
     </UButton>
     <div class="px-5 max-w-2xl min-w-lg flex-grow">

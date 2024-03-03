@@ -2,6 +2,7 @@
 import databases from "~/utils/databases"
 import IncrementalButton from '~/components/IncrementalButton.vue'
 import {eventOptions} from "~/utils/eventOptions";
+import PouchDB from "pouchdb";
 
 const {scoutingData} = databases.locals
 let db = scoutingData
@@ -108,7 +109,8 @@ function isValidNum() {
 async function submit() {
   data.value.event = selectedEvent.value || eventOptions[0]
   //SHOULD THIS BE AN AWAIT TODO
-  let newDoc = db.post(data.value)
+  let newDoc = await db.post(data.value)
+  PouchDB.sync(databases.locals.scoutingData, databases.remotes.scoutingData)
   await navigateTo("/matches")
 }
 
