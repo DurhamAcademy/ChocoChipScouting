@@ -58,8 +58,12 @@ if (sessionState.value.userCtx.roles?.indexOf("_admin") != -1) {
 const remoteDB = new PouchDB(`${couchDBBaseURL}/basic`, {skip_setup: true});
 const localDB = new PouchDB('basic', {skip_setup: true, name:'basic'})
 
+let syncDisable = ref(false)
+
 async function sync(){
-  localDB.sync(remoteDB)
+  syncDisable.value = true
+  await localDB.sync(remoteDB)
+  syncDisable.value = false
 }
 
 </script>
@@ -123,7 +127,7 @@ async function sync(){
                         />
                       </ClientOnly>
                     </UFormGroup>
-                    <UButton @click="sync">
+                    <UButton @click="sync" :disabled="syncDisable">
                       Sync Databases
                     </UButton>
                     <template #footer>
