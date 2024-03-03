@@ -127,7 +127,7 @@ async function sync(){
                         />
                       </ClientOnly>
                     </UFormGroup>
-                    <UButton @click="sync" :disabled="syncDisable">
+                    <UButton class="pt-3" @click="sync" :disabled="syncDisable">
                       Sync Databases
                     </UButton>
                     <template #footer>
