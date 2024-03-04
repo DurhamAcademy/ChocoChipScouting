@@ -156,7 +156,7 @@ function populateMatch(){
 let totalMatches = ref(0)
 let correctMatches = ref(0)
 
-let md = fetch.data.value
+let md = await fetch.data.value
 if(md != null) {
   for (let compMatch of md) {
     if (compMatch.comp_level == "qm") {
@@ -168,7 +168,7 @@ if(md != null) {
       }
       predict()
       console.log(winningTeamColor.value)
-      console.log(compMatch.winningAlliance)
+      console.dir(compMatch)
       if(winningTeamColor.value == "bg-blue-100 rounded-lg"){
         if(compMatch.winningAlliance == "blue"){
           console.log("run")
