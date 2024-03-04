@@ -153,6 +153,34 @@ function populateMatch(){
     }
   }
 }
+let totalMatches = 0
+let correctMatches = 0
+
+let md = fetch.data.value
+if(md != null) {
+  for (let compMatch of md) {
+    if (compMatch.comp_level == "qm") {
+      for (let i = 0; i < compMatch.alliances.blue.team_keys.length; i++) {
+        selectedBlueTeams.value[i] = compMatch.alliances.blue.team_keys[i].replace("frc", "")
+      }
+      for (let i = 0; i < compMatch.alliances.red.team_keys.length; i++) {
+        selectedRedTeams.value[i] = compMatch.alliances.red.team_keys[i].replace("frc", "")
+      }
+      predict()
+      if(winningTeamColor.value == "bg-blue-100 rounded-lg"){
+        if(compMatch.winningAlliance == "blue"){
+          correctMatches++
+        }
+      }
+      else if(winningTeamColor.value == "bg-red-100 rounded-lg"){
+        if(compMatch.winningAlliance == "red"){
+          correctMatches++
+        }
+      }
+      totalMatches++
+    }
+  }
+}
 
 </script>
 
@@ -206,6 +234,7 @@ function populateMatch(){
           <UContainer :class="winningTeamColor">
             <div class="text-center">
               <p class="font-semibold">{{winningPercentage.toFixed(2)}}</p>
+              <p>{{correctMatches.toString() + totalMatches.toString()}}</p>
             </div>
           </UContainer>
         </template>
