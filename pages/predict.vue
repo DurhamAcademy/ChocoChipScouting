@@ -168,8 +168,10 @@ if(md != null) {
       }
       predict()
       console.log(winningTeamColor.value)
+      console.log(compMatch.winningAlliance)
       if(winningTeamColor.value == "bg-blue-100 rounded-lg"){
         if(compMatch.winningAlliance == "blue"){
+          console.log("run")
           correctMatches.value++
         }
       }
