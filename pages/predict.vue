@@ -61,15 +61,6 @@ let winningTeamColor = ref("")
 let winningPercentage = ref(50)
 let teamsFound = ref([[false, false, false], [false, false, false]])
 
-
-function resetInputs(){
-  selectedBlueTeams.value = ["", "", ""]
-  selectedRedTeams.value = ["", "", ""]
-  winningTeamColor.value = ""
-  winningPercentage.value = 50
-  teamsFound.value = [[false, false, false], [false, false, false]]
-}
-
 function calculateTeamAverageScore(team:number){
   let teamMatches = teamOrgMatches.get(team)
   if(teamMatches){
@@ -167,6 +158,11 @@ watch(pending, () => {
   if(!pending.value){
     let md = data.value
     if(md != null) {
+      let blueTeams = JSON.stringify(selectedBlueTeams.value)
+      let redTeams = JSON.stringify(selectedRedTeams.value)
+      let winningColor = JSON.stringify(winningTeamColor.value)
+      let winPercent = JSON.stringify(winningPercentage.value)
+      let tf = JSON.stringify(teamsFound.value)
       for (let compMatch of md) {
         if (compMatch.comp_level == "qm") {
           for (let i = 0; i < compMatch.alliances.blue.team_keys.length; i++) {
@@ -189,7 +185,11 @@ watch(pending, () => {
           totalMatches.value++
         }
       }
-      resetInputs()
+      selectedBlueTeams.value = JSON.parse(blueTeams)
+      selectedRedTeams.value = JSON.parse(redTeams)
+      winningTeamColor.value = JSON.parse(winningColor)
+      winningPercentage.value = JSON.parse(winPercent)
+      teamsFound.value = JSON.parse(tf)
     }
   }
 })
