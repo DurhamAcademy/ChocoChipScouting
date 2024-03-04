@@ -1,4 +1,4 @@
-import {couchDBBaseURL} from "../utils/URIs";
+import {couchDBBaseURL} from "~/utils/URIs";
 import PouchDB from "pouchdb"
 import {Attachments, ScoutingData} from "../utils/databases";
 

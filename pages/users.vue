@@ -12,7 +12,7 @@ let username = ref("")
 let password = ref("")
 
 let roles = ref([[""]])
-const roleOptions = ["Coach", "Scout"]
+const roleOptions = ["drive team", "scout", 'pit', 'other']
 
 let updatingRoles = false
 
@@ -68,6 +68,8 @@ async function signUp() {
             }
           } else {
             console.log("User created")
+            username.value = ""
+            password.value = ""
             setup()
           }
         }
@@ -83,6 +85,8 @@ async function changePassword() {
             console.log(err)
           } else {
             console.log("Password changed")
+            username.value = ""
+            password.value = ""
             setup()
           }
         }

@@ -2,6 +2,7 @@
 import databases from "~/utils/databases"
 import IncrementalButton from '~/components/IncrementalButton.vue'
 import {eventOptions} from "~/utils/eventOptions";
+import PouchDB from "pouchdb";
 
 const {scoutingData} = databases.locals
 let db = scoutingData
@@ -17,8 +18,12 @@ enum GameTime {
 //The active tab used
 let gameTime = ref(GameTime.Autonomous)
 
-let selectedEvent = eventOptions[0]
-if (typeof window !== 'undefined') selectedEvent = localStorage.getItem('currentEvent') || eventOptions[0]
+const events = eventOptions
+let selectedEvent = ref(eventOptions[0])
+if (typeof window !== 'undefined') selectedEvent.value = localStorage.getItem('currentEvent') || eventOptions[0]
+watch(selectedEvent, (value) => {
+  window.localStorage.setItem('currentEvent', value)
+})
 
 
 // Selectable options for the Multi-Select component
@@ -102,9 +107,10 @@ function isValidNum() {
 }
 
 async function submit() {
-  data.value.event = selectedEvent || ""
+  data.value.event = selectedEvent.value || eventOptions[0]
   //SHOULD THIS BE AN AWAIT TODO
-  let newDoc = db.post(data.value)
+  let newDoc = await db.post(data.value)
+  PouchDB.sync(databases.locals.scoutingData, databases.remotes.scoutingData)
   await navigateTo("/matches")
 }
 
@@ -120,12 +126,15 @@ async function submit() {
     <UCard class="max-w-xl flex-grow m-5">
       <template #header>
         <div style="display:flex">
-          <div style="flex:1">
+          <div class="flex-0 pr-2">
             <UInput v-model="data.teamNumber" placeholder="Team #"></UInput>
           </div>
-          <div style="flex:1;padding-left:5px">
+          <div class="flex-0 pr-2">
             <UInput v-model="data.matchNumber" placeholder="Match #"></UInput>
           </div>
+          <UFormGroup class="flex-1">
+            <USelectMenu v-model="selectedEvent" :options="events"/>
+          </UFormGroup>
         </div>
         <br>
         <UButtonGroup class="flex">

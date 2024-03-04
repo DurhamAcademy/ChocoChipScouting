@@ -18,6 +18,9 @@ const selectedEvent = useState<String>("currentEvent", () => {
   if (typeof window !== 'undefined') return localStorage.getItem('currentEvent') || eventOptions[0]
   return eventOptions[0]
 });
+watch(selectedEvent, () => {
+  if (typeof window !== 'undefined') return localStorage.setItem('currentEvent', selectedEvent.value.toString())
+})
 
 const {updateUsernameState}: { updateUsernameState: () => void } = inject(loginStateKey)!
 
