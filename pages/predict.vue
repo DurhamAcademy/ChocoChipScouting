@@ -57,8 +57,8 @@ for(let teamData of teamOrgMatches){
 
 let selectedBlueTeams = ref<Array<string>>(["", "", ""])
 let selectedRedTeams = ref<Array<string>>(["", "", ""])
-let winningTeamColor = ref("")
-let winningPercentage = ref(50)
+let winningTeamColor = ref(["outline-red-100", "outline-blue-100"])
+let winningPercentage = ref(-1)
 let teamsFound = ref([[false, false, false], [false, false, false]])
 
 function calculateTeamAverageScore(team:number){
@@ -103,15 +103,15 @@ function predict(){
 
   let blueWinPercentage = blueTotal/(blueTotal+redTotal) * 100
   if(blueWinPercentage > 50){
-    winningTeamColor.value = "bg-blue-100 rounded-lg"
+    winningTeamColor.value = ["outline-red-100", "outline-blue-300"]
     winningPercentage.value = blueWinPercentage
   }
   else if(blueWinPercentage < 50){
-    winningTeamColor.value = "bg-red-100 rounded-lg"
+    winningTeamColor.value = ["outline-red-300", "outline-blue-100"]
     winningPercentage.value = 100 - blueWinPercentage
   }
   else{
-    winningTeamColor.value = ""
+    winningTeamColor.value = ["outline-red-100", "outline-blue-100"]
     winningPercentage.value = blueWinPercentage
   }
 }
@@ -176,12 +176,12 @@ watch(pending, () => {
             selectedRedTeams.value[i] = compMatch.alliances.red.team_keys[i].replace("frc", "")
           }
           predict()
-          if(winningTeamColor.value == "bg-blue-100 rounded-lg"){
+          if(winningPercentage.value > 50){
             if(compMatch.winning_alliance == "blue"){
               correctMatches.value++
             }
           }
-          else if(winningTeamColor.value == "bg-red-100 rounded-lg"){
+          else if(winningPercentage.value < 50){
             if(compMatch.winning_alliance == "red"){
               correctMatches.value++
             }
@@ -212,7 +212,7 @@ watch(pending, () => {
             <UButton class="ml-2.5 flex-1" label="Predict" @click="predict"></UButton>
           </div>
         </template>
-        <UContainer class="flex bg-blue-100 p-5">
+        <UContainer :class="'flex bg-blue-100 p-5 rounded-sm outline outline-3 ' + winningTeamColor[1]">
           <UInput v-model="selectedBlueTeams[0]" class="flex-1" placeholder="Team #">
             <template #trailing>
               <span v-if="teamsFound[0][0]" class="text-red-400 dark:text-red-600 text-xs">not found</span>
@@ -229,7 +229,13 @@ watch(pending, () => {
             </template>
           </UInput>
         </UContainer>
-        <UContainer class="flex bg-red-100 p-5 mb-5">
+        <UContainer class="mt-4 mb-4">
+          <div class="text-center">
+            <p v-if="winningPercentage != -1 && !isNaN(winningPercentage)" class="font-semibold">{{winningPercentage.toFixed(2)}}</p>
+            <p v-else class="font-semibold">vs</p>
+          </div>
+        </UContainer>
+        <UContainer :class="'flex bg-red-100 p-5 mt-4 rounded-sm outline outline-3 ' + winningTeamColor[0]">
           <UInput v-model="selectedRedTeams[0]" class="flex-1" placeholder="Team #">
             <template #trailing>
               <span v-if="teamsFound[1][0]" class="text-red-400 dark:text-red-600 text-xs">not found</span>
@@ -245,11 +251,6 @@ watch(pending, () => {
               <span v-if="teamsFound[1][2]" class="text-red-400 dark:text-red-600 text-xs">not found</span>
             </template>
           </UInput>
-        </UContainer>
-        <UContainer :class="winningTeamColor">
-          <div class="text-center">
-            <p class="font-semibold">{{winningPercentage.toFixed(2)}}</p>
-          </div>
         </UContainer>
         <template #footer>
           <div class="text-center text-xs">
