@@ -60,6 +60,8 @@ let selectedRedTeams = ref<Array<string>>(["", "", ""])
 let winningTeamColor = ref(["outline-red-100", "outline-blue-100"])
 let winningPercentage = ref(-1)
 let teamsFound = ref([[false, false, false], [false, false, false]])
+let blueTotal = ref(0)
+let redTotal = ref(0)
 
 function calculateTeamAverageScore(team:number){
   let teamMatches = teamOrgMatches.get(team)
@@ -74,8 +76,8 @@ function calculateTeamAverageScore(team:number){
 }
 
 function predict(){
-  let blueTotal = 0
-  let redTotal = 0
+  blueTotal.value = 0
+  redTotal.value = 0
   for(let team of selectedBlueTeams.value){
     let teamNum = parseInt(team)
     let score = 0
@@ -83,7 +85,7 @@ function predict(){
     if(!Number.isNaN(teamNum))
       score += calculateTeamAverageScore(teamNum)
     if(score > 0)
-      blueTotal += score
+      blueTotal.value += score
     else if(score == -1){
       teamsFound.value[0][selectedBlueTeams.value.indexOf(team)] = true
     }
@@ -95,13 +97,13 @@ function predict(){
     if(!Number.isNaN(teamNum))
       score = calculateTeamAverageScore(teamNum)
     if(score > 0)
-      redTotal += score
+      redTotal.value += score
     else if(score == -1){
       teamsFound.value[1][selectedRedTeams.value.indexOf(team)] = true
     }
   }
 
-  let blueWinPercentage = blueTotal/(blueTotal+redTotal) * 100
+  let blueWinPercentage = blueTotal.value/(blueTotal.value+redTotal.value) * 100
   if(blueWinPercentage > 50){
     winningTeamColor.value = ["outline-red-100", "outline-blue-300"]
     winningPercentage.value = blueWinPercentage
@@ -167,6 +169,8 @@ watch(pending, () => {
       let winningColor = JSON.stringify(winningTeamColor.value)
       let winPercent = JSON.stringify(winningPercentage.value)
       let tf = JSON.stringify(teamsFound.value)
+      let blue = JSON.stringify(blueTotal.value)
+      let red = JSON.stringify(redTotal.value)
       for (let compMatch of md) {
         if (compMatch.comp_level == "qm") {
           for (let i = 0; i < compMatch.alliances.blue.team_keys.length; i++) {
@@ -194,6 +198,8 @@ watch(pending, () => {
       winningTeamColor.value = JSON.parse(winningColor)
       winningPercentage.value = JSON.parse(winPercent)
       teamsFound.value = JSON.parse(tf)
+      blueTotal.value = JSON.parse(blue)
+      redTotal.value = JSON.parse(red)
     }
   }
 })
@@ -231,7 +237,7 @@ watch(pending, () => {
         </UContainer>
         <UContainer class="mt-4 mb-4">
           <div class="text-center">
-            <p v-if="winningPercentage != -1 && !isNaN(winningPercentage)" class="font-semibold">{{winningPercentage.toFixed(2)}}</p>
+            <p v-if="winningPercentage != -1 && !isNaN(winningPercentage)" class="font-semibold">{{blueTotal + ' - ' + redTotal}}</p>
             <p v-else class="font-semibold">vs</p>
           </div>
         </UContainer>
