@@ -6,7 +6,7 @@ import {eventOptions} from "~/utils/eventOptions";
 let currentEvent = eventOptions[0]
 if (typeof window !== 'undefined') currentEvent = localStorage.getItem('currentEvent') || eventOptions[0]
 
-const fetch = useFetch<Array<any>>("/api/eventMatches/" + currentEvent)
+const {data, pending} = await useFetch<Array<any>>("/api/eventMatches/" + currentEvent)
 
 
 const { scoutingData } = databases.locals
@@ -32,19 +32,19 @@ for(let i  = 0; i < match.length; i++){
     }
   }
 }
-for(let data of teamOrgMatches){
-  let matches = teamOrgMatches.get(data[0])
+for(let teamData of teamOrgMatches){
+  let matches = teamOrgMatches.get(teamData[0])
   let matchNumbers: number[] = []
   if(matches) {
     for (let i = 0; i < matches.length; i++) {
       let currMatch = matches[i].matchNumber
       if(matchNumbers.includes(currMatch)) {
-        for(let i = 0; i < data[1].length; i++){
-          if(data[1][i].matchNumber == currMatch){
-            let arr = teamOrgMatches.get(data[0])
+        for(let i = 0; i < teamData[1].length; i++){
+          if(teamData[1][i].matchNumber == currMatch){
+            let arr = teamOrgMatches.get(teamData[0])
             if(arr != undefined){
               arr.splice(i, 1)
-              teamOrgMatches.set(data[0], arr)
+              teamOrgMatches.set(teamData[0], arr)
             }
             break
           }
@@ -123,9 +123,10 @@ let matchNumber = ref<number>()
 let playoffNumber = ref<number>()
 
 function populateMatch(){
-  let tbaMatchData = fetch.data.value
-  if(matchNumber.value != undefined && matchNumber.value.toString() != '') {
-    if (tbaMatchData != null) {
+  if(!pending.value && data.value != null) {
+    let tbaMatchData = data.value
+    if (matchNumber.value != undefined && matchNumber.value.toString() != '') {
+      let tbaMatchData = data.value
       for (let compMatch of tbaMatchData) {
         if (compMatch.comp_level == "qm" && compMatch.match_number == matchNumber.value) {
           for (let i = 0; i < compMatch.alliances.blue.team_keys.length; i++) {
@@ -136,17 +137,16 @@ function populateMatch(){
           }
         }
       }
-    }
-  }
-  else if(playoffNumber.value != undefined){
-    if (tbaMatchData != null) {
-      for (let compMatch of tbaMatchData) {
-        if (compMatch.comp_level == "sf" && compMatch.set_number == playoffNumber.value) {
-          for (let i = 0; i < compMatch.alliances.blue.team_keys.length; i++) {
-            selectedBlueTeams.value[i] = compMatch.alliances.blue.team_keys[i].replace("frc", "")
-          }
-          for (let i = 0; i < compMatch.alliances.red.team_keys.length; i++) {
-            selectedRedTeams.value[i] = compMatch.alliances.red.team_keys[i].replace("frc", "")
+    } else if (playoffNumber.value != undefined) {
+      if (tbaMatchData != null) {
+        for (let compMatch of tbaMatchData) {
+          if (compMatch.comp_level == "sf" && compMatch.set_number == playoffNumber.value) {
+            for (let i = 0; i < compMatch.alliances.blue.team_keys.length; i++) {
+              selectedBlueTeams.value[i] = compMatch.alliances.blue.team_keys[i].replace("frc", "")
+            }
+            for (let i = 0; i < compMatch.alliances.red.team_keys.length; i++) {
+              selectedRedTeams.value[i] = compMatch.alliances.red.team_keys[i].replace("frc", "")
+            }
           }
         }
       }
@@ -156,7 +156,7 @@ function populateMatch(){
 let totalMatches = ref(0)
 let correctMatches = ref(0)
 
-let md = await fetch.data.value
+let md = data.value
 if(md != null) {
   for (let compMatch of md) {
     if (compMatch.comp_level == "qm") {
