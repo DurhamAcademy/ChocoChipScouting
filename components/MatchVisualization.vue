@@ -35,7 +35,7 @@ function compareMatchNumbers(a: any, b: any){
   return 0;
 }
 
-const chartLabels = ['Auto Amp', 'Auto Speaker', 'Amp', 'Speaker', 'Speaker+', 'Trap']
+const chartLabels = ['Auto Amp', 'Auto Speaker', 'Amp', 'Speaker', 'Trap']
 let currData: any = ref(props.rowData.rawData[selectedMatch.value - 1])
 
 watch(selectedMatch, () =>{
@@ -45,7 +45,6 @@ watch(selectedMatch, () =>{
     currData.value.auto.speakerNA,
     currData.value.teleop.amp,
     currData.value.teleop.speakerNA,
-    currData.value.teleop.speakerA,
     currData.value.endgame.trap,
   ]
   chartTitle.value = "Match " + currData.value.matchNumber
