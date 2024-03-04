@@ -6,7 +6,7 @@ import {eventOptions} from "~/utils/eventOptions";
 let currentEvent = eventOptions[0]
 if (typeof window !== 'undefined') currentEvent = localStorage.getItem('currentEvent') || eventOptions[0]
 
-const {data, pending} = await useFetch<Array<any>>("/api/eventMatches/" + currentEvent)
+const {data, pending} = await useLazyFetch<Array<any>>("/api/eventMatches/" + currentEvent)
 
 
 const { scoutingData } = databases.locals
@@ -55,12 +55,20 @@ for(let teamData of teamOrgMatches){
   }
 }
 
-
 let selectedBlueTeams = ref<Array<string>>(["", "", ""])
 let selectedRedTeams = ref<Array<string>>(["", "", ""])
-
 let winningTeamColor = ref("")
 let winningPercentage = ref(50)
+let teamsFound = ref([[false, false, false], [false, false, false]])
+
+
+function resetInputs(){
+  selectedBlueTeams.value = ["", "", ""]
+  selectedRedTeams.value = ["", "", ""]
+  winningTeamColor.value = ""
+  winningPercentage.value = 50
+  teamsFound.value = [[false, false, false], [false, false, false]]
+}
 
 function calculateTeamAverageScore(team:number){
   let teamMatches = teamOrgMatches.get(team)
@@ -73,8 +81,6 @@ function calculateTeamAverageScore(team:number){
   }
   return -1
 }
-
-let teamsFound = ref([[false, false, false], [false, false, false]])
 
 function predict(){
   let blueTotal = 0
@@ -153,34 +159,40 @@ function populateMatch(){
     }
   }
 }
+
+
 let totalMatches = ref(0)
 let correctMatches = ref(0)
-
-let md = data.value
-if(md != null) {
-  for (let compMatch of md) {
-    if (compMatch.comp_level == "qm") {
-      for (let i = 0; i < compMatch.alliances.blue.team_keys.length; i++) {
-        selectedBlueTeams.value[i] = compMatch.alliances.blue.team_keys[i].replace("frc", "")
-      }
-      for (let i = 0; i < compMatch.alliances.red.team_keys.length; i++) {
-        selectedRedTeams.value[i] = compMatch.alliances.red.team_keys[i].replace("frc", "")
-      }
-      predict()
-      if(winningTeamColor.value == "bg-blue-100 rounded-lg"){
-        if(compMatch.winning_alliance == "blue"){
-          correctMatches.value++
+watch(pending, () => {
+  if(!pending.value){
+    let md = data.value
+    if(md != null) {
+      for (let compMatch of md) {
+        if (compMatch.comp_level == "qm") {
+          for (let i = 0; i < compMatch.alliances.blue.team_keys.length; i++) {
+            selectedBlueTeams.value[i] = compMatch.alliances.blue.team_keys[i].replace("frc", "")
+          }
+          for (let i = 0; i < compMatch.alliances.red.team_keys.length; i++) {
+            selectedRedTeams.value[i] = compMatch.alliances.red.team_keys[i].replace("frc", "")
+          }
+          predict()
+          if(winningTeamColor.value == "bg-blue-100 rounded-lg"){
+            if(compMatch.winning_alliance == "blue"){
+              correctMatches.value++
+            }
+          }
+          else if(winningTeamColor.value == "bg-red-100 rounded-lg"){
+            if(compMatch.winning_alliance == "red"){
+              correctMatches.value++
+            }
+          }
+          totalMatches.value++
         }
       }
-      else if(winningTeamColor.value == "bg-red-100 rounded-lg"){
-        if(compMatch.winning_alliance == "red"){
-          correctMatches.value++
-        }
-      }
-      totalMatches.value++
+      resetInputs()
     }
   }
-}
+})
 
 </script>
 
@@ -213,7 +225,7 @@ if(md != null) {
             </template>
           </UInput>
         </UContainer>
-        <UContainer class="flex bg-red-100 p-5">
+        <UContainer class="flex bg-red-100 p-5 mb-5">
           <UInput v-model="selectedRedTeams[0]" class="flex-1" placeholder="Team #">
             <template #trailing>
               <span v-if="teamsFound[1][0]" class="text-red-400 dark:text-red-600 text-xs">not found</span>
@@ -230,13 +242,16 @@ if(md != null) {
             </template>
           </UInput>
         </UContainer>
+        <UContainer :class="winningTeamColor">
+          <div class="text-center">
+            <p class="font-semibold">{{winningPercentage.toFixed(2)}}</p>
+          </div>
+        </UContainer>
         <template #footer>
-          <UContainer :class="winningTeamColor">
-            <div class="text-center">
-              <p class="font-semibold">{{winningPercentage.toFixed(2)}}</p>
-              <p>{{correctMatches.toString() + totalMatches.toString()}}</p>
-            </div>
-          </UContainer>
+          <div class="text-center text-xs">
+            <p v-if="!pending">{{'Accuracy: ' + correctMatches.toString() + ' / ' + totalMatches.toString()}}</p>
+            <p v-else>Accuracy 0 / 0</p>
+          </div>
         </template>
       </UCard>
     </div>
