@@ -153,8 +153,8 @@ function populateMatch(){
     }
   }
 }
-let totalMatches = 0
-let correctMatches = 0
+let totalMatches = ref(0)
+let correctMatches = ref(0)
 
 let md = fetch.data.value
 if(md != null) {
@@ -169,15 +169,15 @@ if(md != null) {
       predict()
       if(winningTeamColor.value == "bg-blue-100 rounded-lg"){
         if(compMatch.winningAlliance == "blue"){
-          correctMatches++
+          correctMatches.value++
         }
       }
       else if(winningTeamColor.value == "bg-red-100 rounded-lg"){
         if(compMatch.winningAlliance == "red"){
-          correctMatches++
+          correctMatches.value++
         }
       }
-      totalMatches++
+      totalMatches.value++
     }
   }
 }
