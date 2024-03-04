@@ -249,8 +249,8 @@ watch(pending, () => {
         </UContainer>
         <template #footer>
           <div class="text-center text-xs">
-            <p v-if="!pending">{{'Accuracy: ' + correctMatches.toString() + ' / ' + totalMatches.toString()}}</p>
-            <p v-else>Accuracy 0 / 0</p>
+            <p v-if="!pending">{{'Accuracy: ' + (correctMatches/totalMatches).toFixed(0) + "%"}}</p>
+            <p v-else>Accuracy: fetching...</p>
           </div>
         </template>
       </UCard>
