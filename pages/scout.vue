@@ -60,7 +60,7 @@ let data: Ref<UnwrapRef<{
   teamNumber: null;
   event: string;
   matchNumber: null;
-  teleop: { speakerA: number; speakerNA: number; amp: number }
+  teleop: { speakerNA: number; amp: number }
 }>> = ref({
   event: "",
   teamNumber: null,
@@ -73,7 +73,6 @@ let data: Ref<UnwrapRef<{
   teleop: {
     amp: 0,
     speakerNA: 0,
-    speakerA: 0,
   },
   endgame: {
     trap: 0,
@@ -169,10 +168,6 @@ async function submit() {
             <h1 class="text-gray-700 dark:text-gray-200 font-sans font-medium">Speaker</h1>
             <IncrementalButton v-model="data.teleop.speakerNA" style="margin:5px"></IncrementalButton>
           </div>
-          <div>
-            <h1 class="text-gray-700 dark:text-gray-200 font-sans font-medium">Speaker+</h1>
-            <IncrementalButton v-model="data.teleop.speakerA" style="margin:5px"></IncrementalButton>
-          </div>
         </div>
       </div>
       <div v-if="gameTime == GameTime.Endgame">
@@ -184,10 +179,6 @@ async function submit() {
           <div>
             <h1 class="text-gray-700 dark:text-gray-200 font-sans font-medium">Speaker</h1>
             <IncrementalButton v-model="data.teleop.speakerNA" style="margin:5px"></IncrementalButton>
-          </div>
-          <div>
-            <h1 class="text-gray-700 dark:text-gray-200 font-sans font-medium">Speaker+</h1>
-            <IncrementalButton v-model="data.teleop.speakerA" style="margin:5px"></IncrementalButton>
           </div>
           <div>
             <h1 class="text-gray-700 dark:text-gray-200 font-sans font-medium">Trap</h1>
