@@ -167,16 +167,13 @@ if(md != null) {
         selectedRedTeams.value[i] = compMatch.alliances.red.team_keys[i].replace("frc", "")
       }
       predict()
-      console.log(winningTeamColor.value)
-      console.dir(compMatch)
       if(winningTeamColor.value == "bg-blue-100 rounded-lg"){
-        if(compMatch.winningAlliance == "blue"){
-          console.log("run")
+        if(compMatch.winning_alliance == "blue"){
           correctMatches.value++
         }
       }
       else if(winningTeamColor.value == "bg-red-100 rounded-lg"){
-        if(compMatch.winningAlliance == "red"){
+        if(compMatch.winning_alliance == "red"){
           correctMatches.value++
         }
       }
