@@ -237,7 +237,7 @@ watch(pending, () => {
         </UContainer>
         <UContainer class="mt-4 mb-4">
           <div class="text-center">
-            <p v-if="winningPercentage != -1 && !isNaN(winningPercentage)" class="font-semibold">{{blueTotal + ' - ' + redTotal}}</p>
+            <p v-if="winningPercentage != -1 && !isNaN(winningPercentage)" class="font-semibold">{{blueTotal.toFixed(1) + ' - ' + redTotal.toFixed(1)}}</p>
             <p v-else class="font-semibold">vs</p>
           </div>
         </UContainer>
