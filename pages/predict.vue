@@ -148,6 +148,10 @@ function populateMatch(){
         }
       }
     }
+    else{
+      selectedRedTeams.value = ["", "", ""]
+      selectedBlueTeams.value = ["", "", ""]
+    }
   }
 }
 
