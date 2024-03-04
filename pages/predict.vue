@@ -180,12 +180,12 @@ watch(pending, () => {
             selectedRedTeams.value[i] = compMatch.alliances.red.team_keys[i].replace("frc", "")
           }
           predict()
-          if(winningPercentage.value > 50){
+          if(blueTotal.value > redTotal.value){
             if(compMatch.winning_alliance == "blue"){
               correctMatches.value++
             }
           }
-          else if(winningPercentage.value < 50){
+          else if(blueTotal.value < redTotal.value){
             if(compMatch.winning_alliance == "red"){
               correctMatches.value++
             }
