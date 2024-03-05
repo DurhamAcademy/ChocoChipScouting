@@ -59,7 +59,6 @@ let chartData = ref([
   currData.value.auto.speakerNA,
   currData.value.teleop.amp,
   currData.value.teleop.speakerNA,
-  currData.value.teleop.speakerA,
   currData.value.endgame.trap,
 ])
 let chartTitle = ref("Match " + currData.value.matchNumber)

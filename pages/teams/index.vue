@@ -247,7 +247,7 @@ function averageDefensiveScore(teamArrays: Array<any>){
 function getAverageSpeakerCycles(teamArrays: Array<ScoutingData>){
   let nonAveragedValue = 0
   for(let i = 0; i < teamArrays.length; i++){
-    nonAveragedValue += teamArrays[i].auto.speakerNA + teamArrays[i].teleop.speakerNA + teamArrays[i].teleop.speakerA
+    nonAveragedValue += teamArrays[i].auto.speakerNA + teamArrays[i].teleop.speakerNA
   }
   return nonAveragedValue/teamArrays.length
 }
