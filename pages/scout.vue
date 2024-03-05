@@ -126,10 +126,10 @@ async function submit() {
       <template #header>
         <div style="display:flex">
           <div class="flex-0 pr-2">
-            <UInput v-model="data.teamNumber" placeholder="Team #"></UInput>
+            <UInput v-model="data.teamNumber" type="number" placeholder="Team #"></UInput>
           </div>
           <div class="flex-0 pr-2">
-            <UInput v-model="data.matchNumber" placeholder="Match #"></UInput>
+            <UInput v-model="data.matchNumber" type="number" placeholder="Match #"></UInput>
           </div>
           <UFormGroup class="flex-1">
             <USelectMenu v-model="selectedEvent" :options="events"/>
