@@ -74,7 +74,7 @@ const items = matches
     >
       <template v-slot:item.notes="row">
         <UPopover :popper="{ offsetDistance: 15 }">
-          <UButton class="mt-2.5 mb-2.5" color="yellow" label="Notes" variant="soft"/>
+          <UButton class="mt-2 mb-2" color="yellow" label="Notes" variant="soft"/>
           <template #panel>
               <UContainer class="m-auto max-w-lg min-w-[15rem] overflow-y-auto" style="max-height: 20rem; min-height: 10rem">
                 <br>
