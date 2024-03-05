@@ -25,6 +25,15 @@ watch(selectedEvent, (value) => {
   window.localStorage.setItem('currentEvent', value)
 })
 
+const {data, pending} = await useLazyFetch<Array<any>>("/api/eventTeams/" + selectedEvent.value)
+
+watch(pending, () => {
+  if(!pending.value && data.value != null){
+    validTeamNums.value = data.value.map((value) => value.team_number)
+  }
+})
+
+let validTeamNums = ref<Array<number>>()
 
 // Selectable options for the Multi-Select component
 const endgameOptions = ["None", "Parked", "Attempted Onstage", "Onstage", "Harmony"]
@@ -53,7 +62,7 @@ let impData = {
   */
 
 
-let data: Ref<UnwrapRef<{
+let scoutData: Ref<UnwrapRef<{
   auto: { speakerNA: number; amp: number; mobility: boolean };
   notes: { efficiency: number; notes: string; reliability: number };
   endgame: { endgame: string[]; trap: number };
@@ -94,23 +103,26 @@ function updateEndgameOptions(value: Array<number>) {
       arr.push(endgameOptions[i])
     }
   }
-  data.value.endgame.endgame = arr
-  if (data.value.endgame.endgame.length < 1) {
-    data.value.endgame.endgame = [endgameOptions[0]]
+  scoutData.value.endgame.endgame = arr
+  if (scoutData.value.endgame.endgame.length < 1) {
+    scoutData.value.endgame.endgame = [endgameOptions[0]]
   }
 }
 
 
 function isValidNum() {
-  return (data.value.teamNumber != null) && (data.value.matchNumber != null) && (data.value.teamNumber > 0) && (data.value.matchNumber > 0) && (data.value.teamNumber < 10000)
+  return (scoutData.value.teamNumber != null) && (scoutData.value.matchNumber != null) && (scoutData.value.teamNumber > 0) && (scoutData.value.matchNumber > 0) && (scoutData.value.teamNumber < 10000)
 }
 
 async function submit() {
-  data.value.event = selectedEvent.value || eventOptions[0]
-  //SHOULD THIS BE AN AWAIT TODO
-  let newDoc = await db.post(data.value)
-  PouchDB.sync(databases.locals.scoutingData, databases.remotes.scoutingData)
-  await navigateTo("/matches")
+  if(!Number.isNaN(parseInt(scoutData.value.teamNumber)) && !Number.isNaN(parseInt(scoutData.value.matchNumber))) {
+    scoutData.value.teamNumber = parseInt(scoutData.value.teamNumber)
+    scoutData.value.teamNumber = parseInt(scoutData.value.matchNumber)
+    scoutData.value.event = selectedEvent.value || eventOptions[0]
+    let newDoc = await db.post(scoutData.value)
+    PouchDB.sync(databases.locals.scoutingData, databases.remotes.scoutingData)
+    await navigateTo("/matches")
+  }
 }
 
 /* Good-looking square buttons but don't work horizontally why?
@@ -126,10 +138,18 @@ async function submit() {
       <template #header>
         <div style="display:flex">
           <div class="flex-0 pr-2">
-            <UInput v-model="data.teamNumber" type="number" placeholder="Team #"></UInput>
+            <UInput v-model="scoutData.teamNumber" placeholder="Team #" >
+              <template #trailing>
+                <span class="text-red-400 dark:text-red-600 text-xs" v-if="validTeamNums && validTeamNums.length > 0 && !validTeamNums.includes(parseInt(scoutData.teamNumber))">not found</span>
+              </template>
+            </UInput>
           </div>
           <div class="flex-0 pr-2">
-            <UInput v-model="data.matchNumber" type="number" placeholder="Match #"></UInput>
+            <UInput v-model="scoutData.matchNumber" placeholder="Match #">
+              <template #trailing>
+                <span class="text-red-400 dark:text-red-600 text-xs" v-if="isNaN(parseInt(scoutData.matchNumber)) && scoutData.matchNumber != null && scoutData.matchNumber != ''">error</span>
+              </template>
+            </UInput>
           </div>
           <UFormGroup class="flex-1">
             <USelectMenu v-model="selectedEvent" :options="events"/>
@@ -145,15 +165,15 @@ async function submit() {
         <div class="flex" style="text-align:center">
           <div>
             <h1 class="font-sans text-gray-700 dark:text-gray-200 font-medium">Amp</h1>
-            <IncrementalButton v-model="data.auto.amp" style="margin:5px"></IncrementalButton>
+            <IncrementalButton v-model="scoutData.auto.amp" style="margin:5px"></IncrementalButton>
           </div>
           <div>
             <h1 class="text-gray-700 dark:text-gray-200 font-sans font-medium">Speaker</h1>
-            <IncrementalButton v-model="data.auto.speakerNA" style="margin:5px"></IncrementalButton>
+            <IncrementalButton v-model="scoutData.auto.speakerNA" style="margin:5px"></IncrementalButton>
           </div>
           <div>
             <br>
-            <BooleanButton v-model="data.auto.mobility" :default-value="'Mobility'" :other-value="'Mobility'"
+            <BooleanButton v-model="scoutData.auto.mobility" :default-value="'Mobility'" :other-value="'Mobility'"
                            style="margin:5px"></BooleanButton>
           </div>
         </div>
@@ -162,11 +182,11 @@ async function submit() {
         <div class="flex" style="text-align:center">
           <div>
             <h1 class="text-gray-700 dark:text-gray-200 font-sans font-medium">Amp</h1>
-            <IncrementalButton v-model="data.teleop.amp" style="margin:5px"></IncrementalButton>
+            <IncrementalButton v-model="scoutData.teleop.amp" style="margin:5px"></IncrementalButton>
           </div>
           <div>
             <h1 class="text-gray-700 dark:text-gray-200 font-sans font-medium">Speaker</h1>
-            <IncrementalButton v-model="data.teleop.speakerNA" style="margin:5px"></IncrementalButton>
+            <IncrementalButton v-model="scoutData.teleop.speakerNA" style="margin:5px"></IncrementalButton>
           </div>
         </div>
       </div>
@@ -174,15 +194,15 @@ async function submit() {
         <div class="flex text-center flex-wrap">
           <div>
             <h1 class="text-gray-700 dark:text-gray-200 font-sans font-medium">Amp</h1>
-            <IncrementalButton v-model="data.teleop.amp" style="margin:5px"></IncrementalButton>
+            <IncrementalButton v-model="scoutData.teleop.amp" style="margin:5px"></IncrementalButton>
           </div>
           <div>
             <h1 class="text-gray-700 dark:text-gray-200 font-sans font-medium">Speaker</h1>
-            <IncrementalButton v-model="data.teleop.speakerNA" style="margin:5px"></IncrementalButton>
+            <IncrementalButton v-model="scoutData.teleop.speakerNA" style="margin:5px"></IncrementalButton>
           </div>
           <div>
             <h1 class="text-gray-700 dark:text-gray-200 font-sans font-medium">Trap</h1>
-            <IncrementalButton v-model="data.endgame.trap" :max-value="3" style="margin:5px"></IncrementalButton>
+            <IncrementalButton v-model="scoutData.endgame.trap" :max-value="3" style="margin:5px"></IncrementalButton>
           </div>
           </div>
           <br>
@@ -194,20 +214,20 @@ async function submit() {
         <div class="flex">
           <div class="flex-0 text-center">
             <p class="flex-auto text-gray-700 dark:text-gray-200 font-sans font-medium">Defended</p>
-            <UCheckbox class="flex-auto mt-0.5 justify-center" v-model="data.notes.playedDefense"/>
+            <UCheckbox class="flex-auto mt-0.5 justify-center" v-model="scoutData.notes.playedDefense"/>
           </div>
           <div class="flex-1 text-center">
             <p class="text-gray-700 dark:text-gray-200 font-sans font-medium mr-5">Rating</p>
             <div class="flex">
-              <URange v-if="!(data.notes.playedDefense)" class="ml-3 mr-3 mt-1 flex-auto" disabled v-model="data.notes.defense" size="md" min="1" :max="5"/>
-              <URange v-if="data.notes.playedDefense" class="ml-3 mr-3 mt-1 flex-auto" v-model="data.notes.defense" size="md" min="1" :max="5"/>
-              <UBadge class="flex-auto" :label="data.notes.playedDefense ? data.notes.defense: 0" :variant="data.notes.playedDefense ? 'solid':'soft'"/>
+              <URange v-if="!(scoutData.notes.playedDefense)" class="ml-3 mr-3 mt-1 flex-auto" disabled v-model="scoutData.notes.defense" size="md" min="1" :max="5"/>
+              <URange v-if="scoutData.notes.playedDefense" class="ml-3 mr-3 mt-1 flex-auto" v-model="scoutData.notes.defense" size="md" min="1" :max="5"/>
+              <UBadge class="flex-auto" :label="scoutData.notes.playedDefense ? scoutData.notes.defense: 0" :variant="scoutData.notes.playedDefense ? 'solid':'soft'"/>
             </div>
           </div>
         </div>
       </div>
       <template #footer>
-        <UTextarea v-model="data.notes.notes" color="yellow" placeholder="Notes..."/>
+        <UTextarea v-model="scoutData.notes.notes" color="yellow" placeholder="Notes..."/>
         <br/>
         <div class="flex justify-between">
           <div>
