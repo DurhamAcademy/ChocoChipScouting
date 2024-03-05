@@ -3,7 +3,7 @@ import databases from "~/utils/databases"
 import {eventOptions} from "~/utils/eventOptions";
 const { scoutingData } = databases.locals
 
-const sortBy = ref([{ key: 'teamNumber', order: 'asc' }])
+const sortBy = ref([{ key: 'teamNumber', order: 'asc' }, { key: 'matchNumber', order: 'asc' }])
 
 let currentEvent = eventOptions[0]
 if (typeof window !== 'undefined') currentEvent = localStorage.getItem('currentEvent') || eventOptions[0]
