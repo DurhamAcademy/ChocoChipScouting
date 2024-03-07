@@ -29,7 +29,8 @@ const headers = [
     children: [
       { title: 'Team', align: 'start', value: 'teamNumber' },
       { title: 'Match', align: 'start', value: 'matchNumber' },
-      { title: 'Notes', value: 'notes' }
+      { title: 'Notes', value: 'notes' },
+      { title: 'Author', value: 'author' },
     ]
   }, {
     title: 'Auto',
@@ -50,8 +51,8 @@ const headers = [
     title: 'Endgame',
     align: 'center',
     children: [
-      { title: 'Onstage', align: 'end', value: 'endgame.endgame' },
-      { title: 'Trap', align: 'end', value: 'endgame.trap' }
+      {title: 'Onstage', align: 'end', value: 'endgame.endgame'},
+      {title: 'Trap', align: 'end', value: 'endgame.trap'}
     ]
   }
 ]
@@ -83,6 +84,14 @@ const items = matches
               </UContainer>
           </template>
         </UPopover>
+      </template>
+      <template v-slot:item.author="row">
+        <UTooltip :text="row.value || 'not found'">
+          <UAvatar
+              class="select-none"
+              :alt="row.value || '-'"
+          />
+        </UTooltip>
       </template>
     </VDataTable>
   </OuterComponents>

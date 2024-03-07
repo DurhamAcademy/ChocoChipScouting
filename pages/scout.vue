@@ -3,6 +3,13 @@ import databases from "~/utils/databases"
 import IncrementalButton from '~/components/IncrementalButton.vue'
 import {eventOptions} from "~/utils/eventOptions";
 import PouchDB from "pouchdb";
+import type {Ref} from "@vue/reactivity";
+import type {UnwrapRef} from "vue";
+import {loginStateKey} from "~/utils/keys";
+
+const {usernameState}: {
+  usernameState: Ref<UnwrapRef<string>>;
+} = inject(loginStateKey)!
 
 const {scoutingData} = databases.locals
 let db = scoutingData
@@ -64,16 +71,18 @@ let impData = {
 
 let scoutData: Ref<UnwrapRef<{
   auto: { speakerNA: number; amp: number; mobility: boolean };
-  notes: { efficiency: number; notes: string; reliability: number };
+  notes: { playedDefense: boolean; defense: number; notes: string };
   endgame: { endgame: string[]; trap: number };
-  teamNumber: null;
+  teamNumber: any;
   event: string;
-  matchNumber: null;
+  matchNumber: any;
+  author: string;
   teleop: { speakerNA: number; amp: number }
 }>> = ref({
   event: "",
-  teamNumber: null,
-  matchNumber: null,
+  teamNumber: "",
+  matchNumber: "",
+  author: "",
   auto: {
     speakerNA: 0,
     amp: 0,
@@ -115,12 +124,12 @@ function isValidNum() {
 }
 
 async function submit() {
-  if(!Number.isNaN(parseInt(scoutData.value.teamNumber)) && !Number.isNaN(parseInt(scoutData.value.matchNumber))) {
-    scoutData.value.teamNumber = parseInt(scoutData.value.teamNumber)
-    scoutData.value.teamNumber = parseInt(scoutData.value.matchNumber)
+  scoutData.value.teamNumber = parseInt(scoutData.value.teamNumber)
+  scoutData.value.matchNumber = parseInt(scoutData.value.matchNumber)
+  if(!Number.isNaN(scoutData.value.teamNumber) && !Number.isNaN(scoutData.value.teamNumber)) {
+    scoutData.value.author = usernameState.value
     scoutData.value.event = selectedEvent.value || eventOptions[0]
     let newDoc = await db.post(scoutData.value)
-    PouchDB.sync(databases.locals.scoutingData, databases.remotes.scoutingData)
     await navigateTo("/matches")
   }
 }

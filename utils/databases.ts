@@ -38,11 +38,12 @@ class LocalRemoteDatabaseSyncHolder<Content extends {} = {}> {
 
 export type ScoutingData = {
     auto: {speakerNA: number; amp: number; mobility: boolean};
-    notes: {efficiency: number; notes: string; reliability: number};
+    notes: { playedDefense: boolean; defense: number; notes: string };
     endgame: {endgame: string[]; trap: number};
     teamNumber: number;
     event: string;
     matchNumber: number;
+    author: string;
     teleop: {speakerNA: number; amp: number};
 }
 

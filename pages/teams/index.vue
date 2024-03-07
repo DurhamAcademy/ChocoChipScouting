@@ -9,7 +9,6 @@ import SpeakerVisualization from "~/components/SpeakerVisualization.vue";
 import {useWindowSize} from "@vueuse/core";
 import MiscPopup from "~/components/MiscPopup.vue";
 
-const toast = useToast()
 let {width, height} = useWindowSize()
 let modalOpen = ref([])
 
