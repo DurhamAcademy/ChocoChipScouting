@@ -117,7 +117,7 @@ function isValidNum() {
 async function submit() {
   if(!Number.isNaN(parseInt(scoutData.value.teamNumber)) && !Number.isNaN(parseInt(scoutData.value.matchNumber))) {
     scoutData.value.teamNumber = parseInt(scoutData.value.teamNumber)
-    scoutData.value.teamNumber = parseInt(scoutData.value.matchNumber)
+    scoutData.value.matchNumber = parseInt(scoutData.value.matchNumber)
     scoutData.value.event = selectedEvent.value || eventOptions[0]
     let newDoc = await db.post(scoutData.value)
     PouchDB.sync(databases.locals.scoutingData, databases.remotes.scoutingData)

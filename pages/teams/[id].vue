@@ -15,12 +15,15 @@ let attachmentsURLs = ref<string[]>([])
 const displayURLs = ref<string[]>([])
 const possibleTags = ref<string[]>([])
 const tagStyles = ref<string[]>([])
+const possibleEvents = ref<string[]>([])
+const eventStyles = ref<string[]>([])
 const attachmentHovered = ref(attachmentsData.value.map(() => false)) // creates a list of bools for each of the attachments (all set to false because none are being hovered)
 const openCarousel = ref(false)
 
 // filters
 const filterTags = ref<string[]>([])
 const filterInput = ref<string>('')
+const filterEvent = ref("")
 
 let allDocs = await db.allDocs({ include_docs: true })
 // filter attachments by team #
@@ -34,6 +37,10 @@ allDocs.rows.forEach(async (row) => {
         let file = new File([attachment], doc.name, {type: attachment.type})
 
         attachmentsData.value.push({ attachmentURL: URL.createObjectURL(file), attachmentID: doc._id, tagList: doc.tags, notes: doc.extraNotes, fileName: doc.name, fileSize: doc.fileSize, event: doc.event, author: doc.author, dateUploaded: doc.dateUploaded, attachmentHovered: false})
+        if(!possibleEvents.value.includes(doc.event)) {
+          possibleEvents.value.push(doc.event)
+          eventStyles.value.push("outline")
+        }
         for (let tag of attachmentsData.value[attachmentsData.value.length-1].tagList) {
           if(!possibleTags.value.includes(tag)) {
             possibleTags.value.push(tag)
@@ -48,13 +55,17 @@ filteredAttachmentsData.value = attachmentsData.value
 
 // updating stuff when values change
 attachmentsURLs = computed(() => {
-  return attachmentsData.value.map(item => item.attachmentURL)
+  return filteredAttachmentsData.value.map(item => item.attachmentURL)
 })
 filteredAttachmentsData = computed(() => {
   return attachmentsData.value.filter(attachment => {
     return attachment.notes.toLowerCase().includes(filterInput.value.toLowerCase());
   }).filter(attachment => {
     return filterTags.value.every(tag => attachment.tagList.includes(tag))
+  }).filter(attachment => {
+    if (filterEvent.value == "")
+      return true
+    return filterEvent.value == attachment.event
   })
 })
 
@@ -69,10 +80,22 @@ function toggleTag(index: number) {
   }
 }
 
+function toggleEvent(index: number) {
+  if (eventStyles.value[index] == "outline") {
+    console.log(possibleEvents.value)
+    filterEvent.value = possibleEvents.value[index]
+    eventStyles.value = eventStyles.value.map(() => "outline")
+    eventStyles.value[index] = "solid"
+  } else if (eventStyles.value[index] == "solid"){
+    filterEvent.value = ""
+    eventStyles.value[index] = "outline"
+  }
+}
+
 // sets image clicked on as the first image in the carousel and makes sure that carousel data is parallel to displayURLs array
 function showCarousel(index: number) {
   displayURLs.value = [...attachmentsURLs.value]
-  tempCarouselData.value = [...attachmentsData.value]
+  tempCarouselData.value = [...filteredAttachmentsData.value]
   const temp = displayURLs.value.splice(index, 1)[0]
   const temp2 = tempCarouselData.value.splice(index, 1)[0]
   displayURLs.value.unshift(temp)
@@ -92,18 +115,28 @@ async function goBack() {
       <UButton class="absolute left-2 top-2" variant="ghost" size="xl" icon="i-heroicons-arrow-left" @click="goBack"/>
       <h1 class="font-extrabold text-4xl text-center">Team {{ route.params.id }} Attachments</h1>
       <div class="flex mt-2 justify-center">
-        <UInput placeholder="Filter Notes" icon="i-heroicons-magnifying-glass" color="primary" class="w-40" v-model="filterInput"/> <!-- wip -->
+        <UButton class="font-sans font-medium mr-2" variant="ghost" color="primary" icon="i-heroicons-adjustments-horizontal" label="Filters: "></UButton>
+        <UInput icon="i-heroicons-magnifying-glass" color="primary" class="w-32" v-model="filterInput"/> <!-- wip -->
         <UPopover class="px-2">
-          <UButton label="Filter Tags" trailing-icon="i-heroicons-adjustments-horizontal" variant="ghost"/>
+          <UButton label="Tags" variant="ghost"/>
           <template #panel>
-            <UCard class="min-w-32 max-w-64 flex flex-wrap justify-center">
-              <template #header>
-                <h1 class="font-sans text-lg font-bold opacity-50">Choose Tags To Filter</h1>
-              </template>
-              <template #default>
-                <UButton v-for="(tag, index) in possibleTags" :label="tag" class="flex-grow justify center" style="margin:5px" :variant="tagStyles[index]" :ui="{ rounded: 'rounded-full' }" @click="toggleTag(index)"/>
-              </template>
-            </UCard>
+            <div class="p-2 flex-wrap justify-center">
+              <p class="font-sans font-bold text-opacity-60">Choose Tags To Filter</p>
+              <div class="flex justify-center">
+                <UButton v-for="(tag, index) in possibleTags" :label="tag" class="justify center" style="margin:5px" :variant="tagStyles[index]" :ui="{ rounded: 'rounded-full' }" @click="toggleTag(index)"/>
+              </div>
+            </div>
+          </template>
+        </UPopover>
+        <UPopover class="px-2">
+          <UButton label="Events" variant="ghost"/>
+          <template #panel>
+            <div class="flex-wrap justify-center p-2">
+              <p class="font-sans font-bold text-opacity-60">Choose Events To Filter</p>
+              <div class="flex justify-center">
+                <UButton v-for="(tag, index) in possibleEvents" :label="tag" class="justify center" style="margin:5px" :variant="eventStyles[index]" :ui="{ rounded: 'rounded-full' }" @click="toggleEvent(index)"/>
+              </div>
+            </div>
           </template>
         </UPopover>
       </div>
