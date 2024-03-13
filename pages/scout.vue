@@ -69,10 +69,11 @@ let impData = {
   */
 
 
+//todo fix
 let scoutData: Ref<UnwrapRef<{
   auto: { speakerNA: number; amp: number; mobility: boolean };
-  notes: { playedDefense: boolean; defense: number; notes: string };
-  endgame: { endgame: string[]; trap: number };
+  notes: {  notes: string; promptedNotes: Array<Array<boolean | number | Array<string>>> };
+  endgame: { endgame: string[]; trap: number; spotlight: number };
   teamNumber: any;
   event: string;
   matchNumber: any;
@@ -94,12 +95,12 @@ let scoutData: Ref<UnwrapRef<{
   },
   endgame: {
     trap: 0,
-    endgame: [endgameOptions[0]]
+    endgame: [endgameOptions[0]],
+    spotlight: 0
   },
   notes: {
-    playedDefense: false,
-    defense: 3,
     notes: "",
+    promptedNotes: [[false, 1, []], [false, 1, []], [false, 1, []]]
   }
 })
 
@@ -202,38 +203,36 @@ async function submit() {
       <div v-if="gameTime == GameTime.Endgame">
         <div class="flex text-center flex-wrap">
           <div>
-            <h1 class="text-gray-700 dark:text-gray-200 font-sans font-medium">Amp</h1>
-            <IncrementalButton v-model="scoutData.teleop.amp" style="margin:5px"></IncrementalButton>
-          </div>
-          <div>
-            <h1 class="text-gray-700 dark:text-gray-200 font-sans font-medium">Speaker</h1>
-            <IncrementalButton v-model="scoutData.teleop.speakerNA" style="margin:5px"></IncrementalButton>
-          </div>
-          <div>
             <h1 class="text-gray-700 dark:text-gray-200 font-sans font-medium">Trap</h1>
             <IncrementalButton v-model="scoutData.endgame.trap" :max-value="3" style="margin:5px"></IncrementalButton>
           </div>
+          <div class="ml-3">
+            <h1 class="text-gray-700 dark:text-gray-200 font-sans font-medium">Spotlights Hit</h1>
+            <SingleSelect  v-model="scoutData.endgame.spotlight" :options="['0', '1', '2', '3']"/>
           </div>
+        </div>
           <br>
             <MultiSelect :model-value="endgameIndex" :options="endgameOptions"
                      @update:model-value="value => {updateEndgameOptions(value)}"
-                     :connected-options="connectedOptions"></MultiSelect>
+                     :connected-options="connectedOptions"/>
        </div>
       <div v-if="gameTime == GameTime.Notes">
-        <div class="flex">
-          <div class="flex-0 text-center">
-            <p class="flex-auto text-gray-700 dark:text-gray-200 font-sans font-medium">Defended</p>
-            <UCheckbox class="flex-auto mt-0.5 justify-center" v-model="scoutData.notes.playedDefense"/>
-          </div>
-          <div class="flex-1 text-center">
-            <p class="text-gray-700 dark:text-gray-200 font-sans font-medium mr-5">Rating</p>
-            <div class="flex">
-              <URange v-if="!(scoutData.notes.playedDefense)" class="ml-3 mr-3 mt-1 flex-auto" disabled v-model="scoutData.notes.defense" size="md" min="1" :max="5"/>
-              <URange v-if="scoutData.notes.playedDefense" class="ml-3 mr-3 mt-1 flex-auto" v-model="scoutData.notes.defense" size="md" min="1" :max="5"/>
-              <UBadge class="flex-auto" :label="scoutData.notes.playedDefense ? scoutData.notes.defense: 0" :variant="scoutData.notes.playedDefense ? 'solid':'soft'"/>
-            </div>
-          </div>
-        </div>
+        <UAccordion
+            open-icon="i-heroicons-plus"
+            close-icon="i-heroicons-minus"
+            multiple
+            :items="[{ label: 'Defense', slot: 'defense', defaultOpen: true}, { label: 'Driver', slot: 'driver'}, { label: 'Robot Efficiency', slot: 'efficiency'}]"
+        >
+          <template #defense>
+            <PromptedNote v-model="scoutData.notes.promptedNotes[0]" :questions="['Explain your rating', 'Where did this team play defense?']"/>
+          </template>
+          <template #driver>
+            <PromptedNote v-model="scoutData.notes.promptedNotes[1]" :questions="['Explain your rating']"/>
+          </template>
+          <template #efficiency>
+            <PromptedNote v-model="scoutData.notes.promptedNotes[2]" :questions="['Explain your rating']"/>
+          </template>
+        </UAccordion>
       </div>
       <template #footer>
         <UTextarea v-model="scoutData.notes.notes" color="yellow" placeholder="Notes..."/>
