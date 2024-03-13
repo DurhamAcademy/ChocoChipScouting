@@ -70,18 +70,18 @@ let promptedNotesDetailedOptions = [["Rating explained", "Defense location"], ["
 
 <template>
       <UCard>
-        <div class="flex">
+        <div class="flex flex-wrap">
           <div class="flex-auto">
             <BarChart
                 class="mb-1"
                 :labels="chartLabels"
                 :data="chartData"
                 :chart-title="chartTitle"
-                height="h-80"
-                width="w-80"
+                height="h-64"
+                width="w-64"
             ></BarChart>
           </div>
-          <div class="flex-auto whitespace-normal w-72 max-w-72 h-80 max-h-80">
+          <div class="flex-auto whitespace-normal max-h-72 w-72 max-w-72">
             <p class="font-extrabold text-sm">Auto & Endgame: </p>
             <div class="pb-2.5">
               <UBadge color="sky" variant="subtle" v-if="rowData.rawData[selectedMatch - 1].auto.mobility" class="mr-1.5 mt-2">Mobility</UBadge>

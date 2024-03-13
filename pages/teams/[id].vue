@@ -4,6 +4,9 @@ import databases, {type ScoutingData} from "~/utils/databases";
 import MatchVisualization from "~/components/MatchVisualization.vue";
 import IdMeta = PouchDB.Core.IdMeta;
 import {eventOptions} from "~/utils/eventOptions";
+import {useWindowSize} from "@vueuse/core";
+
+let {width, height} = useWindowSize()
 
 const events = eventOptions.map((event) => event.replace(/[0-9]/g, ''))
 let currentEvent = ref(eventOptions[0])
@@ -83,6 +86,11 @@ watch(currentEvent, (value) => {
 async function goBack() {
   navigateTo("/teams/")
 }
+
+let margin = ref(width.value > 800 ? "ml-2": "")
+watch(width, () => {
+  margin.value = width.value > 800 ? "ml-2": "mt-4"
+})
 </script>
 
 <template>
@@ -112,11 +120,11 @@ async function goBack() {
       </div>
     </template>
 
-    <div class="flex" v-if="teamData.rawData.length > 0">
+    <div class="flex flex-wrap" v-if="teamData.rawData.length > 0">
       <div class="flex-auto h-1/3 mr-2">
         <MatchVisualization :row-data="teamData"></MatchVisualization>
       </div>
-      <div class="flex-auto h-min max-h-min ml-2 flex-wrap">
+      <div :class="'flex-auto h-min max-h-min flex-wrap ' + margin">
         <AmpVisualization :row-data="teamData"></AmpVisualization>
         <SpeakerVisualization class="mt-4" :row-data="teamData"></SpeakerVisualization>
       </div>
