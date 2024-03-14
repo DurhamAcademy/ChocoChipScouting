@@ -4,6 +4,7 @@ import SecurityHelper from "pouchdb-security-helper"
 
 PouchDB.plugin(SecurityHelper)
 
+console.dir(process.env,{colors:true,depth:3})
 
 export default defineNitroPlugin((nitroApp) => {
     // @ts-ignore
@@ -17,7 +18,7 @@ export default defineNitroPlugin((nitroApp) => {
                 .map((name) => {
                     console.log("name")
                     console.log(config.couchDB.serverAdminUser.username)
-                    return new PouchDB(`http://${process.env.couchDBHostname}:5984/` + name, {
+                    return new PouchDB(`http://${config.couchDB.hostname}:5984/` + name, {
                         name: name,
                         auth: {username: config.couchDB.serverAdminUser.username, password: config.couchDB.serverAdminUser.password}
                     })
