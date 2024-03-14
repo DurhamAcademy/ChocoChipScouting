@@ -3,11 +3,7 @@ import databases, {type ScoutingData} from "~/utils/databases";
 import IdMeta = PouchDB.Core.IdMeta;
 import Sentiment from 'sentiment';
 import {eventOptions} from "~/utils/eventOptions";
-import AmpVisualization from "~/components/AmpVisualization.vue";
-import MatchVisualization from "~/components/MatchVisualization.vue";
-import SpeakerVisualization from "~/components/SpeakerVisualization.vue";
 import {useWindowSize} from "@vueuse/core";
-import MiscPopup from "~/components/MiscPopup.vue";
 
 let {width, height} = useWindowSize()
 
@@ -315,9 +311,6 @@ const columns = [{
 }, {
   key: 'buttons',
 }]
-
-const graphOptions = ['Match Stats', 'Amp', 'Speaker', 'Misc']
-const selectedGraph = ref(graphOptions[0])
 
 await tableSetup()
 </script>

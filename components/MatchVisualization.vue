@@ -64,7 +64,7 @@ let chartData = ref([
 let chartTitle = ref("Match " + currData.value.matchNumber)
 
 let promptedNotesOptions = ["Defense", "Offense", "Driver"]
-let promptedNotesDetailedOptions = [["Defense location", "Risk of fouls", "Other"], ["Shooing location(s)", "Ability to avoid defense", "Other"], ["Strengths", "Weaknesses", "Other"]]
+let promptedNotesDetailedOptions = [["Defense location", "Risk of fouls", "Other"], ["Shooing location(s)", "Ability to avoid defense", "Weakness of cycles", "Other"], ["Strengths", "Weaknesses", "Other"]]
 
 </script>
 
@@ -92,11 +92,11 @@ let promptedNotesDetailedOptions = [["Defense location", "Risk of fouls", "Other
                 <div v-if="item[0]">
                   <div class="pb-1">
                     <span class="font-extrabold mr-2 text-sm">{{promptedNotesOptions[index] + ":"}}</span>
-                    <UBadge :color="item[1] > 3 ? 'green': item[1] < 3 ? 'red' : 'gray'" :variant="!(item[1] > 4 || item[1] < 2) ? 'soft': 'subtle'">{{item[1]}}</UBadge>
+                    <UBadge :color="item[1] > 3 ? 'green': item[1] < 3 ? 'red' : 'gray'" :variant="item[1] == 2 || item[1] == 4 ? 'soft': 'subtle'">{{item[1]}}</UBadge>
                   </div>
-                  <div v-if="text != ''" v-for="(text, i) in item[2]">
-                    <p class="text-xs pb-0 font-semibold underline-offset-2" >{{promptedNotesDetailedOptions[index][i] + ':'}}</p>
-                    <p class="pb-2.5 text-xs">{{text}}</p>
+                  <div v-for="(text, i) in item[2]">
+                    <p v-if="text != ''" class="text-xs pb-0 font-semibold underline-offset-2" >{{promptedNotesDetailedOptions[index][i] + ':'}}</p>
+                    <p v-if="text != ''" class="pb-2.5 text-xs">{{text}}</p>
                   </div>
                 </div>
               </div>

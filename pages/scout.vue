@@ -32,11 +32,11 @@ watch(selectedEvent, (value) => {
   window.localStorage.setItem('currentEvent', value)
 })
 
-const {data, pending} = await useLazyFetch<Array<any>>("/api/eventTeams/" + selectedEvent.value)
+const {data: tbaEventData, pending: tbaPending} = await useLazyFetch<Array<any>>("/api/eventTeams/" + selectedEvent.value)
 
-watch(pending, () => {
-  if(!pending.value && data.value != null){
-    validTeamNums.value = data.value.map((value) => value.team_number)
+watch(tbaPending, () => {
+  if(!tbaPending.value && tbaEventData.value != null){
+    validTeamNums.value = tbaEventData.value.map((value) => value.team_number)
   }
 })
 
@@ -223,10 +223,10 @@ async function submit() {
             :items="[{ label: 'Defense', slot: 'defense', defaultOpen: true}, { label: 'Offense', slot: 'offense'}, { label: 'Driver', slot: 'driver'}]"
         >
           <template #defense>
-            <PromptedNote v-model="scoutData.notes.promptedNotes[0]" :questions="[['Where did this team play defense?', 1], ['Is this team at risk of causing fouls? Elaborate why.', 2], ['What other factors contributed to your rating?', 1]]"/>
+            <PromptedNote v-model="scoutData.notes.promptedNotes[0]" :questions="[['Where did this team play defense?', 1], ['Is this team at risk of causing fouls? If so, elaborate why.', 2], ['What other factors contributed to your rating?', 1]]"/>
           </template>
           <template #offense>
-            <PromptedNote v-model="scoutData.notes.promptedNotes[1]" :questions="[['Where can this team shoot from?', 1], ['If applicable, how did the driver make efforts to avoid defense?', 2], ['What other factors contributed to your rating?', 1]]"/>
+            <PromptedNote v-model="scoutData.notes.promptedNotes[1]" :questions="[['Where can this team shoot from?', 1], ['If applicable, how did the driver make efforts to avoid opposing defense?', 2], ['What slowed down their cycles?', 2], ['What other factors contributed to your rating?', 1]]"/>
           </template>
           <template #driver>
             <PromptedNote v-model="scoutData.notes.promptedNotes[2]" :questions="[['What makes their driving strong?', 1], ['What makes their driving weak?', 1], ['What other factors contributed to your rating?', 1]]"/>
@@ -234,7 +234,7 @@ async function submit() {
         </UAccordion>
       </div>
       <template #footer>
-        <UTextarea v-model="scoutData.notes.notes" color="yellow" placeholder="Notes..."/>
+        <UTextarea v-model="scoutData.notes.notes" color="yellow" placeholder="Other notes..."/>
         <br/>
         <div class="flex justify-between">
           <div>

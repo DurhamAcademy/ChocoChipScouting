@@ -22,16 +22,19 @@ class LocalRemoteDatabaseSyncHolder<Content extends {} = {}> {
     static databases = {
         "attachments": new LocalRemoteDatabaseSyncHolder<Attachments>("attachments"),
         "scoutingData": new LocalRemoteDatabaseSyncHolder<ScoutingData>("scouting-data"),
+        "teamData": new LocalRemoteDatabaseSyncHolder<TeamData>("team-data"),
         "basic": new LocalRemoteDatabaseSyncHolder<{}>("basic")
     };
     static locals= {
         "attachments": this.databases.attachments.local,
         "scoutingData": this.databases.scoutingData.local,
+        "teamData": this.databases.teamData.local,
         "basic": this.databases.basic.local,
     };
     static remotes = {
         "attachments": this.databases.attachments.remote,
         "scoutingData": this.databases.scoutingData.remote,
+        "teamData": this.databases.teamData.remote,
         "basic": this.databases.basic.remote,
     };
 }
@@ -45,6 +48,11 @@ export type ScoutingData = {
     matchNumber: any;
     author: string;
     teleop: { speakerNA: number; amp: number }
+}
+
+export type TeamData = {
+    teamNum: number,
+    teamName: string
 }
 
 export type Attachments = {
