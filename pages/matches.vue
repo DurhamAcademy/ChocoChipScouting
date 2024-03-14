@@ -3,7 +3,7 @@ import databases from "~/utils/databases"
 import {eventOptions} from "~/utils/eventOptions";
 const { scoutingData } = databases.locals
 
-const sortBy = ref([{ key: 'teamNumber', order: 'asc' }])
+const sortBy = ref([{ key: 'teamNumber', order: 'asc' }, { key: 'matchNumber', order: 'asc' }])
 
 let currentEvent = eventOptions[0]
 if (typeof window !== 'undefined') currentEvent = localStorage.getItem('currentEvent') || eventOptions[0]
@@ -45,7 +45,6 @@ const headers = [
     children: [
       { title: 'Amp', align: 'end', value: 'teleop.amp' },
       { title: 'Speaker', align: 'end', value: 'teleop.speakerNA' },
-      { title: 'Speaker+', align: 'end', value: 'teleop.speakerA' }
     ]
   }, {
     title: 'Endgame',
@@ -64,16 +63,17 @@ const items = matches
 <template>
   <OuterComponents>
     <VDataTable
+        class="max-h-dvh overflow-auto"
         :headers="headers"
         :items="items"
         item-key="name"
         density="compact"
-        items-per-page="10"
+        :items-per-page="-1"
         v-model:sort-by="sortBy"
     >
       <template v-slot:item.notes="row">
         <UPopover :popper="{ offsetDistance: 15 }">
-          <UButton class="-m-2.5" color="yellow" label="Notes" variant="soft"/>
+          <UButton class="mt-2 mb-2" color="yellow" label="Notes" variant="soft"/>
           <template #panel>
               <UContainer class="m-auto max-w-lg min-w-[15rem] overflow-y-auto" style="max-height: 20rem; min-height: 10rem">
                 <br>

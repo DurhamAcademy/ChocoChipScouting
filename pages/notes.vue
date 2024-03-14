@@ -1,24 +1,52 @@
 <script setup lang="ts">
 import databases from "~/utils/databases"
 import IncrementalButton from '~/components/IncrementalButton.vue'
+import {eventOptions} from "~/utils/eventOptions";
 
 const { scoutingData } = databases.locals
 let db = scoutingData
 
+let selectedEvent = eventOptions[0]
+if (typeof window !== 'undefined') selectedEvent = localStorage.getItem('currentEvent') || eventOptions[0]
 
-let data = ref({
+let data: Ref<UnwrapRef<{
+  auto: { speakerNA: number; amp: number; mobility: boolean };
+  notes: { efficiency: number; notes: string; reliability: number };
+  endgame: { endgame: string[]; trap: number };
+  teamNumber: null;
+  event: string;
+  matchNumber: null;
+  teleop: { speakerNA: number; amp: number }
+}>> = ref({
+  event: "",
   teamNumber: null,
   matchNumber: -1,
-  event: "",
-  notes: "",
+  auto: {
+    speakerNA: 0,
+    amp: 0,
+    mobility: false,
+  },
+  teleop: {
+    amp: 0,
+    speakerNA: 0,
+  },
+  endgame: {
+    trap: 0,
+    endgame: ""
+  },
+  notes: {
+    playedDefense: false,
+    defense: 3,
+    notes: "",
+  }
 })
 
-console.log(db)
-
 async function submit() {
-  data.value.event = window.localStorage.getItem("event") || ""
-  let newDoc = db.post(data.value)
-  await navigateTo("dashboard")
+  data.value.event = selectedEvent
+  if(data.value.teamNumber != null) {
+    let doc = db.post(data.value)
+    await navigateTo("dashboard")
+  }
 }
 
 </script>
@@ -31,7 +59,7 @@ async function submit() {
         <div class="pb-1.5">
           <UInput v-model="data.teamNumber" placeholder="Team #"></UInput>
         </div>
-        <UTextarea rows="10" v-model="data.notes" placeholder="Notes..."/>
+        <UTextarea rows="10" v-model="data.notes.notes" placeholder="Notes..."/>
       </template>
       <template #footer>
         <div class="flex justify-between">

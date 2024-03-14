@@ -1,8 +1,25 @@
 <script setup lang="ts">
+
+import PouchDB from "pouchdb";
+import databases from "~/utils/databases";
+
+let syncDisable = ref(false)
+
+async function sync(){
+  syncDisable.value = true
+  await PouchDB.sync(databases.locals.scoutingData, databases.remotes.scoutingData)
+  await PouchDB.sync(databases.locals.basic, databases.remotes.basic)
+  await PouchDB.sync(databases.locals.attachments, databases.remotes.attachments)
+  syncDisable.value = false
+}
 </script>
+
 
 <template>
   <OuterComponents>
+    <UButton class="ml-3 mt-3" @click="sync" :disabled="syncDisable" :loading="syncDisable">
+      Sync Databases
+    </UButton>
     <div class="px-5 max-w-2xl min-w-lg flex-grow">
       <LazyUSkeleton class="w-full h-64 my-5"></LazyUSkeleton>
       <LazyUCard class="my-5">
@@ -15,16 +32,6 @@
           </div>
           <div class="w-full py-2.5">
             <LazyUSkeleton class="w-full h-16"></LazyUSkeleton>
-          </div>
-        </div>
-      </LazyUCard>
-      <LazyUSkeleton class="w-full h-32 my-5"></LazyUSkeleton>
-      <LazyUCard class="my-5">
-        <div class="m-1 flex items-center space-x-4">
-          <LazyUSkeleton class="h-12 w-12" :ui="{ rounded: 'rounded-full' }" />
-          <div class="space-y-2 flex-grow">
-            <LazyUSkeleton class="h-4 w-full" />
-            <LazyUSkeleton class="h-4 w-full" />
           </div>
         </div>
       </LazyUCard>

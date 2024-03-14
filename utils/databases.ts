@@ -43,7 +43,7 @@ export type ScoutingData = {
     teamNumber: number;
     event: string;
     matchNumber: number;
-    teleop: {speakerA: number; speakerNA: number; amp: number};
+    teleop: {speakerNA: number; amp: number};
 }
 
 export type Attachments = {

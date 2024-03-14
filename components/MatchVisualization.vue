@@ -35,7 +35,7 @@ function compareMatchNumbers(a: any, b: any){
   return 0;
 }
 
-const chartLabels = ['Auto Amp', 'Auto Speaker', 'Amp', 'Speaker', 'Speaker+', 'Trap']
+const chartLabels = ['Auto Amp', 'Auto Speaker', 'Amp', 'Speaker', 'Trap']
 let currData: any = ref(props.rowData.rawData[selectedMatch.value - 1])
 
 watch(selectedMatch, () =>{
@@ -45,7 +45,6 @@ watch(selectedMatch, () =>{
     currData.value.auto.speakerNA,
     currData.value.teleop.amp,
     currData.value.teleop.speakerNA,
-    currData.value.teleop.speakerA,
     currData.value.endgame.trap,
   ]
   chartTitle.value = "Match " + currData.value.matchNumber
@@ -60,7 +59,6 @@ let chartData = ref([
   currData.value.auto.speakerNA,
   currData.value.teleop.amp,
   currData.value.teleop.speakerNA,
-  currData.value.teleop.speakerA,
   currData.value.endgame.trap,
 ])
 let chartTitle = ref("Match " + currData.value.matchNumber)
@@ -69,8 +67,8 @@ let chartTitle = ref("Match " + currData.value.matchNumber)
 
 <template>
       <UCard>
-        <div class="h-80 flex">
-          <div class="flex-auto w-80 mr-5">
+        <div class="flex-wrap flex">
+          <div class="flex-auto mr-5 width=device-width">
             <BarChart
                 class="mb-1"
                 :labels="chartLabels"
