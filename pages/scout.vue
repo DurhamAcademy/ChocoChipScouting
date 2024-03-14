@@ -220,17 +220,16 @@ async function submit() {
         <UAccordion
             open-icon="i-heroicons-plus"
             close-icon="i-heroicons-minus"
-            multiple
-            :items="[{ label: 'Defense', slot: 'defense', defaultOpen: true}, { label: 'Driver', slot: 'driver'}, { label: 'Robot Efficiency', slot: 'efficiency'}]"
+            :items="[{ label: 'Defense', slot: 'defense', defaultOpen: true}, { label: 'Offense', slot: 'offense'}, { label: 'Driver', slot: 'driver'}]"
         >
           <template #defense>
-            <PromptedNote v-model="scoutData.notes.promptedNotes[0]" :questions="['Explain your rating', 'Where did this team play defense?']"/>
+            <PromptedNote v-model="scoutData.notes.promptedNotes[0]" :questions="[['Where did this team play defense?', 1], ['Is this team at risk of causing fouls? Elaborate why.', 2], ['What other factors contributed to your rating?', 1]]"/>
+          </template>
+          <template #offense>
+            <PromptedNote v-model="scoutData.notes.promptedNotes[1]" :questions="[['Where can this team shoot from?', 1], ['If applicable, how did the driver make efforts to avoid defense?', 2], ['What other factors contributed to your rating?', 1]]"/>
           </template>
           <template #driver>
-            <PromptedNote v-model="scoutData.notes.promptedNotes[1]" :questions="['Explain your rating']"/>
-          </template>
-          <template #efficiency>
-            <PromptedNote v-model="scoutData.notes.promptedNotes[2]" :questions="['Explain your rating']"/>
+            <PromptedNote v-model="scoutData.notes.promptedNotes[2]" :questions="[['What makes their driving strong?', 1], ['What makes their driving weak?', 1], ['What other factors contributed to your rating?', 1]]"/>
           </template>
         </UAccordion>
       </div>

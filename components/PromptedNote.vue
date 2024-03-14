@@ -27,7 +27,7 @@ const value = computed({
     <URange class="flex-auto mt-1 ml-1" :disabled="!modelValue[0]" :min="1" :max="5" v-model="modelValue[1]"></URange>
     <UBadge class="flex-auto ml-3 select-none" :label="modelValue[1]" :variant="!modelValue[0] ? 'outline': 'solid'"></UBadge>
   </div>
-  <UTextarea class="mt-3 w-full" v-for="(item, index) in questions" v-model="modelValue[2][index]" :disabled="!modelValue[0]" :rows="1" autoresize :placeholder="item"/>
+  <UTextarea class="mt-3 w-full" v-for="(item, index) in questions" v-model="modelValue[2][index]" :disabled="!modelValue[0]" :rows="item[1]" autoresize :placeholder="item[0]"/>
 </template>
 
 <style scoped>
