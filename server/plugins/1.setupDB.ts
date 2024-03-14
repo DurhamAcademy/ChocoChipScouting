@@ -4,7 +4,6 @@ import SecurityHelper from "pouchdb-security-helper"
 
 PouchDB.plugin(SecurityHelper)
 
-console.dir(process.env,{colors:true,depth:3})
 
 export default defineNitroPlugin((nitroApp) => {
     // @ts-ignore
