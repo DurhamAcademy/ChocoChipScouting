@@ -16,8 +16,8 @@ const value = computed({
   }
 })
 
-function whenClicked(Quad:string){
-  console.log(Quad)
+function whenClicked(Quadrant:string){
+  console.log(Quadrant)
 }
 
 </script>
