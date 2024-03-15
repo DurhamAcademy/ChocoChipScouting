@@ -2,11 +2,9 @@
 import { computed } from 'vue'
 const emit = defineEmits(['update:modelValue'])
 const props = defineProps<{
-  modelValue: string[]
+  modelValue: Array<String>
 }>()
-let
-    index: string,
-    fullArray: [["f1", "f2", "f3", "f4"],["m1", "m2", "m3", "m4"],["c1", "c2", "c3", "c4"],["s1", "s2", "s3", "s4"]]
+let fullArray = [["f1", "f2", "f3", "f4"],["m1", "m2", "m3", "m4"],["c1", "c2", "c3", "c4"],["s1", "s2", "s3", "s4"]]
     //f = front m = middle c = climb s = speaker
 
 const value = computed({
@@ -21,12 +19,9 @@ const value = computed({
 
 <template>
   <div>
-    <div v-for="items in fullArray">
-      <p>{{items}}</p>
-      <p>Hey</p>
-      <div v-for="item in items">
+    <div v-for="items in fullArray" class="flex" flex-auto>
+      <div v-for="item in items" @click="" class="flex-auto">
         <p>{{item}}</p>
-        <p> HEy</p>
       </div>
     </div>
   </div>
