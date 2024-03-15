@@ -5,6 +5,7 @@ import {eventOptions} from "~/utils/eventOptions";
 import PouchDB from "pouchdb";
 
 const {scoutingData} = databases.locals
+const isRouteOpen = ref(false)
 let db = scoutingData
 
 //An enum of tabs on the scout page
@@ -162,21 +163,7 @@ async function submit() {
         </UButtonGroup>
       </template>
       <div v-if="gameTime == GameTime.Autonomous">
-        <div class="flex" style="text-align:center">
-          <div>
-            <h1 class="font-sans text-gray-700 dark:text-gray-200 font-medium">Amp</h1>
-            <IncrementalButton v-model="scoutData.auto.amp" style="margin:5px"></IncrementalButton>
-          </div>
-          <div>
-            <h1 class="text-gray-700 dark:text-gray-200 font-sans font-medium">Speaker</h1>
-            <IncrementalButton v-model="scoutData.auto.speakerNA" style="margin:5px"></IncrementalButton>
-          </div>
-          <div>
-            <br>
-            <BooleanButton v-model="scoutData.auto.mobility" :default-value="'Mobility'" :other-value="'Mobility'"
-                           style="margin:5px"></BooleanButton>
-          </div>
-        </div>
+        <AutoRoute/>
       </div>
       <div v-if="gameTime == GameTime.Teleoperated">
         <div class="flex" style="text-align:center">
