@@ -2,7 +2,7 @@
 import vuetify, { transformAssetUrls } from 'vite-plugin-vuetify'
 
 var sw = true;
-
+console.dir(process.env,{colors:true,depth:3})
 export default defineNuxtConfig({
   modules: [
     '@nuxt/image',
@@ -218,3 +218,4 @@ export default defineNuxtConfig({
     }
   }
 })
+console.dir(process.env,{colors:true,depth:3})

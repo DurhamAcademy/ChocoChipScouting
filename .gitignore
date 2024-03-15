@@ -19,6 +19,13 @@ logs
 .idea
 
 # Local env files
+deployment/.env
+deployment/.env.*
+
+deployment/couchdb_etc/*.pem
+deployment/*.pem
+deployment/couchdb_etc/fullchain1.pem
+deployment/couchdb_etc/privkey1.pem
 .env
 .env.*
 !.env.example
