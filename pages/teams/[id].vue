@@ -117,22 +117,18 @@ watch(width, () => {
       <div class="text-center justify-center">
         <h1 class="font-extrabold text-2xl mb-2">{{teamData.teamName != '' ? (teamData.teamNum + ' - ' + teamData.teamName): teamData.teamNum}}</h1>
         <div class="mx-auto flex justify-center align-center">
-          <UTooltip text="Team #">
-            <UInputMenu
-                v-model="filterTeam"
-                :options="teamOptions"
-                @change="navigateTo('/teams/' + filterTeam)"
-                class="max-w-36 w-36 flex-auto"
-                placeholder="Select a team"
-            />
-          </UTooltip>
-          <UTooltip text="Event Key">
-            <USelectMenu
-                v-model="currentEvent"
-                :options="eventOptions"
-                class="max-w-36 w-36 flex-auto ml-3"
-            />
-          </UTooltip>
+          <UInputMenu
+              v-model="filterTeam"
+              :options="teamOptions"
+              @change="navigateTo('/teams/' + filterTeam)"
+              class="max-w-36 w-36 flex-auto h-8"
+              placeholder="Select a team"
+          />
+          <USelectMenu
+              v-model="currentEvent"
+              :options="eventOptions"
+              class="max-w-36 w-36 flex-auto h-8 ml-3"
+          />
         </div>
       </div>
     </template>
