@@ -179,8 +179,8 @@ export default defineNuxtConfig({
     couchDB: {
       hostname: (process.env.couchDBHostname === undefined) ? process.env.couchDBHostname:"localhost",
       serverAdminUser: {
-        username: process.env.COUCHDB_SERVER_USER,
-        password: process.env.COUCHDB_SERVER_PASSWORD
+        username: process.env.NUXT_COUCH_DB_SERVER_ADMIN_USER_USERNAME,
+        password: process.env.NUXT_COUCH_DB_SERVER_ADMIN_USER_PASSWORD
       }
     }
   },
