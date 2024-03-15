@@ -25,7 +25,7 @@ function whenClicked(Quadrant:string){
 <template>
   <div>
     <div v-for="items in fullArray" class="flex" flex-auto>
-      <div v-for="item in items" @click="whenClicked" class="flex-auto w-1/4 h-1/4">
+      <div v-for="item in items" @click="whenClicked(item)" class="flex-auto w-1/4 h-1/4">
         <p>{{item}}</p>
       </div>
     </div>
