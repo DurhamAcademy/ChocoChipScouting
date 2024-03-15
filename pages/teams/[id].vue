@@ -48,7 +48,7 @@ let extraNotes = new Map<number, Array<string>>()
     }
   }
 
-let teamData = ref<{team: number, rawData: any}>()
+let teamData = ref<{teamNum: number, teamName: string, rawData: any}>({teamNum: 0, teamName: "", rawData: null})
 let teamOptions = ref<Array<number>>([])
 let filterTeam = ref(route.params.id)
 
@@ -66,14 +66,31 @@ function setup() {
     }
     if (key.toString() == filterTeam.value) {
       teamData.value = {
-        team: key,
-        rawData: filteredValue
+        teamNum: key,
+        rawData: filteredValue,
+        teamName: ""
       }
     }
   }
   teamOptions.value.sort()
+  findTeamName()
 }
 setup()
+
+async function findTeamName(){
+  let {teamData: db} = databases.locals
+  //gets all the teamsData docs from the database and adds them to one array
+  let dbTeams = (await db.allDocs()).rows.map(async (doc): Promise<TeamData> => {
+    return db.get(doc.id)
+  })
+  Promise.all(dbTeams).then((teams: Array<TeamData>) => {
+      teams.forEach((team) => {
+        if(team.teamNum == teamData.value.teamNum){
+          teamData.value.teamName = team.teamName
+        }
+      })
+  })
+}
 
 watch(currentEvent, (value) => {
   setup()
@@ -98,7 +115,7 @@ watch(width, () => {
     <template #header>
       <UButton class="absolute left-2 top-2" variant="ghost" size="xl" icon="i-heroicons-arrow-left" @click="goBack"/>
       <div class="text-center justify-center">
-        <h1 class="font-extrabold text-2xl mb-2">{{teamData.team}}</h1>
+        <h1 class="font-extrabold text-2xl mb-2">{{teamData.teamName != '' ? (teamData.teamNum + ' - ' + teamData.teamName): teamData.teamNum}}</h1>
         <div class="mx-auto flex justify-center align-center">
           <UTooltip text="Team #">
             <UInputMenu
@@ -131,7 +148,7 @@ watch(width, () => {
     </div>
     <div v-else class="opacity-50">
       <NuxtImg class="mx-auto" src="/sadcookie.png" height="400" width="400" />
-      <h1 class="font-sans text-xl font-bold text-center">Looks like there is no data on team {{teamData.team}} at {{currentEvent}} :(</h1>
+      <h1 class="font-sans text-xl font-bold text-center">Looks like there is no data on team {{teamData.teamNum}} at {{currentEvent}} :(</h1>
     </div>
   </UCard>
 </template>
