@@ -15,12 +15,17 @@ const value = computed({
     emit('update:modelValue', value)
   }
 })
+
+function whenClicked(Quad:string){
+  console.log(Quad)
+}
+
 </script>
 
 <template>
   <div>
     <div v-for="items in fullArray" class="flex" flex-auto>
-      <div v-for="item in items" @click="" class="flex-auto">
+      <div v-for="item in items" @click="whenClicked" class="flex-auto w-1/4 h-1/4">
         <p>{{item}}</p>
       </div>
     </div>
