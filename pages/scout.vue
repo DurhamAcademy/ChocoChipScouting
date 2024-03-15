@@ -71,27 +71,31 @@ let impData = {
 
 //todo fix
 let scoutData: Ref<UnwrapRef<{
-  auto: { speakerNA: number; amp: number; mobility: boolean };
-  notes: {  notes: string; promptedNotes: Array<Array<boolean | number | Array<string>>> };
+  auto: { speaker: number; missedSpeaker: number; amp: number; missedAmp: number; mobility: boolean };
+  teleop: { speaker: number; missedSpeaker: number; amp: number; missedAmp: number; };
   endgame: { endgame: string[]; trap: number; spotlight: number };
+  notes: {  notes: string; promptedNotes: Array<Array<boolean | number | Array<string>>> };
   teamNumber: any;
   event: string;
   matchNumber: any;
   author: string;
-  teleop: { speakerNA: number; amp: number }
 }>> = ref({
   event: "",
   teamNumber: "",
   matchNumber: "",
   author: "",
   auto: {
-    speakerNA: 0,
+    speaker: 0,
+    missedSpeaker: 0,
     amp: 0,
+    missedAmp: 0,
     mobility: false,
   },
   teleop: {
     amp: 0,
-    speakerNA: 0,
+    missedAmp: 0,
+    speaker: 0,
+    missedSpeaker: 0,
   },
   endgame: {
     trap: 0,
@@ -172,46 +176,68 @@ async function submit() {
         </UButtonGroup>
       </template>
       <div v-if="gameTime == GameTime.Autonomous">
-        <div class="flex" style="text-align:center">
-          <div>
-            <h1 class="font-sans text-gray-700 dark:text-gray-200 font-medium">Amp</h1>
-            <IncrementalButton v-model="scoutData.auto.amp" style="margin:5px"></IncrementalButton>
+        <div class="flex text-center">
+          <div class="max-w-24 w-24">
+            <h1 class="text-gray-700 dark:text-gray-200 font-sans mr-3 mb-1 font-medium">Amp</h1>
+            <IncrementalButton class="mb-0 mr-3 mt-1" v-model="scoutData.auto.amp"></IncrementalButton>
+            <h1 class="text-coral-500 mr-3 dark:text-gray-200 font-sans text-sm">Scored</h1>
           </div>
-          <div>
-            <h1 class="text-gray-700 dark:text-gray-200 font-sans font-medium">Speaker</h1>
-            <IncrementalButton v-model="scoutData.auto.speakerNA" style="margin:5px"></IncrementalButton>
+          <div class="max-w-24 w-24">
+            <h1 class="text-gray-700 dark:text-gray-200 font-sans font-medium mb-1">Speaker</h1>
+            <IncrementalButton class="mb-0 mt-1" v-model="scoutData.auto.speaker"></IncrementalButton>
+            <h1 class="text-coral-500 dark:text-gray-200 font-sans text-sm">Scored</h1>
           </div>
           <div>
             <br>
-            <BooleanButton v-model="scoutData.auto.mobility" :default-value="'Mobility'" :other-value="'Mobility'"
-                           style="margin:5px"></BooleanButton>
+            <BooleanButton class="mt-2 ml-3" v-model="scoutData.auto.mobility" :default-value="'Mobility'" :other-value="'Mobility'"/>
+          </div>
+        </div>
+        <div class="flex text-center">
+          <div class="max-w-24 w-24">
+            <IncrementalButton class="mb-0 mt-2 mr-3" v-model="scoutData.auto.missedAmp" ></IncrementalButton>
+            <h1 class="text-coral-500 dark:text-gray-200 font-sans text-sm mr-3">Missed</h1>
+          </div>
+          <div class="max-w-24 w-24">
+            <IncrementalButton class="mb-0 mt-2" v-model="scoutData.auto.missedSpeaker"></IncrementalButton>
+            <h1 class="text-coral-500 dark:text-gray-200 font-sans text-sm">Missed</h1>
           </div>
         </div>
       </div>
       <div v-if="gameTime == GameTime.Teleoperated">
-        <div class="flex" style="text-align:center">
-          <div>
-            <h1 class="text-gray-700 dark:text-gray-200 font-sans font-medium">Amp</h1>
-            <IncrementalButton v-model="scoutData.teleop.amp" style="margin:5px"></IncrementalButton>
+        <div class="flex text-center">
+          <div class="max-w-24 w-24">
+            <h1 class="text-gray-700 dark:text-gray-200 font-sans mr-3 mb-1 font-medium">Amp</h1>
+            <IncrementalButton class="mb-0 mr-3 mt-1" v-model="scoutData.teleop.amp"></IncrementalButton>
+            <h1 class="text-coral-500 mr-3 dark:text-gray-200 font-sans text-sm">Scored</h1>
           </div>
-          <div>
-            <h1 class="text-gray-700 dark:text-gray-200 font-sans font-medium">Speaker</h1>
-            <IncrementalButton v-model="scoutData.teleop.speakerNA" style="margin:5px"></IncrementalButton>
+          <div class="max-w-24 w-24">
+            <h1 class="text-gray-700 dark:text-gray-200 font-sans font-medium mb-1">Speaker</h1>
+            <IncrementalButton class="mb-0 mt-1" v-model="scoutData.teleop.speaker"></IncrementalButton>
+            <h1 class="text-coral-500 dark:text-gray-200 font-sans text-sm">Scored</h1>
+          </div>
+        </div>
+        <div class="flex text-center">
+          <div class="max-w-24 w-24">
+            <IncrementalButton class="mb-0 mt-2 mr-3" v-model="scoutData.teleop.missedAmp" ></IncrementalButton>
+            <h1 class="text-coral-500 dark:text-gray-200 font-sans text-sm mr-3">Missed</h1>
+          </div>
+          <div class="max-w-24 w-24">
+            <IncrementalButton class="mb-0 mt-2" v-model="scoutData.teleop.missedSpeaker"></IncrementalButton>
+            <h1 class="text-coral-500 dark:text-gray-200 font-sans text-sm">Missed</h1>
           </div>
         </div>
       </div>
       <div v-if="gameTime == GameTime.Endgame">
-        <div class="flex text-center flex-wrap">
-          <div>
+        <div class="flex text-center flex-wrap mb-3">
+          <div class="max-w-24 w-24">
             <h1 class="text-gray-700 dark:text-gray-200 font-sans font-medium">Trap</h1>
-            <IncrementalButton v-model="scoutData.endgame.trap" :max-value="3" style="margin:5px"></IncrementalButton>
+            <IncrementalButton class="mt-1" v-model="scoutData.endgame.trap" :max-value="3"></IncrementalButton>
           </div>
           <div class="ml-3">
             <h1 class="text-gray-700 dark:text-gray-200 font-sans font-medium">Spotlights Hit</h1>
             <SingleSelect  v-model="scoutData.endgame.spotlight" :options="['0', '1', '2', '3']"/>
           </div>
         </div>
-          <br>
             <MultiSelect :model-value="endgameIndex" :options="endgameOptions"
                      @update:model-value="value => {updateEndgameOptions(value)}"
                      :connected-options="connectedOptions"/>

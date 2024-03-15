@@ -40,14 +40,14 @@ class LocalRemoteDatabaseSyncHolder<Content extends {} = {}> {
 }
 
 export type ScoutingData = {
-    auto: { speakerNA: number; amp: number; mobility: boolean };
+    auto: { speaker: number; missedSpeaker: number; amp: number; missedAmp: number; mobility: boolean };
     notes: {  notes: string; promptedNotes: Array<Array<boolean & number & Array<string>>> };
     endgame: { endgame: string[]; trap: number; spotlight: number };
     teamNumber: any;
     event: string;
     matchNumber: any;
     author: string;
-    teleop: { speakerNA: number; amp: number }
+    teleop: { speaker: number; missedSpeaker: number; amp: number; missedAmp: number; }
 }
 
 export type TeamData = {

@@ -26,8 +26,8 @@ let matchScores = ref<Array<number>>([])
 
 for(let match of props.rowData.rawData){
   matchNums.value.push(match.matchNumber)
-  autoMatchScores.value.push(match.auto.speakerNA)
-  matchScores.value.push(match.auto.speakerNA + match.teleop.speakerNA)
+  autoMatchScores.value.push(match.auto.speaker)
+  matchScores.value.push(match.auto.speaker + match.teleop.speaker)
 }
 
 
@@ -56,8 +56,8 @@ function getSpeakerStats(){
   let minTeleop = null
   let totalTeleop = 0
   for(let match of props.rowData.rawData){
-    let matchAuto = match.auto.speakerNA
-    let matchTeleop = match.teleop.speakerNA
+    let matchAuto = match.auto.speaker
+    let matchTeleop = match.teleop.speaker
     if(matchAuto > maxAuto) maxAuto = matchAuto
     if(matchTeleop > maxTeleop) maxTeleop = matchTeleop
 
