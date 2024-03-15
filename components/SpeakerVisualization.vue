@@ -26,8 +26,8 @@ let matchScores = ref<Array<number>>([])
 
 for(let match of props.rowData.rawData){
   matchNums.value.push(match.matchNumber)
-  autoMatchScores.value.push(match.auto.speakerNA)
-  matchScores.value.push(match.auto.speakerNA + match.teleop.speakerNA)
+  autoMatchScores.value.push(match.auto.speaker)
+  matchScores.value.push(match.auto.speaker + match.teleop.speaker)
 }
 
 
@@ -56,8 +56,8 @@ function getSpeakerStats(){
   let minTeleop = null
   let totalTeleop = 0
   for(let match of props.rowData.rawData){
-    let matchAuto = match.auto.speakerNA
-    let matchTeleop = match.teleop.speakerNA
+    let matchAuto = match.auto.speaker
+    let matchTeleop = match.teleop.speaker
     if(matchAuto > maxAuto) maxAuto = matchAuto
     if(matchTeleop > maxTeleop) maxTeleop = matchTeleop
 
@@ -88,15 +88,20 @@ let rows = [{
 
 <template>
   <UCard>
-    <div class="width=device-width flex-auto flex-wrap flex">
+    <div class="width=device-width flex-auto flex flex-wrap">
       <LineChart
           class="mr-5"
           :data="[matchScores, autoMatchScores]"
           :labels="matchNums"
           :chart-titles="chartTitles"
           :suggested-max="20"
+          height="h-64"
+          width="w-64"
       ></LineChart>
       <div class="flex-auto whitespace-normal">
+        <div class="font-semibold underline underline-offset-2 mb-1 w-full text-center">
+          <h1>Speaker</h1>
+        </div>
         <UTable :rows="rows" :columns="columns"/>
       </div>
     </div>

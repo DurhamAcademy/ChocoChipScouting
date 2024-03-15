@@ -154,7 +154,7 @@ const {isOverDropZone} = useDropZone(dropZoneRef, onDrop) // variable that check
       </template>
     </UCard>
     <UCard class="m-3">
-      <UTable :rows="rows" :columns="[{key: 'fileName', label: 'File Name'}, {key: 'fileType', label: 'File Type'}, {key: 'fileSize', label: 'File Size'}, {key: 'teamNum', label: 'Team # (-1 for misc)'}, {key: 'tags', label: 'Tags'}, {key: 'actions'}]">
+      <UTable :rows="rows" :columns="[{key: 'fileName', label: 'File Name'}, {key: 'fileType', label: 'File Type'}, {key: 'fileSize', label: 'File Size'}, {key: 'teamNum', label: 'Team # (0 for misc)'}, {key: 'tags', label: 'Tags'}, {key: 'actions'}]">
         <template #teamNum-data="{ row, index }">
           <div class="flex ">
             <UInput class="min-w-20" v-model="row.teamNumber" placeholder="Team #" type="number" @change="minMaxTeam(index)"/>

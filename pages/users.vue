@@ -6,13 +6,14 @@ import {useLazyAsyncData} from "#app";
 
 PouchDB.plugin(auth)
 const usersDB = new PouchDB(`${couchDBBaseURL}/_users`, {skip_setup: true});
+const basicDB = new PouchDB(`${couchDBBaseURL}/basic`, {skip_setup: true});
 const toast = useToast()
 
 let username = ref("")
 let password = ref("")
 
 let roles = ref([[""]])
-const roleOptions = ["drive team", "scout", 'pit', 'other']
+const roleOptions = ["drive team", "scout", 'pit', 'other', 'admin']
 
 let updatingRoles = false
 

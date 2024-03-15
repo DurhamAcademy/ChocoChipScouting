@@ -10,7 +10,52 @@ async function sync(){
   await PouchDB.sync(databases.locals.scoutingData, databases.remotes.scoutingData)
   await PouchDB.sync(databases.locals.basic, databases.remotes.basic)
   await PouchDB.sync(databases.locals.attachments, databases.remotes.attachments)
+  await PouchDB.sync(databases.locals.teamData, databases.remotes.teamData)
+
   syncDisable.value = false
+}
+
+updateTeamData()
+
+async function updateTeamData() {
+  try {
+    let previouslySavedTeamNums: number[] = []
+    let {teamData: db} = databases.locals
+    //gets all the teamsData docs from the database and adds them to one array
+    let dbTeams = (await db.allDocs()).rows.map(async (doc): Promise<TeamData> => {
+      return db.get(doc.id)
+    })
+    Promise.all(dbTeams).then((teams: Array<TeamData>) => {
+      previouslySavedTeamNums = teams.map((value) => {
+        return value.teamNum
+      })
+    }).then(async () => {
+      //goes through each event and checks if they have any teams that aren't in the db already
+      let newTeams: Array<TeamData> = []
+      for (let event of eventOptions) {
+        const {data: tbaEventData} = await useFetch<Array<any>>("/api/eventTeams/" + event)
+        if (tbaEventData.value != null) {
+          if(tbaEventData.value.hasOwnProperty("Error")) continue
+          for (let team of tbaEventData.value) {
+            let teamDataObj: TeamData = {
+              teamNum: parseInt(team.key.replace("frc", '')),
+              teamName: team.nickname
+            }
+            if (previouslySavedTeamNums.includes(teamDataObj.teamNum)) continue
+            newTeams.push(teamDataObj)
+          }
+        }
+        else{
+          console.error("Ruh roh! There seems to have been an issue")
+        }
+      }
+      if(newTeams.length > 0){
+        await db.bulkDocs(newTeams)
+      }
+    })
+  } catch {
+    console.error("An error occurred")
+  }
 }
 </script>
 
