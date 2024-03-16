@@ -2,6 +2,7 @@
 
 import PouchDB from "pouchdb";
 import databases from "~/utils/databases";
+import SyncStatusVisualization from "~/components/SyncStatusVisualization.vue";
 
 let syncDisable = ref(false)
 
@@ -65,6 +66,7 @@ async function updateTeamData() {
     <UButton class="ml-3 mt-3" @click="sync" :disabled="syncDisable" :loading="syncDisable">
       Sync Databases
     </UButton>
+    <SyncStatusVisualization/>
     <div class="px-5 max-w-2xl min-w-lg flex-grow">
       <LazyUSkeleton class="w-full h-64 my-5"></LazyUSkeleton>
       <LazyUCard class="my-5">

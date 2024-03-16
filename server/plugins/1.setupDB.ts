@@ -4,7 +4,6 @@ import SecurityHelper from "pouchdb-security-helper"
 
 PouchDB.plugin(SecurityHelper)
 
-
 export default defineNitroPlugin((nitroApp) => {
     // @ts-ignore
     nitroApp.hooks.hookOnce('request', async function () {
