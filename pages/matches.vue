@@ -1,6 +1,8 @@
 <script setup lang="ts">
-import databases from "~/utils/databases"
+import databases, {type ScoutingData} from "~/utils/databases"
 import {eventOptions} from "~/utils/eventOptions";
+import IdMeta = PouchDB.Core.IdMeta;
+import {useLazyAsyncData} from "#app";
 const { scoutingData } = databases.locals
 
 const sortBy = ref([{ key: 'teamNumber', order: 'asc' }, { key: 'matchNumber', order: 'asc' }])
@@ -10,17 +12,24 @@ if (typeof window !== 'undefined') currentEvent = localStorage.getItem('currentE
 
 let db = scoutingData
 
-
-const matche = (await db.allDocs()).rows
-let matc = matche.map(async (doc) => {
-  return await db.get(doc.id)
-})
-let matches = await Promise.all(matc)
-for (let i=matches.length-1; i>=0; i--) {
-  if(matches[i].matchNumber === -1 || matches[i].matchNumber === null || (matches[i].event != currentEvent)){
-    matches.splice(i, 1)
+async function setup(){
+  const allDocs = (await db.allDocs()).rows
+  let promiseMatches = allDocs.map(async (doc): Promise<ScoutingData & IdMeta> => {
+    return await db.get(doc.id)
+  })
+  let matches = await Promise.all(promiseMatches)
+  for (let i=matches.length-1; i>=0; i--) {
+    if(matches[i].matchNumber === -1 || matches[i].matchNumber === null || (matches[i].event != currentEvent)){
+      matches.splice(i, 1)
+    }
   }
+
+
+
+
+  items = matches
 }
+let items
 
 const headers = [
   {
@@ -57,13 +66,12 @@ const headers = [
   }
 ]
 
-
-const items = matches
-
+const { pending, data: res } = await useLazyAsyncData('res', () => setup())
 </script>
 <template>
   <OuterComponents>
     <VDataTable
+        :loading="pending"
         class="max-h-dvh overflow-auto"
         :headers="headers"
         :items="items"
@@ -92,6 +100,10 @@ const items = matches
               :alt="row.value || '-'"
           />
         </UTooltip>
+      </template>
+
+      <template v-slot:loading>
+        <v-skeleton-loader type="table-row"></v-skeleton-loader>
       </template>
     </VDataTable>
   </OuterComponents>

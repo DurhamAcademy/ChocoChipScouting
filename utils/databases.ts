@@ -15,8 +15,11 @@ class LocalRemoteDatabaseSyncHolder<Content extends {} = {}> {
         })
     }
 
-    async sync() {
-        PouchDB.sync(this.local, this.remote, {live: true, retry: true,})
+    sync() {
+        return PouchDB.sync(this.local, this.remote, {
+            live: true,
+            retry: true
+        })
     }
 
     static databases = {
@@ -60,11 +63,6 @@ export type Attachments = {
     team: number;
     author: string | undefined;
 }
-
-for (const database of Object.values(LocalRemoteDatabaseSyncHolder.databases)) {
-    database.sync()
-}
-
 
 export default {
     databases: LocalRemoteDatabaseSyncHolder.databases,
