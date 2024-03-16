@@ -187,7 +187,7 @@ async function tableSetup() {
       if (filter.id == 1) {
         let hasAuto = false
         for (let match of data) {
-          if (match.auto.amp > 0 || match.auto.speaker > 0 || match.auto.mobility) {
+          if (match.auto.amp > 0 || match.auto.speakerNA > 0 || match.auto.mobility) {
             hasAuto = true
             break
           }
@@ -241,7 +241,7 @@ function averageDefensiveScore(teamArrays: Array<ScoutingData>){
 function getAverageSpeakerCycles(teamArrays: Array<ScoutingData>){
   let nonAveragedValue = 0
   for(let i = 0; i < teamArrays.length; i++){
-    nonAveragedValue += teamArrays[i].auto.speaker + teamArrays[i].teleop.speaker
+    nonAveragedValue += teamArrays[i].auto.speakerNA + teamArrays[i].teleop.speakerNA
   }
   return nonAveragedValue/teamArrays.length
 }
