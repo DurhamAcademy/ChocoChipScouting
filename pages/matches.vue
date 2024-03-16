@@ -101,6 +101,10 @@ const { pending, data: res } = await useLazyAsyncData('res', () => setup())
           />
         </UTooltip>
       </template>
+
+      <template v-slot:loading>
+        <v-skeleton-loader type="table"></v-skeleton-loader>
+      </template>
     </VDataTable>
   </OuterComponents>
 </template>
