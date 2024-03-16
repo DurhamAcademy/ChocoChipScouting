@@ -9,8 +9,8 @@ if (typeof window !== 'undefined') {
     }
     couchDBBaseURL = `${location.protocol}//${window.location.hostname}:${port}`;
 } else {
-    if (process.env.couchDBHostname !== undefined) {
-        couchDBBaseURL = `http://${process.env.couchDBHostname}:5984`;
+    if (process.env.NUXT_COUCH_DB_HOSTNAME !== undefined) {
+        couchDBBaseURL = `http://${process.env.NUXT_COUCH_DB_HOSTNAME}:5984`;
     } else {
         couchDBBaseURL = `http://localhost:5984`;
     }
