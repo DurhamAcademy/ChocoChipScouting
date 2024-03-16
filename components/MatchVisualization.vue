@@ -42,9 +42,9 @@ watch(selectedMatch, () =>{
   currData.value = props.rowData.rawData[selectedMatch.value - 1]
   chartData.value = [
     currData.value.auto.amp,
-    currData.value.auto.speaker,
+    currData.value.auto.speakerNA,
     currData.value.teleop.amp,
-    currData.value.teleop.speaker,
+    currData.value.teleop.speakerNA,
     currData.value.endgame.trap,
   ]
   chartTitle.value = "Match " + currData.value.matchNumber
@@ -56,10 +56,10 @@ let sentimentScore = sentiment.analyze(props.rowData.rawData[selectedMatch.value
 
 let chartData = ref([
   currData.value.auto.amp,
-  currData.value.auto.speaker,
+  currData.value.auto.speakerNA,
   currData.value.teleop.amp,
   currData.value.teleop.missedAmp,
-  currData.value.teleop.speaker,
+  currData.value.teleop.speakerNA,
   currData.value.teleop.missedSpeaker,
   currData.value.endgame.trap,
 ])

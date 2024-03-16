@@ -71,8 +71,8 @@ let impData = {
 
 //todo fix
 let scoutData: Ref<UnwrapRef<{
-  auto: { speaker: number; missedSpeaker: number; amp: number; missedAmp: number; mobility: boolean };
-  teleop: { speaker: number; missedSpeaker: number; amp: number; missedAmp: number; };
+  auto: { speakerNA: number; missedSpeaker: number; amp: number; missedAmp: number; mobility: boolean };
+  teleop: { speakerNA: number; missedSpeaker: number; amp: number; missedAmp: number; };
   endgame: { endgame: string[]; trap: number; spotlight: number };
   notes: {  notes: string; promptedNotes: Array<Array<boolean | number | Array<string>>> };
   teamNumber: any;
@@ -85,7 +85,7 @@ let scoutData: Ref<UnwrapRef<{
   matchNumber: "",
   author: "",
   auto: {
-    speaker: 0,
+    speakerNA: 0,
     missedSpeaker: 0,
     amp: 0,
     missedAmp: 0,
@@ -94,7 +94,7 @@ let scoutData: Ref<UnwrapRef<{
   teleop: {
     amp: 0,
     missedAmp: 0,
-    speaker: 0,
+    speakerNA: 0,
     missedSpeaker: 0,
   },
   endgame: {
@@ -184,7 +184,7 @@ async function submit() {
           </div>
           <div class="max-w-24 w-24">
             <h1 class="text-gray-700 dark:text-gray-200 font-sans font-medium mb-1">Speaker</h1>
-            <IncrementalButton class="mb-0 mt-1" v-model="scoutData.auto.speaker"></IncrementalButton>
+            <IncrementalButton class="mb-0 mt-1" v-model="scoutData.auto.speakerNA"></IncrementalButton>
             <h1 class="text-coral-500 dark:text-gray-200 font-sans text-sm">Scored</h1>
           </div>
           <div>
@@ -212,7 +212,7 @@ async function submit() {
           </div>
           <div class="max-w-24 w-24">
             <h1 class="text-gray-700 dark:text-gray-200 font-sans font-medium mb-1">Speaker</h1>
-            <IncrementalButton class="mb-0 mt-1" v-model="scoutData.teleop.speaker"></IncrementalButton>
+            <IncrementalButton class="mb-0 mt-1" v-model="scoutData.teleop.speakerNA"></IncrementalButton>
             <h1 class="text-coral-500 dark:text-gray-200 font-sans text-sm">Scored</h1>
           </div>
         </div>

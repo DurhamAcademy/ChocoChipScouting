@@ -201,7 +201,7 @@ async function tableSetup() {
       let arr = {
         team: key,
         amp: getAverageAmpCycles(data).toFixed(2),
-        speaker: getAverageSpeakerCycles(data).toFixed(2),
+        speakerNA: getAverageSpeakerCycles(data).toFixed(2),
         mobility: averageAuto(data).toFixed(2),
         endgame: compileEndgames(data),
         defense: averageDefensiveScore(data).toFixed(2),
