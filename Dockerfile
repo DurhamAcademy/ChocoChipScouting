@@ -90,6 +90,8 @@ COPY ./server ./server
 COPY ./components ./components
 COPY ./utils ./utils
 COPY ./plugins ./plugins
+COPY ./service-worker ./service-worker
+COPY ./composables ./composables
 
 #ENTRYPOINT ["bash"]
 RUN ["bun", "--bun", "run", "postinstall"]

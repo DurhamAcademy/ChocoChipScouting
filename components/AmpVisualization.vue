@@ -84,17 +84,21 @@ let rows = [{
 
 <template>
   <UCard>
-    <div class="h-80 overflow-scroll flex">
+    <div class="flex flex-auto width=device-width flex-wrap">
       <LineChart
-          class="w-80 mr-5"
+          class="mr-5"
           :data="[matchScores, autoMatchScores]"
           :labels="matchNums"
           :chart-titles="chartTitles"
+          :suggested-max="20"
+          height="h-64"
+          width="w-64"
       ></LineChart>
-      <div class="flex-auto whitespace-normal w-72 max-w-72">
-        <UTable :rows="rows" :columns="columns">
-
-        </UTable>
+      <div class="flex-auto whitespace-normal">
+        <div class="font-semibold underline underline-offset-2 mb-1 w-full text-center">
+          <h1>Amp</h1>
+        </div>
+        <UTable :rows="rows" :columns="columns"/>
       </div>
     </div>
   </UCard>

@@ -2,52 +2,58 @@
 import PouchDB from "pouchdb"
 import auth from "../utils/authorization/Authorizer";
 import {couchDBBaseURL} from "~/utils/URIs"
+import {useLazyAsyncData} from "#app";
 
 PouchDB.plugin(auth)
-const usersDB = new PouchDB(`${couchDBBaseURL}/basic`, {skip_setup: true});
+const usersDB = new PouchDB(`${couchDBBaseURL}/_users`, {skip_setup: true});
+const basicDB = new PouchDB(`${couchDBBaseURL}/basic`, {skip_setup: true});
+const toast = useToast()
 
+let username = ref("")
+let password = ref("")
 
-  let username = ref("")
+let roles = ref([[""]])
+const roleOptions = ["drive team", "scout", 'pit', 'other', 'admin']
 
-  let roles = ref([[""]])
-  const roleOptions = ["Coach", "Scout"]
-  let prevRoles: string[][] = [[]]
-  let resetRoles = false
+let updatingRoles = false
 
-  let adminAccount = ref(false)
+let userArr = ref([[""]])
 
-  let userArr = ref([[""]])
-
-  async function setup() {
-    resetRoles = true
+async function setup() {
+  try {
+    let docs = await usersDB.allDocs()
     userArr.value.length = 0
     roles.value.length = 0
-    prevRoles.length = 0
-    let docs = await usersDB.allDocs()
-    for(let user of docs.rows){
-      if(user.id.includes("org.couchdb.user:")){
-        let userInfo = await usersDB.getUser(user.id.split(":")[1])
+    let rolePromises = []
+    for (let user of docs.rows) {
+      if (user.id.includes("org.couchdb.user:")) {
         userArr.value.push([user.id.split(":")[1]])
-        if(userInfo.roles) roles.value.push(userInfo.roles)
-        else roles.value.push([])
+        rolePromises.push(Promise.resolve(usersDB.getUser(user.id.split(":")[1])))
       }
     }
-    prevRoles = Array.from(roles.value)
-    resetRoles = false
-    usersDB.getSession(function(err, response){
-      if(response){
-        if(response.userCtx.roles?.includes("_admin")){
-          adminAccount.value = true
-        }
+    updatingRoles = true
+    Promise.all(rolePromises).then((promiseValues) => {
+      for(let userInfo of promiseValues) {
+        if(promiseValues.indexOf(userInfo) == promiseValues.length - 1) updatingRoles = false
+        if (userInfo.roles) roles.value.push(userInfo.roles)
+        else roles.value.push([])
       }
     })
+    return userArr
   }
-  setup()
+  catch{
+    debug("fail")
+  }
+}
 
-  async function createUser() {
-    let sessionRoles = await usersDB.getSession()
-    if(! (sessionRoles.userCtx.roles && (sessionRoles.userCtx.roles.includes("_admin"))) ) return
-    usersDB.signUp(username.value, "temp",
+function debug(text:string){
+  toast.add({ title: text })
+}
+
+async function signUp() {
+  let sessionRoles = await usersDB.getSession()
+  if(!(sessionRoles.userCtx.roles && (sessionRoles.userCtx.roles.includes("_admin")))) return
+    usersDB.signUp(username.value, password.value,
         {
           metadata: {
             unaccessedAccount: true
@@ -63,80 +69,113 @@ const usersDB = new PouchDB(`${couchDBBaseURL}/basic`, {skip_setup: true});
             }
           } else {
             console.log("User created")
+            username.value = ""
+            password.value = ""
             setup()
           }
-        });
-  }
+        }
+    );
+}
 
-  watch(roles.value, (value, oldValue, onCleanup) => {
-    if(!resetRoles) {
-      for (let i = 0; i < value.length; i++) {
-        let updateRoles = false
-        for (let j = 0; j < value[i].length; j++) {
-          if (value[i][j] != prevRoles[i][j]) {
-            updateRoles = true
+async function changePassword() {
+  let sessionRoles = await usersDB.getSession()
+  if(!(sessionRoles.userCtx.roles && (sessionRoles.userCtx.roles.includes("_admin")))) return
+    usersDB.changePassword(username.value, password.value,
+        {}, function (err, response) {
+          if (err) {
+            console.log(err)
+          } else {
+            console.log("Password changed")
+            username.value = ""
+            password.value = ""
+            setup()
           }
         }
-        if (updateRoles) {
-          if (userArr.value[i][0]) editRoles(userArr.value[i][0], value[i])
+    )
+}
+
+async function userManage() {
+  let sessionRoles = await usersDB.getSession()
+  if(!(sessionRoles.userCtx.roles && (sessionRoles.userCtx.roles.includes("_admin")))) return
+  usersDB.getUser(username.value,
+      {}, function (err, response) {
+        if (err) {
+          if (err.name == 'not_found') {
+            signUp()
+          }
+        } else {
+          changePassword()
         }
       }
-      prevRoles = Array.from(value)
+  )
+}
+
+watch(roles.value, (value) => {
+  if(!updatingRoles) {
+    let promiseArr = []
+    for (let i = 0; i < value.length; i++) {
+      promiseArr.push(Promise.resolve(editRoles(userArr.value[i][0], value[i])))
     }
-  })
-
-  async function editRoles(username: string, newRoles: Array<string>) {
-    let sessionRoles = await usersDB.getSession()
-    if(! (sessionRoles.userCtx.roles && (sessionRoles.userCtx.roles.includes("_admin"))) ) return
-    await usersDB.putUser(username, {roles: newRoles})
+    Promise.all(promiseArr)
   }
+})
 
+async function editRoles(username: string, newRoles: Array<string>) {
+  let sessionRoles = await usersDB.getSession()
+  if(! (sessionRoles.userCtx.roles && (sessionRoles.userCtx.roles.includes("_admin"))) ) return
+  await usersDB.putUser(username, {roles: newRoles})
+}
 
-  async function deleteUser(username: string) {
-    let sessionRoles = await usersDB.getSession()
-    if(! (sessionRoles.userCtx.roles && (sessionRoles.userCtx.roles.includes("_admin"))) ) return
-    usersDB.deleteUser(username, function (err, result) {
-      if (err) {
-        console.log(err.name)
-      }
-      if (result) {
-        for (let i = 0; i < userArr.value.length; i++) {
-          if (userArr.value[i].includes(username)) {
-            userArr.value.splice(i, 1)
-          }
+async function deleteUser(username: string) {
+  let sessionRoles = await usersDB.getSession()
+  if(! (sessionRoles.userCtx.roles && (sessionRoles.userCtx.roles.includes("_admin"))) ) return
+  usersDB.deleteUser(username, function (err, result) {
+    if (err) {
+      console.log(err.name)
+    }
+    if (result) {
+      for (let i = 0; i < userArr.value.length; i++) {
+        if (userArr.value[i].includes(username)) {
+          userArr.value.splice(i, 1)
+          roles.value.splice(i, 1)
         }
       }
-    });
-  }
+    }
+  });
+}
 
-  const columns = [{
-    key: 'user',
-    label: 'Username'
-  }, {
-    key: 'roles',
-    label: "Roles"
-  }, {
-    key: 'delete',
-  }]
+const columns = [{
+  key: 'user',
+  label: 'Username'
+}, {
+  key: 'roles',
+  label: "Roles"
+}, {
+  key: 'delete',
+}]
 
+const { pending, data: res } = await useLazyAsyncData('res', () => setup())
 </script>
 
 <template>
-  <OuterComponents v-if="adminAccount">
-    <div class="flex justify-center">
-      <UCard class="max-w-xl flex-grow m-5" style="overflow:visible">
+  <OuterComponents>
+    <div class="flex justify-center overflow-y-scroll">
+      <UCard class="max-w-xl flex-grow m-5 overflow-visible">
         <template #header>
-          <div style="display:flex">
-            <div style="flex:1">
-              <UInput v-model="username" placeholder="Username"/>
-            </div>
-            <div style="flex:.5;padding-left:5px">
-              <UButton :label="'Create User'" @click="createUser" block></UButton>
-            </div>
-          </div>
+          <UForm class="flex">
+            <UFormGroup class="flex-auto">
+              <UInput v-model="username" autocomplete="off" placeholder="Username"/>
+            </UFormGroup>
+            <UFormGroup class="flex-auto pl-2.5">
+            <UInput v-model="password" autocomplete="off" type="password" placeholder="Password"/>
+            </UFormGroup>
+            <UFormGroup class="flex-auto pl-2.5">
+              <UButton :label="'Add/Edit User'" @click="userManage" block></UButton>
+            </UFormGroup>
+          </UForm>
           </template>
         <template #default>
-          <UTable :rows="userArr" :columns="columns">
+          <UTable :rows="userArr" :columns="columns" :loading="pending" :loading-state="{ icon: 'i-heroicons-arrow-path-20-solid', label: 'Loading...' }">
             <template #user-data="{ row }">
               <p>{{ row[0] }}</p>
             </template>

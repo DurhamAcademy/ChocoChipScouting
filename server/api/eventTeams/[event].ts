@@ -3,7 +3,7 @@ export default defineEventHandler(async (event) => {
     let config = useRuntimeConfig();
     if (config.tbaKey != undefined) {
         let urlNoNum: string = "https://www.thebluealliance.com/api/v3/";
-        let urlFinal: string = urlNoNum + "event/" + eventKey + "/matches";
+        let urlFinal: string = urlNoNum + "event/" + eventKey + "/teams/simple";
         let grab: any;
         grab = await fetch(urlFinal, {
             method: 'GET',

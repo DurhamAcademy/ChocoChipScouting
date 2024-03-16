@@ -1,13 +1,10 @@
-name: "production_scouting_server"
+name: "prod"
 version: 1.0.0
 services:
   server:
-    env_file: .serverenvfile
+    env_file: .env
     restart: on-failure
-    build:
-      dockerfile: Dockerfile
-      context: .
-      target: production
+    image: ghcr.io/durhamacademy/nuxtscoutingsystem:testing
     depends_on:
       couchdb:
         condition: service_healthy
@@ -21,18 +18,23 @@ services:
       - couchDBHostname=couchdb
       - COUCHDB_SERVER_USER=${SERVER_USERNAME}
       - COUCHDB_SERVER_PASSWORD=${SERVER_PASSWORD}
+      - NITRO_SSL_CERT=${NITRO_SSL_CERT}
+      - NITRO_SSL_KEY=${NITRO_SSL_KEY}
+      - NUXT_TBA_KEY=${NUXT_TBA_KEY}
     networks:
       - intercom_network
   couchdb:
-    env_file: .serverenvfile
+    env_file: .env
     restart: on-failure
     expose:
       - '5984'
+      - '6984'
     environment:
       - COUCHDB_USER=${SERVER_USERNAME}
       - COUCHDB_PASSWORD=${SERVER_PASSWORD}
     ports:
       - '5984:5984'
+      - '6984:6984'
     image: 'couchdb:3'
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:5984"]
@@ -43,8 +45,11 @@ services:
       - intercom_network
     volumes:
       - couchDB:/opt/couchdb/data
+      - ./couchdb_etc/local.d:/opt/couchdb/etc/local.d
+      - ./couchdb_etc/fullchain1.pem:/opt/couchdb/etc/fullchain1.pem
+      - ./couchdb_etc/privkey1.pem:/opt/couchdb/etc/privkey1.pem
   couch-db-setup:
-    env_file: .serverenvfile
+    env_file: .env
     restart: on-failure
     depends_on:
       couchdb:

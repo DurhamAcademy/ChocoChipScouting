@@ -12,6 +12,7 @@ let addButtonLinks = [{
   icon: 'i-heroicons-chart-bar',
   to: '/attachment/add'
 }]
+
 </script>
 
 <template>

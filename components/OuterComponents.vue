@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import PouchDB from "pouchdb";
 import {useWindowSize} from "@vueuse/core";
 import LoginState from "~/utils/authorization/LoginState";
 import {loginStateKey} from "~/utils/keys";
@@ -6,11 +7,18 @@ import AddButton from "~/components/AddButton.vue";
 import type {VerticalNavigationLink} from "#ui/types";
 import type {Ref} from "@vue/reactivity";
 import type {UnwrapRef} from "vue";
-import {couchDBBaseURL} from "~/utils/URIs";
 import {eventOptions} from "~/utils/eventOptions";
 
-const usersDB = new PouchDB(`${couchDBBaseURL}/_users`, {skip_setup: true});
-const session = await usersDB.getSession()
+const {usernameState, sessionState, logout}: {
+  logout: () => Promise<void>;
+  // noinspection TypeScriptUnresolvedReference
+  loginState: Ref<UnwrapRef<LoginState>>;
+  // noinspection TypeScriptUnresolvedReference
+  sessionState: Ref<UnwrapRef<PouchDB.Authentication.SessionResponse>>;
+  // noinspection TypeScriptUnresolvedReference
+  usernameState: Ref<UnwrapRef<string>>;
+  updateUsernameState: () => Promise<boolean>
+} = inject(loginStateKey)!
 
 const colorMode = useColorMode()
 const isDark = computed({
@@ -26,31 +34,23 @@ const isDark = computed({
 let {width, height} = useWindowSize()
 
 let route = useRoute()
+let router = useRouter()
 
 const events = eventOptions
-let selectedEvent = ref(localStorage.getItem('currentEvent') || eventOptions[0])
+let selectedEvent = ref(eventOptions[0])
+if (typeof window !== 'undefined') selectedEvent.value = localStorage.getItem('currentEvent') || eventOptions[0]
+
 watch(selectedEvent, (value) => {
   window.localStorage.setItem('currentEvent', value)
 })
-
-const {usernameState, sessionState, logout}: {
-  logout: () => Promise<void>;
-  // noinspection TypeScriptUnresolvedReference
-  loginState: Ref<UnwrapRef<LoginState>>;
-  // noinspection TypeScriptUnresolvedReference
-  sessionState: Ref<UnwrapRef<PouchDB.Authentication.SessionResponse>>;
-  // noinspection TypeScriptUnresolvedReference
-  usernameState: Ref<UnwrapRef<string>>;
-  updateUsernameState: () => Promise<boolean>
-} = inject(loginStateKey)!
 
 let links: VerticalNavigationLink[] = [
   {label: "Dashboard", to: "/dashboard"},
   {label: "Matches", to: "/matches"},
   {label: "Teams", to: "/teams"},
-  {label: "Attachments", to: "/attachments"}
+  { label: "Predict", to: "/predict" },
 ]
-if (session.userCtx.roles?.indexOf("_admin") != -1) {
+if (sessionState.value.userCtx.roles?.indexOf("_admin") != -1) {
   links.push({label: "Users", to: "/users"})
 }
 
@@ -66,6 +66,31 @@ if (session.userCtx.roles?.indexOf("_admin") != -1) {
           <UCard class="h-full" :ui="{rounded: 'rounded-none'}">
             <UVerticalNavigation :links="links"/>
             <div class="settingsPopupDiv">
+              <div class="flex">
+                <UButton
+                  v-if="false"
+                    icon="i-heroicons-arrow-small-left"
+                    color="gray"
+                    variant="ghost"
+                    block
+                    square @click="router.back()"
+                />
+                <UButton
+                  v-if="false"
+                    icon="i-heroicons-arrow-small-right"
+                    color="gray"
+                    variant="ghost"
+                    block
+                    square @click="router.forward()"
+                />
+              <UButton
+                  v-if="false"
+                         icon="i-heroicons-home"
+                         color="gray" variant="ghost"
+                         block square
+                         @click="navigateTo('dashboard')"
+                />
+              </div>
               <UPopover>
                 <UButton icon="i-heroicons-cog-6-tooth" square :size="'xl'" :variant="'ghost'" :color="'gray'"/>
                 <template #panel>
@@ -85,7 +110,7 @@ if (session.userCtx.roles?.indexOf("_admin") != -1) {
                           :icon="isDark ? 'i-heroicons-moon-20-solid' : 'i-heroicons-sun-20-solid'"
                           color="gray"
                           variant="ghost"
-                          aria-label="Theme"
+                          label="Theme"
                           @click="isDark = !isDark"
                         />
                       </ClientOnly>

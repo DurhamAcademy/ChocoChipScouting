@@ -1,8 +1,15 @@
 <script lang="ts" setup>
 import databases from "~/utils/databases"
 import IncrementalButton from '~/components/IncrementalButton.vue'
-import {URange} from "#components";
 import {eventOptions} from "~/utils/eventOptions";
+import PouchDB from "pouchdb";
+import type {Ref} from "@vue/reactivity";
+import type {UnwrapRef} from "vue";
+import {loginStateKey} from "~/utils/keys";
+
+const {usernameState}: {
+  usernameState: Ref<UnwrapRef<string>>;
+} = inject(loginStateKey)!
 
 const {scoutingData} = databases.locals
 let db = scoutingData
@@ -18,8 +25,22 @@ enum GameTime {
 //The active tab used
 let gameTime = ref(GameTime.Autonomous)
 
-let selectedEvent = localStorage.getItem('currentEvent') || eventOptions[0]
+const events = eventOptions
+let selectedEvent = ref(eventOptions[0])
+if (typeof window !== 'undefined') selectedEvent.value = localStorage.getItem('currentEvent') || eventOptions[0]
+watch(selectedEvent, (value) => {
+  window.localStorage.setItem('currentEvent', value)
+})
 
+const {data: tbaEventData, pending: tbaPending} = await useLazyFetch<Array<any>>("/api/eventTeams/" + selectedEvent.value)
+
+watch(tbaPending, () => {
+  if(!tbaPending.value && tbaEventData.value != null){
+    validTeamNums.value = tbaEventData.value.map((value) => value.team_number)
+  }
+})
+
+let validTeamNums = ref<Array<number>>()
 
 // Selectable options for the Multi-Select component
 const endgameOptions = ["None", "Parked", "Attempted Onstage", "Onstage", "Harmony"]
@@ -48,36 +69,42 @@ let impData = {
   */
 
 
-let data: Ref<UnwrapRef<{
-  auto: { speakerNA: number; amp: number; mobility: boolean };
-  notes: { efficiency: number; notes: string; reliability: number };
-  endgame: { endgame: string[]; trap: number };
-  teamNumber: null;
+//todo fix
+let scoutData: Ref<UnwrapRef<{
+  auto: { speakerNA: number; missedSpeaker: number; amp: number; missedAmp: number; mobility: boolean };
+  teleop: { speakerNA: number; missedSpeaker: number; amp: number; missedAmp: number; };
+  endgame: { endgame: string[]; trap: number; spotlight: number };
+  notes: {  notes: string; promptedNotes: Array<Array<boolean | number | Array<string>>> };
+  teamNumber: any;
   event: string;
-  matchNumber: null;
-  teleop: { speakerA: number; speakerNA: number; amp: number }
+  matchNumber: any;
+  author: string;
 }>> = ref({
   event: "",
-  teamNumber: null,
-  matchNumber: null,
+  teamNumber: "",
+  matchNumber: "",
+  author: "",
   auto: {
     speakerNA: 0,
+    missedSpeaker: 0,
     amp: 0,
+    missedAmp: 0,
     mobility: false,
   },
   teleop: {
     amp: 0,
+    missedAmp: 0,
     speakerNA: 0,
-    speakerA: 0,
+    missedSpeaker: 0,
   },
   endgame: {
     trap: 0,
-    endgame: [endgameOptions[0]]
+    endgame: [endgameOptions[0]],
+    spotlight: 0
   },
   notes: {
-    playedDefense: false,
-    defense: 3,
     notes: "",
+    promptedNotes: [[false, 1, []], [false, 1, []], [false, 1, []]]
   }
 })
 
@@ -90,22 +117,26 @@ function updateEndgameOptions(value: Array<number>) {
       arr.push(endgameOptions[i])
     }
   }
-  data.value.endgame.endgame = arr
-  if (data.value.endgame.endgame.length < 1) {
-    data.value.endgame.endgame = [endgameOptions[0]]
+  scoutData.value.endgame.endgame = arr
+  if (scoutData.value.endgame.endgame.length < 1) {
+    scoutData.value.endgame.endgame = [endgameOptions[0]]
   }
 }
 
 
 function isValidNum() {
-  return (data.value.teamNumber != null) && (data.value.matchNumber != null) && (data.value.teamNumber > 0) && (data.value.matchNumber > 0) && (data.value.teamNumber < 10000)
+  return (scoutData.value.teamNumber != null) && (scoutData.value.matchNumber != null) && (scoutData.value.teamNumber > 0) && (scoutData.value.matchNumber > 0) && (scoutData.value.teamNumber < 10000)
 }
 
 async function submit() {
-  data.value.event = selectedEvent || ""
-  //SHOULD THIS BE AN AWAIT TODO
-  let newDoc = db.post(data.value)
-  await navigateTo("/matches")
+  scoutData.value.teamNumber = parseInt(scoutData.value.teamNumber)
+  scoutData.value.matchNumber = parseInt(scoutData.value.matchNumber)
+  if(!Number.isNaN(scoutData.value.teamNumber) && !Number.isNaN(scoutData.value.teamNumber)) {
+    scoutData.value.author = usernameState.value
+    scoutData.value.event = selectedEvent.value || eventOptions[0]
+    let newDoc = await db.post(scoutData.value)
+    await navigateTo("/matches")
+  }
 }
 
 /* Good-looking square buttons but don't work horizontally why?
@@ -117,15 +148,26 @@ async function submit() {
 <template>
   <Navbar scout-mode></Navbar>
   <div class="flex justify-center">
-    <UCard class="max-w-xl flex-grow m-5 ">
+    <UCard class="max-w-xl flex-grow m-5">
       <template #header>
         <div style="display:flex">
-          <div style="flex:1">
-            <UInput v-model="data.teamNumber" placeholder="Team #"></UInput>
+          <div class="flex-0 pr-2">
+            <UInput v-model="scoutData.teamNumber" placeholder="Team #" >
+              <template #trailing>
+                <span class="text-red-400 dark:text-red-600 text-xs" v-if="validTeamNums && validTeamNums.length > 0 && !validTeamNums.includes(parseInt(scoutData.teamNumber))">not found</span>
+              </template>
+            </UInput>
           </div>
-          <div style="flex:1;padding-left:5px">
-            <UInput v-model="data.matchNumber" placeholder="Match #"></UInput>
+          <div class="flex-0 pr-2">
+            <UInput v-model="scoutData.matchNumber" placeholder="Match #">
+              <template #trailing>
+                <span class="text-red-400 dark:text-red-600 text-xs" v-if="isNaN(parseInt(scoutData.matchNumber)) && scoutData.matchNumber != null && scoutData.matchNumber != ''">error</span>
+              </template>
+            </UInput>
           </div>
+          <UFormGroup class="flex-1">
+            <USelectMenu v-model="selectedEvent" :options="events"/>
+          </UFormGroup>
         </div>
         <br>
         <UButtonGroup class="flex">
@@ -134,80 +176,91 @@ async function submit() {
         </UButtonGroup>
       </template>
       <div v-if="gameTime == GameTime.Autonomous">
-        <div class="flex" style="text-align:center">
-          <div>
-            <h1 class="font-sans text-gray-700 dark:text-gray-200 font-medium">Amp</h1>
-            <IncrementalButton v-model="data.auto.amp" style="margin:5px"></IncrementalButton>
+        <div class="flex text-center">
+          <div class="max-w-24 w-24">
+            <h1 class="text-gray-700 dark:text-gray-200 font-sans mr-3 mb-1 font-medium">Amp</h1>
+            <IncrementalButton class="mb-0 mr-3 mt-1" v-model="scoutData.auto.amp"></IncrementalButton>
+            <h1 class="text-coral-500 mr-3 dark:text-gray-200 font-sans text-sm">Scored</h1>
           </div>
-          <div>
-            <h1 class="text-gray-700 dark:text-gray-200 font-sans font-medium">Speaker</h1>
-            <IncrementalButton v-model="data.auto.speakerNA" style="margin:5px"></IncrementalButton>
+          <div class="max-w-24 w-24">
+            <h1 class="text-gray-700 dark:text-gray-200 font-sans font-medium mb-1">Speaker</h1>
+            <IncrementalButton class="mb-0 mt-1" v-model="scoutData.auto.speakerNA"></IncrementalButton>
+            <h1 class="text-coral-500 dark:text-gray-200 font-sans text-sm">Scored</h1>
           </div>
           <div>
             <br>
-            <BooleanButton v-model="data.auto.mobility" :default-value="'Mobility'" :other-value="'Mobility'"
-                           style="margin:5px"></BooleanButton>
+            <BooleanButton class="mt-2 ml-3" v-model="scoutData.auto.mobility" :default-value="'Mobility'" :other-value="'Mobility'"/>
+          </div>
+        </div>
+        <div class="flex text-center">
+          <div class="max-w-24 w-24">
+            <IncrementalButton class="mb-0 mt-2 mr-3" v-model="scoutData.auto.missedAmp" ></IncrementalButton>
+            <h1 class="text-coral-500 dark:text-gray-200 font-sans text-sm mr-3">Missed</h1>
+          </div>
+          <div class="max-w-24 w-24">
+            <IncrementalButton class="mb-0 mt-2" v-model="scoutData.auto.missedSpeaker"></IncrementalButton>
+            <h1 class="text-coral-500 dark:text-gray-200 font-sans text-sm">Missed</h1>
           </div>
         </div>
       </div>
       <div v-if="gameTime == GameTime.Teleoperated">
-        <div class="flex" style="text-align:center">
-          <div>
-            <h1 class="text-gray-700 dark:text-gray-200 font-sans font-medium">Amp</h1>
-            <IncrementalButton v-model="data.teleop.amp" style="margin:5px"></IncrementalButton>
+        <div class="flex text-center">
+          <div class="max-w-24 w-24">
+            <h1 class="text-gray-700 dark:text-gray-200 font-sans mr-3 mb-1 font-medium">Amp</h1>
+            <IncrementalButton class="mb-0 mr-3 mt-1" v-model="scoutData.teleop.amp"></IncrementalButton>
+            <h1 class="text-coral-500 mr-3 dark:text-gray-200 font-sans text-sm">Scored</h1>
           </div>
-          <div>
-            <h1 class="text-gray-700 dark:text-gray-200 font-sans font-medium">Speaker</h1>
-            <IncrementalButton v-model="data.teleop.speakerNA" style="margin:5px"></IncrementalButton>
+          <div class="max-w-24 w-24">
+            <h1 class="text-gray-700 dark:text-gray-200 font-sans font-medium mb-1">Speaker</h1>
+            <IncrementalButton class="mb-0 mt-1" v-model="scoutData.teleop.speakerNA"></IncrementalButton>
+            <h1 class="text-coral-500 dark:text-gray-200 font-sans text-sm">Scored</h1>
           </div>
-          <div>
-            <h1 class="text-gray-700 dark:text-gray-200 font-sans font-medium">Speaker+</h1>
-            <IncrementalButton v-model="data.teleop.speakerA" style="margin:5px"></IncrementalButton>
+        </div>
+        <div class="flex text-center">
+          <div class="max-w-24 w-24">
+            <IncrementalButton class="mb-0 mt-2 mr-3" v-model="scoutData.teleop.missedAmp" ></IncrementalButton>
+            <h1 class="text-coral-500 dark:text-gray-200 font-sans text-sm mr-3">Missed</h1>
+          </div>
+          <div class="max-w-24 w-24">
+            <IncrementalButton class="mb-0 mt-2" v-model="scoutData.teleop.missedSpeaker"></IncrementalButton>
+            <h1 class="text-coral-500 dark:text-gray-200 font-sans text-sm">Missed</h1>
           </div>
         </div>
       </div>
       <div v-if="gameTime == GameTime.Endgame">
-        <div class="flex" style="text-align:center">
-          <div>
-            <h1 class="text-gray-700 dark:text-gray-200 font-sans font-medium">Amp</h1>
-            <IncrementalButton v-model="data.teleop.amp" style="margin:5px"></IncrementalButton>
-          </div>
-          <div>
-            <h1 class="text-gray-700 dark:text-gray-200 font-sans font-medium">Speaker</h1>
-            <IncrementalButton v-model="data.teleop.speakerNA" style="margin:5px"></IncrementalButton>
-          </div>
-          <div>
-            <h1 class="text-gray-700 dark:text-gray-200 font-sans font-medium">Speaker+</h1>
-            <IncrementalButton v-model="data.teleop.speakerA" style="margin:5px"></IncrementalButton>
-          </div>
-          <div>
+        <div class="flex text-center flex-wrap mb-3">
+          <div class="max-w-24 w-24">
             <h1 class="text-gray-700 dark:text-gray-200 font-sans font-medium">Trap</h1>
-            <IncrementalButton v-model="data.endgame.trap" :max-value="3" style="margin:5px"></IncrementalButton>
+            <IncrementalButton class="mt-1" v-model="scoutData.endgame.trap" :max-value="3"></IncrementalButton>
           </div>
-          </div>
-          <br>
-            <MultiSelect :model-value="endgameIndex" :options="endgameOptions"
-                     @update:model-value="value => {updateEndgameOptions(value)}"
-                     :connected-options="connectedOptions"></MultiSelect>
-       </div>
-      <div v-if="gameTime == GameTime.Notes">
-        <div class="flex">
-          <div class="flex-0 text-center">
-            <p class="flex-auto text-gray-700 dark:text-gray-200 font-sans font-medium">Defended</p>
-            <UCheckbox class="flex-auto mt-0.5 justify-center" v-model="data.notes.playedDefense"/>
-          </div>
-          <div class="flex-1 text-center">
-            <p class="text-gray-700 dark:text-gray-200 font-sans font-medium mr-5">Rating</p>
-            <div class="flex">
-              <URange v-if="!(data.notes.playedDefense)" class="ml-3 mr-3 mt-1 flex-auto" disabled v-model="data.notes.defense" size="md" min="1" :max="5"/>
-              <URange v-if="data.notes.playedDefense" class="ml-3 mr-3 mt-1 flex-auto" v-model="data.notes.defense" size="md" min="1" :max="5"/>
-              <UBadge class="flex-auto" :label="data.notes.playedDefense ? data.notes.defense: 0" :variant="data.notes.playedDefense ? 'solid':'soft'"/>
-            </div>
+          <div class="ml-3">
+            <h1 class="text-gray-700 dark:text-gray-200 font-sans font-medium">Spotlights Hit</h1>
+            <SingleSelect  v-model="scoutData.endgame.spotlight" :options="['0', '1', '2', '3']"/>
           </div>
         </div>
+            <MultiSelect :model-value="endgameIndex" :options="endgameOptions"
+                     @update:model-value="value => {updateEndgameOptions(value)}"
+                     :connected-options="connectedOptions"/>
+       </div>
+      <div v-if="gameTime == GameTime.Notes">
+        <UAccordion
+            open-icon="i-heroicons-plus"
+            close-icon="i-heroicons-minus"
+            :items="[{ label: 'Defense', slot: 'defense', defaultOpen: true}, { label: 'Offense', slot: 'offense'}, { label: 'Driver', slot: 'driver'}]"
+        >
+          <template #defense>
+            <PromptedNote v-model="scoutData.notes.promptedNotes[0]" :questions="[['Where did this team play defense?', 1], ['Is this team at risk of causing fouls? If so, elaborate why.', 2], ['What other factors contributed to your rating?', 1]]"/>
+          </template>
+          <template #offense>
+            <PromptedNote v-model="scoutData.notes.promptedNotes[1]" :questions="[['Where can this team shoot from?', 1], ['If applicable, how did the driver make efforts to avoid opposing defense?', 2], ['What slowed down their cycles?', 2], ['What other factors contributed to your rating?', 1]]"/>
+          </template>
+          <template #driver>
+            <PromptedNote v-model="scoutData.notes.promptedNotes[2]" :questions="[['What makes their driving strong?', 1], ['What makes their driving weak?', 1], ['What other factors contributed to your rating?', 1]]"/>
+          </template>
+        </UAccordion>
       </div>
       <template #footer>
-        <UTextarea v-model="data.notes.notes" color="yellow" placeholder="Notes..."/>
+        <UTextarea v-model="scoutData.notes.notes" color="yellow" placeholder="Other notes..."/>
         <br/>
         <div class="flex justify-between">
           <div>

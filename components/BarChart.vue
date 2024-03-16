@@ -1,5 +1,7 @@
 <template>
-  <BarChart :chartData="data" :options="options" :height="height || '300px'" :width="width || '300px'"/>
+  <div :class="height + ' relative ' + width">
+    <BarChart :chartData="data" :options="options"/>
+  </div>
 </template>
 
 <script lang="ts" setup>
@@ -50,14 +52,15 @@ let borderColors = [
 if(props.borderColors)
   borderColors = props.borderColors
 
-Chart.register(...registerables);
+if(registerables) Chart.register(...registerables);
 
 let options = {
   scales: {
     y: {
       suggestedMax: props.suggestedMax || 10,
     }
-  }
+  },
+  responsive: true
 }
 
 const data = ref({

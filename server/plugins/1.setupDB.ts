@@ -7,14 +7,13 @@ PouchDB.plugin(SecurityHelper)
 export default defineNitroPlugin((nitroApp) => {
     // @ts-ignore
     nitroApp.hooks.hookOnce('request', async function () {
-        var config = useRuntimeConfig();
+        let config = useRuntimeConfig();
         let databaseInfoResponses
         try {
             databaseInfoResponses = await Promise.all(Object.values(databases.databases)
                 .map((database) => database.name)
                 .map((name) => {
-                    console.log(name)
-                    return new PouchDB(`http://${process.env.couchDBHostname}:5984/` + name, {
+                    return new PouchDB(`http://${process.env.NUXT_COUCH_DB_HOSTNAME}:5984/` + name, {
                         name: name,
                         auth: {username: config.couchDB.serverAdminUser.username, password: config.couchDB.serverAdminUser.password}
                     })

@@ -1,5 +1,6 @@
-import {couchDBBaseURL} from "../utils/URIs";
+import {couchDBBaseURL} from "~/utils/URIs";
 import PouchDB from "pouchdb"
+import {Attachments, ScoutingData, TeamData} from "../utils/databases";
 
 class LocalRemoteServerSideDatabaseSyncHolder<Content extends {} = {}> {
     name: string
@@ -19,28 +20,33 @@ class LocalRemoteServerSideDatabaseSyncHolder<Content extends {} = {}> {
 
     async sync() {
         if (this.local) {
-            PouchDB.sync(this.local, this.remote, {live: true, retry: true,})
+            const sync = await PouchDB.sync(this.local, this.remote, {live: true, retry: true,});
             return true
         }
         return false
     }
 
-    static databases: { attachments: LocalRemoteServerSideDatabaseSyncHolder<{ event: string; name: string; teamNumber: number; fileSize: string; author : string | undefined; tags: string[] ; extraNotes: string }>; scoutingData: LocalRemoteServerSideDatabaseSyncHolder<{ event: string; teamNumber: number; matchNumber: number }>; basic: LocalRemoteServerSideDatabaseSyncHolder<{}> } = {
-        "attachments": new LocalRemoteServerSideDatabaseSyncHolder<{ event: string; name: string; teamNumber: number; fileSize: string; author : string | undefined; tags: string[] ; extraNotes: string }>("attachment-db", false),
-        "scoutingData": new LocalRemoteServerSideDatabaseSyncHolder<{ event: string; teamNumber: number; matchNumber: number }>("scouting-data", false),
-        "basic": new LocalRemoteServerSideDatabaseSyncHolder<{}>("basic", false)
+    static databases = {
+        "attachments": new LocalRemoteServerSideDatabaseSyncHolder<Attachments>("attachments", false),
+        "scoutingData": new LocalRemoteServerSideDatabaseSyncHolder<ScoutingData>("scouting-data", false),
+        "teamData": new LocalRemoteServerSideDatabaseSyncHolder<TeamData>("team-data", false),
+        "basic": new LocalRemoteServerSideDatabaseSyncHolder<{}>("basic", false),
     };
-    static locals: { attachments: PouchDB.Database<{ event: string; name: string; teamNumber: number; fileSize: string; author : string | undefined; tags: string[] ; extraNotes: string }>; scoutingData: PouchDB.Database<{ event: string; teamNumber: number; matchNumber: number}>; basic: PouchDB.Database<{}> } = {
+    static locals = {
         "attachments": this.databases.attachments.local!,
         "scoutingData": this.databases.scoutingData.local!,
+        "teamData": this.databases.teamData.local!,
         "basic": this.databases.basic.local!,
     };
-    static remotes: { attachments: PouchDB.Database<{ event: string; name: string; teamNumber: number; fileSize: string; author : string | undefined; tags: string[] ; extraNotes: string }>; scoutingData: PouchDB.Database<{ event: string; teamNumber: number; matchNumber: number}>; basic: PouchDB.Database<{}> } = {
+    static remotes = {
         "attachments": this.databases.attachments.remote,
         "scoutingData": this.databases.scoutingData.remote,
+        "teamData": this.databases.teamData.remote,
         "basic": this.databases.basic.remote,
     };
 }
+
+
 
 for (const database of Object.values(LocalRemoteServerSideDatabaseSyncHolder.databases)) {
     database.sync()

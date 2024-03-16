@@ -1,59 +1,87 @@
 <script setup lang="ts">
-import {loginStateKey} from "~/utils/keys";
-import AddButton from "~/components/AddButton.vue";
-import SessionResponse = PouchDB.Authentication.SessionResponse;
 
-const {sessionState}: { sessionState: SessionResponse } = inject(loginStateKey)!
+import PouchDB from "pouchdb";
+import databases from "~/utils/databases";
+import SyncStatusVisualization from "~/components/SyncStatusVisualization.vue";
+let syncDisable = ref(false)
 
-let addAttachmentModal = ref(false)
+async function sync(){
+  syncDisable.value = true
+  await PouchDB.sync(databases.locals.scoutingData, databases.remotes.scoutingData)
+  await PouchDB.sync(databases.locals.basic, databases.remotes.basic)
+  await PouchDB.sync(databases.locals.attachments, databases.remotes.attachments)
+  await PouchDB.sync(databases.locals.teamData, databases.remotes.teamData)
+  syncDisable.value = false
+}
 
+updateTeamData()
+
+async function updateTeamData() {
+  try {
+    let previouslySavedTeamNums: number[] = []
+    let {teamData: db} = databases.locals
+    //gets all the teamsData docs from the database and adds them to one array
+    let dbTeams = (await db.allDocs()).rows.map(async (doc): Promise<TeamData> => {
+      return db.get(doc.id)
+    })
+    Promise.all(dbTeams).then((teams: Array<TeamData>) => {
+      previouslySavedTeamNums = teams.map((value) => {
+        return value.teamNum
+      })
+    }).then(async () => {
+      //goes through each event and checks if they have any teams that aren't in the db already
+      let newTeams: Array<TeamData> = []
+      for (let event of eventOptions) {
+        const {data: tbaEventData} = await useFetch<Array<any>>("/api/eventTeams/" + event)
+        if (tbaEventData.value != null) {
+          if(tbaEventData.value.hasOwnProperty("Error")) continue
+          for (let team of tbaEventData.value) {
+            let teamDataObj: TeamData = {
+              teamNum: parseInt(team.key.replace("frc", '')),
+              teamName: team.nickname
+            }
+            if (previouslySavedTeamNums.includes(teamDataObj.teamNum)) continue
+            newTeams.push(teamDataObj)
+          }
+        }
+        else{
+          console.error("Ruh roh! There seems to have been an issue")
+        }
+      }
+      if(newTeams.length > 0){
+        await db.bulkDocs(newTeams)
+      }
+    })
+  } catch {
+    console.error("An error occurred")
+  }
+}
 </script>
+
 
 <template>
   <OuterComponents>
+    <UButton class="ml-3 mt-3" @click="sync" :disabled="syncDisable" :loading="syncDisable">
+      Sync Databases
+    </UButton>
     <div class="px-5 max-w-2xl min-w-lg flex-grow">
-      <USkeleton class="w-full h-64 my-5"></USkeleton>
-      <UCard class="my-5">
+      <LazyUSkeleton class="w-full h-64 my-5"></LazyUSkeleton>
+      <LazyUCard class="my-5">
         <div class="m-1 flex flex-wrap">
           <div class="w-1/2 pr-2.5">
-            <USkeleton class="w-full h-32"></USkeleton>
+            <LazyUSkeleton class="w-full h-32"></LazyUSkeleton>
           </div>
           <div class="w-1/2 pl-2.5">
-            <USkeleton class="w-full h-32"></USkeleton>
+            <LazyUSkeleton class="w-full h-32"></LazyUSkeleton>
           </div>
           <div class="w-full py-2.5">
-            <USkeleton class="w-full h-16"></USkeleton>
+            <LazyUSkeleton class="w-full h-16"></LazyUSkeleton>
           </div>
         </div>
-      </UCard>
-      <USkeleton class="w-full h-32 my-5"></USkeleton>
-      <UCard class="my-5">
-        <div class="m-1 flex items-center space-x-4">
-          <USkeleton class="h-12 w-12" :ui="{ rounded: 'rounded-full' }" />
-          <div class="space-y-2 flex-grow">
-            <USkeleton class="h-4 w-full" />
-            <USkeleton class="h-4 w-full" />
-          </div>
-        </div>
-      </UCard>
-
-  <!--    <div class="app-button-grid">-->
-  <!--      <app-button v-if="sessionState.userCtx.roles?.includes('verified')" text="Matches" to="/matches"/>-->
-  <!--      <app-button v-if="sessionState.userCtx.roles?.includes('verified')" text="Teams" to="/teams"/>-->
-  <!--      <app-button v-if="sessionState.userCtx.roles?.includes('verified')" text="Notes" to="/notes"/>-->
-  <!--      <app-button v-if="sessionState.userCtx.roles?.includes('verified')" text="Competitions" to="/competitions"/>-->
-  <!--      <app-button v-if="sessionState.userCtx.roles?.includes('verified')" text="Attachments" to="/attachments"/>-->
-  <!--      <app-button v-if="sessionState.userCtx.roles?.includes('verified')" text="Contacts" to="/contacts"/>-->
-  <!--      <app-button v-if="sessionState.userCtx.roles?.includes('admin')" text="Users" to="/users"/>-->
-  <!--    </div>-->
+      </LazyUCard>
     </div>
   </OuterComponents>
 </template>
 
 <style scoped>
-.app-button-grid {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-}
 </style>

@@ -15,35 +15,47 @@ class LocalRemoteDatabaseSyncHolder<Content extends {} = {}> {
         })
     }
 
-    async sync() {
-        PouchDB.sync(this.local, this.remote, {live: true, retry: true,})
+    sync() {
+        return PouchDB.sync(this.local, this.remote, {
+            live: true,
+            retry: true
+        })
     }
 
     static databases = {
-        "attachments": new LocalRemoteDatabaseSyncHolder<Attachments>("attachment-db"),
+        "attachments": new LocalRemoteDatabaseSyncHolder<Attachments>("attachments"),
         "scoutingData": new LocalRemoteDatabaseSyncHolder<ScoutingData>("scouting-data"),
+        "teamData": new LocalRemoteDatabaseSyncHolder<TeamData>("team-data"),
         "basic": new LocalRemoteDatabaseSyncHolder<{}>("basic")
     };
     static locals= {
         "attachments": this.databases.attachments.local,
         "scoutingData": this.databases.scoutingData.local,
+        "teamData": this.databases.teamData.local,
         "basic": this.databases.basic.local,
     };
     static remotes = {
         "attachments": this.databases.attachments.remote,
         "scoutingData": this.databases.scoutingData.remote,
+        "teamData": this.databases.teamData.remote,
         "basic": this.databases.basic.remote,
     };
 }
 
 export type ScoutingData = {
-    auto: {speakerNA: number; amp: number; mobility: boolean};
-    notes: {efficiency: number; notes: string; reliability: number};
-    endgame: {endgame: string[]; trap: number};
-    teamNumber: number;
+    auto: { speakerNA: number; missedSpeaker: number; amp: number; missedAmp: number; mobility: boolean };
+    notes: {  notes: string; promptedNotes: Array<Array<boolean & number & Array<string>>> };
+    endgame: { endgame: string[]; trap: number; spotlight: number };
+    teamNumber: any;
     event: string;
-    matchNumber: number;
-    teleop: {speakerA: number; speakerNA: number; amp: number};
+    matchNumber: any;
+    author: string;
+    teleop: { speakerNA: number; missedSpeaker: number; amp: number; missedAmp: number; }
+}
+
+export type TeamData = {
+    teamNum: number,
+    teamName: string
 }
 
 export type Attachments = {
@@ -51,11 +63,6 @@ export type Attachments = {
     team: number;
     author: string | undefined;
 }
-
-for (const database of Object.values(LocalRemoteDatabaseSyncHolder.databases)) {
-    database.sync()
-}
-
 
 export default {
     databases: LocalRemoteDatabaseSyncHolder.databases,

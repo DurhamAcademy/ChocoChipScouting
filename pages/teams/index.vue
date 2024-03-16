@@ -3,11 +3,9 @@ import databases, {type ScoutingData} from "~/utils/databases";
 import IdMeta = PouchDB.Core.IdMeta;
 import Sentiment from 'sentiment';
 import {eventOptions} from "~/utils/eventOptions";
-import AmpVisualization from "~/components/AmpVisualization.vue";
-import MatchVisualization from "~/components/MatchVisualization.vue";
-import SpeakerVisualization from "~/components/SpeakerVisualization.vue";
+import {useWindowSize} from "@vueuse/core";
 
-const toast = useToast()
+let {width, height} = useWindowSize()
 
 let sentiment = new Sentiment()
 let options = {
@@ -23,7 +21,8 @@ let options = {
 }
 
 const events = eventOptions.map((event) => event.replace(/[0-9]/g, ''))
-const currentEvent = localStorage.getItem('currentEvent') || eventOptions[0]
+let currentEvent = eventOptions[0]
+if (typeof window !== 'undefined') currentEvent = localStorage.getItem('currentEvent') || eventOptions[0]
 const fetch = useFetch<Array<any>>("/api/eventMatches/" + currentEvent)
 
 
@@ -59,24 +58,36 @@ let match = matches.map(async (doc): Promise<ScoutingData & IdMeta> => {
 })
 
 let teamOrgMatches = new Map<number,Array<ScoutingData & IdMeta>>()
+let extraNotes = new Map<number, Array<string>>()
 
 for(let i  = 0; i < match.length; i++){
   let currentMatch = (await match[i])
-  let team = typeof currentMatch.teamNumber == "string" ? parseInt(currentMatch.teamNumber): currentMatch.teamNumber
-  if (!teamOrgMatches.has(team)) {
-    teamOrgMatches.set(team, [currentMatch])
+  if(currentMatch.matchNumber != -1) {
+    let team = typeof currentMatch.teamNumber == "string" ? parseInt(currentMatch.teamNumber) : currentMatch.teamNumber
+    if (!teamOrgMatches.has(team)) {
+      teamOrgMatches.set(team, [currentMatch])
+    } else {
+      let arr: Array<ScoutingData & IdMeta> = teamOrgMatches.get(team)!
+      arr.push(currentMatch)
+      teamOrgMatches.set(team, arr)
+    }
   }
-  else {
-    let arr : Array<ScoutingData & IdMeta> = teamOrgMatches.get(team)!
-    arr.push(currentMatch)
-    teamOrgMatches.set(team, arr)
+  else if(currentMatch.notes.notes != undefined){
+    let team = typeof currentMatch.teamNumber == "string" ? parseInt(currentMatch.teamNumber) : currentMatch.teamNumber
+    if (!extraNotes.has(team)) {
+      extraNotes.set(team, [currentMatch.notes.notes])
+    } else {
+      let arr: Array<string> = extraNotes.get(team)!
+      arr.push(currentMatch.notes.notes)
+      extraNotes.set(team, arr)
+    }
   }
 }
 
-let teamsData = ref<Array<any>>([])
+let teamsData = ref<any>([])
 
 async function tableSetup() {
-  teamsData.length = 0
+  teamsData.value.length = 0
 
   /*
   Creates two arrays that are filters applied on all data for team numbers and events (includes match number filter)
@@ -93,8 +104,7 @@ async function tableSetup() {
       allowedTeams.push(filter.content.split(":")[1].trim())
     }
     if (filter.content.startsWith("match")) {
-      //TODO figure out async stuff
-      let tbaMatchData = fetch.data.value
+      let tbaMatchData = await fetch.data.value
       if(tbaMatchData != null){
         let userInput = parseInt(filter.content.split(':')[1].trim())
         for(let match of tbaMatchData){
@@ -119,6 +129,7 @@ async function tableSetup() {
     }
   }
   tableLoop: for (let [key, value] of teamOrgMatches) {
+    if(key == undefined) continue
     /*
     Data is an array of all matches, associated with a team (key), for the event filters selected
      */
@@ -134,6 +145,9 @@ async function tableSetup() {
       }
     }
 
+    let teamExtraNotes = extraNotes.get(key)
+    if(teamExtraNotes == undefined) teamExtraNotes = []
+
     /*
     Removes match overlaps
      */
@@ -142,10 +156,10 @@ async function tableSetup() {
       let currMatch = value.matchNumber
       if(matchNumbers.includes(currMatch)) {
         for(let i = 0; i < data.length; i++){
-              if(data[i].matchNumber == currMatch){
-                data.splice(data.indexOf(data[i]), 1)
-                break
-              }
+          if(data[i].matchNumber == currMatch){
+            data.splice(data.indexOf(data[i]), 1)
+            break
+          }
         }
       }
       else matchNumbers.push(currMatch)
@@ -189,42 +203,45 @@ async function tableSetup() {
         amp: getAverageAmpCycles(data).toFixed(2),
         speaker: getAverageSpeakerCycles(data).toFixed(2),
         mobility: averageAuto(data).toFixed(2),
-        sentiment: analyzeNotes(data).toFixed(2),
         endgame: compileEndgames(data),
+        defense: averageDefensiveScore(data).toFixed(2),
         class: alliance,
-        rawData: data
+        rawData: data,
+        extraNotes: teamExtraNotes
       }
-      teamsData.push(arr)
+      teamsData.value.push(arr)
     }
   }
 
   //Defaults to the alliance colors being together if match filter is selected
   if(redAlliance.length > 0 || blueAlliance.length > 0){
     let sortedData = []
-    for(let team of teamsData){
+    for(let team of teamsData.value){
       if(team.class == "bg-blue-100") sortedData.unshift(team)
       else sortedData.push(team)
     }
-    teamsData = sortedData
+    teamsData.value = sortedData
   }
 }
 
-function debug(text:string){
-  toast.add({ title: text })
-}
-
-function analyzeNotes(teamArrays: Array<any>){
-  let analysisTotal = 0
+function averageDefensiveScore(teamArrays: Array<ScoutingData>){
+  let total = 0
+  let totalMatches = 0
   for(let match of teamArrays){
-    analysisTotal += sentiment.analyze(match.notes.notes, options).score
+    //Try catch needed due to old version of data
+    try {
+      if (match.notes.promptedNotes[0][0]) total += match.notes.promptedNotes[0][1]
+      totalMatches++
+    }
+    catch{}
   }
-  return analysisTotal/teamArrays.length
+  return (totalMatches != 0 ? total / totalMatches: 0)
 }
 
 function getAverageSpeakerCycles(teamArrays: Array<ScoutingData>){
   let nonAveragedValue = 0
   for(let i = 0; i < teamArrays.length; i++){
-    nonAveragedValue += teamArrays[i].auto.speakerNA + teamArrays[i].teleop.speakerNA + teamArrays[i].teleop.speakerA
+    nonAveragedValue += teamArrays[i].auto.speakerNA + teamArrays[i].teleop.speakerNA
   }
   return nonAveragedValue/teamArrays.length
 }
@@ -249,11 +266,10 @@ function compileEndgames(teamArrays: Array<ScoutingData>): [Array<string>, Array
   let endgameMap = new Map<string, number>();
   for(let i = 0; i < teamArrays.length; i++) {
     teamArrays[i].endgame.endgame.forEach(function (value: string) {
-        if (endgameMap.has(value)) {
-          endgameMap.set(value, endgameMap.get(value)! + 1)
-        } else
-          endgameMap.set(value, 1)
-
+      if (endgameMap.has(value)) {
+        endgameMap.set(value, endgameMap.get(value)! + 1)
+      } else
+        endgameMap.set(value, 1)
     })
   }
   let endgameOptionsArr : Array<string> = []
@@ -263,6 +279,10 @@ function compileEndgames(teamArrays: Array<ScoutingData>): [Array<string>, Array
     endgameDataArr.push(value)
   })
   return [endgameOptionsArr, endgameDataArr]
+}
+
+async function view(teamNum: number) {
+  navigateTo("/teams/attachments/"+teamNum)
 }
 
 const columns = [{
@@ -282,35 +302,32 @@ const columns = [{
   label: 'Mobility Success Rate',
   sortable: true
 }, {
-  key: 'sentiment',
-  label: 'Sentiment Analysis',
+  key: 'defense',
+  label: 'Defensive Score',
   sortable: true
 }, {
   key: 'actions',
   label: 'Endgame'
-},{
-  key: 'dropdown'
+}, {
+  key: 'buttons',
 }]
-
-const graphOptions = ['Match Stats', 'Amp', 'Speaker']
-const selectedGraph = ref(graphOptions[0])
 
 await tableSetup()
 </script>
 
 <template>
-<OuterComponents>
-  <UCard class="max-h-dvh overflow-auto">
-    <template #header>
+  <OuterComponents>
+    <UCard class="max-h-dvh overflow-auto">
+      <template #header>
         <UFormGroup class="w-full" block>
           <FilterMultiSelect v-model="selectedFilters" :options="filterOptions" :extra-options="extraFilterOptions"></FilterMultiSelect>
         </UFormGroup>
-    </template>
+      </template>
       <UTable :rows="teamsData" :columns="columns" class="overflow-auto">
 
         <template #actions-data="{ row }">
           <UPopover>
-            <UButton class="m-1" color="blue" label="Chart" variant="soft" />
+            <UButton class="m-1" label="Chart" variant="soft" />
             <template #panel>
               <UCard>
                 <div class="max-w-xs min-w-[15rem] overflow-y-auto" style="max-height: 20rem; min-height: 10rem">
@@ -320,28 +337,15 @@ await tableSetup()
             </template>
           </UPopover>
         </template>
+        <template #buttons-data="{ row }">
+          <div class="flex">
+            <UButton @click="view(row.team)" icon="i-heroicons-paper-clip" color="gray" variant="ghost"/>
+            <UButton @click="navigateTo('/teams/'+row.team)" variant="ghost" color="gray" icon="i-heroicons-document-chart-bar"/>
+          </div>
 
-        <template #dropdown-data="{ row }">
-          <UPopover :popper="{ placement: teamsData.indexOf(row) > teamsData.length/2 ? 'top-end': 'bottom-end' }">
-            <UButton color="gray" variant="ghost" icon="i-heroicons-ellipsis-horizontal-20-solid"/>
-            <template #panel>
-              <div class="flex">
-              <UCard class="flex-auto">
-                <template #header>
-                  <UButtonGroup>
-                    <UButton :variant="selectedGraph == label ? 'solid' : 'soft'"  v-for="label in graphOptions" @click="selectedGraph = label" :label="label"></UButton>
-                  </UButtonGroup>
-                </template>
-                <MatchVisualization v-if="selectedGraph == 'Match Stats'" :row-data="row"></MatchVisualization>
-                <AmpVisualization v-if="selectedGraph == 'Amp'" :row-data="row"></AmpVisualization>
-                <SpeakerVisualization v-if="selectedGraph == 'Speaker'" :row-data="row"></SpeakerVisualization>
-              </UCard>
-              </div>
-            </template>
-          </UPopover>
         </template>
       </UTable>
-  </UCard>
+      </UCard>
 </OuterComponents>
 </template>
 
