@@ -71,7 +71,7 @@ const { pending, data: res } = await useLazyAsyncData('res', () => setup())
 <template>
   <OuterComponents>
     <VDataTable
-        v-if="!pending"
+        :loading="pending"
         class="max-h-dvh overflow-auto"
         :headers="headers"
         :items="items"
@@ -103,7 +103,7 @@ const { pending, data: res } = await useLazyAsyncData('res', () => setup())
       </template>
 
       <template v-slot:loading>
-        <v-skeleton-loader type="table"></v-skeleton-loader>
+        <v-skeleton-loader type="table-row"></v-skeleton-loader>
       </template>
     </VDataTable>
   </OuterComponents>
