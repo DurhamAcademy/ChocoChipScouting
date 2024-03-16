@@ -55,6 +55,7 @@ let filterTeam = ref(route.params.id)
 function setup() {
   teamOptions.value = []
   for (let [key, value] of teamOrgMatches) {
+    if(typeof key == 'string') key = parseInt(key)
     let filteredValue: (ScoutingData & IdMeta)[] = []
     for (let match of value) {
       if (match.event == currentEvent.value) {
