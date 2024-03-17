@@ -11,7 +11,7 @@
   },
   "devDependencies": {
     "@nuxt/devtools": "latest",
-    "@types/pouchdb": "6.4.0",
+    "@types/pouchdb": "6.4.2",
     "@types/sentiment": "^5.0.4",
     "nuxt": "^3.10.3"
   },
