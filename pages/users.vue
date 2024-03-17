@@ -52,7 +52,7 @@ function debug(text:string){
 
 async function signUp() {
   let sessionRoles = await usersDB.getSession()
-  if(!(sessionRoles.userCtx.roles && (sessionRoles.userCtx.roles.includes("_admin")))) return
+  if(!(sessionRoles.userCtx.roles && (sessionRoles.userCtx.roles.includes("_admin") || sessionRoles.userCtx.roles.includes("admin")))) return
     usersDB.signUp(username.value, password.value,
         {
           metadata: {
@@ -79,7 +79,7 @@ async function signUp() {
 
 async function changePassword() {
   let sessionRoles = await usersDB.getSession()
-  if(!(sessionRoles.userCtx.roles && (sessionRoles.userCtx.roles.includes("_admin")))) return
+  if(!(sessionRoles.userCtx.roles && (sessionRoles.userCtx.roles.includes("_admin") || sessionRoles.userCtx.roles.includes("admin")))) return
     usersDB.changePassword(username.value, password.value,
         {}, function (err, response) {
           if (err) {
@@ -96,7 +96,7 @@ async function changePassword() {
 
 async function userManage() {
   let sessionRoles = await usersDB.getSession()
-  if(!(sessionRoles.userCtx.roles && (sessionRoles.userCtx.roles.includes("_admin")))) return
+  if(!(sessionRoles.userCtx.roles && (sessionRoles.userCtx.roles.includes("_admin") || sessionRoles.userCtx.roles.includes("admin")))) return
   usersDB.getUser(username.value,
       {}, function (err, response) {
         if (err) {
@@ -122,13 +122,13 @@ watch(roles.value, (value) => {
 
 async function editRoles(username: string, newRoles: Array<string>) {
   let sessionRoles = await usersDB.getSession()
-  if(! (sessionRoles.userCtx.roles && (sessionRoles.userCtx.roles.includes("_admin"))) ) return
+  if(!(sessionRoles.userCtx.roles && (sessionRoles.userCtx.roles.includes("_admin") || sessionRoles.userCtx.roles.includes("admin")))) return
   await usersDB.putUser(username, {roles: newRoles})
 }
 
 async function deleteUser(username: string) {
   let sessionRoles = await usersDB.getSession()
-  if(! (sessionRoles.userCtx.roles && (sessionRoles.userCtx.roles.includes("_admin"))) ) return
+  if(!(sessionRoles.userCtx.roles && (sessionRoles.userCtx.roles.includes("_admin") || sessionRoles.userCtx.roles.includes("admin")))) return
   usersDB.deleteUser(username, function (err, result) {
     if (err) {
       console.log(err.name)

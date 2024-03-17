@@ -50,7 +50,7 @@ let links: VerticalNavigationLink[] = [
   {label: "Teams", to: "/teams"},
   { label: "Predict", to: "/predict" },
 ]
-if (sessionState.value.userCtx.roles?.indexOf("_admin") != -1) {
+if (sessionState.value.userCtx.roles?.indexOf("admin") != -1 || sessionState.value.userCtx.roles?.indexOf("_admin") != -1) {
   links.push({label: "Users", to: "/users"})
 }
 
