@@ -127,13 +127,14 @@ function isValidNum() {
 }
 
 async function submit() {
-  if(!Number.isNaN(parseInt(scoutData.value.teamNumber)) && !Number.isNaN(parseInt(scoutData.value.matchNumber))) {
-    scoutData.value.teamNumber = parseInt(scoutData.value.teamNumber)
-    scoutData.value.matchNumber = parseInt(scoutData.value.matchNumber)
+  scoutData.value.teamNumber = parseInt(scoutData.value.teamNumber)
+  scoutData.value.matchNumber = parseInt(scoutData.value.matchNumber)
+  if(!Number.isNaN(scoutData.value.teamNumber) && !Number.isNaN(scoutData.value.matchNumber)) {
+    scoutData.value.author = usernameState.value
+    scoutData.value.event = selectedEvent.value || eventOptions[0]
+    let newDoc = await db.post(scoutData.value)
+    await navigateTo("/matches")
   }
-  scoutData.value.event = selectedEvent.value || eventOptions[0]
-  let newDoc = await db.post(scoutData.value)
-  PouchDB.sync(databases.locals.scoutingData, databases.remotes.scoutingData)
 }
 
 /* Good-looking square buttons but don't work horizontally why?
