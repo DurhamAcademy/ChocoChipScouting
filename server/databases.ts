@@ -9,7 +9,7 @@ class LocalRemoteServerSideDatabaseSyncHolder<Content extends {} = {}> {
     memberRoles: string[]
     adminRoles: string[]
 
-    constructor(name: string, local: boolean, memberRoles: string[] = ["verified", "_admin"], adminRoles: string[] = ["_admin"]) {
+    constructor(name: string, local: boolean, memberRoles: string[] = ["drive team", "scout", "pit", "other", "_admin", "admin"], adminRoles: string[] = ["_admin", "admin"]) {
         this.name = name;
         if (local)
             this.local = new PouchDB(name, {skip_setup: true, name: name})
