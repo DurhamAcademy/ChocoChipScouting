@@ -47,6 +47,7 @@ const headers = [
     children: [
       { title: 'Amp', align: 'end', value: 'auto.amp' },
       { title: 'Speaker', align: 'end', value: 'auto.speakerNA' },
+      { title: 'Missed', align: 'end', value: 'auto.missed' },
       { title: 'Mobility', align: 'end', value: 'auto.mobility' }
     ]
   }, {
@@ -55,6 +56,7 @@ const headers = [
     children: [
       { title: 'Amp', align: 'end', value: 'teleop.amp' },
       { title: 'Speaker', align: 'end', value: 'teleop.speakerNA' },
+      { title: 'Missed', align: 'end', value: 'teleop.missed' },
     ]
   }, {
     title: 'Endgame',

@@ -10,29 +10,27 @@ let selectedEvent = eventOptions[0]
 if (typeof window !== 'undefined') selectedEvent = localStorage.getItem('currentEvent') || eventOptions[0]
 
 let data: Ref<UnwrapRef<{
-  auto: { speakerNA: number; missedSpeaker: number; amp: number; missedAmp: number; mobility: boolean };
+  auto: { speakerNA: number; amp: number; missed: number; mobility: boolean };
   notes: { efficiency: number; notes: string; reliability: number };
   endgame: { endgame: string[]; trap: number };
   teamNumber: null;
   event: string;
   matchNumber: null;
-  teleop: { speakerNA: number; missedSpeaker: number; amp: number; missedAmp: number; }
+  teleop: { speakerNA: number; amp: number; missed: number; }
 }>> = ref({
   event: "",
   teamNumber: null,
   matchNumber: -1,
   auto: {
     speakerNA: 0,
-    missedSpeaker: 0,
     amp: 0,
-    missedAmp: 0,
+    missed: 0,
     mobility: false,
   },
   teleop: {
     amp: 0,
-    missedAmp: 0,
     speakerNA: 0,
-    missedSpeaker: 0,
+    missed: 0,
   },
   endgame: {
     trap: 0,

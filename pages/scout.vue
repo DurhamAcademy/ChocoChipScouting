@@ -71,8 +71,8 @@ let impData = {
 
 //todo fix
 let scoutData: Ref<UnwrapRef<{
-  auto: { speakerNA: number; missedSpeaker: number; amp: number; missedAmp: number; mobility: boolean };
-  teleop: { speakerNA: number; missedSpeaker: number; amp: number; missedAmp: number; };
+  auto: { speakerNA: number; amp: number; missed: number; mobility: boolean };
+  teleop: { speakerNA: number; amp: number; missed: number; };
   endgame: { endgame: string[]; trap: number; spotlight: number };
   notes: {  notes: string; promptedNotes: Array<Array<boolean | number | Array<string>>> };
   teamNumber: any;
@@ -86,16 +86,14 @@ let scoutData: Ref<UnwrapRef<{
   author: "",
   auto: {
     speakerNA: 0,
-    missedSpeaker: 0,
     amp: 0,
-    missedAmp: 0,
+    missed: 0,
     mobility: false,
   },
   teleop: {
     amp: 0,
-    missedAmp: 0,
     speakerNA: 0,
-    missedSpeaker: 0,
+    missed: 0,
   },
   endgame: {
     trap: 0,
@@ -180,26 +178,18 @@ async function submit() {
           <div class="max-w-24 w-24">
             <h1 class="text-gray-700 dark:text-gray-200 font-sans mr-3 mb-1 font-medium">Amp</h1>
             <IncrementalButton class="mb-0 mr-3 mt-1" v-model="scoutData.auto.amp"></IncrementalButton>
-            <h1 class="text-coral-500 mr-3 dark:text-gray-200 font-sans text-sm">Scored</h1>
           </div>
           <div class="max-w-24 w-24">
-            <h1 class="text-gray-700 dark:text-gray-200 font-sans font-medium mb-1">Speaker</h1>
-            <IncrementalButton class="mb-0 mt-1" v-model="scoutData.auto.speakerNA"></IncrementalButton>
-            <h1 class="text-coral-500 dark:text-gray-200 font-sans text-sm">Scored</h1>
+            <h1 class="text-gray-700 dark:text-gray-200 mr-3 font-sans font-medium mb-1">Speaker</h1>
+            <IncrementalButton class="mb-0 mr-3 mt-1" v-model="scoutData.auto.speakerNA"></IncrementalButton>
+          </div>
+          <div class="max-w-24 w-24">
+            <h1 class="text-gray-700 dark:text-gray-200 font-sans mr-3 mb-1 font-medium">Missed</h1>
+            <IncrementalButton class="mb-0 mr-3 mt-1" v-model="scoutData.auto.missed"></IncrementalButton>
           </div>
           <div>
             <br>
-            <BooleanButton class="mt-2 ml-3" v-model="scoutData.auto.mobility" :default-value="'Mobility'" :other-value="'Mobility'"/>
-          </div>
-        </div>
-        <div class="flex text-center">
-          <div class="max-w-24 w-24">
-            <IncrementalButton class="mb-0 mt-2 mr-3" v-model="scoutData.auto.missedAmp" ></IncrementalButton>
-            <h1 class="text-coral-500 dark:text-gray-200 font-sans text-sm mr-3">Missed</h1>
-          </div>
-          <div class="max-w-24 w-24">
-            <IncrementalButton class="mb-0 mt-2" v-model="scoutData.auto.missedSpeaker"></IncrementalButton>
-            <h1 class="text-coral-500 dark:text-gray-200 font-sans text-sm">Missed</h1>
+            <BooleanButton class="mt-2" v-model="scoutData.auto.mobility" :default-value="'Mobility'" :other-value="'Mobility'"/>
           </div>
         </div>
       </div>
@@ -208,22 +198,14 @@ async function submit() {
           <div class="max-w-24 w-24">
             <h1 class="text-gray-700 dark:text-gray-200 font-sans mr-3 mb-1 font-medium">Amp</h1>
             <IncrementalButton class="mb-0 mr-3 mt-1" v-model="scoutData.teleop.amp"></IncrementalButton>
-            <h1 class="text-coral-500 mr-3 dark:text-gray-200 font-sans text-sm">Scored</h1>
           </div>
           <div class="max-w-24 w-24">
-            <h1 class="text-gray-700 dark:text-gray-200 font-sans font-medium mb-1">Speaker</h1>
-            <IncrementalButton class="mb-0 mt-1" v-model="scoutData.teleop.speakerNA"></IncrementalButton>
-            <h1 class="text-coral-500 dark:text-gray-200 font-sans text-sm">Scored</h1>
-          </div>
-        </div>
-        <div class="flex text-center">
-          <div class="max-w-24 w-24">
-            <IncrementalButton class="mb-0 mt-2 mr-3" v-model="scoutData.teleop.missedAmp" ></IncrementalButton>
-            <h1 class="text-coral-500 dark:text-gray-200 font-sans text-sm mr-3">Missed</h1>
+            <h1 class="text-gray-700 dark:text-gray-200 mr-3 font-sans font-medium mb-1">Speaker</h1>
+            <IncrementalButton class="mb-0 mr-3 mt-1" v-model="scoutData.teleop.speakerNA"></IncrementalButton>
           </div>
           <div class="max-w-24 w-24">
-            <IncrementalButton class="mb-0 mt-2" v-model="scoutData.teleop.missedSpeaker"></IncrementalButton>
-            <h1 class="text-coral-500 dark:text-gray-200 font-sans text-sm">Missed</h1>
+            <h1 class="text-gray-700 dark:text-gray-200 font-sans mr-3 mb-1 font-medium">Missed</h1>
+            <IncrementalButton class="mb-0 mr-3 mt-1" v-model="scoutData.teleop.missed"></IncrementalButton>
           </div>
         </div>
       </div>
