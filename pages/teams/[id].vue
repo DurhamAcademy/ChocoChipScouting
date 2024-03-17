@@ -7,6 +7,8 @@ const { attachments } = databases.locals
 const db = attachments
 const route = useRoute()
 
+let currentEvent = eventOptions[0]
+
 // display stuff
 const attachmentsData = ref<({ attachmentURL: string; attachmentID: string; tagList: string[]; notes: string; fileName: string; fileSize: string; event: string; author: string | undefined; dateUploaded: string; attachmentHovered: boolean})[]>([])
 let filteredAttachmentsData = ref<({ attachmentURL: string; attachmentID: string; tagList: string[]; notes: string; fileName: string; fileSize: string; event: string; author: string | undefined; dateUploaded: string; attachmentHovered: boolean})[]>([])
@@ -23,7 +25,7 @@ const openCarousel = ref(false)
 // filters
 const filterTags = ref<string[]>([])
 const filterInput = ref<string>('')
-const filterEvent = ref("")
+const filterEvent = ref(currentEvent)
 
 let allDocs = await db.allDocs({ include_docs: true })
 // filter attachments by team #
@@ -39,7 +41,10 @@ allDocs.rows.forEach(async (row) => {
         attachmentsData.value.push({ attachmentURL: URL.createObjectURL(file), attachmentID: doc._id, tagList: doc.tags, notes: doc.extraNotes, fileName: doc.name, fileSize: doc.fileSize, event: doc.event, author: doc.author, dateUploaded: doc.dateUploaded, attachmentHovered: false})
         if(!possibleEvents.value.includes(doc.event)) {
           possibleEvents.value.push(doc.event)
-          eventStyles.value.push("outline")
+          if(doc.event === currentEvent)
+            eventStyles.value.push("solid")
+          else
+            eventStyles.value.push("outline")
         }
         for (let tag of attachmentsData.value[attachmentsData.value.length-1].tagList) {
           if(!possibleTags.value.includes(tag)) {
@@ -82,7 +87,6 @@ function toggleTag(index: number) {
 
 function toggleEvent(index: number) {
   if (eventStyles.value[index] == "outline") {
-    console.log(possibleEvents.value)
     filterEvent.value = possibleEvents.value[index]
     eventStyles.value = eventStyles.value.map(() => "outline")
     eventStyles.value[index] = "solid"
