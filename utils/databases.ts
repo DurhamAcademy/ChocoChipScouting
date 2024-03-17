@@ -59,9 +59,14 @@ export type TeamData = {
 }
 
 export type Attachments = {
+    event: string;
     name: string;
-    team: number;
-    author: string | undefined;
+    teamNumber: number;
+    fileSize: string;
+    author : string | undefined;
+    tags: string[];
+    extraNotes: string;
+    dateUploaded: string;
 }
 
 export default {
