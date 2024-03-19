@@ -8,6 +8,8 @@ let fullArray = [["f1", "f2", "f3", "f4"],["m1", "m2", "m3", "m4"],["c1", "c2", 
     //f = front m = middle c = climb s = speaker
 let isOpen = ref(false)
 let cQ = ""
+let endResult=Array<String>
+let eZ=false, cN=false, dN=false, sNM=false, sAM=false, sNS=false, sAS=false
 //currentQuadrant
 
 const value = computed({
@@ -20,7 +22,31 @@ const value = computed({
 })
 
 function addResults(Quadrant:string){
-
+  let temp = Quadrant
+  if(eZ){
+    temp = temp + " eZ"
+  }
+  if(cN){
+    temp = temp + " cN"
+  }
+  if(dN){
+    temp = temp + " dN"
+  }
+  if(sNM){
+    temp = temp + " sNM"
+  }
+  if(sAM){
+    temp = temp + " sAM"
+  }
+  if(sNS){
+    temp = temp + " sNS"
+  }
+  if(sAS){
+    temp = temp + " sAS"
+  }
+  if(temp!=Quadrant) {
+    endResult.add(temp)
+  }
 }
 
 </script>
@@ -37,15 +63,15 @@ function addResults(Quadrant:string){
       <div class="flex flex-auto">
         <div class="p-4">
           <div class="h-72">
-            <BooleanButton label="Entered Zone" @click=""/>
-            <BooleanButton label="Collected Note" @click=""/>
-            <BooleanButton label="Discarded Note" @click=""/>
+            <BooleanButton label="Entered Zone" @click="eZ=!eZ"/>
+            <BooleanButton label="Collected Note" @click="cN=!cN"/>
+            <BooleanButton label="Discarded Note" @click="dN=!dN"/>
             <br>
-            <BooleanButton label="Shot Note (Missed)" @click=""/>
-            <BooleanButton label="Shot Amp (Missed)" @click=""/>
+            <BooleanButton label="Shot Note (Missed)" @click="sNM=!sNM"/>
+            <BooleanButton label="Shot Amp (Missed)" @click="sAM=!sAM"/>
             <br>
-            <BooleanButton label="Shot Note (Scored)" @click=""/>
-            <BooleanButton label="Shot Amp (Scored)" @click=""/>
+            <BooleanButton label="Shot Note (Scored)" @click="sNS=!sNS"/>
+            <BooleanButton label="Shot Amp (Scored)" @click="sAS=!sNS"/>
             <br>
             <BooleanButton label="unused Button" @click=""/>
             <BooleanButton label="unused Button" @click=""/>
