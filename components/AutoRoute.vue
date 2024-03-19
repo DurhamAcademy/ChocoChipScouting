@@ -7,8 +7,8 @@ const props = defineProps<{
 let fullArray = [["f1", "f2", "f3", "f4"],["m1", "m2", "m3", "m4"],["c1", "c2", "c3", "c4"],["s1", "s2", "s3", "s4"]]
     //f = front m = middle c = climb s = speaker
 let isOpen = ref(false)
-let cQ = ""
-let endResult=Array<String>
+let cQ: string
+let endResult: ArrayList<String>
 let eZ=false, cN=false, dN=false, sNM=false, sAM=false, sNS=false, sAS=false
 //currentQuadrant
 
