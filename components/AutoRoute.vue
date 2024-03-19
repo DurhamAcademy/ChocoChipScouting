@@ -7,6 +7,8 @@ const props = defineProps<{
 let fullArray = [["f1", "f2", "f3", "f4"],["m1", "m2", "m3", "m4"],["c1", "c2", "c3", "c4"],["s1", "s2", "s3", "s4"]]
     //f = front m = middle c = climb s = speaker
 let isOpen = ref(false)
+let cQ = ""
+//currentQuadrant
 
 const value = computed({
   get() {
@@ -17,13 +19,16 @@ const value = computed({
   }
 })
 
+function addResults(Quadrant:string){
+
+}
 
 </script>
 
 <template>
   <div>
     <div v-for="items in fullArray" class="flex" flex-auto>
-      <div v-for="item in items" @click="isOpen = true" class="flex-auto w-1/4 h-1/4">
+      <div v-for="item in items" @click="isOpen = true, cQ=item" class="flex-auto w-1/4 h-1/4">
         <p>{{item}}</p>
         <br>
       </div>
@@ -32,7 +37,19 @@ const value = computed({
       <div class="flex flex-auto">
         <div class="p-4">
           <div class="h-72">
-
+            <BooleanButton label="Entered Zone" @click=""/>
+            <BooleanButton label="Collected Note" @click=""/>
+            <BooleanButton label="Discarded Note" @click=""/>
+            <br>
+            <BooleanButton label="Shot Note (Missed)" @click=""/>
+            <BooleanButton label="Shot Amp (Missed)" @click=""/>
+            <br>
+            <BooleanButton label="Shot Note (Scored)" @click=""/>
+            <BooleanButton label="Shot Amp (Scored)" @click=""/>
+            <br>
+            <BooleanButton label="unused Button" @click=""/>
+            <BooleanButton label="unused Button" @click=""/>
+            <UButton @click="addResults(cQ), isOpen=false" icon="i-heroicons-x-circle" class="flex justify-end justify-right"/>
             </div>
         </div>
       </div>
