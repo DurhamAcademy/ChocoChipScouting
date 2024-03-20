@@ -2,8 +2,10 @@
 
 import PouchDB from "pouchdb";
 import databases from "~/utils/databases";
-import SyncStatusVisualization from "~/components/SyncStatusVisualization.vue";
+import {useSync} from "~/composables/useSync";
 let syncDisable = ref(false)
+
+useSync();
 
 async function sync(){
   syncDisable.value = true
