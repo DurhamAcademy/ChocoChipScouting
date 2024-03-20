@@ -71,6 +71,8 @@ let chartTitle = ref("Match " + currData.value.matchNumber)
 let promptedNotesOptions = ["Defense", "Offense", "Driver"]
 let promptedNotesDetailedOptions = [["Defense location", "Risk of fouls", "Other"], ["Shooing location(s)", "Ability to avoid defense", "Weakness of cycles", "Other"], ["Strengths", "Weaknesses", "Other"]]
 
+console.log(props.rowData.rawData)
+
 </script>
 
 <template>
@@ -95,12 +97,12 @@ let promptedNotesDetailedOptions = [["Defense location", "Risk of fouls", "Other
             </div>
             <div class="text-wrap max-w-72 h-2/3 max-h-2/3 overflow-y-scroll">
               <div v-for="(item, index) in rowData.rawData[selectedMatch - 1].notes.promptedNotes">
-                <div v-if="item[0]">
+                <div v-if="item.selected">
                   <div class="pb-1">
                     <span class="font-extrabold mr-2 text-sm">{{promptedNotesOptions[index] + ":"}}</span>
-                    <UBadge :color="item[1] > 3 ? 'green': item[1] < 3 ? 'red' : 'gray'" :variant="item[1] == 2 || item[1] == 4 ? 'soft': 'subtle'">{{item[1]}}</UBadge>
+                    <UBadge :color="item.rating > 3 ? 'green': item.rating < 3 ? 'red' : 'gray'" :variant="item.rating == 2 || item.rating == 4 ? 'soft': 'subtle'">{{item.rating}}</UBadge>
                   </div>
-                  <div v-for="(text, i) in item[2]">
+                  <div v-for="(text, i) in item.notes">
                     <p v-if="text != ''" class="text-xs pb-0 font-semibold underline-offset-2" >{{promptedNotesDetailedOptions[index][i] + ':'}}</p>
                     <p v-if="text != ''" class="pb-2.5 text-xs">{{text}}</p>
                   </div>

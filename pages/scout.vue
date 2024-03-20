@@ -74,7 +74,7 @@ let scoutData: Ref<UnwrapRef<{
   auto: { speakerNA: number; amp: number; missed: number; mobility: boolean };
   teleop: { speakerNA: number; amp: number; missed: number; };
   endgame: { endgame: string[]; trap: number; spotlight: number };
-  notes: {  notes: string; promptedNotes: Array<Array<boolean | number | Array<string>>> };
+  notes: {  notes: string; promptedNotes: Array<{ selected: boolean, rating: number, notes: Array<string> }> };
   teamNumber: any;
   event: string;
   matchNumber: any;
@@ -102,7 +102,21 @@ let scoutData: Ref<UnwrapRef<{
   },
   notes: {
     notes: "",
-    promptedNotes: [[false, 1, []], [false, 1, []], [false, 1, []]]
+    promptedNotes: [{
+        selected: false,
+        rating: 1,
+        notes: [],
+      },
+      {
+        selected: false,
+        rating: 1,
+        notes: [],
+      },
+      {
+        selected: false,
+        rating: 1,
+        notes: [],
+      }]
   }
 })
 
