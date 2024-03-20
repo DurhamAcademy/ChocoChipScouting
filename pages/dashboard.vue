@@ -5,8 +5,6 @@ import databases from "~/utils/databases";
 import {useSync} from "~/composables/useSync";
 let syncDisable = ref(false)
 
-useSync();
-
 async function sync(){
   syncDisable.value = true
   await PouchDB.sync(databases.locals.scoutingData, databases.remotes.scoutingData)
