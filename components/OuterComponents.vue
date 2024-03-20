@@ -10,6 +10,8 @@ import type {UnwrapRef} from "vue";
 import {eventOptions} from "~/utils/eventOptions";
 import {useSync} from "~/composables/useSync";
 
+useSync();
+
 const {usernameState, sessionState, logout}: {
   logout: () => Promise<void>;
   // noinspection TypeScriptUnresolvedReference
