@@ -1,8 +1,7 @@
 <script setup lang="ts">
 
 import PouchDB from "pouchdb";
-import databases from "~/utils/databases";
-import {useSync} from "~/composables/useSync";
+import databases, {type TeamInfo} from "~/utils/databases";
 let syncDisable = ref(false)
 
 async function sync(){
@@ -10,7 +9,7 @@ async function sync(){
   await PouchDB.sync(databases.locals.scoutingData, databases.remotes.scoutingData)
   await PouchDB.sync(databases.locals.basic, databases.remotes.basic)
   await PouchDB.sync(databases.locals.attachments, databases.remotes.attachments)
-  await PouchDB.sync(databases.locals.teamData, databases.remotes.teamData)
+  await PouchDB.sync(databases.locals.teamInfo, databases.remotes.teamInfo)
   syncDisable.value = false
 }
 
@@ -19,24 +18,24 @@ updateTeamData()
 async function updateTeamData() {
   try {
     let previouslySavedTeamNums: number[] = []
-    let {teamData: db} = databases.locals
+    let {teamInfo: db} = databases.locals
     //gets all the teamsData docs from the database and adds them to one array
-    let dbTeams = (await db.allDocs()).rows.map(async (doc): Promise<TeamData> => {
+    let dbTeams = (await db.allDocs()).rows.map(async (doc): Promise<TeamInfo> => {
       return db.get(doc.id)
     })
-    Promise.all(dbTeams).then((teams: Array<TeamData>) => {
+    Promise.all(dbTeams).then((teams: Array<TeamInfo>) => {
       previouslySavedTeamNums = teams.map((value) => {
         return value.teamNum
       })
     }).then(async () => {
       //goes through each event and checks if they have any teams that aren't in the db already
-      let newTeams: Array<TeamData> = []
+      let newTeams: Array<TeamInfo> = []
       for (let event of eventOptions) {
         const {data: tbaEventData} = await useFetch<Array<any>>("/api/eventTeams/" + event)
         if (tbaEventData.value != null) {
           if(tbaEventData.value.hasOwnProperty("Error")) continue
           for (let team of tbaEventData.value) {
-            let teamDataObj: TeamData = {
+            let teamDataObj: TeamInfo = {
               teamNum: parseInt(team.key.replace("frc", '')),
               teamName: team.nickname
             }

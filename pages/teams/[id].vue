@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-import databases, {type ScoutingData} from "~/utils/databases";
+import databases, {type ScoutingData, type TeamInfo} from "~/utils/databases";
 import MatchVisualization from "~/components/MatchVisualization.vue";
 import IdMeta = PouchDB.Core.IdMeta;
 import {eventOptions} from "~/utils/eventOptions";
@@ -80,12 +80,12 @@ function setup() {
 setup()
 
 async function findTeamName(){
-  let {teamData: db} = databases.locals
+  let {teamInfo: db} = databases.locals
   //gets all the teamsData docs from the database and adds them to one array
-  let dbTeams = (await db.allDocs()).rows.map(async (doc): Promise<TeamData> => {
+  let dbTeams = (await db.allDocs()).rows.map(async (doc): Promise<TeamInfo> => {
     return db.get(doc.id)
   })
-  Promise.all(dbTeams).then((teams: Array<TeamData>) => {
+  Promise.all(dbTeams).then((teams: Array<TeamInfo>) => {
       teams.forEach((team) => {
         if(team.teamNum == teamData.value.teamNum){
           teamData.value.teamName = team.teamName

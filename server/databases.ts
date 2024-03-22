@@ -1,6 +1,6 @@
 import {couchDBBaseURL} from "~/utils/URIs";
 import PouchDB from "pouchdb"
-import {Attachments, ScoutingData, TeamData} from "~/utils/databases";
+import {Attachments, ScoutingData, TeamInfo} from "~/utils/databases";
 
 class LocalRemoteServerSideDatabaseSyncHolder<Content extends {} = {}> {
     name: string
@@ -33,19 +33,19 @@ class LocalRemoteServerSideDatabaseSyncHolder<Content extends {} = {}> {
     static databases = {
         "attachments": new LocalRemoteServerSideDatabaseSyncHolder<Attachments>("attachments", false, ["drive team", "scout", 'pit', 'other', '_admin'], ["_admin"]),
         "scoutingData": new LocalRemoteServerSideDatabaseSyncHolder<ScoutingData>("scouting-data", false, ["drive team", "scout", 'pit', 'other', '_admin'], ["_admin"]),
-        "teamData": new LocalRemoteServerSideDatabaseSyncHolder<TeamData>("team-data", false, ["drive team", "scout", 'pit', 'other', '_admin'], ["_admin"]),
+        "teamInfo": new LocalRemoteServerSideDatabaseSyncHolder<TeamInfo>("team-info", false, ["drive team", "scout", 'pit', 'other', '_admin'], ["_admin"]),
         "basic": new LocalRemoteServerSideDatabaseSyncHolder<{}>("basic", false, ["drive team", "scout", 'pit', 'other', '_admin'], ["_admin"]),
     };
     static locals = {
         "attachments": this.databases.attachments.local!,
         "scoutingData": this.databases.scoutingData.local!,
-        "teamData": this.databases.teamData.local!,
+        "teamInfo": this.databases.teamInfo.local!,
         "basic": this.databases.basic.local!,
     };
     static remotes = {
         "attachments": this.databases.attachments.remote,
         "scoutingData": this.databases.scoutingData.remote,
-        "teamData": this.databases.teamData.remote,
+        "teamInfo": this.databases.teamInfo.remote,
         "basic": this.databases.basic.remote,
     };
 }
