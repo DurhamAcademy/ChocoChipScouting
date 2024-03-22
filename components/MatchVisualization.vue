@@ -35,7 +35,7 @@ function compareMatchNumbers(a: any, b: any){
   return 0;
 }
 
-const chartLabels = ['Auto Amp','Auto Speaker', 'Amp', 'Speaker', 'Trap']
+const chartLabels = ['Auto Amp','Auto Speaker', 'Auto Miss', 'Amp', 'Speaker', 'Miss', 'Trap']
 let currData: any = ref(props.rowData.rawData[selectedMatch.value - 1])
 
 watch(selectedMatch, () =>{
@@ -43,8 +43,10 @@ watch(selectedMatch, () =>{
   chartData.value = [
     currData.value.auto.amp,
     currData.value.auto.speakerNA,
+    currData.value.auto.missed || 0,
     currData.value.teleop.amp,
     currData.value.teleop.speakerNA,
+    currData.value.teleop.missed || 0,
     currData.value.endgame.trap,
   ]
   chartTitle.value = "Match " + currData.value.matchNumber
@@ -53,18 +55,23 @@ watch(selectedMatch, () =>{
 
 let sentimentScore = sentiment.analyze(props.rowData.rawData[selectedMatch.value - 1].notes.notes).score
 
+//TODO eventually get rid of the || 0s because they are just backwards compatability
 
 let chartData = ref([
   currData.value.auto.amp,
   currData.value.auto.speakerNA,
+  currData.value.auto.missed || 0,
   currData.value.teleop.amp,
   currData.value.teleop.speakerNA,
+  currData.value.teleop.missed || 0,
   currData.value.endgame.trap,
 ])
 let chartTitle = ref("Match " + currData.value.matchNumber)
 
 let promptedNotesOptions = ["Defense", "Offense", "Driver"]
 let promptedNotesDetailedOptions = [["Defense location", "Risk of fouls", "Other"], ["Shooing location(s)", "Ability to avoid defense", "Weakness of cycles", "Other"], ["Strengths", "Weaknesses", "Other"]]
+
+console.log(props.rowData.rawData)
 
 </script>
 
@@ -86,17 +93,16 @@ let promptedNotesDetailedOptions = [["Defense location", "Risk of fouls", "Other
             <div class="pb-1">
               <UBadge color="sky" variant="subtle" v-if="rowData.rawData[selectedMatch - 1].auto.mobility" class="mr-1.5 mt-2">Mobility</UBadge>
               <UBadge color="indigo" variant="subtle" v-for="endgame in rowData.rawData[selectedMatch - 1].endgame.endgame" class="mr-1.5 mt-2"> {{ endgame }} </UBadge>
+              <UBadge color="emerald" variant="subtle" v-if="rowData.rawData[selectedMatch - 1].endgame.spotlight > 0" class="mr-1.5 mt-2">Spotlight: {{ rowData.rawData[selectedMatch - 1].endgame.spotlight }} </UBadge>
             </div>
-            <span class="font-extrabold text-sm flex-auto">Spotlight: </span>
-            <UBadge color="gray" variant="soft" class="pb-3 mr-1.5 mt-2">{{rowData.rawData[selectedMatch - 1].endgame.spotlight}}</UBadge>
             <div class="text-wrap max-w-72 h-2/3 max-h-2/3 overflow-y-scroll">
               <div v-for="(item, index) in rowData.rawData[selectedMatch - 1].notes.promptedNotes">
-                <div v-if="item[0]">
+                <div v-if="item.selected">
                   <div class="pb-1">
                     <span class="font-extrabold mr-2 text-sm">{{promptedNotesOptions[index] + ":"}}</span>
-                    <UBadge :color="item[1] > 3 ? 'green': item[1] < 3 ? 'red' : 'gray'" :variant="item[1] == 2 || item[1] == 4 ? 'soft': 'subtle'">{{item[1]}}</UBadge>
+                    <UBadge :color="item.rating > 3 ? 'green': item.rating < 3 ? 'red' : 'gray'" :variant="item.rating == 2 || item.rating == 4 ? 'soft': 'subtle'">{{item.rating}}</UBadge>
                   </div>
-                  <div v-for="(text, i) in item[2]">
+                  <div v-for="(text, i) in item.notes">
                     <p v-if="text != ''" class="text-xs pb-0 font-semibold underline-offset-2" >{{promptedNotesDetailedOptions[index][i] + ':'}}</p>
                     <p v-if="text != ''" class="pb-2.5 text-xs">{{text}}</p>
                   </div>

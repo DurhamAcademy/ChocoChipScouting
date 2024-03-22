@@ -23,15 +23,18 @@ function compareMatchNumbers(a: any, b: any){
 let matchNums = ref<Array<number>>([])
 let autoMatchScores = ref<Array<number>>([])
 let matchScores = ref<Array<number>>([])
+let missedScores = ref<Array<number>>([])
 
 for(let match of props.rowData.rawData){
   matchNums.value.push(match.matchNumber)
   autoMatchScores.value.push(match.auto.speakerNA)
+  //TODO backwards compatability
+  missedScores.value.push((match.auto.missed + match.teleop.missed) || 0)
   matchScores.value.push(match.auto.speakerNA + match.teleop.speakerNA)
 }
 
 
-const chartTitles = ["Total", "Auto"]
+const chartTitles = ["Total", "Auto", "Missed"]
 
 let columns = [{
   key: 'period',
@@ -91,7 +94,7 @@ let rows = [{
     <div class="width=device-width flex-auto flex flex-wrap">
       <LineChart
           class="mr-5"
-          :data="[matchScores, autoMatchScores]"
+          :data="[matchScores, autoMatchScores, missedScores]"
           :labels="matchNums"
           :chart-titles="chartTitles"
           :suggested-max="20"

@@ -6,14 +6,13 @@ import {useLazyAsyncData} from "#app";
 
 PouchDB.plugin(auth)
 const usersDB = new PouchDB(`${couchDBBaseURL}/_users`, {skip_setup: true});
-const basicDB = new PouchDB(`${couchDBBaseURL}/basic`, {skip_setup: true});
 const toast = useToast()
 
 let username = ref("")
 let password = ref("")
 
 let roles = ref([[""]])
-const roleOptions = ["drive team", "scout", 'pit', 'other', '_admin', 'verified']
+const roleOptions = ["drive team", "scout", 'pit', 'other']
 
 let updatingRoles = false
 
@@ -52,51 +51,51 @@ function debug(text:string){
 
 async function signUp() {
   let sessionRoles = await usersDB.getSession()
-  if(!(sessionRoles.userCtx.roles && (sessionRoles.userCtx.roles.includes("_admin")))) return
-    usersDB.signUp(username.value, password.value,
-        {
-          metadata: {
-            unaccessedAccount: true
-          }
-        }, function (err, response) {
-          if (err) {
-            if (err.name === 'conflict') {
-              console.log("Username already exists")
-            } else if (err.name === 'forbidden') {
-              console.log("Invalid name")
-            } else {
-              console.log(err.name)
-            }
-          } else {
-            console.log("User created")
-            username.value = ""
-            password.value = ""
-            setup()
-          }
+  if(!(sessionRoles.userCtx.roles && (sessionRoles.userCtx.roles.includes("_admin") || sessionRoles.userCtx.roles.includes("admin")))) return
+  usersDB.signUp(username.value, password.value,
+      {
+        metadata: {
+          unaccessedAccount: true
         }
-    );
+      }, function (err, response) {
+        if (err) {
+          if (err.name === 'conflict') {
+            console.log("Username already exists")
+          } else if (err.name === 'forbidden') {
+            console.log("Invalid name")
+          } else {
+            console.log(err.name)
+          }
+        } else {
+          console.log("User created")
+          username.value = ""
+          password.value = ""
+          setup()
+        }
+      }
+  );
 }
 
 async function changePassword() {
   let sessionRoles = await usersDB.getSession()
-  if(!(sessionRoles.userCtx.roles && (sessionRoles.userCtx.roles.includes("_admin")))) return
-    usersDB.changePassword(username.value, password.value,
-        {}, function (err, response) {
-          if (err) {
-            console.log(err)
-          } else {
-            console.log("Password changed")
-            username.value = ""
-            password.value = ""
-            setup()
-          }
+  if(!(sessionRoles.userCtx.roles && (sessionRoles.userCtx.roles.includes("_admin") || sessionRoles.userCtx.roles.includes("admin")))) return
+  usersDB.changePassword(username.value, password.value,
+      {}, function (err, response) {
+        if (err) {
+          console.log(err)
+        } else {
+          console.log("Password changed")
+          username.value = ""
+          password.value = ""
+          setup()
         }
-    )
+      }
+  )
 }
 
 async function userManage() {
   let sessionRoles = await usersDB.getSession()
-  if(!(sessionRoles.userCtx.roles && (sessionRoles.userCtx.roles.includes("_admin")))) return
+  if(!(sessionRoles.userCtx.roles && (sessionRoles.userCtx.roles.includes("_admin") || sessionRoles.userCtx.roles.includes("admin")))) return
   usersDB.getUser(username.value,
       {}, function (err, response) {
         if (err) {
@@ -122,13 +121,13 @@ watch(roles.value, (value) => {
 
 async function editRoles(username: string, newRoles: Array<string>) {
   let sessionRoles = await usersDB.getSession()
-  if(! (sessionRoles.userCtx.roles && (sessionRoles.userCtx.roles.includes("_admin"))) ) return
+  if(!(sessionRoles.userCtx.roles && (sessionRoles.userCtx.roles.includes("_admin") || sessionRoles.userCtx.roles.includes("admin")))) return
   await usersDB.putUser(username, {roles: newRoles})
 }
 
 async function deleteUser(username: string) {
   let sessionRoles = await usersDB.getSession()
-  if(! (sessionRoles.userCtx.roles && (sessionRoles.userCtx.roles.includes("_admin"))) ) return
+  if(!(sessionRoles.userCtx.roles && (sessionRoles.userCtx.roles.includes("_admin") || sessionRoles.userCtx.roles.includes("admin")))) return
   usersDB.deleteUser(username, function (err, result) {
     if (err) {
       console.log(err.name)
@@ -167,13 +166,13 @@ const { pending, data: res } = await useLazyAsyncData('res', () => setup())
               <UInput v-model="username" autocomplete="off" placeholder="Username"/>
             </UFormGroup>
             <UFormGroup class="flex-auto pl-2.5">
-            <UInput v-model="password" autocomplete="off" type="password" placeholder="Password"/>
+              <UInput v-model="password" autocomplete="off" type="password" placeholder="Password"/>
             </UFormGroup>
             <UFormGroup class="flex-auto pl-2.5">
               <UButton :label="'Add/Edit User'" @click="userManage" block></UButton>
             </UFormGroup>
           </UForm>
-          </template>
+        </template>
         <template #default>
           <UTable :rows="userArr" :columns="columns" :loading="pending" :loading-state="{ icon: 'i-heroicons-arrow-path-20-solid', label: 'Loading...' }">
             <template #user-data="{ row }">
@@ -187,7 +186,7 @@ const { pending, data: res } = await useLazyAsyncData('res', () => setup())
             </template>
           </UTable>
         </template>
-        </UCard>
+      </UCard>
     </div>
   </OuterComponents>
 </template>
