@@ -8,9 +8,8 @@ import type {VerticalNavigationLink} from "#ui/types";
 import type {Ref} from "@vue/reactivity";
 import type {UnwrapRef} from "vue";
 import {eventOptions} from "~/utils/eventOptions";
-import {useSync} from "~/composables/useSync";
 
-useSync();
+syncData()
 
 const {usernameState, sessionState, logout}: {
   logout: () => Promise<void>;
