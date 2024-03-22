@@ -36,16 +36,9 @@ const {data: tbaEventData, pending: tbaPending} = await useLazyFetch<Array<any>>
 
 watch(tbaPending, () => {
   if(!tbaPending.value && tbaEventData.value != null){
-    debug(typeof tbaEventData.value)
     validTeamNums.value = tbaEventData.value.map((value) => value.team_number)
   }
 })
-
-const toast = useToast()
-
-function debug(text:string){
-  toast.add({ title: text })
-}
 
 let validTeamNums = ref<Array<number>>()
 
