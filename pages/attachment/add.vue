@@ -114,7 +114,7 @@ async function submit() {
   console.info(rev)
   rev = result.rev
   }
-  await attachments.sync();
+  attachments.sync();
   resetPage()
 }
 
