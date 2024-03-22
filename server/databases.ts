@@ -9,7 +9,7 @@ class LocalRemoteServerSideDatabaseSyncHolder<Content extends {} = {}> {
     memberRoles: string[]
     adminRoles: string[]
 
-    constructor(name: string, local: boolean, memberRoles: string[] = ["drive team", "scout", "pit", "other", "_admin", "admin"], adminRoles: string[] = ["_admin", "admin"]) {
+    constructor(name: string, local: boolean, memberRoles: string[], adminRoles: string[]) {
         this.name = name;
         if (local)
             this.local = new PouchDB(name, {skip_setup: true, name: name})
@@ -31,10 +31,10 @@ class LocalRemoteServerSideDatabaseSyncHolder<Content extends {} = {}> {
     }
 
     static databases = {
-        "attachments": new LocalRemoteServerSideDatabaseSyncHolder<Attachments>("attachments", false, ["drive team", "scout", 'pit', 'other', '_admin'], ["_admin"]),
-        "scoutingData": new LocalRemoteServerSideDatabaseSyncHolder<ScoutingData>("scouting-data", false, ["drive team", "scout", 'pit', 'other', '_admin'], ["_admin"]),
-        "teamInfo": new LocalRemoteServerSideDatabaseSyncHolder<TeamInfo>("team-info", false, ["drive team", "scout", 'pit', 'other', '_admin'], ["_admin"]),
-        "basic": new LocalRemoteServerSideDatabaseSyncHolder<{}>("basic", false, ["drive team", "scout", 'pit', 'other', '_admin'], ["_admin"]),
+        "attachments": new LocalRemoteServerSideDatabaseSyncHolder<Attachments>("attachments", false, ["drive team", "scout", 'pit', 'other', '_admin'], ["_admin", "admin"]),
+        "scoutingData": new LocalRemoteServerSideDatabaseSyncHolder<ScoutingData>("scouting-data", false, ["drive team", "scout", 'pit', 'other', '_admin'], ["_admin", "admin"]),
+        "teamInfo": new LocalRemoteServerSideDatabaseSyncHolder<TeamInfo>("team-info", false, ["drive team", "scout", 'pit', 'other', '_admin'], ["_admin", "admin"]),
+        "basic": new LocalRemoteServerSideDatabaseSyncHolder<{}>("basic", false, ["drive team", "scout", 'pit', 'other', '_admin'], ["_admin", "admin"]),
     };
     static locals = {
         "attachments": this.databases.attachments.local!,

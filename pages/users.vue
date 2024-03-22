@@ -12,7 +12,7 @@ let username = ref("")
 let password = ref("")
 
 let roles = ref([[""]])
-const roleOptions = ["drive team", "scout", 'pit', 'other']
+const roleOptions = ["drive team", "scout", 'pit', 'other', 'admin']
 
 let updatingRoles = false
 
