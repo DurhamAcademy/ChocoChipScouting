@@ -18,7 +18,7 @@ export default defineNitroPlugin((nitroApp) => {
                 .map((object) => {
                     const name = object.name
                     return {
-                        db: new PouchDB(`http://${process.env.couchDBHostname}:5984/` + name, {
+                        db: new PouchDB(`http://${process.env.NUXT_COUCH_DB_HOSTNAME}:5984/` + name, {
                             name: name,
                             auth: {
                                 username: config.couchDB.serverAdminUser.username,
