@@ -47,9 +47,14 @@ export type ScoutingData = {
 }
 
 export type Attachments = {
+    event: string;
     name: string;
-    team: number;
-    author: string | undefined;
+    teamNumber: number;
+    fileSize: string;
+    author : string | undefined;
+    tags: string[];
+    extraNotes: string;
+    dateUploaded: string;
 }
 
 for (const database of Object.values(LocalRemoteDatabaseSyncHolder.databases)) {
