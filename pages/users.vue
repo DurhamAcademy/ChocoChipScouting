@@ -53,45 +53,45 @@ function debug(text:string){
 async function signUp() {
   let sessionRoles = await usersDB.getSession()
   if(!(sessionRoles.userCtx.roles && (sessionRoles.userCtx.roles.includes("_admin") || sessionRoles.userCtx.roles.includes("admin")))) return
-    usersDB.signUp(username.value, password.value,
-        {
-          metadata: {
-            unaccessedAccount: true
-          }
-        }, function (err, response) {
-          if (err) {
-            if (err.name === 'conflict') {
-              console.log("Username already exists")
-            } else if (err.name === 'forbidden') {
-              console.log("Invalid name")
-            } else {
-              console.log(err.name)
-            }
-          } else {
-            console.log("User created")
-            username.value = ""
-            password.value = ""
-            setup()
-          }
+  usersDB.signUp(username.value, password.value,
+      {
+        metadata: {
+          unaccessedAccount: true
         }
-    );
+      }, function (err, response) {
+        if (err) {
+          if (err.name === 'conflict') {
+            console.log("Username already exists")
+          } else if (err.name === 'forbidden') {
+            console.log("Invalid name")
+          } else {
+            console.log(err.name)
+          }
+        } else {
+          console.log("User created")
+          username.value = ""
+          password.value = ""
+          setup()
+        }
+      }
+  );
 }
 
 async function changePassword() {
   let sessionRoles = await usersDB.getSession()
   if(!(sessionRoles.userCtx.roles && (sessionRoles.userCtx.roles.includes("_admin") || sessionRoles.userCtx.roles.includes("admin")))) return
-    usersDB.changePassword(username.value, password.value,
-        {}, function (err, response) {
-          if (err) {
-            console.log(err)
-          } else {
-            console.log("Password changed")
-            username.value = ""
-            password.value = ""
-            setup()
-          }
+  usersDB.changePassword(username.value, password.value,
+      {}, function (err, response) {
+        if (err) {
+          console.log(err)
+        } else {
+          console.log("Password changed")
+          username.value = ""
+          password.value = ""
+          setup()
         }
-    )
+      }
+  )
 }
 
 async function userManage() {
@@ -167,13 +167,13 @@ const { pending, data: res } = await useLazyAsyncData('res', () => setup())
               <UInput v-model="username" autocomplete="off" placeholder="Username"/>
             </UFormGroup>
             <UFormGroup class="flex-auto pl-2.5">
-            <UInput v-model="password" autocomplete="off" type="password" placeholder="Password"/>
+              <UInput v-model="password" autocomplete="off" type="password" placeholder="Password"/>
             </UFormGroup>
             <UFormGroup class="flex-auto pl-2.5">
               <UButton :label="'Add/Edit User'" @click="userManage" block></UButton>
             </UFormGroup>
           </UForm>
-          </template>
+        </template>
         <template #default>
           <UTable :rows="userArr" :columns="columns" :loading="pending" :loading-state="{ icon: 'i-heroicons-arrow-path-20-solid', label: 'Loading...' }">
             <template #user-data="{ row }">
@@ -187,7 +187,7 @@ const { pending, data: res } = await useLazyAsyncData('res', () => setup())
             </template>
           </UTable>
         </template>
-        </UCard>
+      </UCard>
     </div>
   </OuterComponents>
 </template>
