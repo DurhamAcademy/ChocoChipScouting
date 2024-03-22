@@ -15,6 +15,12 @@ async function sync(){
 
 updateTeamData()
 
+const toast = useToast()
+
+function debug(text:string){
+  toast.add({ title: text })
+}
+
 async function updateTeamData() {
   try {
     let previouslySavedTeamNums: number[] = []
@@ -28,6 +34,7 @@ async function updateTeamData() {
         return value.teamNum
       })
     }).then(async () => {
+      debug(JSON.stringify(previouslySavedTeamNums))
       //goes through each event and checks if they have any teams that aren't in the db already
       let newTeams: Array<TeamInfo> = []
       for (let event of eventOptions) {
