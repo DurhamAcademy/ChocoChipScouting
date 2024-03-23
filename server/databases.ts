@@ -33,7 +33,7 @@ class LocalRemoteServerSideDatabaseSyncHolder<Content extends {} = {}> {
     static databases = {
         "attachments": new LocalRemoteServerSideDatabaseSyncHolder<Attachments>("attachments", false, ["drive team", "scout", 'pit', 'other', '_admin'], ["_admin", "admin"]),
         "scoutingData": new LocalRemoteServerSideDatabaseSyncHolder<ScoutingData>("scouting-data", false, ["drive team", "scout", 'pit', 'other', '_admin'], ["_admin", "admin"]),
-        "teamInfo": new LocalRemoteServerSideDatabaseSyncHolder<TeamInfo>("team-info", false, [], []),
+        "teamInfo": new LocalRemoteServerSideDatabaseSyncHolder<TeamInfo>("team-info", false, ["drive team", "scout", 'pit', 'other', '_admin'], ["_admin", "admin"]),
         "basic": new LocalRemoteServerSideDatabaseSyncHolder<{}>("basic", false, ["drive team", "scout", 'pit', 'other', '_admin'], ["_admin", "admin"]),
     };
     static locals = {
