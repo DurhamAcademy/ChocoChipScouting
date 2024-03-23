@@ -160,7 +160,7 @@ async function updateTeamData() {
                     <UButton v-if="typeof event.week === 'number'" class="rounded-full mx-0.5 mr-1" :label="'Week ' + (parseInt(event.week)+1)" color="gray" variant="outline"/>
                     <p class="my-auto mx-0.5">{{months.at(event.start_date.split("-")[1]-1) + " " + parseInt(event.start_date.split("-")[2]) + ", " + event.start_date.split("-")[0]}} - {{months.at(event.end_date.split("-")[1]-1) + " " + parseInt(event.end_date.split("-")[2]) + ", " + event.end_date.split("-")[0]}}</p>
                   </div>
-                  <UPopover v-if="teamEventData[index].length != 0">
+                  <UPopover v-if="teamEventData != undefined && teamEventData[index].length != 0">
                     <div class="flex">
                       <UButton icon="i-heroicons-presentation-chart-bar" variant="outline" class="rounded-full mx-0.5 mr-1" color="primary"/>
                       <p class="my-auto mx-0.5 font-sans">{{placeify(teamEventData[index].rank)}} Place with a Record of {{`${teamEventData[index].record.wins}-${teamEventData[index].record.losses}-${teamEventData[index].record.ties}`}}</p>
