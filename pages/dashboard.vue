@@ -1,7 +1,18 @@
 <script setup lang="ts">
 
 import {ref} from "vue";
+import PouchDB from "pouchdb";
 import databases, {type TeamInfo} from "~/utils/databases";
+let syncDisable = ref(false)
+
+async function sync(){
+  syncDisable.value = true
+  await PouchDB.sync(databases.locals.scoutingData, databases.remotes.scoutingData)
+  await PouchDB.sync(databases.locals.basic, databases.remotes.basic)
+  await PouchDB.sync(databases.locals.attachments, databases.remotes.attachments)
+  await PouchDB.sync(databases.locals.teamInfo, databases.remotes.teamInfo)
+  syncDisable.value = false
+}
 
 let date = new Date();
 const rankings = ref<any[]>([])
@@ -144,6 +155,9 @@ async function updateTeamData() {
 
 <template>
   <OuterComponents>
+    <UButton class="ml-3 mt-3" @click="sync" :disabled="syncDisable" :loading="syncDisable">
+      Sync Databases
+    </UButton>
     <div class="px-5 max-w-2xl min-w-lg flex-grow m-auto">
       <div class="w-full my-8 text-center font-sans font-bold !text-primary text-5xl">
         Chocochips Scouting
