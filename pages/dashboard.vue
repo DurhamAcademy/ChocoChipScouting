@@ -155,7 +155,7 @@ async function updateTeamData() {
 
 <template>
   <OuterComponents>
-    <UButton class="ml-3 mt-3" @click="sync" :disabled="syncDisable" :loading="syncDisable">
+    <UButton class="mr-3 mt-3 right-0 absolute" @click="sync" :disabled="syncDisable" :loading="syncDisable">
       Sync Databases
     </UButton>
     <div class="px-5 max-w-2xl min-w-lg flex-grow m-auto">
