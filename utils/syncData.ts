@@ -5,7 +5,7 @@ export function syncData(){
     Promise.all([
         PouchDB.sync(databases.locals.scoutingData, databases.remotes.scoutingData),
         PouchDB.sync(databases.locals.attachments, databases.remotes.attachments),
-        PouchDB.sync(databases.locals.basic, databases.remotes.basic)
+        PouchDB.sync(databases.locals.teamInfo, databases.remotes.teamInfo),
     ]).then(() => {
         return true
     }).catch(() => {
