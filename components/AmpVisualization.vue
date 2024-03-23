@@ -23,14 +23,17 @@ function compareMatchNumbers(a: any, b: any){
 let matchNums = ref<Array<number>>([])
 let autoMatchScores = ref<Array<number>>([])
 let matchScores = ref<Array<number>>([])
+let missedScores = ref<Array<number>>([])
 
 for(let match of props.rowData.rawData){
   matchNums.value.push(match.matchNumber)
+  //TODO backwards compatability
+  missedScores.value.push((match.auto.missed + match.teleop.missed) || 0)
   autoMatchScores.value.push(match.auto.amp)
   matchScores.value.push(match.teleop.amp + match.auto.amp)
 }
 
-const chartTitles = ["Total", "Auto"]
+const chartTitles = ["Total", "Auto", "Missed"]
 
 let columns = [{
   key: 'period',
@@ -84,18 +87,21 @@ let rows = [{
 
 <template>
   <UCard>
-    <div class="flex flex-auto flex-wrap width=device-width">
+    <div class="flex flex-auto width=device-width flex-wrap">
       <LineChart
           class="mr-5"
-          :data="[matchScores, autoMatchScores]"
+          :data="[matchScores, autoMatchScores, missedScores]"
           :labels="matchNums"
           :chart-titles="chartTitles"
           :suggested-max="20"
+          height="h-64"
+          width="w-64"
       ></LineChart>
       <div class="flex-auto whitespace-normal">
-        <UTable :rows="rows" :columns="columns">
-
-        </UTable>
+        <div class="font-semibold underline underline-offset-2 mb-1 w-full text-center">
+          <h1>Amp</h1>
+        </div>
+        <UTable :rows="rows" :columns="columns"/>
       </div>
     </div>
   </UCard>

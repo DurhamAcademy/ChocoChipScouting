@@ -4,32 +4,45 @@ import SecurityHelper from "pouchdb-security-helper"
 
 PouchDB.plugin(SecurityHelper)
 
-
 export default defineNitroPlugin((nitroApp) => {
     // @ts-ignore
     nitroApp.hooks.hookOnce('request', async function () {
-        var config = useRuntimeConfig();
-        console.dir(config)
+        let config = useRuntimeConfig();
         let databaseInfoResponses
         try {
             databaseInfoResponses = await Promise.all(Object.values(databases.databases)
-                .map((database) => database.name)
-                .map((name) => {
-                    console.log("name")
-                    console.log(config.couchDB.serverAdminUser.username)
-                    return new PouchDB(`http://${process.env.couchDBHostname}:5984/` + name, {
-                        name: name,
-                        auth: {username: config.couchDB.serverAdminUser.username, password: config.couchDB.serverAdminUser.password}
-                    })
+                .map((database) => ({
+                    name: database.name,
+                    database: database
+                }))
+                .map((object) => {
+                    const name = object.name
+                    return {
+                        db: new PouchDB(`http://${process.env.NUXT_COUCH_DB_HOSTNAME}:5984/` + name, {
+                            name: name,
+                            auth: {
+                                username: config.couchDB.serverAdminUser.username,
+                                password: config.couchDB.serverAdminUser.password
+                            }
+                        }),
+                        localRemoteDatabaseObject: object.database
+                    };
                 })
-                .map(async (db) => {
+                .map(async (object) => {
+                    const db = object.db
                     //TODO: https://www.npmjs.com/package/pouchdb-security-helper
                     // use this for adding the correct access roles to the right databases
                     try {
                         if (!db.name.endsWith("_users")) {
                             let security = db.security();
-                            if (!security.roleHasAccess("verified"))
-                                security.members.roles.add("verified")
+                            security.members.set({
+                                names:[],
+                                roles: object.localRemoteDatabaseObject.memberRoles
+                            })
+                            security.admins.set({
+                                names:[],
+                                roles: object.localRemoteDatabaseObject.adminRoles
+                            })
                             await security.save()
                         }
                     } catch (e) {

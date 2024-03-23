@@ -2,7 +2,6 @@
 import vuetify, { transformAssetUrls } from 'vite-plugin-vuetify'
 
 var sw = true;
-
 export default defineNuxtConfig({
   modules: [
     '@nuxt/image',
@@ -177,10 +176,10 @@ export default defineNuxtConfig({
   runtimeConfig:{
     tbaKey: process.env.NUXT_TBA_KEY,
     couchDB: {
-      hostname: (process.env.couchDBHostname === undefined) ? process.env.couchDBHostname:"localhost",
+      hostname: (process.env.NUXT_COUCH_DB_HOSTNAME === undefined) ? process.env.NUXT_COUCH_DB_HOSTNAME:"localhost",
       serverAdminUser: {
-        username: process.env.COUCHDB_SERVER_USER,
-        password: process.env.COUCHDB_SERVER_PASSWORD
+        username: process.env.NUXT_COUCH_DB_SERVER_ADMIN_USER_USERNAME,
+        password: process.env.NUXT_COUCH_DB_SERVER_ADMIN_USER_PASSWORD
       }
     }
   },

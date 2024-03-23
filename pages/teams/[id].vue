@@ -1,199 +1,229 @@
 <script setup lang="ts">
 
-import {ref} from "vue"
-import databases from "~/utils/databases"
+import databases, {type ScoutingData, type TeamInfo} from "~/utils/databases";
+import MatchVisualization from "~/components/MatchVisualization.vue";
+import IdMeta = PouchDB.Core.IdMeta;
+import {eventOptions} from "~/utils/eventOptions";
+import {useWindowSize} from "@vueuse/core";
 
-const { attachments } = databases.locals
-const db = attachments
+let {width, height} = useWindowSize()
+
+const events = eventOptions.map((event) => event.replace(/[0-9]/g, ''))
+let currentEvent = ref(eventOptions[0])
+if (typeof window !== 'undefined') currentEvent.value = localStorage.getItem('currentEvent') || eventOptions[0]
+
+const { scoutingData } = databases.locals
+let db = scoutingData
+
 const route = useRoute()
 
-// display stuff
-const attachmentsData = ref<({ attachmentURL: string; attachmentID: string; tagList: string[]; notes: string; fileName: string; fileSize: string; event: string; author: string | undefined; dateUploaded: string; attachmentHovered: boolean})[]>([])
-let filteredAttachmentsData = ref<({ attachmentURL: string; attachmentID: string; tagList: string[]; notes: string; fileName: string; fileSize: string; event: string; author: string | undefined; dateUploaded: string; attachmentHovered: boolean})[]>([])
-const tempCarouselData = ref<({ attachmentURL: string; attachmentID: string; tagList: string[]; notes: string; fileName: string; fileSize: string; event: string; author: string | undefined; dateUploaded: string; attachmentHovered: boolean})[]>([])
-let attachmentsURLs = ref<string[]>([])
-const displayURLs = ref<string[]>([])
-const possibleTags = ref<string[]>([])
-const tagStyles = ref<string[]>([])
-const attachmentHovered = ref(attachmentsData.value.map(() => false)) // creates a list of bools for each of the attachments (all set to false because none are being hovered)
-const openCarousel = ref(false)
+const matches = (await db.allDocs()).rows
+let match = matches.map(async (doc): Promise<ScoutingData & IdMeta> => {
+  return await db.get(doc.id)
+})
 
-// filters
-const filterTags = ref<string[]>([])
-const filterInput = ref<string>('')
+let teamOrgMatches = new Map<number,Array<ScoutingData & IdMeta>>()
+let extraNotes = new Map<number, Array<string>>()
 
-let allDocs = await db.allDocs({ include_docs: true })
-// filter attachments by team #
-allDocs.rows.forEach(async (row) => {
-  const doc = row.doc;
-  if (doc)
-    if (doc._attachments && doc.teamNumber.toString() == route.params.id) {
-      // Process the attachments for this document
-      let attachment = await (db.getAttachment(doc._id, doc.name))
-      if (attachment instanceof Blob) {
-        let file = new File([attachment], doc.name, {type: attachment.type})
+  for (let i = 0; i < match.length; i++) {
+    let currentMatch = (await match[i])
+    if (currentMatch.matchNumber != -1) {
+      let team = typeof currentMatch.teamNumber == "string" ? parseInt(currentMatch.teamNumber) : currentMatch.teamNumber
+      if (!teamOrgMatches.has(team)) {
+        teamOrgMatches.set(team, [currentMatch])
+      } else {
+        let arr: Array<ScoutingData & IdMeta> = teamOrgMatches.get(team)!
+        arr.push(currentMatch)
+        teamOrgMatches.set(team, arr)
+      }
+    } else if (currentMatch.notes.notes != undefined) {
+      let team = typeof currentMatch.teamNumber == "string" ? parseInt(currentMatch.teamNumber) : currentMatch.teamNumber
+      if (!extraNotes.has(team)) {
+        extraNotes.set(team, [currentMatch.notes.notes])
+      } else {
+        let arr: Array<string> = extraNotes.get(team)!
+        arr.push(currentMatch.notes.notes)
+        extraNotes.set(team, arr)
+      }
+    }
+  }
 
-        attachmentsData.value.push({ attachmentURL: URL.createObjectURL(file), attachmentID: doc._id, tagList: doc.tags, notes: doc.extraNotes, fileName: doc.name, fileSize: doc.fileSize, event: doc.event, author: doc.author, dateUploaded: doc.dateUploaded, attachmentHovered: false})
-        for (let tag of attachmentsData.value[attachmentsData.value.length-1].tagList) {
-          if(!possibleTags.value.includes(tag)) {
-            possibleTags.value.push(tag)
-            tagStyles.value.push("outline")
+let teamData = ref<{teamNum: number, teamName: string, rawData: any, penaltyScore: number}>({teamNum: 0, teamName: "", rawData: null, penaltyScore: 0})
+let teamOptions = ref<Array<number>>([])
+let filterTeam = ref(route.params.id)
+
+function setup() {
+  teamOptions.value = []
+  for (let [key, value] of teamOrgMatches) {
+    if(typeof key == 'string') key = parseInt(key)
+    let filteredValue: (ScoutingData & IdMeta)[] = []
+    for (let match of value) {
+      if (match.event == currentEvent.value) {
+        if (!teamOptions.value.includes(key)) {
+          teamOptions.value.push(key)
+        }
+        filteredValue.push(match)
+      }
+    }
+    if (key.toString() == filterTeam.value) {
+      teamData.value = {
+        teamNum: key,
+        rawData: filteredValue,
+        teamName: "",
+        penaltyScore: 0
+      }
+    }
+  }
+  teamOptions.value.sort()
+  findTeamName()
+}
+setup()
+
+async function findTeamName(){
+  let {teamInfo: db} = databases.locals
+  //gets all the teamsData docs from the database and adds them to one array
+  let dbTeams = (await db.allDocs()).rows.map(async (doc): Promise<TeamInfo> => {
+    return db.get(doc.id)
+  })
+  Promise.all(dbTeams).then((teams: Array<TeamInfo>) => {
+      teams.forEach((team) => {
+        if(team.teamNum == teamData.value.teamNum){
+          teamData.value.teamName = team.teamName
+        }
+      })
+  })
+}
+
+const {data: tbaMatchData, pending: tbaPending} = useLazyFetch<Array<any>>("/api/eventMatches/" + currentEvent.value)
+function getTeamPenaltyCount(){
+  if(!tbaPending.value && tbaMatchData.value != null){
+    let teamsMap = new Map()
+    for(let match of tbaMatchData.value){
+      if(match.comp_level == "qm"){
+        for(let team of match.alliances.red.team_keys){
+          let teamNum = parseInt(team.substring(3))
+          if(teamsMap.has(teamNum)){
+            let increasedValues =
+                [
+                  teamsMap.get(teamNum)[0] + (match.score_breakdown.red.foulCount + match.score_breakdown.red.techFoulCount) / 3,
+                  teamsMap.get(teamNum)[1] + 1
+                ]
+            teamsMap.set(teamNum, increasedValues)
+          }
+          else{
+            teamsMap.set(teamNum, [
+              (match.score_breakdown.red.foulCount + match.score_breakdown.red.techFoulCount) / 3,
+              1
+            ])
+          }
+        }
+        for(let team of match.alliances.blue.team_keys){
+          let teamNum = parseInt(team.substring(3))
+          if(teamsMap.has(teamNum)){
+            let increasedValues =
+                [
+                  teamsMap.get(teamNum)[0] + (match.score_breakdown.blue.foulCount + match.score_breakdown.blue.techFoulCount) / 3,
+                  teamsMap.get(teamNum)[1] + 1
+                ]
+            teamsMap.set(teamNum, increasedValues)
+          }
+          else{
+            teamsMap.set(teamNum, [
+              (match.score_breakdown.blue.foulCount + match.score_breakdown.blue.techFoulCount) / 3,
+              1
+            ])
           }
         }
       }
-
     }
-});
-filteredAttachmentsData.value = attachmentsData.value
-
-// updating stuff when values change
-attachmentsURLs = computed(() => {
-  return attachmentsData.value.map(item => item.attachmentURL)
-})
-filteredAttachmentsData = computed(() => {
-  return attachmentsData.value.filter(attachment => {
-    return attachment.notes.toLowerCase().includes(filterInput.value.toLowerCase());
-  }).filter(attachment => {
-    return filterTags.value.every(tag => attachment.tagList.includes(tag))
-  })
-})
-
-// changes tag variant of tag clicked and also adds/removes tag to filter tags
-function toggleTag(index: number) {
-  if (tagStyles.value[index] == "outline") {
-    filterTags.value.push(possibleTags.value[index])
-    tagStyles.value[index] = "solid"
-  } else if (tagStyles.value[index] == "solid"){
-    filterTags.value.splice(filterTags.value.indexOf(possibleTags.value[index]))
-    tagStyles.value[index] = "outline"
+    return teamsMap
   }
+  return new Map()
 }
 
-// sets image clicked on as the first image in the carousel and makes sure that carousel data is parallel to displayURLs array
-function showCarousel(index: number) {
-  displayURLs.value = [...attachmentsURLs.value]
-  tempCarouselData.value = [...attachmentsData.value]
-  const temp = displayURLs.value.splice(index, 1)[0]
-  const temp2 = tempCarouselData.value.splice(index, 1)[0]
-  displayURLs.value.unshift(temp)
-  tempCarouselData.value.unshift(temp2)
-  openCarousel.value = true
-}
+let upperQuarterCutoff = ref(1)
+
+watch(tbaPending, (value) => {
+  if(!value){
+    let map = getTeamPenaltyCount()
+    let valuesArr = Array.from(map.values())
+    let percentile = .75
+    let calculatedValuesArr = valuesArr.map((value: Array<number>) => {
+      return value[0]/value[1] || 0
+    })
+    calculatedValuesArr.sort()
+    upperQuarterCutoff.value = calculatedValuesArr[Math.floor(valuesArr.length * percentile)]
+    let teamNum = filterTeam.value + ""
+    if(map.has(parseInt(teamNum))){
+      let mapValues = map.get(parseInt(teamNum))
+      teamData.value.penaltyScore = mapValues[0] / mapValues[1] || 0
+    }
+  }
+})
+
+
+watch(currentEvent, (value) => {
+  setup()
+  try{
+    localStorage.setItem('currentEvent', value)
+  }
+  catch{}
+})
 
 async function goBack() {
   navigateTo("/teams/")
 }
 
+let margin = ref(width.value > 800 ? "ml-2": "")
+watch(width, () => {
+  margin.value = width.value > 800 ? "ml-2": "mt-4"
+})
+
 </script>
 
 <template>
-  <UCard>
+  <UCard class="w-full h-full">
     <template #header>
       <UButton class="absolute left-2 top-2" variant="ghost" size="xl" icon="i-heroicons-arrow-left" @click="goBack"/>
-      <h1 class="font-extrabold text-4xl text-center">Team {{ route.params.id }} Attachments</h1>
-      <div class="flex mt-2 justify-center">
-        <UInput placeholder="Filter Notes" icon="i-heroicons-magnifying-glass" color="primary" class="w-40" v-model="filterInput"/> <!-- wip -->
-        <UPopover class="px-2">
-          <UButton label="Filter Tags" trailing-icon="i-heroicons-adjustments-horizontal" variant="ghost"/>
-          <template #panel>
-            <UCard class="min-w-32 max-w-64 flex flex-wrap justify-center">
-              <template #header>
-                <h1 class="font-sans text-lg font-bold opacity-50">Choose Tags To Filter</h1>
-              </template>
-              <template #default>
-                <UButton v-for="(tag, index) in possibleTags" :label="tag" class="flex-grow justify center" style="margin:5px" :variant="tagStyles[index]" :ui="{ rounded: 'rounded-full' }" @click="toggleTag(index)"/>
-              </template>
-            </UCard>
-          </template>
-        </UPopover>
+        <div class="text-center justify-center">
+          <UTooltip :text="'Avg Penalties: ' + teamData.penaltyScore.toFixed(2)" :popper="{ offsetDistance: -2 }">
+            <div>
+              <svg v-if="teamData.penaltyScore > upperQuarterCutoff" class="mb-2 mr-1 inline-block stroke-rose-500 fill-rose-200 w-6 h-6" viewBox="0 0 24 24" >
+                <path fill-rule="evenodd" d="M9.401 3.003c1.155-2 4.043-2 5.197 0l7.355 12.748c1.154 2-.29 4.5-2.599 4.5H4.645c-2.309 0-3.752-2.5-2.598-4.5L9.4 3.003ZM12 8.25a.75.75 0 0 1 .75.75v3.75a.75.75 0 0 1-1.5 0V9a.75.75 0 0 1 .75-.75Zm0 8.25a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z" clip-rule="evenodd" />
+              </svg>
+              <h1 class="inline-block font-extrabold text-2xl mb-2">{{teamData.teamName != '' ? (teamData.teamNum + ' - ' + teamData.teamName): teamData.teamNum}}</h1>
+            </div>
+          </UTooltip>
+        <div class="mx-auto flex justify-center align-center">
+          <UInputMenu
+              v-model="filterTeam"
+              :options="teamOptions"
+              @change="navigateTo('/teams/' + filterTeam)"
+              class="max-w-36 w-36 flex-auto h-8"
+              placeholder="Select a team"
+          />
+          <USelectMenu
+              v-model="currentEvent"
+              :options="eventOptions"
+              class="max-w-36 w-36 flex-auto h-8 ml-3"
+          />
+        </div>
       </div>
     </template>
-    <template class="flex flex-wrap justify-center">
-      <UModal v-model="openCarousel" fullscreen >
-        <UButton icon="i-heroicons-x-mark" size="xl" class="absolute right-2 top-2" variant="ghost" @click="openCarousel=false "/>
-          <UCarousel
-              v-slot="{ item, index }"
-              :items="displayURLs"
-              :ui="{
-        item: 'basis-full justify-center',
-        container: 'rounded-lg bg-gray-100'
 
-      }"
-              :prev-button="{
-        color: 'primary',
-        variant: 'ghost',
-        icon: 'i-heroicons-arrow-left-20-solid',
-        class: 'left-6'
-      }"
-              :next-button="{
-        color: 'primary',
-        variant: 'ghost',
-        icon: 'i-heroicons-arrow-right-20-solid',
-        class: 'right-6'
-      }"
-              arrows
-              class="w-full h-11/12 m-auto"
-          >
-
-            <NuxtImg :src="item" draggable="false" class="object-contain overflow-hidden" />
-            <UCard class="bg-white rounded-2xl m-2 lg:min-w-64 md:min-w-48 min-w-24 overflow-hidden">
-              <template #header class="flex flex-wrap">
-                <div class="font-sans text-2xl flex flex-wrap font-bold" >
-                  <h1 v-if="tempCarouselData[index].notes != ''" >{{ tempCarouselData[index].notes }}</h1>
-                  <h1 v-else class="font-sans opacity-50">No Notes</h1>
-                </div>
-              </template>
-              <template class="flex flex-wrap">
-                <UBadge v-if="tempCarouselData[index].tagList.length != 0" v-for="tag in tempCarouselData[index].tagList" :label="tag" class="m-0.5 rounded-2xl h-7 px-3 primary-900" variant="soft" />
-                <h1 v-else class="font-sans text-lg opacity-50 font-bold">No Tags</h1>
-              </template>
-              <template #footer>
-                <div class="font-sans text-xs opacity-40 font-medium">
-                  <p>Event: {{tempCarouselData[index].event}}</p>
-                  <p>Author: {{tempCarouselData[index].author}}</p>
-                  <p>Date Uploaded: {{tempCarouselData[index].dateUploaded}}</p>
-                </div>
-              </template>
-            </UCard>
-          </UCarousel>
-      </UModal>
-      <UContainer v-if="filteredAttachmentsData.length != 0" v-for="(attachment, index) in filteredAttachmentsData" :key="index"  class="m-2 bg-cover bg-center min-w-60 w-7/24 h-80 rounded-2xl md:px-0 lg:px-0 sm:px-0 px-0 flex flex-col justify-end" :style="{ backgroundImage: 'url(' + attachment.attachmentURL + ')'}" @mouseover="attachmentHovered[index] = true" @mouseleave="attachmentHovered[index] = false" @click="showCarousel(index)">
-          <UContainer v-show="attachmentHovered[index]" class="lg:px-0 sm:px-0 px-0 m-0 h-30 max-w-7xl">
-            <UCard class="rounded-t-none rounded-b-2xl bg-white" :style="{ backgroundColor: 'rgba(255, 255, 255, 0.7)' }">
-                <div class="flex flex-wrap">
-                  <div class="font-sans text-2xl flex flex-wrap" >
-                    <h1 v-if="attachment.notes != ''" >{{ attachment.notes }}</h1>
-                    <h1 class="opacity-50" v-else>No Notes</h1>
-                  </div>
-
-                  <!--
-                  <UPopover>
-                    <UButton icon="i-heroicons-pencil-square" variant="ghost" color="primary" class="ml-1"/>
-                    <template #panel>
-                      <UInput :model-value="attachment.notes" @change=""/>
-                    </template>
-                  </UPopover>
-                  -->
-                </div>
-              <div class="flex flex-wrap">
-                <UBadge v-for="tag in attachment.tagList" :label="tag" class="m-0.5 rounded-2xl h-7 px-3" variant="soft" color="primary"/>
-                <!--
-                <UPopover>
-                  <UButton icon="i-heroicons-tag" variant="ghost" color="primary" class="ml-1"/>
-                  <template #panel>
-                     add or remove tags
-                  </template>
-                </UPopover>
-                -->
-              </div>
-            </UCard>
-          </UContainer>
-      </UContainer>
-      <div v-else class="opacity-50">
-        <NuxtImg src="/sadcookie.png" height="400" width="400" />
-        <h1 class="font-sans text-xl font-bold text-center">No Images</h1>
+    <div class="flex flex-wrap" v-if="teamData.rawData.length > 0">
+      <div class="flex-auto h-1/3 mr-2">
+        <MatchVisualization :row-data="teamData"></MatchVisualization>
       </div>
-    </template>
+      <div :class="'flex-auto h-min max-h-min flex-wrap ' + margin">
+        <AmpVisualization :row-data="teamData"></AmpVisualization>
+        <SpeakerVisualization class="mt-4" :row-data="teamData"></SpeakerVisualization>
+      </div>
+    </div>
+    <div v-else class="opacity-50">
+      <NuxtImg class="mx-auto" src="/sadcookie.png" height="400" width="400" />
+      <h1 class="font-sans text-xl font-bold text-center">Looks like there is no data on team {{teamData.teamNum}} at {{currentEvent}} :(</h1>
+    </div>
   </UCard>
 </template>
 

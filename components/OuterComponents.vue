@@ -9,6 +9,8 @@ import type {Ref} from "@vue/reactivity";
 import type {UnwrapRef} from "vue";
 import {eventOptions} from "~/utils/eventOptions";
 
+syncData()
+
 const {usernameState, sessionState, logout}: {
   logout: () => Promise<void>;
   // noinspection TypeScriptUnresolvedReference
@@ -20,20 +22,10 @@ const {usernameState, sessionState, logout}: {
   updateUsernameState: () => Promise<boolean>
 } = inject(loginStateKey)!
 
-const colorMode = useColorMode()
-const isDark = computed({
-  get () {
-    return colorMode.value === 'dark'
-  },
-  set () {
-    colorMode.preference = colorMode.value === 'dark' ? 'light' : 'dark'
-  }
-})
 
 
 let {width, height} = useWindowSize()
 
-let route = useRoute()
 let router = useRouter()
 
 const events = eventOptions
@@ -50,7 +42,7 @@ let links: VerticalNavigationLink[] = [
   {label: "Teams", to: "/teams"},
   { label: "Predict", to: "/predict" },
 ]
-if (sessionState.value.userCtx.roles?.indexOf("_admin") != -1) {
+if (sessionState.value.userCtx.roles?.indexOf("admin") != -1 || sessionState.value.userCtx.roles?.indexOf("_admin") != -1) {
   links.push({label: "Users", to: "/users"})
 }
 
@@ -96,25 +88,24 @@ if (sessionState.value.userCtx.roles?.indexOf("_admin") != -1) {
                 <template #panel>
                   <UCard class="p-2">
                     <template #header>
-                        <div class="usernameLabel flex-auto mt-1.5 text-zinc-900 max-w-32">
+                      <div class="text-center">
+                        <span class="overflow-hidden flex-auto text-zinc-900 max-w-32">
                           {{ usernameState }}
-                        </div>
+                        </span>
+                      </div>
                     </template>
                     <UFormGroup class="inputDiv" label="Event" name="event">
                       <USelectMenu v-model="selectedEvent" :options="events"/>
                     </UFormGroup>
                     <br>
-                    <UFormGroup class="inputDiv" label="Style" name="event">
-                      <ClientOnly>
-                        <UButton
-                          :icon="isDark ? 'i-heroicons-moon-20-solid' : 'i-heroicons-sun-20-solid'"
-                          color="gray"
-                          variant="ghost"
-                          label="Theme"
-                          @click="isDark = !isDark"
-                        />
-                      </ClientOnly>
-                    </UFormGroup>
+                    <UButton
+                        icon="i-heroicons-arrow-right-circle"
+                        trailing
+                        color="black"
+                        variant="link"
+                        label="More Settings"
+                        @click="navigateTo('/settings')"
+                    />
                     <template #footer>
                       <UButton block label="Logout" square @click="logout"/>
                     </template>
@@ -141,9 +132,6 @@ if (sessionState.value.userCtx.roles?.indexOf("_admin") != -1) {
   position: relative;
 }
 
-.usernameLabel {
-  overflow: hidden
-}
 
 .settingsPopupDiv {
   position: absolute;
