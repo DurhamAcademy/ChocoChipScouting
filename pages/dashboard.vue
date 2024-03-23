@@ -296,7 +296,7 @@ async function updateTeamData() {
 
         }"
           >
-          <NuxtImg :src="item.attachmentURL" draggable="false" class="object-contain overflow-hiddenrounded-lg" />
+          <NuxtImg :src="item.attachmentURL" draggable="false" class="object-contain overflow-hidden rounded-lg" />
         </UCarousel>
       </UCard>
     </div>
