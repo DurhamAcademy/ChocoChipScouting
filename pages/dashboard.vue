@@ -1,7 +1,18 @@
 <script setup lang="ts">
 
 import {ref} from "vue";
+import PouchDB from "pouchdb";
 import databases, {type TeamInfo} from "~/utils/databases";
+let syncDisable = ref(false)
+
+async function sync(){
+  syncDisable.value = true
+  await PouchDB.sync(databases.locals.scoutingData, databases.remotes.scoutingData)
+  await PouchDB.sync(databases.locals.basic, databases.remotes.basic)
+  await PouchDB.sync(databases.locals.attachments, databases.remotes.attachments)
+  await PouchDB.sync(databases.locals.teamInfo, databases.remotes.teamInfo)
+  syncDisable.value = false
+}
 
 let date = new Date();
 const rankings = ref<any[]>([])
@@ -82,12 +93,12 @@ watch(eventsPending, async () => {
 let allDocs = await db.allDocs({ include_docs: true })
 allDocs.rows.forEach(async (row) => {
   const doc = row.doc;
-  if (doc && doc.tags.includes("robot")) {
+  if (doc && doc.tags.includes("robot") && doc.teamNumber == 6502) {
     let attachment = await (db.getAttachment(doc._id, doc.name))
     if (attachment instanceof Blob) {
       let file = new File([attachment], doc.name, {type: attachment.type})
       robotAttachments.value.push({ attachmentURL: URL.createObjectURL(file), attachmentID: doc._id, tagList: doc.tags, notes: doc.extraNotes, fileName: doc.name, fileSize: doc.fileSize, event: doc.event, author: doc.author, dateUploaded: doc.dateUploaded, attachmentHovered: false})
-      }
+    }
     }
 });
 
@@ -109,7 +120,8 @@ function placeify(place: number) {
       return place+"th";
    }
 }
-      
+
+//TODO find more perm fix
 //updateTeamData()
 
 async function updateTeamData() {
@@ -157,12 +169,15 @@ async function updateTeamData() {
 
 <template>
   <OuterComponents>
-    <div class="px-5 max-w-2xl min-w-lg flex-grow">
+    <UButton class="mr-3 mt-3 right-0 absolute" @click="sync" :disabled="syncDisable" :loading="syncDisable">
+      Sync Databases
+    </UButton>
+    <div class="px-5 max-w-2xl min-w-lg flex-grow m-auto">
       <div class="w-full my-8 text-center font-sans font-bold !text-primary text-5xl">
         Chocochips Scouting
       </div>
       <UCard class="mb-8">
-        <UTabs :items="items" class="w-full">
+        <UTabs :items="items" class="w-full max-h-52 overflow-hidden">
           <template #past="{ item }">
             <div class="h-40 overflow-y-auto px-4 rounded-md">
               <div v-for="(event, index) in pastEvents" class="bg-gray-100 rounded-md">
@@ -263,9 +278,10 @@ async function updateTeamData() {
             :items="robotAttachments"
             :ui="{
         item: 'basis-full justify-center',
-        container: 'rounded-lg bg-gray-100'
-
-      }"
+        container: 'rounded-lg '
+              }"
+              arrows
+      class="w-full px-4 max-h-96"
             :prev-button="{
         color: 'primary',
         variant: 'ghost',
@@ -277,12 +293,10 @@ async function updateTeamData() {
         variant: 'ghost',
         icon: 'i-heroicons-arrow-right-20-solid',
         class: '-right-4'
-      }"
-            arrows
-            class="w-full px-4"
-        >
 
-          <NuxtImg :src="item.attachmentURL" draggable="false" class="object-contain overflow-hidden" />
+        }"
+          >
+          <NuxtImg :src="item.attachmentURL" draggable="false" class="object-contain overflow-hiddenrounded-lg" />
         </UCarousel>
       </UCard>
     </div>
