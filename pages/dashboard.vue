@@ -73,7 +73,7 @@ allDocs.rows.forEach(async (row) => {
     if (attachment instanceof Blob) {
       let file = new File([attachment], doc.name, {type: attachment.type})
       robotAttachments.value.push({ attachmentURL: URL.createObjectURL(file), attachmentID: doc._id, tagList: doc.tags, notes: doc.extraNotes, fileName: doc.name, fileSize: doc.fileSize, event: doc.event, author: doc.author, dateUploaded: doc.dateUploaded, attachmentHovered: false})
-      }
+    }
     }
 });
 
@@ -143,12 +143,12 @@ async function updateTeamData() {
 
 <template>
   <OuterComponents>
-    <div class="px-5 max-w-2xl min-w-lg flex-grow">
+    <div class="px-5 max-w-2xl min-w-lg flex-grow m-auto">
       <div class="w-full my-8 text-center font-sans font-bold !text-primary text-5xl">
         Chocochips Scouting
       </div>
       <UCard>
-        <UTabs :items="items" class="w-full">
+        <UTabs :items="items" class="w-full max-h-52 overflow-hidden">
           <template #past="{ item }">
             <div class="h-40 overflow-y-auto px-4 rounded-md">
               <div v-for="(event, index) in pastEvents" class="bg-gray-100 rounded-md">
@@ -218,27 +218,25 @@ async function updateTeamData() {
               v-slot="{ item, index }"
               :items="robotAttachments"
               :ui="{
-          item: 'basis-full justify-center',
-          container: 'rounded-lg bg-gray-100'
-
-        }"
-              :prev-button="{
-          color: 'primary',
-          variant: 'ghost',
-          icon: 'i-heroicons-arrow-left-20-solid',
-          class: '-left-4'
-        }"
-              :next-button="{
-          color: 'primary',
-          variant: 'ghost',
-          icon: 'i-heroicons-arrow-right-20-solid',
-          class: '-right-4'
-        }"
+                item: 'basis-full justify-center',
+                container: 'rounded-lg'
+              }"
               arrows
-              class="w-full px-4"
+              class="w-full px-4 max-h-96"
+              :prev-button="{
+                color: 'primary',
+                variant: 'ghost',
+                icon: 'i-heroicons-arrow-left-20-solid',
+                class: '-left-4'
+              }"
+              :next-button="{
+                color: 'primary',
+                variant: 'ghost',
+                icon: 'i-heroicons-arrow-right-20-solid',
+                class: '-right-4'
+              }"
           >
-
-            <NuxtImg :src="item.attachmentURL" draggable="false" class="object-contain overflow-hidden" />
+            <NuxtImg :src="item.attachmentURL" draggable="false" class="object-contain overflow-hidden rounded-lg" />
           </UCarousel>
         </UCard>
       </div>
