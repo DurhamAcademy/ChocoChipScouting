@@ -125,7 +125,7 @@ if (sessionState.value.userCtx.roles?.indexOf("_admin") != -1) {
           </UCard>
         </div>
       </Transition>
-      <div class="flex-col min-w-0 min-h-full max-h-none max-w-full overflow-x-auto flex-grow place-content-center">
+      <div class="flex-col min-w-0 min-h-full max-h-none max-w-full overflow-x-auto flex-grow">
         <slot/>
       </div>
     </div>
