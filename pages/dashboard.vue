@@ -1,11 +1,9 @@
 <script setup lang="ts">
 
 import PouchDB from "pouchdb";
-import databases from "~/utils/databases";
 import {ref} from "vue";
 import databases, {type TeamInfo} from "~/utils/databases";
 
-let syncDisable = ref(false)
 let date = new Date();
 const rankings = ref<any[]>([])
 const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
@@ -28,14 +26,6 @@ const teamEventData = ref<any[]>([])
 const upcomingEvents = ref<any[]>([])
 const pastEvents = ref<any[]>([])
 
-async function sync(){
-  syncDisable.value = true
-  await PouchDB.sync(databases.locals.scoutingData, databases.remotes.scoutingData)
-  await PouchDB.sync(databases.locals.basic, databases.remotes.basic)
-  await PouchDB.sync(databases.locals.attachments, databases.remotes.attachments)
-  await PouchDB.sync(databases.locals.teamInfo, databases.remotes.teamInfo)
-  syncDisable.value = false
-}
 
 
 const {data: eventsData, pending: eventsPending} = await useLazyFetch<Array<any>>('/api/teamEvents/frc6502');
@@ -154,9 +144,6 @@ async function updateTeamData() {
 
 <template>
   <OuterComponents>
-    <UButton class="ml-3 mt-3" @click="sync" :disabled="syncDisable" :loading="syncDisable">
-      Sync Databases
-    </UButton>
     <div class="px-5 max-w-2xl min-w-lg flex-grow">
       <div class="w-full my-8 text-center font-sans font-bold !text-primary text-5xl">
         Chocochips Scouting
