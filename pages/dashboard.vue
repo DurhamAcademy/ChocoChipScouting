@@ -95,8 +95,9 @@ function placeify(place: number) {
       return place+"th";
    }
 }
-      
-updateTeamData()
+
+//TODO find more perm fix
+//updateTeamData()
 
 async function updateTeamData() {
   try {
