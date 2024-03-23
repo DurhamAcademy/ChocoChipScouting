@@ -47,7 +47,7 @@ watch(selectedFilters, async () => {
 })
 
 
-const extraFilterOptions = ["team", "match", "author"]
+const extraFilterOptions = ["team", "match", "author", "ignore author"]
 
 const { scoutingData } = databases.locals
 let db = scoutingData
@@ -95,6 +95,7 @@ async function tableSetup() {
   let allowedEvents = []
   let allowedTeams = []
   let allowedAuthors = []
+  let ignoredAuthors = []
   let blueAlliance = []
   let redAlliance = []
   for (let filter of selectedFilters.value) {
@@ -106,6 +107,9 @@ async function tableSetup() {
     }
     if (filter.content.startsWith("author:")) {
       allowedAuthors.push(filter.content.split(":")[1].trim())
+    }
+    if (filter.content.startsWith("ignore author:")) {
+      ignoredAuthors.push(filter.content.split(":")[1].trim())
     }
     if (filter.content.startsWith("match")) {
       let tbaMatchData = fetch.data.value
@@ -144,7 +148,7 @@ async function tableSetup() {
     if (allowedTeams.includes(key.toString()) || allowedTeams.length == 0) {
       for (let match of value) {
         if (match.event != undefined && allowedEvents.includes( match.event.replace(/[0-9]/g, ''))) {
-          if(allowedAuthors.length == 0 || allowedAuthors.includes(match.author)){
+          if((allowedAuthors.length == 0 || allowedAuthors.includes(match.author)) && (ignoredAuthors.length == 0 || !ignoredAuthors.includes(match.author))){
             data.push(match)
           }
         }
@@ -164,7 +168,8 @@ async function tableSetup() {
         let includedOne = false
         for(let i = data.length - 1; i >= 0; i--){
           if(data[i].matchNumber == currMatch){
-            if(includedOne){
+            //switch to prioritizing your org not just darc side
+            if(includedOne || data[i].author == "Voltcats"){
               data.splice(data.indexOf(data[i]), 1)
             }
             else includedOne = true
