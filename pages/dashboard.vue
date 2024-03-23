@@ -1,6 +1,5 @@
 <script setup lang="ts">
 
-import PouchDB from "pouchdb";
 import {ref} from "vue";
 import databases, {type TeamInfo} from "~/utils/databases";
 
