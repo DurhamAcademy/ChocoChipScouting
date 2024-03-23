@@ -68,7 +68,7 @@ watch(eventsPending, async () => {
 let allDocs = await db.allDocs({ include_docs: true })
 allDocs.rows.forEach(async (row) => {
   const doc = row.doc;
-  if (doc && doc.tags.includes("robot")) {
+  if (doc && doc.tags.includes("robot") && doc.teamNumber == 6502) {
     let attachment = await (db.getAttachment(doc._id, doc.name))
     if (attachment instanceof Blob) {
       let file = new File([attachment], doc.name, {type: attachment.type})
