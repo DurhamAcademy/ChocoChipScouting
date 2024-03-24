@@ -35,6 +35,9 @@ const events = ref<any[]>([])
 const teamEventData = ref<any[]>([])
 const upcomingEvents = ref<any[]>([])
 const pastEvents = ref<any[]>([])
+const currentRankings = ref<any[]>([])
+const currentTeamRanking = ref<any[]>()
+const displayRankings = ref(false)
 
 
 
@@ -49,13 +52,17 @@ watch(eventsPending, async () => {
     pastEvents.value = eventsData.value.filter((event) => { return new Date(event.end_date) < date })
     // making a list of promises
     const promises = eventsData.value
-        .filter((event) => {
-          return new Date(event.end_date) < date
-        })
         .map(async (event) => {
-          const teamRankings = await $fetch<Array<any>>('/api/eventRankings/' + event.key)
-          rankings.value.push([teamRankings, event.end_date, event.name])
-          events.value.push(event.name)
+          if(new Date(event.end_date) < date) {
+            const teamRankings = await $fetch<Array<any>>('/api/eventRankings/' + event.key)
+            rankings.value.push([teamRankings, event.end_date, event.name])
+            events.value.push(event.name)
+          }
+          else if(new Date(event.start_date) < date && new Date(event.end_date) > date) {
+            const teamRankings = await $fetch<Array<any>>('/api/eventRankings/' + event.key)
+            currentRankings.value.push(teamRankings)
+          }
+
         })
     if (promises) {
       // when the promises are done, I will sort through the data
@@ -70,6 +77,13 @@ watch(eventsPending, async () => {
           }
         }
         teamEventData.value.push(temp)
+      }
+      if(currentRankings.value[0].rankings.length != 0) {
+        for(let ranking of currentRankings.value[0].rankings) {
+          if(ranking.team_key == 'frc6502')
+            currentTeamRanking.value = ranking
+        }
+        displayRankings.value = true
       }
     }
   }
@@ -162,7 +176,7 @@ async function updateTeamData() {
       <div class="w-full my-8 text-center font-sans font-bold !text-primary text-5xl">
         Chocochips Scouting
       </div>
-      <UCard>
+      <UCard class="mb-8">
         <UTabs :items="items" class="w-full max-h-52 overflow-hidden">
           <template #past="{ item }">
             <div class="h-40 overflow-y-auto px-4 rounded-md">
@@ -186,12 +200,12 @@ async function updateTeamData() {
                           <thead class="bg-gray-200 sticky top-0">
                           <tr class="p-2">
                             <th class="px-6 py-4">Rank</th>
-                            <th class="px-6 py-4">Team</th>
+                            <th class="px-6 py-4">Team #</th>
                             <th class="px-6 py-4">Record</th>
                             <th class="px-6 py-4">Matches Played</th>
                           </tr>
                           </thead>
-                          <tbody class="">
+                          <tbody>
                           <tr v-for="rank of rankings[index][0].rankings" class="text-center even:bg-gray-100">
                             <td v-if="rank.rank==1" class="text-yellow-600 font-medium whitespace-nowrap px-6 py-4">{{ rank.rank }}</td>
                             <td v-else-if="rank.rank==2" class="text-gray-500 font-medium whitespace-nowrap px-6 py-4">{{ rank.rank }}</td>
@@ -227,34 +241,64 @@ async function updateTeamData() {
           </template>
         </UTabs>
       </UCard>
-      <div class="my-8">
-        <UCard>
-          <UCarousel
-              v-slot="{ item, index }"
-              :items="robotAttachments"
-              :ui="{
-                item: 'basis-full justify-center',
-                container: 'rounded-lg'
+      <UCard class="mb-8 px-4 pb-4" v-if="displayRankings">
+        <p class="font-bold text-center !text-primary text-lg">Team 6502 Stats</p>
+        <div class="flex justify-center my-1">
+          <UButton class="rounded-2xl mx-0.5" color="gray" variant="outline" :label="placeify(currentTeamRanking.rank)+ ' Place'" />
+          <UButton class="rounded-2xl mx-0.5" color="gray" variant="outline" :label="`Record: ${currentTeamRanking.record.wins}-${currentTeamRanking.record.losses}-${currentTeamRanking.record.ties}`"/>
+          <UButton class="rounded-2xl mx-0.5" color="gray" variant="outline" :label="`Matches Played: ${currentTeamRanking.matches_played}`"/>
+        </div>
+        <div class="overflow-y-auto h-60 rounded-md mt-2">
+          <table class="rounded-md w-full">
+            <thead class="bg-gray-200 sticky top-0">
+            <tr class="">
+              <th class="px-7 py-4">Rank</th>
+              <th class="px-7 py-4">Team</th>
+              <th class="px-7 py-4">Record</th>
+              <th class="px-7 py-4">Matches Played</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr class="text-center even:bg-gray-100" v-for="rank of currentRankings[0].rankings">
+              <td v-if="rank.rank==1" class="text-yellow-600 font-medium whitespace-nowrap px-6 py-4">{{ rank.rank }}</td>
+              <td v-else-if="rank.rank==2" class="text-gray-500 font-medium whitespace-nowrap px-6 py-4">{{ rank.rank }}</td>
+              <td v-else-if="rank.rank==3" class="text-amber-900 font-medium whitespace-nowrap px-6 py-4">{{ rank.rank }}</td>
+              <td v-else class="whitespace-nowrap px-6 py-4 font-medium">{{ rank.rank }}</td>
+              <td class="whitespace-nowrap px-6 py-4 font-medium">{{ rank.team_key.replace('frc', '') }}</td>
+              <td class="whitespace-nowrap px-6 py-4 font-medium">{{`${rank.record.wins}-${rank.record.losses}-${rank.record.ties}`}}</td>
+              <td class="whitespace-nowrap px-6 py-4 font-medium">{{rank.matches_played}}</td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </UCard>
+      <UCard>
+        <UCarousel
+            v-slot="{ item, index }"
+            :items="robotAttachments"
+            :ui="{
+        item: 'basis-full justify-center',
+        container: 'rounded-lg '
               }"
               arrows
-              class="w-full px-4 max-h-96"
-              :prev-button="{
-                color: 'primary',
-                variant: 'ghost',
-                icon: 'i-heroicons-arrow-left-20-solid',
-                class: '-left-4'
-              }"
-              :next-button="{
-                color: 'primary',
-                variant: 'ghost',
-                icon: 'i-heroicons-arrow-right-20-solid',
-                class: '-right-4'
-              }"
+      class="w-full px-4 max-h-96"
+            :prev-button="{
+        color: 'primary',
+        variant: 'ghost',
+        icon: 'i-heroicons-arrow-left-20-solid',
+        class: '-left-4'
+      }"
+            :next-button="{
+        color: 'primary',
+        variant: 'ghost',
+        icon: 'i-heroicons-arrow-right-20-solid',
+        class: '-right-4'
+
+        }"
           >
-            <NuxtImg :src="item.attachmentURL" draggable="false" class="object-contain overflow-hidden rounded-lg" />
-          </UCarousel>
-        </UCard>
-      </div>
+          <NuxtImg :src="item.attachmentURL" draggable="false" class="object-contain overflow-hidden rounded-lg" />
+        </UCarousel>
+      </UCard>
     </div>
   </OuterComponents>
 </template>
