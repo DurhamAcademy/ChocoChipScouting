@@ -107,7 +107,7 @@ allDocs.rows.forEach(async (row) => {
       let file = new File([attachment], doc.name, {type: attachment.type})
       robotAttachments.value.push({ attachmentURL: URL.createObjectURL(file), attachmentID: doc._id, tagList: doc.tags, notes: doc.extraNotes, fileName: doc.name, fileSize: doc.fileSize, event: doc.event, author: doc.author, dateUploaded: doc.dateUploaded, attachmentHovered: false})
     }
-    }
+  }
 });
 
 // takes a number and returns a place ex: 5 -> 5th
@@ -126,7 +126,7 @@ function placeify(place: number) {
       return place+"rd";
     default:
       return place+"th";
-   }
+  }
 }
 
 function addDays(date: Date, days: number) {
@@ -300,8 +300,8 @@ async function updateTeamData() {
         item: 'basis-full justify-center',
         container: 'rounded-lg '
               }"
-              arrows
-      class="w-full px-4 max-h-96"
+            arrows
+            class="w-full px-4 max-h-96"
             :prev-button="{
         color: 'primary',
         variant: 'ghost',
@@ -315,7 +315,7 @@ async function updateTeamData() {
         class: '-right-4'
 
         }"
-          >
+        >
           <NuxtImg :src="item.attachmentURL" draggable="false" class="object-contain overflow-hidden rounded-lg" />
         </UCarousel>
       </UCard>
