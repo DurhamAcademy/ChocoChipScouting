@@ -72,6 +72,7 @@ async function signUp() {
           console.log("User created")
           username.value = ""
           password.value = ""
+          selectedRoles.value = ['scout']
           setup()
         }
       }
@@ -89,6 +90,7 @@ async function changePassword() {
           console.log("Password changed")
           username.value = ""
           password.value = ""
+          selectedRoles.value = ['scout']
           setup()
         }
       }
