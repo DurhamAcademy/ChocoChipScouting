@@ -38,7 +38,7 @@ const pastEvents = ref<any[]>([])
 const currentRankings = ref<any[]>([])
 const currentTeamRanking = ref<any[]>()
 const displayRankings = ref(false)
-
+const currentEvent = ref(false)
 
 
 const {data: eventsData, pending: eventsPending} = await useLazyFetch<Array<any>>('/api/teamEvents/frc6502');
@@ -48,21 +48,28 @@ watch(eventsPending, async () => {
   if (eventsData.value) {
     // sorting by time
     eventsData.value.sort((b, a) => new Date(a.end_date).getTime() - new Date(b.end_date).getTime())
-    upcomingEvents.value = eventsData.value.filter((event) => { return new Date(event.end_date) > date })
+    upcomingEvents.value = eventsData.value.filter((event) => { new Date(event.end_date) > date })
     pastEvents.value = eventsData.value.filter((event) => { return new Date(event.end_date) < date })
     // making a list of promises
     const promises = eventsData.value
         .map(async (event) => {
-          if(new Date(event.end_date) < date) {
+          let startDate = new Date(event.start_date)
+          let endDate = new Date(event.end_date)
+          let addedDate = new Date(addDays(new Date(event.end_date), 2))
+          if (addedDate < date) {
             const teamRankings = await $fetch<Array<any>>('/api/eventRankings/' + event.key)
             rankings.value.push([teamRankings, event.end_date, event.name])
             events.value.push(event.name)
           }
-          else if(new Date(event.start_date) < date && new Date(event.end_date) > date) {
+          else if(startDate < date && addedDate > date) {
             const teamRankings = await $fetch<Array<any>>('/api/eventRankings/' + event.key)
-            currentRankings.value.push(teamRankings)
+            currentRankings.value.push([teamRankings, event.name])
+            currentEvent.value = true
+            if(date > endDate) {
+              rankings.value.push([teamRankings, event.end_date, event.name])
+              events.value.push(event.name)
+            }
           }
-
         })
     if (promises) {
       // when the promises are done, I will sort through the data
@@ -78,12 +85,13 @@ watch(eventsPending, async () => {
         }
         teamEventData.value.push(temp)
       }
-      if(currentRankings.value[0].rankings.length != 0) {
-        for(let ranking of currentRankings.value[0].rankings) {
-          if(ranking.team_key == 'frc6502')
-            currentTeamRanking.value = ranking
+      if(currentRankings.value.length > 0 && currentRankings.value[0][0].rankings.length !== 0) {
+        for (let ranking of currentRankings.value[0][0].rankings) {
+          if (ranking?.team_key === 'frc6502') {
+            currentTeamRanking.value = ranking;
+          }
         }
-        displayRankings.value = true
+        displayRankings.value = currentRankings.value[0][0].rankings.length > 0;
       }
     }
   }
@@ -119,6 +127,11 @@ function placeify(place: number) {
     default:
       return place+"th";
    }
+}
+
+function addDays(date: Date, days: number) {
+  date.setDate(date.getDate() + days);
+  return date;
 }
 
 //TODO find more perm fix
@@ -176,12 +189,46 @@ async function updateTeamData() {
       <div class="w-full my-8 text-center font-sans font-bold !text-primary text-5xl">
         Chocochips Scouting
       </div>
+      <UCard class="mb-8 px-4 pb-4" v-if="displayRankings">
+        <div class="font-bold text-center text-lg justify-center">
+          <p class="">{{currentRankings[0][1]}}</p>
+          <p class="!text-primary">Team 6502 Stats</p>
+        </div>
+        <div class="flex justify-center my-1">
+          <UButton class="rounded-2xl mx-0.5" color="gray" variant="outline" :label="placeify(currentTeamRanking.rank)+ ' Place'" />
+          <UButton class="rounded-2xl mx-0.5" color="gray" variant="outline" :label="`Record: ${currentTeamRanking.record.wins}-${currentTeamRanking.record.losses}-${currentTeamRanking.record.ties}`"/>
+          <UButton class="rounded-2xl mx-0.5" color="gray" variant="outline" :label="`Matches Played: ${currentTeamRanking.matches_played}`"/>
+        </div>
+        <div class="overflow-y-auto h-60 rounded-md mt-2">
+          <table class="rounded-md w-full">
+            <thead class="bg-gray-200 sticky top-0">
+            <tr class="">
+              <th class="px-7 py-4">Rank</th>
+              <th class="px-7 py-4">Team #</th>
+              <th class="px-7 py-4">Record</th>
+              <th class="px-7 py-4">Matches Played</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr class="text-center even:bg-gray-100" v-for="rank of currentRankings[0][0].rankings">
+              <td v-if="rank.rank==1" class="text-yellow-600 font-medium whitespace-nowrap px-6 py-4">{{ rank.rank }}</td>
+              <td v-else-if="rank.rank==2" class="text-gray-500 font-medium whitespace-nowrap px-6 py-4">{{ rank.rank }}</td>
+              <td v-else-if="rank.rank==3" class="text-amber-900 font-medium whitespace-nowrap px-6 py-4">{{ rank.rank }}</td>
+              <td v-else class="whitespace-nowrap px-6 py-4 font-medium">{{ rank.rank }}</td>
+              <td class="whitespace-nowrap px-6 py-4 font-medium">{{ rank.team_key.replace('frc', '') }}<!--<UButton @click="navigateTo({ path: `/teams/${rank.team_key.replace('frc', '')}`})" variant="ghost" color="gray" icon="i-heroicons-document-chart-bar" class="align-middle ml-1" />--></td>
+              <td class="whitespace-nowrap px-6 py-4 font-medium">{{`${rank.record.wins}-${rank.record.losses}-${rank.record.ties}`}}</td>
+              <td class="whitespace-nowrap px-6 py-4 font-medium">{{rank.matches_played}}</td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </UCard>
       <UCard class="mb-8">
         <UTabs :items="items" class="w-full max-h-52 overflow-hidden">
           <template #past="{ item }">
             <div class="h-40 overflow-y-auto px-4 rounded-md">
               <div v-for="(event, index) in pastEvents" class="bg-gray-100 rounded-md">
-                <div v-if="new Date(event.end_date) < date" class="my-2 p-2">
+                <div class="my-2 p-2">
                   <p class="font-medium">{{event.name}}</p>
                   <UButton class="rounded-full my-0.5" icon="i-heroicons-map-pin-solid" :label="event.city + ', ' + event.state_prov + ', ' + event.country" :to="event.gmaps_url" target="_blank" variant="outline"/>
                   <div class="flex my-0.5">
@@ -225,9 +272,9 @@ async function updateTeamData() {
             </div>
           </template>
           <template #upcoming="{ item }">
-            <div class="h-32 overflow-y-auto px-4 rounded-md">
+            <div class="h-32 overflow-y-auto px-4 rounded-md" v-if="upcomingEvents.length > 0">
               <div v-for="event in upcomingEvents" class="bg-gray-100 rounded-md">
-                <div v-if="new Date(event.end_date) > date" class="my-2 p-2">
+                <div class="my-2 p-2">
                   <p class="font-medium">{{event.name}}</p>
                   <UButton class="rounded-full my-0.5" icon="i-heroicons-map-pin-solid" :label="event.city + ', ' + event.state_prov + ', ' + event.country" :to="event.gmaps_url" target="_blank" variant="outline"/>
                   <div class="flex my-0.5">
@@ -238,41 +285,14 @@ async function updateTeamData() {
                 </div>
               </div>
             </div>
+            <div v-else>
+              <p class="font-medium text-xl text-center ">No Events Scheduled</p>
+              <NuxtImg src="/sadcookie.png" class="mx-auto" width="145" height="145"/>
+            </div>
           </template>
         </UTabs>
       </UCard>
-      <UCard class="mb-8 px-4 pb-4" v-if="displayRankings">
-        <p class="font-bold text-center !text-primary text-lg">Team 6502 Stats</p>
-        <div class="flex justify-center my-1">
-          <UButton class="rounded-2xl mx-0.5" color="gray" variant="outline" :label="placeify(currentTeamRanking.rank)+ ' Place'" />
-          <UButton class="rounded-2xl mx-0.5" color="gray" variant="outline" :label="`Record: ${currentTeamRanking.record.wins}-${currentTeamRanking.record.losses}-${currentTeamRanking.record.ties}`"/>
-          <UButton class="rounded-2xl mx-0.5" color="gray" variant="outline" :label="`Matches Played: ${currentTeamRanking.matches_played}`"/>
-        </div>
-        <div class="overflow-y-auto h-60 rounded-md mt-2">
-          <table class="rounded-md w-full">
-            <thead class="bg-gray-200 sticky top-0">
-            <tr class="">
-              <th class="px-7 py-4">Rank</th>
-              <th class="px-7 py-4">Team</th>
-              <th class="px-7 py-4">Record</th>
-              <th class="px-7 py-4">Matches Played</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr class="text-center even:bg-gray-100" v-for="rank of currentRankings[0].rankings">
-              <td v-if="rank.rank==1" class="text-yellow-600 font-medium whitespace-nowrap px-6 py-4">{{ rank.rank }}</td>
-              <td v-else-if="rank.rank==2" class="text-gray-500 font-medium whitespace-nowrap px-6 py-4">{{ rank.rank }}</td>
-              <td v-else-if="rank.rank==3" class="text-amber-900 font-medium whitespace-nowrap px-6 py-4">{{ rank.rank }}</td>
-              <td v-else class="whitespace-nowrap px-6 py-4 font-medium">{{ rank.rank }}</td>
-              <td class="whitespace-nowrap px-6 py-4 font-medium">{{ rank.team_key.replace('frc', '') }}</td>
-              <td class="whitespace-nowrap px-6 py-4 font-medium">{{`${rank.record.wins}-${rank.record.losses}-${rank.record.ties}`}}</td>
-              <td class="whitespace-nowrap px-6 py-4 font-medium">{{rank.matches_played}}</td>
-            </tr>
-            </tbody>
-          </table>
-        </div>
-      </UCard>
-      <UCard>
+      <UCard v-if="robotAttachments.length > 0">
         <UCarousel
             v-slot="{ item, index }"
             :items="robotAttachments"
