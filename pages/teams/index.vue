@@ -244,8 +244,10 @@ function averageDefensiveScore(teamArrays: Array<ScoutingData>){
   for(let match of teamArrays){
     //Try catch needed due to old version of data
     try {
-      if (match.notes.promptedNotes[0][0]) total += match.notes.promptedNotes[0][1]
-      totalMatches++
+      if (match.notes.promptedNotes[0].selected){
+        total += match.notes.promptedNotes[0].rating
+        totalMatches++
+      }
     }
     catch{}
   }
