@@ -71,7 +71,7 @@ let impData = {
 
 //todo fix
 let scoutData: Ref<UnwrapRef<{
-  auto: { speakerNA: number; amp: number; missed: number; mobility: boolean };
+  auto: { speakerNA: number; amp: number; missed: number; mobility: boolean; position: number };
   teleop: { speakerNA: number; amp: number; missed: number; };
   endgame: { endgame: string[]; trap: number; spotlight: number };
   notes: {  notes: string; promptedNotes: Array<{ selected: boolean, rating: number, notes: Array<string> }> };
@@ -89,6 +89,7 @@ let scoutData: Ref<UnwrapRef<{
     amp: 0,
     missed: 0,
     mobility: false,
+    position: 0,
   },
   teleop: {
     amp: 0,
@@ -206,6 +207,11 @@ async function submit() {
             <BooleanButton class="mt-2" v-model="scoutData.auto.mobility" :default-value="'Mobility'" :other-value="'Mobility'"/>
           </div>
         </div>
+        <div class="ml-10">
+        <br>
+        <h1 class="text-gray-700 dark:text-gray-200 font-sans font-medium">Auto Position</h1>
+          </div>
+        <SingleSelect v-model="scoutData.auto.position" :options="['1', '2', '3', '4', '5']"/>
       </div>
       <div v-if="gameTime == GameTime.Teleoperated">
         <div class="flex text-center">
