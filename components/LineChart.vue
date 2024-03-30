@@ -8,7 +8,9 @@ const props = defineProps<{
   data: Array<Array<number>>,
   chartTitles?: Array<string>,
   suggestedMax?: number,
-  defaultShown?: Array<boolean>
+  defaultShown?: Array<boolean>,
+  width?: any,
+  height?: any,
 }>()
 
 if(registerables) Chart.register(...registerables);
@@ -63,11 +65,14 @@ let options = {
       suggestedMax: props.suggestedMax || 10,
       suggestedMin: 0,
     }
-  }
+  },
+  responsive: true
 }
 
 </script>
 
 <template>
-  <LineChart :chart-data="data" :options="options" :width="'300px'" :height="'300px'"></LineChart>
+  <div :class="'relative ' + height + ' ' + width">
+    <LineChart :chart-data="data" :options="options" :width="'300px'" :height="'300px'"></LineChart>
+  </div>
 </template>

@@ -1,21 +1,25 @@
 import {couchDBBaseURL} from "~/utils/URIs";
 import PouchDB from "pouchdb"
-import {Attachments, ScoutingData} from "../utils/databases";
+import {Attachments, ScoutingData, TeamInfo} from "~/utils/databases";
 
 class LocalRemoteServerSideDatabaseSyncHolder<Content extends {} = {}> {
     name: string
     local: PouchDB.Database<Content> | null = null
     remote: PouchDB.Database<Content>
+    memberRoles: string[]
+    adminRoles: string[]
 
-    constructor(name: string, local: boolean) {
+    constructor(name: string, local: boolean, memberRoles: string[], adminRoles: string[]) {
         this.name = name;
         if (local)
             this.local = new PouchDB(name, {skip_setup: true, name: name})
-        this.remote = new PouchDB(couchDBBaseURL + name, {
+            this.remote = new PouchDB(couchDBBaseURL + name, {
             skip_setup: true,
             name: name,
             adapter: "http"
         })
+        this.memberRoles = memberRoles
+        this.adminRoles = adminRoles
     }
 
     async sync() {
@@ -27,18 +31,21 @@ class LocalRemoteServerSideDatabaseSyncHolder<Content extends {} = {}> {
     }
 
     static databases = {
-        "attachments": new LocalRemoteServerSideDatabaseSyncHolder<Attachments>("attachments", false),
-        "scoutingData": new LocalRemoteServerSideDatabaseSyncHolder<ScoutingData>("scouting-data", false),
-        "basic": new LocalRemoteServerSideDatabaseSyncHolder<{}>("basic", false)
+        "attachments": new LocalRemoteServerSideDatabaseSyncHolder<Attachments>("attachments", false, ["drive team", "scout", 'pit', 'other', '_admin'], ["_admin", "admin"]),
+        "scoutingData": new LocalRemoteServerSideDatabaseSyncHolder<ScoutingData>("scouting-data", false, ["drive team", "scout", 'pit', 'other', '_admin'], ["_admin", "admin"]),
+        "teamInfo": new LocalRemoteServerSideDatabaseSyncHolder<TeamInfo>("team-info", false, ["drive team", "scout", 'pit', 'other', '_admin'], ["_admin", "admin"]),
+        "basic": new LocalRemoteServerSideDatabaseSyncHolder<{}>("basic", false, ["drive team", "scout", 'pit', 'other', '_admin'], ["_admin", "admin"]),
     };
     static locals = {
         "attachments": this.databases.attachments.local!,
         "scoutingData": this.databases.scoutingData.local!,
+        "teamInfo": this.databases.teamInfo.local!,
         "basic": this.databases.basic.local!,
     };
     static remotes = {
         "attachments": this.databases.attachments.remote,
         "scoutingData": this.databases.scoutingData.remote,
+        "teamInfo": this.databases.teamInfo.remote,
         "basic": this.databases.basic.remote,
     };
 }

@@ -16,6 +16,10 @@ import PouchDB from "pouchdb";
 import auth from "./utils/authorization/Authorizer"
 import LoginState from "~/utils/authorization/LoginState"
 import {loginStateKey} from "~/utils/keys";
+import {eventOptions} from "~/utils/eventOptions";
+import {useFetch} from "nuxt/app";
+import databases from "~/utils/databases";
+import {useSync} from "~/composables/useSync";
 
 PouchDB.plugin(auth)
 let pdb = new PouchDB(couchDBBaseURL + "/basic");
@@ -76,6 +80,8 @@ async function logout() {
 
 const loginStateObject = {loginState, usernameState, sessionState, updateUsernameState, logout};
 provide(loginStateKey, loginStateObject)
+
+useSync()
 
 </script>
 

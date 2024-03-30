@@ -1,4 +1,12 @@
 [![Docker Image CI](https://github.com/DurhamAcademy/NuxtScoutingSystem/actions/workflows/docker-image.yml/badge.svg)](https://github.com/DurhamAcademy/NuxtScoutingSystem/actions/workflows/docker-image.yml)
+
+# Welcome to ChocoChip! DARC SIDE's Scouting Software
+
+![chocochip darcside logo](https://github.com/DurhamAcademy/NuxtScoutingSystem/assets/65467501/3d2e1bdc-5a94-475b-8531-84e87ac48413)
+
+
+
+
 # Nuxt 3 Minimal Starter
 
 Look at the [Nuxt 3 documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
