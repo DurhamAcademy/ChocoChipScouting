@@ -152,6 +152,8 @@ async function submit() {
   }
 }
 
+const isOpen = ref(false) //prestons way of making the reference image modal open
+
 /* Good-looking square buttons but don't work horizontally why?
 <UButton label="Docked & Engaged" style="aspect-ratio : 1 / 1; max-width: 75px; max-height: 75px;" class="m-1.5"/>
         <UButton label="Docked" style="aspect-ratio : 1 / 1; max-width: 75px; max-height: 75px;" class="m-1.5"/>
@@ -212,6 +214,13 @@ async function submit() {
         <h1 class="text-gray-700 dark:text-gray-200 font-sans font-medium">Auto Position</h1>
           </div>
         <SingleSelect v-model="scoutData.auto.position" :options="['1', '2', '3', '4', '5']"/>
+        <UButton class="ml-1" @click="isOpen=true" label="Reference"/>
+        <UModal v-model="isOpen">
+          <div class="p-4 h-48">
+          <UButton class="mr-3 right-0 absolute" @click="isOpen=false" icon="i-heroicons-x-circle"/>
+            <p>THE REFERENCE IMAGE WILL GO HERE</p>
+          </div>
+        </UModal>
       </div>
       <div v-if="gameTime == GameTime.Teleoperated">
         <div class="flex text-center">
