@@ -209,16 +209,16 @@ const isOpen = ref(false) //prestons way of making the reference image modal ope
             <BooleanButton class="mt-2" v-model="scoutData.auto.mobility" :default-value="'Mobility'" :other-value="'Mobility'"/>
           </div>
         </div>
-        <div class="ml-10">
+        <div class="ml-6">
         <br>
         <h1 class="text-gray-700 dark:text-gray-200 font-sans font-medium">Auto Position</h1>
           </div>
-        <SingleSelect v-model="scoutData.auto.position" :options="['1', '2', '3', '4', '5']"/>
+        <SingleSelect v-model="scoutData.auto.position" :options="['1', '2', '3', '4']"/>
         <UButton class="ml-1" @click="isOpen=true" label="Reference"/>
         <UModal v-model="isOpen">
-          <div class="p-4 h-48">
-          <UButton class="mr-3 right-0 absolute" @click="isOpen=false" icon="i-heroicons-x-circle"/>
-            <p>THE REFERENCE IMAGE WILL GO HERE</p>
+          <div class="flex flex-auto">
+          <UButton class="mr-2 mt-2 right-0 absolute" @click="isOpen=false" icon="i-heroicons-x-circle"/>
+            <img src="/public/referenceImage.png"/>
           </div>
         </UModal>
       </div>
