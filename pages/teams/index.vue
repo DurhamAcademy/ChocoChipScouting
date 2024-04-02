@@ -213,12 +213,18 @@ async function tableSetup() {
     }
     if (data.length > 0) {
       let arr = {
-        team: key,
-        amp: getAverageAmpCycles(data).toFixed(2),
-        speaker: getAverageSpeakerCycles(data).toFixed(2),
-        mobility: averageAuto(data).toFixed(2),
-        endgame: compileEndgames(data),
-        defense: averageDefensiveScore(data).toFixed(2),
+        team: {data: key, color: ''},
+        offense: {data: averageOffensiveScore(data).toFixed(2), color: ''},
+        defense: {data: averageDefensiveScore(data).toFixed(2), color: ''},
+        ampAuto: {data: averageAmpsAuto(data).toFixed(2), color: ''},
+        speakerAuto: {data: averageSpeakersAuto(data).toFixed(2), color: ''},
+        autoAcc: {data: !isNaN(autoAccuracy(data)) ? (autoAccuracy(data)*100).toFixed()+'%' : '0%', color: ''},
+        teleAmp: {data: getAverageAmpCycles(data).toFixed(2), color: ''},
+        teleSpeaker: {data: getAverageSpeakerCycles(data).toFixed(2), color: ''},
+        teleAcc: {data: !isNaN(teleAccuracy(data)) ? (teleAccuracy(data)*100).toFixed()+'%' : '0%', color: ''},
+        traps: {data: getAverageTraps(data).toFixed(2), color: ''},
+        endgamePoints: {data: endgamePoints(data).toFixed(2), color: ''},
+        endgameChart: {data: compileEndgames(data), color: ''},
         class: alliance,
         rawData: data,
         extraNotes: teamExtraNotes
@@ -236,6 +242,106 @@ async function tableSetup() {
     }
     teamsData.value = sortedData
   }
+  /* averages if i ever need
+  let averages = {
+    offense: 0,
+    defense: 0,
+    ampAuto: 0,
+    speakerAuto: 0,
+    autoAcc: 0,
+    teleAmp: 0,
+    teleSpeaker: 0,
+    teleAcc: 0,
+    traps: 0,
+    endgamePoints: 0,
+
+  }
+  let weight = 0
+  for (let team of teamsData.value) {
+    let totalMatches = team.rawData.length
+    averages.offense += team.offense.data * totalMatches
+    averages.defense += team.defense.data * totalMatches
+    averages.ampAuto += team.ampAuto.data * totalMatches
+    averages.speakerAuto += team.speakerAuto.data * totalMatches
+    averages.autoAcc += Number(team.autoAcc.data.replace('%', '')) * totalMatches
+    averages.teleAmp += team.teleAmp.data * totalMatches
+    averages.teleSpeaker += team.teleSpeaker.data * totalMatches
+    averages.teleAcc += Number(team.teleAcc.data.replace('%', '')) * totalMatches
+    averages.traps += team.traps.data * totalMatches
+    averages.endgamePoints += team.endgamePoints.data * totalMatches
+    weight += totalMatches
+  }
+  averages.offense /= weight
+  averages.defense /= weight
+  averages.ampAuto /= weight
+  averages.speakerAuto /= weight
+  averages.autoAcc /= weight
+  averages.teleAmp /= weight
+  averages.teleSpeaker /= weight
+  averages.teleAcc /= weight
+  averages.traps /= weight
+  averages.endgamePoints /= weight
+*/
+
+  let data: {
+    offense: number[];
+    defense: number[];
+    ampAuto: number[];
+    speakerAuto: number[];
+    autoAcc: number[];
+    teleAmp: number[];
+    teleSpeaker: number[];
+    teleAcc: number[];
+    traps: number[];
+    endgamePoints: number[];
+  } = {
+    offense: [],
+    defense: [],
+    ampAuto: [],
+    speakerAuto: [],
+    autoAcc: [],
+    teleAmp: [],
+    teleSpeaker: [],
+    teleAcc: [],
+    traps: [],
+    endgamePoints: []
+  }
+  for (let team of teamsData.value) {
+    data.offense.push(Number(team.offense.data))
+    data.defense.push(Number(team.defense.data))
+    data.ampAuto.push(Number(team.ampAuto.data))
+    data.speakerAuto.push(Number(team.speakerAuto.data))
+    data.autoAcc.push(Number(team.autoAcc.data.replace('%', '')))
+    data.teleAmp.push(Number(team.teleAmp.data))
+    data.teleSpeaker.push(Number(team.teleSpeaker.data))
+    data.teleAcc.push(Number(team.teleAcc.data.replace('%', '')))
+    data.traps.push(Number(team.traps.data))
+    data.endgamePoints.push(Number(team.endgamePoints.data))
+  }
+  for (let i = 0; i < teamsData.value.length; i++) {
+    teamsData.value[i].offense.color = colorify(teamsData.value[i].offense.data, Math.min(...data.offense), Math.max(...data.offense))
+    teamsData.value[i].defense.color = colorify(teamsData.value[i].defense.data, Math.min(...data.defense), Math.max(...data.defense))
+    teamsData.value[i].ampAuto.color = colorify(teamsData.value[i].ampAuto.data, Math.min(...data.ampAuto), Math.max(...data.ampAuto))
+    teamsData.value[i].speakerAuto.color = colorify(teamsData.value[i].speakerAuto.data, Math.min(...data.speakerAuto), Math.max(...data.speakerAuto))
+    teamsData.value[i].autoAcc.color = colorify(teamsData.value[i].autoAcc.data.replace('%', ''), Math.min(...data.autoAcc), Math.max(...data.autoAcc))
+    teamsData.value[i].teleAmp.color = colorify(teamsData.value[i].teleAmp.data, Math.min(...data.teleAmp), Math.max(...data.teleAmp))
+    teamsData.value[i].teleSpeaker.color = colorify(teamsData.value[i].teleSpeaker.data, Math.min(...data.teleSpeaker), Math.max(...data.teleSpeaker))
+    teamsData.value[i].teleAcc.color = colorify(teamsData.value[i].teleAcc.data.replace('%', ''), Math.min(...data.teleAcc), Math.max(...data.teleAcc))
+    teamsData.value[i].traps.color = colorify(teamsData.value[i].traps.data, Math.min(...data.traps), Math.max(...data.traps))
+    teamsData.value[i].endgamePoints.color = colorify(teamsData.value[i].endgamePoints.data, Math.min(...data.endgamePoints), Math.max(...data.endgamePoints))
+  }
+}
+
+function colorify(score: number, min: number, max: number) {
+  let percentage = (score - min) / (max - min) * 100
+  if (percentage >= 90)
+    return 'blue'
+  else if (percentage >= (2/3 * 100))
+    return 'green'
+  else if (percentage >= (1/3 * 100))
+    return 'gray'
+  else
+    return 'coral'
 }
 
 function averageDefensiveScore(teamArrays: Array<ScoutingData>){
@@ -254,10 +360,42 @@ function averageDefensiveScore(teamArrays: Array<ScoutingData>){
   return (totalMatches != 0 ? total / totalMatches: 0)
 }
 
+function averageOffensiveScore(teamArrays: Array<ScoutingData>){
+  let total = 0
+  let totalMatches = 0
+  for(let match of teamArrays){
+    //Try catch needed due to old version of data
+    try {
+      if (match.notes.promptedNotes[1].selected){
+        total += match.notes.promptedNotes[1].rating
+        totalMatches++
+      }
+    }
+    catch{}
+  }
+  return (totalMatches != 0 ? total / totalMatches: 0)
+}
+
+function averageAmpsAuto(teamArrays: Array<ScoutingData>) {
+  let nonAveragedValue = 0
+  for (let i = 0; i < teamArrays.length; i++) {
+    nonAveragedValue += teamArrays[i].auto.amp
+  }
+  return nonAveragedValue/teamArrays.length
+}
+
+function averageSpeakersAuto(teamArrays: Array<ScoutingData>) {
+  let nonAveragedValue = 0
+  for (let i = 0; i < teamArrays.length; i++) {
+    nonAveragedValue += teamArrays[i].auto.speakerNA
+  }
+  return nonAveragedValue/teamArrays.length
+}
+
 function getAverageSpeakerCycles(teamArrays: Array<ScoutingData>){
   let nonAveragedValue = 0
   for(let i = 0; i < teamArrays.length; i++){
-    nonAveragedValue += teamArrays[i].auto.speakerNA + teamArrays[i].teleop.speakerNA
+    nonAveragedValue += teamArrays[i].teleop.speakerNA
   }
   return nonAveragedValue/teamArrays.length
 }
@@ -265,7 +403,7 @@ function getAverageSpeakerCycles(teamArrays: Array<ScoutingData>){
 function getAverageAmpCycles(teamArrays: Array<ScoutingData>){
   let nonAveragedValue = 0
   for(let i = 0; i < teamArrays.length; i++){
-    nonAveragedValue += teamArrays[i].auto.amp + teamArrays[i].teleop.amp
+    nonAveragedValue += teamArrays[i].teleop.amp
   }
   return nonAveragedValue/teamArrays.length
 }
@@ -276,6 +414,50 @@ function averageAuto(teamArrays: Array<ScoutingData>): number {
     successfulMobilityCount += match.auto.mobility ? 1 : 0
   }
   return successfulMobilityCount/teamArrays.length
+}
+
+function autoAccuracy(teamArrays: Array<ScoutingData>): number {
+  let successfulScoreCount = 0
+  let missCount = 0
+  for (let match of teamArrays) {
+    successfulScoreCount += match.auto.amp
+    successfulScoreCount += match.auto.speakerNA
+    missCount += match.auto.missed
+  }
+  return (successfulScoreCount/(successfulScoreCount+missCount))
+}
+
+function teleAccuracy(teamArrays: Array<ScoutingData>): number {
+  let successfulScoreCount = 0
+  let missCount = 0
+  for (let match of teamArrays) {
+    successfulScoreCount += match.teleop.amp
+    successfulScoreCount += match.teleop.speakerNA
+    missCount += match.teleop.missed
+  }
+  return (successfulScoreCount/(successfulScoreCount+missCount))
+}
+
+function getAverageTraps(teamArrays: Array<ScoutingData>): number {
+  let totalTraps = 0
+  for (let match of teamArrays) {
+    totalTraps += match.endgame.trap
+  }
+  return totalTraps/teamArrays.length
+}
+
+function endgamePoints(teamArrays: Array<ScoutingData>): number {
+  let totalEndgamePoints = 0
+  for (let event of teamArrays) {
+    if(event.endgame.endgame.includes('Harmony'))
+      totalEndgamePoints += 5
+    else if (event.endgame.endgame.includes('Onstage'))
+      totalEndgamePoints += 3
+    else if (event.endgame.endgame.includes('Attempted Onstage') || event.endgame.endgame.includes('Parked'))
+      totalEndgamePoints += 1
+    totalEndgamePoints += event.endgame.trap*5
+  }
+  return totalEndgamePoints/teamArrays.length
 }
 
 function compileEndgames(teamArrays: Array<ScoutingData>): [Array<string>, Array<number>] {
@@ -301,32 +483,132 @@ async function view(teamNum: number) {
   navigateTo("/teams/attachments/"+teamNum)
 }
 
-const columns = [{
-  key: 'team',
-  label: 'Team',
-  sortable: true
+let columns = [{
+  label:'Team',
+  sort: 'desc'
 }, {
-  key: 'amp',
-  label: 'Average Amp Cycles',
-  sortable: true
+  label:'Offensive',
+  sort: 'desc'
 }, {
-  key: 'speaker',
-  label: 'Average Speaker Cycles',
-  sortable: true
+  label:'Defensive',
+  sort: 'desc'
 }, {
-  key: 'mobility',
-  label: 'Mobility Success Rate',
-  sortable: true
+  label:'Amps',
+  sort: 'desc'
 }, {
-  key: 'defense',
-  label: 'Defensive Score',
-  sortable: true
+  label:'Speakers',
+  sort: 'desc'
 }, {
-  key: 'actions',
-  label: 'Endgame'
+  label:'Accuracy',
+  sort: 'desc'
 }, {
-  key: 'buttons',
+  label:'Amps',
+  sort: 'desc'
+}, {
+  label:'Speakers',
+  sort: 'desc'
+}, {
+  label:'Accuracy',
+  sort: 'desc'
+}, {
+  label:'Points',
+  sort: 'desc'
+}, {
+  label:'Chart',
+  sort: 'desc'
+}, {
+  label:'Traps',
+  sort: 'desc'
 }]
+
+function sortTable(n: number, sort: string) {
+  let table, rows, switching, i, x, y, shouldSwitch, dir, switchCount = 0, sortedBy;
+  sortedBy = document.getElementById("sortedBy")
+  table = document.getElementById("teamTable") as HTMLTableElement | null
+  // returning if nothing in the table
+  if (!table) return;
+  switching = true;
+  // Set the sorting direction to ascending:
+  dir = sort;
+  /* Make a loop that will continue until
+  no switching has been done: */
+  while (switching) {
+    // Start by saying: no switching is done:
+    switching = false;
+    rows = table.rows;
+    /* Loop through all table rows (except the
+    first, which contains table headers): */
+
+    for (i = 1; i < rows.length - 1; i++) {
+      // Reset shouldSwitch for each iteration
+      shouldSwitch = false;
+      /* Get the two elements you want to compare,
+      one from current row and one from the next: */
+      x = rows[i].getElementsByTagName("TD")[n];
+      y = rows[i + 1].getElementsByTagName("TD")[n];
+      /* Check if the two rows should switch place,
+      based on the direction, asc or desc: */
+      if (x && y) {
+        let xInnerHTML = x.innerHTML
+        let yInnerHTML = y.innerHTML
+        let spanX = x.querySelector('span')
+        let spanY = y.querySelector('span')
+        if(spanX) {
+          xInnerHTML = spanX.innerText
+        }
+        if(spanY)
+          yInnerHTML = spanY.innerText
+        if (dir == "asc") {
+          if (
+              makeSortable(xInnerHTML) > makeSortable(yInnerHTML)
+          ) {
+            // If so, mark as a switch and break the loop:
+            shouldSwitch = true;
+            break;
+          }
+        } else if (dir == "desc") {
+          if (
+              makeSortable(xInnerHTML) < makeSortable(yInnerHTML)
+          ) {
+            // If so, mark as a switch and break the loop:
+            shouldSwitch = true;
+            break;
+          }
+        }
+      }
+    }
+    if (shouldSwitch) {
+      /* If a switch has been marked, make the switch
+      and mark that a switch has been done: */
+      rows[i].parentNode?.insertBefore(rows[i + 1], rows[i]);
+      switching = true;
+      // Each time a switch is done, increase this count by 1:
+      switchCount++;
+    }
+  }
+  if(sortedBy) {
+    if(sort == 'asc') {
+      sortedBy.textContent = `Sort: ${columns[n].label} Ascending`
+      for (let i = 0; i < columns.length; i++) {
+        columns[i].sort = 'asc'
+      }
+      columns[n].sort = 'desc'
+    }
+    else if (sort == 'desc') {
+      sortedBy.textContent = `Sort: ${columns[n].label} Descending`
+      columns[n].sort = 'asc'
+    }
+  }
+}
+
+function makeSortable(thing: string) {
+  if(thing.endsWith('%'))
+    thing = thing.replace('%', '')
+  if(!isNaN(+thing))
+    return Number(thing)
+  else
+    return thing
+}
 
 await tableSetup()
 </script>
@@ -338,30 +620,61 @@ await tableSetup()
         <UFormGroup class="w-full" block>
           <FilterMultiSelect v-model="selectedFilters" :options="filterOptions" :extra-options="extraFilterOptions"></FilterMultiSelect>
         </UFormGroup>
+        <div class="flex m-2">
+          <UBadge label="Bad: 0%-33%" class="rounded-2xl" variant="soft"/>
+          <UBadge label="Ok: 33%-66%" class="rounded-2xl" variant="soft" color="gray"/>
+          <UBadge label="Good: 66%-90%" class="rounded-2xl" variant="soft" color="green"/>
+          <UBadge label="Insane: 90%-100%" class="rounded-2xl" variant="soft" color="blue"/>
+        </div>
       </template>
-      <UTable :rows="teamsData" :columns="columns" class="overflow-auto">
-
-        <template #actions-data="{ row }">
-          <UPopover>
-            <UButton class="m-1" label="Chart" variant="soft" />
-            <template #panel>
-              <UCard>
-                <div class="max-w-xs min-w-[15rem] overflow-y-auto" style="max-height: 20rem; min-height: 10rem">
-                  <PieChart :labels="row.endgame[0]" :data="row.endgame[1]"/>
-                </div>
-              </UCard>
-            </template>
-          </UPopover>
-        </template>
-        <template #buttons-data="{ row }">
-          <div class="flex">
-            <UButton @click="view(row.team)" icon="i-heroicons-paper-clip" color="gray" variant="ghost"/>
-            <UButton @click="navigateTo('/teams/'+row.team)" variant="ghost" color="gray" icon="i-heroicons-document-chart-bar"/>
-          </div>
-
-        </template>
-      </UTable>
-      </UCard>
+      <p id="sortedBy">Sort: </p>
+      <div class="w-full">
+        <table id="teamTable" class="table-auto">
+          <colgroup span="1" class="border border-gray-250"/>
+          <colgroup span="2" class="border border-gray-250"/>
+          <colgroup span="3" class="border border-gray-250"/>
+          <colgroup span="3" class="border border-gray-250"/>
+          <colgroup span="3" class="border border-gray-250"/>
+          <thead>
+            <tr>
+              <th colspan="1"/>
+              <th colspan="2"><p class="text-xs font-light">Average</p>Ratings<p class="text-xs font-light">/5.00</p></th>
+              <th colspan="3" scope="colgroup"><p class="text-xs font-light">Average</p>Auto Cycles</th>
+              <th colspan="3" scope="colgroup"><p class="text-xs font-light">Average</p>Teleop Cycles</th>
+              <th colspan="3" scope="colgroup"><p class="text-xs font-light">Average</p>Endgame</th>
+            </tr>
+            <tr>
+              <th scope="col" v-for="(col, index) of columns">{{ col.label }}<UButton @click="sortTable(index, col.sort)" :icon="col.label == 'asc' ? 'i-heroicons-arrows-up-down' : col.label == 'desc' ? 'i-heroicons-bars-arrow-up' : 'i-heroicons-bars-arrow-down'" variant="ghost" class="rounded-2xl align-middle" size="xs"/></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="team of teamsData">
+              <td>{{team.team.data}}</td>
+              <td><UBadge :label="team.offense.data" variant="soft" :color="team.offense.color"/></td>
+              <td><UBadge :label="team.defense.data" variant="soft" :color="team.defense.color"/></td>
+              <td><UBadge :label="team.ampAuto.data" variant="soft" :color="team.ampAuto.color"/></td>
+              <td><UBadge :label="team.speakerAuto.data" variant="soft" :color="team.speakerAuto.color"/></td>
+              <td><UBadge :label="team.autoAcc.data" variant="soft" :color="team.autoAcc.color"/></td>
+              <td><UBadge :label="team.teleAmp.data" variant="soft" :color="team.teleAmp.color"/></td>
+              <td><UBadge :label="team.teleSpeaker.data" variant="soft" :color="team.teleSpeaker.color"/></td>
+              <td><UBadge :label="team.teleAcc.data" variant="soft" :color="team.teleAcc.color"/></td>
+              <td><UBadge :label="team.endgamePoints.data" variant="soft" :color="team.endgamePoints.color"/></td>
+              <td><UPopover mode="hover">
+                <UBadge class="m-1" label="Chart" variant="soft" />
+                <template #panel>
+                  <UCard>
+                    <div class="max-w-xs min-w-[10rem] overflow-y-auto" style="max-height: 20rem; min-height: 10rem">
+                      <PieChart :labels="team.endgameChart.data[0]" :data="team.endgameChart.data[1]"/>
+                    </div>
+                  </UCard>
+                </template>
+              </UPopover></td>
+              <td><UBadge :label="team.traps.data" variant="soft"  :color="team.traps.color"/></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </UCard>
 </OuterComponents>
 </template>
 
