@@ -35,19 +35,19 @@ function compareMatchNumbers(a: any, b: any){
   return 0;
 }
 
-const chartLabels = ['Auto Amp','Auto Speaker', 'Auto Amp Miss', 'Auto Speaker Miss', 'Amp', 'Speaker', 'Amp Miss', 'Speaker Miss', 'Trap']
+const chartLabels = ['Auto Amp','Auto Amp Miss', 'Auto Speaker', 'Auto Speaker Miss', 'Amp', 'Amp Miss', 'Speaker', 'Speaker Miss', 'Trap']
 let currData: any = ref(props.rowData.rawData[selectedMatch.value - 1])
 
 watch(selectedMatch, () =>{
   currData.value = props.rowData.rawData[selectedMatch.value - 1]
   chartData.value = [
     currData.value.auto.amp,
-    currData.value.auto.speakerNA,
     currData.value.auto.missedAmp || 0,
+    currData.value.auto.speakerNA,
     currData.value.auto.missedSpeaker || 0,
     currData.value.teleop.amp,
-    currData.value.teleop.speakerNA,
     currData.value.teleop.missedAmp || 0,
+    currData.value.teleop.speakerNA,
     currData.value.teleop.missedSpeaker || 0,
     currData.value.endgame.trap,
   ]
@@ -61,12 +61,12 @@ let sentimentScore = sentiment.analyze(props.rowData.rawData[selectedMatch.value
 
 let chartData = ref([
   currData.value.auto.amp,
-  currData.value.auto.speakerNA,
   currData.value.auto.missedAmp || 0,
+  currData.value.auto.speakerNA,
   currData.value.auto.missedSpeaker || 0,
   currData.value.teleop.amp,
-  currData.value.teleop.speakerNA,
   currData.value.teleop.missedAmp || 0,
+  currData.value.teleop.speakerNA,
   currData.value.teleop.missedSpeaker || 0,
   currData.value.endgame.trap,
 ])
