@@ -8,6 +8,7 @@ import type {VerticalNavigationLink} from "#ui/types";
 import type {Ref} from "@vue/reactivity";
 import type {UnwrapRef} from "vue";
 import {eventOptions} from "~/utils/eventOptions";
+import {couchDBBaseURL} from "~/utils/URIs";
 
 syncData()
 
@@ -22,6 +23,7 @@ const {usernameState, sessionState, logout}: {
   updateUsernameState: () => Promise<boolean>
 } = inject(loginStateKey)!
 
+let db = new PouchDB(`${couchDBBaseURL}/_users`, {skip_setup: true});
 
 
 let {width, height} = useWindowSize()

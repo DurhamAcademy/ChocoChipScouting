@@ -9,6 +9,7 @@ FROM install-curl AS setup
 
 
 CMD curl -s -X PUT http://admin:password@couchdb:5984/_users; \
+    curl -s http://admin:password@couchdb:5984/_users/_security -XPUT -d '{}'; \
     curl -s -X PUT http://admin:password@couchdb:5984/_replicator; \
     curl -s -X PUT http://admin:password@couchdb:5984/_global_changes; \
     curl -s -X PUT http://admin:password@couchdb:5984/_node/nonode@nohost/_config/chttpd/enable_cors -d '"true"'; \
