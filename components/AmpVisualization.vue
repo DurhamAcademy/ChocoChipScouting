@@ -28,7 +28,7 @@ let missedScores = ref<Array<number>>([])
 for(let match of props.rowData.rawData){
   matchNums.value.push(match.matchNumber)
   //TODO backwards compatability
-  missedScores.value.push((match.auto.missedAmp + match.auto.missedSpeaker) || 0)
+  missedScores.value.push((match.auto.missedAmp + match.teleop.missedAmp) || 0)
   autoMatchScores.value.push(match.auto.amp)
   matchScores.value.push(match.teleop.amp + match.auto.amp)
 }

@@ -29,7 +29,7 @@ for(let match of props.rowData.rawData){
   matchNums.value.push(match.matchNumber)
   autoMatchScores.value.push(match.auto.speakerNA)
   //TODO backwards compatability
-  missedScores.value.push((match.teleop.missedAmp + match.teleop.missedSpeaker) || 0)
+  missedScores.value.push((match.auto.missedSpeaker + match.teleop.missedSpeaker) || 0)
   matchScores.value.push(match.auto.speakerNA + match.teleop.speakerNA)
 }
 
