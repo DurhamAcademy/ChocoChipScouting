@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import databases, {type ScoutingData} from "~/utils/databases";
+import databases, {type DataArrayOrSum, type ScoutingData, type TeamTableData} from "~/utils/databases";
 import IdMeta = PouchDB.Core.IdMeta;
 import Sentiment from 'sentiment';
 import {eventOptions} from "~/utils/eventOptions";
@@ -214,16 +214,16 @@ async function tableSetup() {
     if (data.length > 0) {
       let arr = {
         team: {data: key, color: ''},
-        offense: {data: averageOffensiveScore(data).toFixed(2), color: ''},
-        defense: {data: averageDefensiveScore(data).toFixed(2), color: ''},
-        ampAuto: {data: averageAmpsAuto(data).toFixed(2), color: ''},
-        speakerAuto: {data: averageSpeakersAuto(data).toFixed(2), color: ''},
-        autoAcc: {data: !isNaN(autoAccuracy(data)) ? (autoAccuracy(data)*100).toFixed()+'%' : '0%', color: ''},
-        teleAmp: {data: getAverageAmpCycles(data).toFixed(2), color: ''},
-        teleSpeaker: {data: getAverageSpeakerCycles(data).toFixed(2), color: ''},
-        teleAcc: {data: !isNaN(teleAccuracy(data)) ? (teleAccuracy(data)*100).toFixed()+'%' : '0%', color: ''},
-        traps: {data: getAverageTraps(data).toFixed(2), color: ''},
-        endgamePoints: {data: endgamePoints(data).toFixed(2), color: ''},
+        offense: {data: Math.round(averageOffensiveScore(data)*100)/100, color: ''},
+        defense: {data: Math.round(averageDefensiveScore(data)*100)/100, color: ''},
+        ampAuto: {data: Math.round(averageAmpsAuto(data)*100)/100, color: ''},
+        speakerAuto: {data: Math.round(averageSpeakersAuto(data)*100)/100, color: ''},
+        autoAcc: {data: !isNaN(autoAccuracy(data)) ? Math.round(autoAccuracy(data)*1000)/10+'%' : '0%', color: ''},
+        teleAmp: {data: Math.round(getAverageAmpCycles(data)*100)/100, color: ''},
+        teleSpeaker: {data: Math.round(getAverageSpeakerCycles(data)*100)/100, color: ''},
+        teleAcc: {data: !isNaN(teleAccuracy(data)) ? Math.round(teleAccuracy(data)*1000)/10+'%' : '0%', color: ''},
+        traps: {data: Math.round(getAverageTraps(data)*100)/100, color: ''},
+        endgamePoints: {data: Math.round(endgamePoints(data)*100)/100, color: ''},
         endgameChart: {data: compileEndgames(data), color: ''},
         class: alliance,
         rawData: data,
@@ -319,26 +319,45 @@ async function tableSetup() {
     data.endgamePoints.push(Number(team.endgamePoints.data))
   }
   for (let i = 0; i < teamsData.value.length; i++) {
-    teamsData.value[i].offense.color = colorify(teamsData.value[i].offense.data, Math.min(...data.offense), Math.max(...data.offense))
-    teamsData.value[i].defense.color = colorify(teamsData.value[i].defense.data, Math.min(...data.defense), Math.max(...data.defense))
-    teamsData.value[i].ampAuto.color = colorify(teamsData.value[i].ampAuto.data, Math.min(...data.ampAuto), Math.max(...data.ampAuto))
-    teamsData.value[i].speakerAuto.color = colorify(teamsData.value[i].speakerAuto.data, Math.min(...data.speakerAuto), Math.max(...data.speakerAuto))
-    teamsData.value[i].autoAcc.color = colorify(teamsData.value[i].autoAcc.data.replace('%', ''), Math.min(...data.autoAcc), Math.max(...data.autoAcc))
-    teamsData.value[i].teleAmp.color = colorify(teamsData.value[i].teleAmp.data, Math.min(...data.teleAmp), Math.max(...data.teleAmp))
-    teamsData.value[i].teleSpeaker.color = colorify(teamsData.value[i].teleSpeaker.data, Math.min(...data.teleSpeaker), Math.max(...data.teleSpeaker))
-    teamsData.value[i].teleAcc.color = colorify(teamsData.value[i].teleAcc.data.replace('%', ''), Math.min(...data.teleAcc), Math.max(...data.teleAcc))
-    teamsData.value[i].traps.color = colorify(teamsData.value[i].traps.data, Math.min(...data.traps), Math.max(...data.traps))
-    teamsData.value[i].endgamePoints.color = colorify(teamsData.value[i].endgamePoints.data, Math.min(...data.endgamePoints), Math.max(...data.endgamePoints))
+    teamsData.value[i].team.color = colorifyTeam(teamsData.value[i], data)
+    teamsData.value[i].offense.color = colorify(calculatePercent(teamsData.value[i].offense.data, Math.min(...data.offense), Math.max(...data.offense)))
+    teamsData.value[i].defense.color = colorify(calculatePercent(teamsData.value[i].defense.data, Math.min(...data.defense), Math.max(...data.defense)))
+    teamsData.value[i].ampAuto.color = colorify(calculatePercent(teamsData.value[i].ampAuto.data, Math.min(...data.ampAuto), Math.max(...data.ampAuto)))
+    teamsData.value[i].speakerAuto.color = colorify(calculatePercent(teamsData.value[i].speakerAuto.data, Math.min(...data.speakerAuto), Math.max(...data.speakerAuto)))
+    teamsData.value[i].autoAcc.color = colorify(calculatePercent(teamsData.value[i].autoAcc.data.replace('%', ''), Math.min(...data.autoAcc), Math.max(...data.autoAcc)))
+    teamsData.value[i].teleAmp.color = colorify(calculatePercent(teamsData.value[i].teleAmp.data, Math.min(...data.teleAmp), Math.max(...data.teleAmp)))
+    teamsData.value[i].teleSpeaker.color = colorify(calculatePercent(teamsData.value[i].teleSpeaker.data, Math.min(...data.teleSpeaker), Math.max(...data.teleSpeaker)))
+    teamsData.value[i].teleAcc.color = colorify(calculatePercent(teamsData.value[i].teleAcc.data.replace('%', ''), Math.min(...data.teleAcc), Math.max(...data.teleAcc)))
+    teamsData.value[i].traps.color = colorify(calculatePercent(teamsData.value[i].traps.data, Math.min(...data.traps), Math.max(...data.traps)))
+    teamsData.value[i].endgamePoints.color = colorify(calculatePercent(teamsData.value[i].endgamePoints.data, Math.min(...data.endgamePoints), Math.max(...data.endgamePoints)))
   }
 }
 
-function colorify(score: number, min: number, max: number) {
-  let percentage = (score - min) / (max - min) * 100
+function colorifyTeam(teamData: TeamTableData, data: DataArrayOrSum) {
+  let totalPercent = 0
+  totalPercent += calculatePercent(teamData.offense.data, Math.min(...data.offense), Math.max(...data.offense))
+  totalPercent += calculatePercent(teamData.defense.data, Math.min(...data.defense), Math.max(...data.defense))
+  totalPercent += calculatePercent(teamData.ampAuto.data, Math.min(...data.ampAuto), Math.max(...data.ampAuto))
+  totalPercent += calculatePercent(teamData.speakerAuto.data, Math.min(...data.speakerAuto), Math.max(...data.speakerAuto))
+  totalPercent += calculatePercent(Number(teamData.autoAcc.data.replace('%', '')), Math.min(...data.autoAcc), Math.max(...data.autoAcc))
+  totalPercent += calculatePercent(teamData.teleAmp.data, Math.min(...data.teleAmp), Math.max(...data.teleAmp))
+  totalPercent += calculatePercent(teamData.teleSpeaker.data, Math.min(...data.teleSpeaker), Math.max(...data.teleSpeaker))
+  totalPercent += calculatePercent(Number(teamData.teleAcc.data.replace('%', '')), Math.min(...data.teleAcc), Math.max(...data.teleAcc))
+  totalPercent += calculatePercent(teamData.traps.data, Math.min(...data.traps), Math.max(...data.traps))
+  totalPercent += calculatePercent(teamData.endgamePoints.data, Math.min(...data.endgamePoints), Math.max(...data.endgamePoints))
+  return colorify(totalPercent/10)
+}
+
+function calculatePercent(score: number, min: number, max: number) {
+  return (score - min) / (max - min) * 100
+}
+
+function colorify(percentage: number) {
   if (percentage >= 90)
     return 'blue'
-  else if (percentage >= (2/3 * 100))
+  else if (percentage >= 66)
     return 'green'
-  else if (percentage >= (1/3 * 100))
+  else if (percentage >= 33)
     return 'gray'
   else
     return 'coral'
@@ -483,45 +502,45 @@ async function view(teamNum: number) {
   navigateTo("/teams/attachments/"+teamNum)
 }
 
-let columns = [{
+let columns = ref([{
   label:'Team',
-  sort: 'desc'
+  sort: 'none'
 }, {
   label:'Offensive',
-  sort: 'desc'
+  sort: 'none'
 }, {
   label:'Defensive',
-  sort: 'desc'
+  sort: 'none'
 }, {
   label:'Amps',
-  sort: 'desc'
+  sort: 'none'
 }, {
   label:'Speakers',
-  sort: 'desc'
+  sort: 'none'
 }, {
   label:'Accuracy',
-  sort: 'desc'
+  sort: 'none'
 }, {
   label:'Amps',
-  sort: 'desc'
+  sort: 'none'
 }, {
   label:'Speakers',
-  sort: 'desc'
+  sort: 'none'
 }, {
   label:'Accuracy',
-  sort: 'desc'
+  sort: 'none'
 }, {
   label:'Points',
-  sort: 'desc'
-}, {
-  label:'Chart',
-  sort: 'desc'
+  sort: 'none'
 }, {
   label:'Traps',
-  sort: 'desc'
-}]
+  sort: 'none'
+}, {
+  label:'Chart',
+  sort: 'none'
+}])
 
-function sortTable(n: number, sort: string) {
+function sortTable(n: number, sort: string, col: string) {
   let table, rows, switching, i, x, y, shouldSwitch, dir, switchCount = 0, sortedBy;
   sortedBy = document.getElementById("sortedBy")
   table = document.getElementById("teamTable") as HTMLTableElement | null
@@ -529,6 +548,10 @@ function sortTable(n: number, sort: string) {
   if (!table) return;
   switching = true;
   // Set the sorting direction to ascending:
+  if(sort == 'none' || sort == 'asc')
+    sort = 'desc'
+  else if (sort == 'desc')
+    sort = 'asc'
   dir = sort;
   /* Make a loop that will continue until
   no switching has been done: */
@@ -553,22 +576,38 @@ function sortTable(n: number, sort: string) {
         let yInnerHTML = y.innerHTML
         let spanX = x.querySelector('span')
         let spanY = y.querySelector('span')
-        if(spanX) {
+        if(spanX)
           xInnerHTML = spanX.innerText
-        }
         if(spanY)
           yInnerHTML = spanY.innerText
-        if (dir == "asc") {
+        if(col == 'Team') {
+          let colorX = x.innerHTML.substring(x.innerHTML.search('bg-')).split('-')[1]
+          let colorY = y.innerHTML.substring(y.innerHTML.search('bg-')).split('-')[1]
+          let possibleColors = ['coral', 'gray', 'green', 'blue']
+          if (dir == "desc") {
+            if(possibleColors.indexOf(colorX) < possibleColors.indexOf(colorY)) {
+              shouldSwitch = true;
+              break;
+            }
+          }
+          else if (dir == "asc") {
+            if(possibleColors.indexOf(colorX) > possibleColors.indexOf(colorY)) {
+              shouldSwitch = true;
+              break;
+            }
+          }
+        }
+        else if (dir == "desc") {
           if (
-              makeSortable(xInnerHTML) > makeSortable(yInnerHTML)
+              makeSortable(xInnerHTML) < makeSortable(yInnerHTML)
           ) {
             // If so, mark as a switch and break the loop:
             shouldSwitch = true;
             break;
           }
-        } else if (dir == "desc") {
+        } else if (dir == "asc") {
           if (
-              makeSortable(xInnerHTML) < makeSortable(yInnerHTML)
+              makeSortable(xInnerHTML) > makeSortable(yInnerHTML)
           ) {
             // If so, mark as a switch and break the loop:
             shouldSwitch = true;
@@ -586,18 +625,17 @@ function sortTable(n: number, sort: string) {
       switchCount++;
     }
   }
-  if(sortedBy) {
-    if(sort == 'asc') {
-      sortedBy.textContent = `Sort: ${columns[n].label} Ascending`
-      for (let i = 0; i < columns.length; i++) {
-        columns[i].sort = 'asc'
-      }
-      columns[n].sort = 'desc'
+  if(sort == 'desc') {
+    for (let i = 0; i < columns.value.length; i++) {
+      columns.value[i].sort = 'none'
     }
-    else if (sort == 'desc') {
-      sortedBy.textContent = `Sort: ${columns[n].label} Descending`
-      columns[n].sort = 'asc'
+    columns.value[n].sort = 'desc'
+  }
+  else if (sort == 'asc') {
+    for (let i = 0; i < columns.value.length; i++) {
+      columns.value[i].sort = 'none'
     }
+    columns.value[n].sort = 'asc'
   }
 }
 
@@ -608,6 +646,15 @@ function makeSortable(thing: string) {
     return Number(thing)
   else
     return thing
+}
+
+function iconThingy(sort: string) {
+  if (sort == 'none')
+    return 'i-heroicons-arrows-up-down'
+  else if (sort == 'desc')
+    return 'i-heroicons-bars-arrow-down'
+  else if (sort == 'asc')
+    return 'i-heroicons-bars-arrow-up'
 }
 
 await tableSetup()
@@ -627,14 +674,13 @@ await tableSetup()
           <UBadge label="Insane: 90%-100%" class="rounded-2xl" variant="soft" color="blue"/>
         </div>
       </template>
-      <p id="sortedBy">Sort: </p>
-      <div class="w-full">
+      <div>
         <table id="teamTable" class="table-auto">
-          <colgroup span="1" class="border border-gray-250"/>
-          <colgroup span="2" class="border border-gray-250"/>
-          <colgroup span="3" class="border border-gray-250"/>
-          <colgroup span="3" class="border border-gray-250"/>
-          <colgroup span="3" class="border border-gray-250"/>
+          <colgroup span="1" class="odd:bg-gray-50"/>
+          <colgroup span="2" class="odd:bg-gray-50"/>
+          <colgroup span="3" class="odd:bg-gray-50"/>
+          <colgroup span="3" class="odd:bg-gray-50"/>
+          <colgroup span="3" class="odd:bg-gray-50"/>
           <thead>
             <tr>
               <th colspan="1"/>
@@ -644,23 +690,24 @@ await tableSetup()
               <th colspan="3" scope="colgroup"><p class="text-xs font-light">Average</p>Endgame</th>
             </tr>
             <tr>
-              <th scope="col" v-for="(col, index) of columns">{{ col.label }}<UButton @click="sortTable(index, col.sort)" :icon="col.label == 'asc' ? 'i-heroicons-arrows-up-down' : col.label == 'desc' ? 'i-heroicons-bars-arrow-up' : 'i-heroicons-bars-arrow-down'" variant="ghost" class="rounded-2xl align-middle" size="xs"/></th>
+              <th scope="col" v-for="(col, index) of columns" class="font-medium text-sm p-2">{{ col.label }}<UButton @click="sortTable(index, col.sort, col.label)" :icon="col.label === 'none' ? 'i-heroicons-arrows-up-down' : (col.label === 'desc') ? 'i-heroicons-bars-arrow-down' : 'i-heroicons-bars-arrow-up'" variant="ghost" class="rounded-2xl align-middle" size="xs"/></th>
             </tr>
           </thead>
           <tbody>
-            <tr v-for="team of teamsData">
-              <td>{{team.team.data}}</td>
-              <td><UBadge :label="team.offense.data" variant="soft" :color="team.offense.color"/></td>
-              <td><UBadge :label="team.defense.data" variant="soft" :color="team.defense.color"/></td>
-              <td><UBadge :label="team.ampAuto.data" variant="soft" :color="team.ampAuto.color"/></td>
-              <td><UBadge :label="team.speakerAuto.data" variant="soft" :color="team.speakerAuto.color"/></td>
-              <td><UBadge :label="team.autoAcc.data" variant="soft" :color="team.autoAcc.color"/></td>
-              <td><UBadge :label="team.teleAmp.data" variant="soft" :color="team.teleAmp.color"/></td>
-              <td><UBadge :label="team.teleSpeaker.data" variant="soft" :color="team.teleSpeaker.color"/></td>
-              <td><UBadge :label="team.teleAcc.data" variant="soft" :color="team.teleAcc.color"/></td>
-              <td><UBadge :label="team.endgamePoints.data" variant="soft" :color="team.endgamePoints.color"/></td>
-              <td><UPopover mode="hover">
-                <UBadge class="m-1" label="Chart" variant="soft" />
+            <tr v-for="team of teamsData" class="border-b border-gray-200 dark:border-gray-700">
+              <td class="text-center"><UBadge :label="team.team.data" variant="soft" :color="team.team.color"/></td>
+              <td class="text-center"><UBadge :label="team.offense.data" variant="soft" :color="team.offense.color"/></td>
+              <td class="text-center"><UBadge :label="team.defense.data" variant="soft" :color="team.defense.color"/></td>
+              <td class="text-center"><UBadge :label="team.ampAuto.data" variant="soft" :color="team.ampAuto.color"/></td>
+              <td class="text-center"><UBadge :label="team.speakerAuto.data" variant="soft" :color="team.speakerAuto.color"/></td>
+              <td class="text-center"><UBadge :label="team.autoAcc.data" variant="soft" :color="team.autoAcc.color"/></td>
+              <td class="text-center"><UBadge :label="team.teleAmp.data" variant="soft" :color="team.teleAmp.color"/></td>
+              <td class="text-center"><UBadge :label="team.teleSpeaker.data" variant="soft" :color="team.teleSpeaker.color"/></td>
+              <td class="text-center"><UBadge :label="team.teleAcc.data" variant="soft" :color="team.teleAcc.color"/></td>
+              <td class="text-center"><UBadge :label="team.endgamePoints.data" variant="soft" :color="team.endgamePoints.color"/></td>
+              <td class="text-center"><UBadge :label="team.traps.data" variant="soft"  :color="team.traps.color"/></td>
+              <td class="text-center"><UPopover mode="hover">
+                <UButton class="m-1 mx-auto" variant="soft" icon="i-heroicons-chart-bar-square" color="gray"/>
                 <template #panel>
                   <UCard>
                     <div class="max-w-xs min-w-[10rem] overflow-y-auto" style="max-height: 20rem; min-height: 10rem">
@@ -669,7 +716,6 @@ await tableSetup()
                   </UCard>
                 </template>
               </UPopover></td>
-              <td><UBadge :label="team.traps.data" variant="soft"  :color="team.traps.color"/></td>
             </tr>
           </tbody>
         </table>

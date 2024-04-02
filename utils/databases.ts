@@ -41,6 +41,35 @@ class LocalRemoteDatabaseSyncHolder<Content extends {} = {}> {
         "basic": this.databases.basic.remote,
     };
 }
+export type TeamTableData = {
+    team: { data: string; color: string };
+    offense: { data: number; color: string };
+    defense: { data: number; color: string };
+    ampAuto: { data: number; color: string };
+    speakerAuto: { data: number; color: string };
+    autoAcc: { data: string; color: string };
+    teleAmp: { data: number; color: string };
+    teleSpeaker: { data: number; color: string };
+    teleAcc: { data: string; color: string };
+    traps: { data: number; color: string };
+    endgamePoints: { data: number; color: string };
+    endgameChart: { data: string; color: string };
+    class: string
+    rawData: any
+    extraNotes: string
+};
+export type DataArrayOrSum = {
+    offense: number[];
+    defense: number[];
+    ampAuto: number[];
+    speakerAuto: number[];
+    autoAcc: number[];
+    teleAmp: number[];
+    teleSpeaker: number[];
+    teleAcc: number[];
+    traps: number[];
+    endgamePoints: number[];
+}
 
 export type ScoutingData = {
     auto: { speakerNA: number; amp: number; missed: number; mobility: boolean };
