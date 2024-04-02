@@ -62,10 +62,12 @@ let sentimentScore = sentiment.analyze(props.rowData.rawData[selectedMatch.value
 let chartData = ref([
   currData.value.auto.amp,
   currData.value.auto.speakerNA,
-  currData.value.auto.missed || 0,
+  currData.value.auto.missedAmp || 0,
+  currData.value.auto.missedSpeaker || 0,
   currData.value.teleop.amp,
   currData.value.teleop.speakerNA,
-  currData.value.teleop.missed || 0,
+  currData.value.teleop.missedAmp || 0,
+  currData.value.teleop.missedSpeaker || 0,
   currData.value.endgame.trap,
 ])
 let chartTitle = ref("Match " + currData.value.matchNumber)
