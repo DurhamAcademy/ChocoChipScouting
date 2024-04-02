@@ -503,41 +503,70 @@ async function view(teamNum: number) {
 }
 
 let columns = ref([{
-  label:'Team',
-  sort: 'none'
+  label: 'Team',
+  sort: 'none',
+  sortable: true,
+  icon: 'i-heroicons-arrows-up-down'
 }, {
-  label:'Offensive',
-  sort: 'none'
+  label: 'Photos',
+  sort: 'none',
+  sortable: false,
+  icon: 'i-heroicons-arrows-up-down'
 }, {
-  label:'Defensive',
-  sort: 'none'
+  label: 'Offensive',
+  sort: 'none',
+  sortable: true,
+  icon: 'i-heroicons-arrows-up-down'
 }, {
-  label:'Amps',
-  sort: 'none'
+  label: 'Defensive',
+  sort: 'none',
+  sortable: true,
+  icon: 'i-heroicons-arrows-up-down'
 }, {
-  label:'Speakers',
-  sort: 'none'
+  label: 'Amps',
+  sort: 'none',
+  sortable: true,
+  icon: 'i-heroicons-arrows-up-down'
 }, {
-  label:'Accuracy',
-  sort: 'none'
+  label: 'Speakers',
+  sort: 'none',
+  sortable: true,
+  icon: 'i-heroicons-arrows-up-down'
 }, {
-  label:'Amps',
-  sort: 'none'
+  label: 'Accuracy',
+  sort: 'none',
+  sortable: true,
+  icon: 'i-heroicons-arrows-up-down'
 }, {
-  label:'Speakers',
-  sort: 'none'
+  label: 'Amps',
+  sort: 'none',
+  sortable: true,
+  icon: 'i-heroicons-arrows-up-down'
 }, {
-  label:'Accuracy',
-  sort: 'none'
+  label: 'Speakers',
+  sort: 'none',
+  sortable: true,
+  icon: 'i-heroicons-arrows-up-down'
 }, {
-  label:'Points',
-  sort: 'none'
+  label: 'Accuracy',
+  sort: 'none',
+  sortable: true,
+  icon: 'i-heroicons-arrows-up-down'
 }, {
-  label:'Traps',
-  sort: 'none'
+  label: 'Points',
+  sort: 'none',
+  sortable: true,
+  icon: 'i-heroicons-arrows-up-down'
 }, {
-  label:'Chart',
-  sort: 'none'
+  label: 'Traps',
+  sort: 'none',
+  sortable: true,
+  icon: 'i-heroicons-arrows-up-down'
+}, {
+  label: 'Chart',
+  sort: 'none',
+  sortable: false,
+  icon: 'i-heroicons-arrows-up-down'
 }])
 
 function sortTable(n: number, sort: string, col: string) {
@@ -628,14 +657,18 @@ function sortTable(n: number, sort: string, col: string) {
   if(sort == 'desc') {
     for (let i = 0; i < columns.value.length; i++) {
       columns.value[i].sort = 'none'
+      columns.value[i].icon = 'i-heroicons-arrows-up-down'
     }
     columns.value[n].sort = 'desc'
+    columns.value[n].icon = 'i-heroicons-bars-arrow-down'
   }
   else if (sort == 'asc') {
     for (let i = 0; i < columns.value.length; i++) {
       columns.value[i].sort = 'none'
+      columns.value[i].icon = 'i-heroicons-arrows-up-down'
     }
     columns.value[n].sort = 'asc'
+    columns.value[n].icon = 'i-heroicons-bars-arrow-up'
   }
 }
 
@@ -676,26 +709,27 @@ await tableSetup()
       </template>
       <div>
         <table id="teamTable" class="table-auto">
-          <colgroup span="1" class="odd:bg-gray-50"/>
+          <colgroup span="2" class="odd:bg-gray-50"/>
           <colgroup span="2" class="odd:bg-gray-50"/>
           <colgroup span="3" class="odd:bg-gray-50"/>
           <colgroup span="3" class="odd:bg-gray-50"/>
           <colgroup span="3" class="odd:bg-gray-50"/>
           <thead>
             <tr>
-              <th colspan="1"/>
+              <th colspan="2" class="my-auto"/>
               <th colspan="2"><p class="text-xs font-light">Average</p>Ratings<p class="text-xs font-light">/5.00</p></th>
               <th colspan="3" scope="colgroup"><p class="text-xs font-light">Average</p>Auto Cycles</th>
               <th colspan="3" scope="colgroup"><p class="text-xs font-light">Average</p>Teleop Cycles</th>
               <th colspan="3" scope="colgroup"><p class="text-xs font-light">Average</p>Endgame</th>
             </tr>
             <tr>
-              <th scope="col" v-for="(col, index) of columns" class="font-medium text-sm p-2">{{ col.label }}<UButton @click="sortTable(index, col.sort, col.label)" :icon="col.label === 'none' ? 'i-heroicons-arrows-up-down' : (col.label === 'desc') ? 'i-heroicons-bars-arrow-down' : 'i-heroicons-bars-arrow-up'" variant="ghost" class="rounded-2xl align-middle" size="xs"/></th>
+              <th scope="col" v-for="(col, index) of columns" class="font-medium text-sm"><UButton v-if="col.sortable" @click="sortTable(index, col.sort, col.label)" :trailing-icon="col.icon" variant="ghost" class="rounded-full" size="xs" :label="col.label" color="gray"/><UButton v-else :label="col.label" size="xs" variant="ghost" class="rounded-full" color="gray"/></th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="team of teamsData" class="border-b border-gray-200 dark:border-gray-700">
-              <td class="text-center"><UBadge :label="team.team.data" variant="soft" :color="team.team.color"/></td>
+              <td class="text-right"><UButton :label="team.team.data" variant="soft" :color="team.team.color" size="xs" @click="navigateTo('/teams/'+team.team.data)" trailing-icon="i-heroicons-chart-bar-square"/></td>
+              <td class="text-center"><UButton size="xs" color="gray" icon="i-heroicons-photo" variant="soft" @click="navigateTo('/teams/attachments/'+team.team.data)"/></td>
               <td class="text-center"><UBadge :label="team.offense.data" variant="soft" :color="team.offense.color"/></td>
               <td class="text-center"><UBadge :label="team.defense.data" variant="soft" :color="team.defense.color"/></td>
               <td class="text-center"><UBadge :label="team.ampAuto.data" variant="soft" :color="team.ampAuto.color"/></td>
@@ -707,7 +741,7 @@ await tableSetup()
               <td class="text-center"><UBadge :label="team.endgamePoints.data" variant="soft" :color="team.endgamePoints.color"/></td>
               <td class="text-center"><UBadge :label="team.traps.data" variant="soft"  :color="team.traps.color"/></td>
               <td class="text-center"><UPopover mode="hover">
-                <UButton class="m-1 mx-auto" variant="soft" icon="i-heroicons-chart-bar-square" color="gray"/>
+                <UButton class="m-1 mx-auto" variant="soft" icon="i-heroicons-chart-pie" color="gray"/>
                 <template #panel>
                   <UCard>
                     <div class="max-w-xs min-w-[10rem] overflow-y-auto" style="max-height: 20rem; min-height: 10rem">

@@ -65,7 +65,7 @@ function setup() {
         filteredValue.push(match)
       }
     }
-    if (key.toString() == filterTeam.value) {
+    if (String(key) == filterTeam.value) {
       teamData.value = {
         teamNum: key,
         rawData: filteredValue,
