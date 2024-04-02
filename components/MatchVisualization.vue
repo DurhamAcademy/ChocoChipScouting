@@ -35,6 +35,34 @@ function compareMatchNumbers(a: any, b: any){
   return 0;
 }
 
+function autoPlaces(){
+  let temp = "", i = ""
+  let c1 = 0, c2 = 0, c3 = 0, c4 = 0
+  for(i in props.rowData){
+    if(i == "1"){
+      c1++
+    }
+    else if(i == "2"){
+      c2++
+    }
+    else if(i == "3"){
+      c3++
+    }
+    else if (i == "4"){
+      c4++
+    }
+  }
+
+  if(c1 == 0 && c2 == 0 && c3 == 0 && c4 == 0){
+    return "No Data Available"
+  }
+  else{
+    temp = temp + "1: " + c1 + " 2: " + c2 + " 3: " + c3 + " 4: " + c4
+    return temp
+  }
+
+}
+
 const chartLabels = ['Auto Amp','Auto Speaker', 'Auto Miss', 'Amp', 'Speaker', 'Miss', 'Trap']
 let currData: any = ref(props.rowData.rawData[selectedMatch.value - 1])
 
@@ -89,6 +117,10 @@ console.log(props.rowData.rawData)
             ></BarChart>
           </div>
           <div class="flex-auto whitespace-normal max-h-72 w-72 max-w-72">
+            <div>
+              <p class="font-extrabold text-sm inline-block">Auto Position: &nbsp;</p>
+              <p class="text-sm inline-block">{{rowData.rawData[selectedMatch - 1].auto.position}}</p>
+            </div>
             <p class="font-extrabold text-sm">Auto & Endgame: </p>
             <div class="pb-1">
               <UBadge color="sky" variant="subtle" v-if="rowData.rawData[selectedMatch - 1].auto.mobility" class="mr-1.5 mt-2">Mobility</UBadge>

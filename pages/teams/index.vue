@@ -322,10 +322,6 @@ const columns = [{
   label: 'Defensive Score',
   sortable: true
 }, {
-  key: 'position',
-  label: 'Favorite Auto',
-  sortable: true
-}, {
   key: 'actions',
   label: 'Endgame'
 }, {
