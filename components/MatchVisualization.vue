@@ -97,7 +97,6 @@ console.log(props.rowData.rawData)
             <div class="pb-1">
               <UBadge color="sky" variant="subtle" v-if="rowData.rawData[selectedMatch - 1].auto.mobility" class="mr-1.5 mt-2">Mobility</UBadge>
               <UBadge color="indigo" variant="subtle" v-for="endgame in rowData.rawData[selectedMatch - 1].endgame.endgame" class="mr-1.5 mt-2"> {{ endgame }} </UBadge>
-              <UBadge color="emerald" variant="subtle" v-if="rowData.rawData[selectedMatch - 1].endgame.spotlight > 0" class="mr-1.5 mt-2">Spotlight: {{ rowData.rawData[selectedMatch - 1].endgame.spotlight }} </UBadge>
             </div>
             <div class="text-wrap max-w-72 h-2/3 max-h-2/3 overflow-y-scroll">
               <div v-for="(item, index) in rowData.rawData[selectedMatch - 1].notes.promptedNotes">

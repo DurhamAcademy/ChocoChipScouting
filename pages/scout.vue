@@ -73,7 +73,7 @@ let impData = {
 let scoutData: Ref<UnwrapRef<{
   auto: { speakerNA: number; amp: number; missedAmp: number; missedSpeaker: number; mobility: boolean };
   teleop: { speakerNA: number; amp: number; missedAmp: number; missedSpeaker: number; };
-  endgame: { endgame: string[]; trap: number; spotlight: number };
+  endgame: { endgame: string[]; trap: number; };
   notes: {  notes: string; promptedNotes: Array<{ selected: boolean, rating: number, notes: Array<string> }> };
   teamNumber: any;
   event: string;
@@ -100,7 +100,6 @@ let scoutData: Ref<UnwrapRef<{
   endgame: {
     trap: 0,
     endgame: [endgameOptions[0]],
-    spotlight: 0
   },
   notes: {
     notes: "",
@@ -239,10 +238,6 @@ async function submit() {
           <div class="max-w-24 w-24">
             <h1 class="text-gray-700 dark:text-gray-200 font-sans font-medium">Trap</h1>
             <IncrementalButton class="mt-1" v-model="scoutData.endgame.trap" :max-value="3"></IncrementalButton>
-          </div>
-          <div class="ml-3">
-            <h1 class="text-gray-700 dark:text-gray-200 font-sans font-medium">Spotlights Hit</h1>
-            <SingleSelect  v-model="scoutData.endgame.spotlight" :options="['0', '1', '2', '3']"/>
           </div>
         </div>
             <MultiSelect :model-value="endgameIndex" :options="endgameOptions"
