@@ -35,18 +35,20 @@ function compareMatchNumbers(a: any, b: any){
   return 0;
 }
 
-const chartLabels = ['Auto Amp','Auto Speaker', 'Auto Miss', 'Amp', 'Speaker', 'Miss', 'Trap']
+const chartLabels = ['Auto Amp','Auto Amp Miss', 'Auto Speaker', 'Auto Speaker Miss', 'Amp', 'Amp Miss', 'Speaker', 'Speaker Miss', 'Trap']
 let currData: any = ref(props.rowData.rawData[selectedMatch.value - 1])
 
 watch(selectedMatch, () =>{
   currData.value = props.rowData.rawData[selectedMatch.value - 1]
   chartData.value = [
     currData.value.auto.amp,
+    currData.value.auto.missedAmp || 0,
     currData.value.auto.speakerNA,
-    currData.value.auto.missed || 0,
+    currData.value.auto.missedSpeaker || 0,
     currData.value.teleop.amp,
+    currData.value.teleop.missedAmp || 0,
     currData.value.teleop.speakerNA,
-    currData.value.teleop.missed || 0,
+    currData.value.teleop.missedSpeaker || 0,
     currData.value.endgame.trap,
   ]
   chartTitle.value = "Match " + currData.value.matchNumber
@@ -59,11 +61,13 @@ let sentimentScore = sentiment.analyze(props.rowData.rawData[selectedMatch.value
 
 let chartData = ref([
   currData.value.auto.amp,
+  currData.value.auto.missedAmp || 0,
   currData.value.auto.speakerNA,
-  currData.value.auto.missed || 0,
+  currData.value.auto.missedSpeaker || 0,
   currData.value.teleop.amp,
+  currData.value.teleop.missedAmp || 0,
   currData.value.teleop.speakerNA,
-  currData.value.teleop.missed || 0,
+  currData.value.teleop.missedSpeaker || 0,
   currData.value.endgame.trap,
 ])
 let chartTitle = ref("Match " + currData.value.matchNumber)
@@ -89,11 +93,14 @@ console.log(props.rowData.rawData)
             ></BarChart>
           </div>
           <div class="flex-auto whitespace-normal max-h-72 w-72 max-w-72">
+            <div>
+              <p class="font-extrabold text-sm inline-block">Auto Position: &nbsp;</p>
+              <p class="text-sm inline-block">{{rowData.rawData[selectedMatch - 1].auto.position}}</p>
+            </div>
             <p class="font-extrabold text-sm">Auto & Endgame: </p>
             <div class="pb-1">
               <UBadge color="sky" variant="subtle" v-if="rowData.rawData[selectedMatch - 1].auto.mobility" class="mr-1.5 mt-2">Mobility</UBadge>
               <UBadge color="indigo" variant="subtle" v-for="endgame in rowData.rawData[selectedMatch - 1].endgame.endgame" class="mr-1.5 mt-2"> {{ endgame }} </UBadge>
-              <UBadge color="emerald" variant="subtle" v-if="rowData.rawData[selectedMatch - 1].endgame.spotlight > 0" class="mr-1.5 mt-2">Spotlight: {{ rowData.rawData[selectedMatch - 1].endgame.spotlight }} </UBadge>
             </div>
             <div class="text-wrap max-w-72 h-2/3 max-h-2/3 overflow-y-scroll">
               <div v-for="(item, index) in rowData.rawData[selectedMatch - 1].notes.promptedNotes">

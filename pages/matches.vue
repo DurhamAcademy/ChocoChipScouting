@@ -46,8 +46,10 @@ const headers = [
     align: 'center',
     children: [
       { title: 'Amp', align: 'end', value: 'auto.amp' },
+      { title: 'Missed Amp', align: 'end', value: 'auto.missedAmp' },
       { title: 'Speaker', align: 'end', value: 'auto.speakerNA' },
-      { title: 'Missed', align: 'end', value: 'auto.missed' },
+      { title: 'Missed Speaker', align: 'end', value: 'auto.missedSpeaker' },
+      { title: 'Position', align: 'start', value: 'auto.position' },
       { title: 'Mobility', align: 'end', value: 'auto.mobility' }
     ]
   }, {
@@ -55,8 +57,9 @@ const headers = [
     align: 'center',
     children: [
       { title: 'Amp', align: 'end', value: 'teleop.amp' },
+      { title: 'Missed Amp', align: 'end', value: 'teleop.missedAmp' },
       { title: 'Speaker', align: 'end', value: 'teleop.speakerNA' },
-      { title: 'Missed', align: 'end', value: 'teleop.missed' },
+      { title: 'Missed Speaker', align: 'end', value: 'teleop.missedSpeaker' },
     ]
   }, {
     title: 'Endgame',

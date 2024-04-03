@@ -71,9 +71,9 @@ let impData = {
 
 //todo fix
 let scoutData: Ref<UnwrapRef<{
-  auto: { speakerNA: number; amp: number; missed: number; mobility: boolean };
-  teleop: { speakerNA: number; amp: number; missed: number; };
-  endgame: { endgame: string[]; trap: number; spotlight: number };
+  auto: { speakerNA: number; amp: number; missedAmp: number; missedSpeaker: number; mobility: boolean; position: number; };
+  teleop: { speakerNA: number; amp: number; missedAmp: number; missedSpeaker: number; };
+  endgame: { endgame: string[]; trap: number; };
   notes: {  notes: string; promptedNotes: Array<{ selected: boolean, rating: number, notes: Array<string> }> };
   teamNumber: any;
   event: string;
@@ -87,18 +87,20 @@ let scoutData: Ref<UnwrapRef<{
   auto: {
     speakerNA: 0,
     amp: 0,
-    missed: 0,
+    missedAmp: 0,
+    missedSpeaker: 0,
     mobility: false,
+    position: 0,
   },
   teleop: {
     amp: 0,
     speakerNA: 0,
-    missed: 0,
+    missedAmp: 0,
+    missedSpeaker: 0,
   },
   endgame: {
     trap: 0,
     endgame: [endgameOptions[0]],
-    spotlight: 0
   },
   notes: {
     notes: "",
@@ -151,6 +153,8 @@ async function submit() {
   }
 }
 
+const isOpen = ref(false) //prestons way of making the reference image modal open
+
 /* Good-looking square buttons but don't work horizontally why?
 <UButton label="Docked & Engaged" style="aspect-ratio : 1 / 1; max-width: 75px; max-height: 75px;" class="m-1.5"/>
         <UButton label="Docked" style="aspect-ratio : 1 / 1; max-width: 75px; max-height: 75px;" class="m-1.5"/>
@@ -190,38 +194,59 @@ async function submit() {
       <div v-if="gameTime == GameTime.Autonomous">
         <div class="flex text-center">
           <div class="max-w-24 w-24">
-            <h1 class="text-gray-700 dark:text-gray-200 font-sans mr-3 mb-1 font-medium">Amp</h1>
-            <IncrementalButton class="mb-0 mr-3 mt-1" v-model="scoutData.auto.amp"></IncrementalButton>
+            <h1 class="text-gray-700 dark:text-gray-200 font-sans mr-3 mb-1 font-bold underline">Amp</h1>
+            <h1 class="text-coral-400 font-sans mr-3 mt-1 font-light text-sm">Scored</h1>
+            <IncrementalButton class="mb-1 mr-3 mt-1" v-model="scoutData.auto.amp"></IncrementalButton>
+            <br>
+            <h1 class="text-coral-400 font-sans mr-3 mt-1 font-light text-sm">Missed</h1>
+            <IncrementalButton class="mb-0 mr-3 mt-1" v-model="scoutData.auto.missedAmp"></IncrementalButton>
           </div>
           <div class="max-w-24 w-24">
-            <h1 class="text-gray-700 dark:text-gray-200 mr-3 font-sans font-medium mb-1">Speaker</h1>
-            <IncrementalButton class="mb-0 mr-3 mt-1" v-model="scoutData.auto.speakerNA"></IncrementalButton>
-          </div>
-          <div class="max-w-24 w-24">
-            <h1 class="text-gray-700 dark:text-gray-200 font-sans mr-3 mb-1 font-medium">Missed</h1>
-            <IncrementalButton class="mb-0 mr-3 mt-1" v-model="scoutData.auto.missed"></IncrementalButton>
+            <h1 class="text-gray-700 dark:text-gray-200 font-sans mr-3 mb-1 font-bold underline">Speaker</h1>
+            <h1 class="text-coral-400 font-sans mr-3 mt-1 font-light text-sm">Scored</h1>
+            <IncrementalButton class="mb-1 mr-3 mt-1" v-model="scoutData.auto.speakerNA"></IncrementalButton>
+            <br>
+            <h1 class="text-coral-400 font-sans mr-3 mt-1 font-light text-sm">Missed</h1>
+            <IncrementalButton class="mb-0 mr-3 mt-1" v-model="scoutData.auto.missedSpeaker"></IncrementalButton>
           </div>
           <div>
             <br>
-            <BooleanButton class="mt-2" v-model="scoutData.auto.mobility" :default-value="'Mobility'" :other-value="'Mobility'"/>
+            <br>
+            <BooleanButton class="mt-1" v-model="scoutData.auto.mobility" :default-value="'Mobility'" :other-value="'Mobility'"/>
+          </div>
           </div>
         </div>
-      </div>
+        <div class="ml-6">
+        <br>
+        <h1 class="text-gray-700 dark:text-gray-200 font-sans font-medium">Auto Position</h1>
+          </div>
+        <SingleSelect v-model="scoutData.auto.position" :options="['1', '2', '3', '4']"/>
+        <UButton class="ml-1" @click="isOpen=true" label="Reference"/>
+        <UModal v-model="isOpen">
+          <div class="flex flex-auto">
+          <UButton class="mr-2 mt-2 right-0 absolute" @click="isOpen=false" icon="i-heroicons-x-circle"/>
+            <img src="/public/referenceImage.png"/>
+          </div>
+        </UModal>
       <div v-if="gameTime == GameTime.Teleoperated">
         <div class="flex text-center">
           <div class="max-w-24 w-24">
-            <h1 class="text-gray-700 dark:text-gray-200 font-sans mr-3 mb-1 font-medium">Amp</h1>
-            <IncrementalButton class="mb-0 mr-3 mt-1" v-model="scoutData.teleop.amp"></IncrementalButton>
+            <h1 class="text-gray-700 dark:text-gray-200 font-sans mr-3 mb-1 font-bold underline">Amp</h1>
+            <h1 class="text-coral-400 font-sans mr-3 mt-1 font-light text-sm">Scored</h1>
+            <IncrementalButton class="mb-1 mr-3 mt-1" v-model="scoutData.teleop.amp"></IncrementalButton>
+            <br>
+            <h1 class="text-coral-400 font-sans mr-3 mt-1 font-light text-sm">Missed</h1>
+            <IncrementalButton class="mb-0 mr-3 mt-1" v-model="scoutData.teleop.missedAmp"></IncrementalButton>
           </div>
           <div class="max-w-24 w-24">
-            <h1 class="text-gray-700 dark:text-gray-200 mr-3 font-sans font-medium mb-1">Speaker</h1>
-            <IncrementalButton class="mb-0 mr-3 mt-1" v-model="scoutData.teleop.speakerNA"></IncrementalButton>
+            <h1 class="text-gray-700 dark:text-gray-200 font-sans mr-3 mb-1 font-bold underline">Speaker</h1>
+            <h1 class="text-coral-400 font-sans mr-3 mt-1 font-light text-sm">Scored</h1>
+            <IncrementalButton class="mb-1 mr-3 mt-1" v-model="scoutData.teleop.speakerNA"></IncrementalButton>
+            <br>
+            <h1 class="text-coral-400 font-sans mr-3 mt-1 font-light text-sm">Missed</h1>
+            <IncrementalButton class="mb-0 mr-3 mt-1" v-model="scoutData.teleop.missedSpeaker"></IncrementalButton>
           </div>
-          <div class="max-w-24 w-24">
-            <h1 class="text-gray-700 dark:text-gray-200 font-sans mr-3 mb-1 font-medium">Missed</h1>
-            <IncrementalButton class="mb-0 mr-3 mt-1" v-model="scoutData.teleop.missed"></IncrementalButton>
-          </div>
-        </div>
+      </div>
       </div>
       <div v-if="gameTime == GameTime.Endgame">
         <div class="flex text-center flex-wrap mb-3">
@@ -229,14 +254,9 @@ async function submit() {
             <h1 class="text-gray-700 dark:text-gray-200 font-sans font-medium">Trap</h1>
             <IncrementalButton class="mt-1" v-model="scoutData.endgame.trap" :max-value="3"></IncrementalButton>
           </div>
-          <div class="ml-3">
-            <h1 class="text-gray-700 dark:text-gray-200 font-sans font-medium">Spotlights Hit</h1>
-            <SingleSelect  v-model="scoutData.endgame.spotlight" :options="['0', '1', '2', '3']"/>
-          </div>
         </div>
             <MultiSelect :model-value="endgameIndex" :options="endgameOptions"
-                     @update:model-value="value => {updateEndgameOptions(value)}"
-                     :connected-options="connectedOptions"/>
+                     @update:model-value="value => {updateEndgameOptions(value)}" :connected-options="connectedOptions"/>
        </div>
       <div v-if="gameTime == GameTime.Notes">
         <UAccordion
