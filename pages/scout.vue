@@ -73,7 +73,7 @@ let impData = {
 let scoutData: Ref<UnwrapRef<{
   auto: { speakerNA: number; amp: number; missedAmp: number; missedSpeaker: number; mobility: boolean; position: number; };
   teleop: { speakerNA: number; amp: number; missedAmp: number; missedSpeaker: number; };
-  endgame: { endgame: string[]; trap: number; spotlight: number };
+  endgame: { endgame: string[]; trap: number; };
   notes: {  notes: string; promptedNotes: Array<{ selected: boolean, rating: number, notes: Array<string> }> };
   teamNumber: any;
   event: string;
@@ -214,6 +214,7 @@ const isOpen = ref(false) //prestons way of making the reference image modal ope
             <br>
             <BooleanButton class="mt-1" v-model="scoutData.auto.mobility" :default-value="'Mobility'" :other-value="'Mobility'"/>
           </div>
+          </div>
         </div>
         <div class="ml-6">
         <br>
@@ -227,7 +228,6 @@ const isOpen = ref(false) //prestons way of making the reference image modal ope
             <img src="/public/referenceImage.png"/>
           </div>
         </UModal>
-          </div>
       <div v-if="gameTime == GameTime.Teleoperated">
         <div class="flex text-center">
           <div class="max-w-24 w-24">
