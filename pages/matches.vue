@@ -49,6 +49,7 @@ const headers = [
       { title: 'Missed Amp', align: 'end', value: 'auto.missedAmp' },
       { title: 'Speaker', align: 'end', value: 'auto.speakerNA' },
       { title: 'Missed Speaker', align: 'end', value: 'auto.missedSpeaker' },
+      { title: 'Position', align: 'start', value: 'auto.position' },
       { title: 'Mobility', align: 'end', value: 'auto.mobility' }
     ]
   }, {

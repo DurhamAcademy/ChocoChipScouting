@@ -93,6 +93,10 @@ console.log(props.rowData.rawData)
             ></BarChart>
           </div>
           <div class="flex-auto whitespace-normal max-h-72 w-72 max-w-72">
+            <div>
+              <p class="font-extrabold text-sm inline-block">Auto Position: &nbsp;</p>
+              <p class="text-sm inline-block">{{rowData.rawData[selectedMatch - 1].auto.position}}</p>
+            </div>
             <p class="font-extrabold text-sm">Auto & Endgame: </p>
             <div class="pb-1">
               <UBadge color="sky" variant="subtle" v-if="rowData.rawData[selectedMatch - 1].auto.mobility" class="mr-1.5 mt-2">Mobility</UBadge>

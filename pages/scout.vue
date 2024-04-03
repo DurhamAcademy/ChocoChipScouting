@@ -71,7 +71,7 @@ let impData = {
 
 //todo fix
 let scoutData: Ref<UnwrapRef<{
-  auto: { speakerNA: number; amp: number; missedAmp: number; missedSpeaker: number; mobility: boolean };
+  auto: { speakerNA: number; amp: number; missedAmp: number; missedSpeaker: number; mobility: boolean; position: number; };
   teleop: { speakerNA: number; amp: number; missedAmp: number; missedSpeaker: number; };
   endgame: { endgame: string[]; trap: number; };
   notes: {  notes: string; promptedNotes: Array<{ selected: boolean, rating: number, notes: Array<string> }> };
@@ -90,6 +90,7 @@ let scoutData: Ref<UnwrapRef<{
     missedAmp: 0,
     missedSpeaker: 0,
     mobility: false,
+    position: 0,
   },
   teleop: {
     amp: 0,
@@ -152,6 +153,8 @@ async function submit() {
   }
 }
 
+const isOpen = ref(false) //prestons way of making the reference image modal open
+
 /* Good-looking square buttons but don't work horizontally why?
 <UButton label="Docked & Engaged" style="aspect-ratio : 1 / 1; max-width: 75px; max-height: 75px;" class="m-1.5"/>
         <UButton label="Docked" style="aspect-ratio : 1 / 1; max-width: 75px; max-height: 75px;" class="m-1.5"/>
@@ -212,7 +215,19 @@ async function submit() {
             <BooleanButton class="mt-1" v-model="scoutData.auto.mobility" :default-value="'Mobility'" :other-value="'Mobility'"/>
           </div>
           </div>
-      </div>
+        </div>
+        <div class="ml-6">
+        <br>
+        <h1 class="text-gray-700 dark:text-gray-200 font-sans font-medium">Auto Position</h1>
+          </div>
+        <SingleSelect v-model="scoutData.auto.position" :options="['1', '2', '3', '4']"/>
+        <UButton class="ml-1" @click="isOpen=true" label="Reference"/>
+        <UModal v-model="isOpen">
+          <div class="flex flex-auto">
+          <UButton class="mr-2 mt-2 right-0 absolute" @click="isOpen=false" icon="i-heroicons-x-circle"/>
+            <img src="/public/referenceImage.png"/>
+          </div>
+        </UModal>
       <div v-if="gameTime == GameTime.Teleoperated">
         <div class="flex text-center">
           <div class="max-w-24 w-24">
@@ -241,8 +256,7 @@ async function submit() {
           </div>
         </div>
             <MultiSelect :model-value="endgameIndex" :options="endgameOptions"
-                     @update:model-value="value => {updateEndgameOptions(value)}"
-                     :connected-options="connectedOptions"/>
+                     @update:model-value="value => {updateEndgameOptions(value)}" :connected-options="connectedOptions"/>
        </div>
       <div v-if="gameTime == GameTime.Notes">
         <UAccordion
