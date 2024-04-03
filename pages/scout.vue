@@ -256,8 +256,7 @@ const isOpen = ref(false) //prestons way of making the reference image modal ope
           </div>
         </div>
             <MultiSelect :model-value="endgameIndex" :options="endgameOptions"
-                     @update:model-value="value => {updateEndgameOptions(value)}"
-                     :connected-options="connectedOptions"/>
+                     @update:model-value="value => {updateEndgameOptions(value)}" :connected-options="connectedOptions"/>
        </div>
       <div v-if="gameTime == GameTime.Notes">
         <UAccordion
