@@ -99,7 +99,7 @@ const { pending, data: res } = await useLazyAsyncData('res', () => setup())
         <UTooltip :text="row.value || 'not found'">
           <UAvatar
               class="select-none"
-              :alt="row.value || '-'"
+              :alt="row.value.replace(/[0-9]/g, '') || '-'"
           />
         </UTooltip>
       </template>

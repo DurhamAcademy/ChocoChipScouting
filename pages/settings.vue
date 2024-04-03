@@ -17,7 +17,7 @@ const isDark = computed({
   <OuterComponents>
     <div class="flex justify-center">
       <UCard class="max-w-xl mt-5 flex-grow">
-        <UFormGroup class="inputDiv mb-2" label="Style" name="event">
+        <UFormGroup class="inline-block inputDiv mb-2" label="Style">
           <ClientOnly>
             <UButton
                 :icon="isDark ? 'i-heroicons-moon-20-solid' : 'i-heroicons-sun-20-solid'"

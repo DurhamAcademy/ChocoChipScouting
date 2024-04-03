@@ -75,7 +75,7 @@ function addFilter(filterOption: string, index: number, query: string){
         option-attribute="content"
         multiple
         searchable
-        :searchable-placeholder="searchPlaceholder != undefined ? searchPlaceholder: 'Search or Add Filter'"
+        :searchable-placeholder="searchPlaceholder != undefined ? searchPlaceholder: 'Search Filters or Add Custom Filter'"
     >
       <template #default>
         <UButton color="gray" class="flex-1 justify-between min-h-9">
