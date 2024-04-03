@@ -12,6 +12,7 @@ let username = ref("")
 let password = ref("")
 
 let roles = ref([[""]])
+let selectedRoles = ref(['scout'])
 const roleOptions = ["drive team", "scout", 'pit', 'other']
 
 let updatingRoles = false
@@ -56,7 +57,8 @@ async function signUp() {
       {
         metadata: {
           unaccessedAccount: true
-        }
+        },
+        roles: selectedRoles.value
       }, function (err, response) {
         if (err) {
           if (err.name === 'conflict') {
@@ -70,6 +72,7 @@ async function signUp() {
           console.log("User created")
           username.value = ""
           password.value = ""
+          selectedRoles.value = ['scout']
           setup()
         }
       }
@@ -87,6 +90,7 @@ async function changePassword() {
           console.log("Password changed")
           username.value = ""
           password.value = ""
+          selectedRoles.value = ['scout']
           setup()
         }
       }
@@ -162,13 +166,16 @@ const { pending, data: res } = await useLazyAsyncData('res', () => setup())
       <UCard class="max-w-xl flex-grow m-5 overflow-visible">
         <template #header>
           <UForm class="flex">
-            <UFormGroup class="flex-auto">
+            <UFormGroup class="flex-auto basis-1/4">
               <UInput v-model="username" autocomplete="off" placeholder="Username"/>
             </UFormGroup>
-            <UFormGroup class="flex-auto pl-2.5">
+            <UFormGroup class="flex-auto pl-2.5 basis-1/4">
               <UInput v-model="password" autocomplete="off" type="password" placeholder="Password"/>
             </UFormGroup>
-            <UFormGroup class="flex-auto pl-2.5">
+            <UFormGroup class="flex-auto pl-2.5 basis-1/8">
+              <USelectMenu v-model="selectedRoles" :options="roleOptions" multiple placeholder="0 Selected"/>
+            </UFormGroup>
+            <UFormGroup class="flex-auto pl-2.5 basis-1/3">
               <UButton :label="'Add/Edit User'" @click="userManage" block></UButton>
             </UFormGroup>
           </UForm>
