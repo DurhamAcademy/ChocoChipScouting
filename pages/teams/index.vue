@@ -20,34 +20,49 @@ let options = {
   }
 }
 
-const events = eventOptions.map((event) => event.replace(/[0-9]/g, ''))
-let currentEvent = eventOptions[0]
-if (typeof window !== 'undefined') currentEvent = localStorage.getItem('currentEvent') || eventOptions[0]
-const fetch = useFetch<Array<any>>("/api/eventMatches/" + currentEvent)
+const events = eventOptions
+let currentEvent = ref(eventOptions[0])
+if (typeof window !== 'undefined') currentEvent.value = localStorage.getItem('currentEvent') || eventOptions[0]
+const fetch = useFetch<Array<any>>("/api/eventMatches/" + currentEvent.value)
 
+let filters = ref({
+  teamNum: {
+    include: [],
+    exclude: []
+  },
+  matchNum: {
+    include: []
+  },
+  author: {
+    include: [],
+    exclude: []
+  },
+  auto: {
+    selected: false
+  },
+  endgame: {
+    selected: false
+  }
+})
 
-let customOptions = ['Has Climb', 'Has Auto']
-for(let event of events){
-  customOptions.push('event: ' + event)
+let filterOptions = ["Team #", "Match #", "-Author"]
+let activeFilterOption = ref(filterOptions[0])
+let filterInput = ref("")
+let activeFilters = ref<Array<string>>([])
+
+function addFilter(){
+  if(filterInput.value != ''){
+    activeFilters.value.push(activeFilterOption.value + ": " + filterInput.value)
+    filterInput.value = ""
+  }
 }
-let currentEventID = customOptions.indexOf('event: ' + currentEvent.replace(/[0-9]/g, ''))
-const filterOptions = ref(
-    Array(customOptions.length)
-        .fill({ id: 0, content: "", custom: false})
-        .map(
-            (_, index) => ({ id: index, content: customOptions[index], custom: false})
-        )
-)
-const currentEventFilter = { id: currentEventID, content: 'event: ' + currentEvent.replace(/[0-9]/g, ''), custom: false }
-const selectedFilters = ref<Array<{ id: number, content: string, custom: boolean}>>([currentEventFilter])
-watch(selectedFilters, async () => {
+
+watch(activeFilters, async () => {
   await tableSetup()
 }, {
   deep: true
 })
 
-
-const extraFilterOptions = ["team", "match", "author", "ignore author"]
 
 const { scoutingData } = databases.locals
 let db = scoutingData
@@ -92,34 +107,27 @@ async function tableSetup() {
   /*
   Creates two arrays that are filters applied on all data for team numbers and events (includes match number filter)
    */
-  let allowedEvents = []
-  let allowedTeams = []
-  let allowedAuthors = []
-  let ignoredAuthors = []
   let blueAlliance = []
   let redAlliance = []
-  for (let filter of selectedFilters.value) {
-    if (filter.content.startsWith("event:")) {
-      allowedEvents.push(filter.content.split(":")[1].trim())
+  let allowedTeams: string[] = []
+  let bannedAuthors: string[] = []
+
+  for(let filter of activeFilters.value){
+    if(filter.startsWith(filterOptions[0])){
+      allowedTeams.push(filter.split(":")[1].trim())
     }
-    if (filter.content.startsWith("team:")) {
-      allowedTeams.push(filter.content.split(":")[1].trim())
+    if(filter.startsWith((filterOptions[2]))){
+      bannedAuthors.push(filter.split(":")[1].trim())
     }
-    if (filter.content.startsWith("author:")) {
-      allowedAuthors.push(filter.content.split(":")[1].trim())
-    }
-    if (filter.content.startsWith("ignore author:")) {
-      ignoredAuthors.push(filter.content.split(":")[1].trim())
-    }
-    if (filter.content.startsWith("match")) {
+    if(filter.startsWith(filterOptions[1])){
       let tbaMatchData = fetch.data.value
-      if(tbaMatchData != null){
-        let userInput = parseInt(filter.content.split(':')[1].trim())
-        for(let match of tbaMatchData){
-          if(match.comp_level == "qm" && match.match_number == userInput){
-            for(let team of match.alliances.blue.team_keys){
+      if (tbaMatchData != null) {
+        let userInput = filter.split(":")[1].trim()
+        for(let match of tbaMatchData) {
+          if (match.comp_level == "qm" && match.match_number == userInput) {
+            for (let team of match.alliances.blue.team_keys) {
               let cleanedTeam = team.replace("frc", "")
-              if(!allowedTeams.includes(cleanedTeam)) {
+              if (!allowedTeams.includes(cleanedTeam)) {
                 allowedTeams.push(cleanedTeam)
                 blueAlliance.push(cleanedTeam)
               }
@@ -136,6 +144,7 @@ async function tableSetup() {
       }
     }
   }
+  console.log(allowedTeams)
   tableLoop: for (let [key, value] of teamOrgMatches) {
     if(key == undefined) continue
     /*
@@ -145,12 +154,11 @@ async function tableSetup() {
     //if sorted by match apply alliance colors
     let alliance = blueAlliance.includes(key.toString()) ? "bg-blue-100": redAlliance.includes(key.toString()) ? "bg-red-100": ""
 
-    if (allowedTeams.includes(key.toString()) || allowedTeams.length == 0) {
+
+    if (allowedTeams.length == 0 || allowedTeams.includes(key.toString())) {
       for (let match of value) {
-        if (match.event != undefined && allowedEvents.includes( match.event.replace(/[0-9]/g, ''))) {
-          if((allowedAuthors.length == 0 || allowedAuthors.includes(match.author)) && (ignoredAuthors.length == 0 || !ignoredAuthors.includes(match.author))){
-            data.push(match)
-          }
+        if (match.event != undefined && currentEvent.value == match.event && !bannedAuthors.includes(match.author)) {
+          data.push(match)
         }
       }
     }
@@ -169,7 +177,7 @@ async function tableSetup() {
         for(let i = data.length - 1; i >= 0; i--){
           if(data[i].matchNumber == currMatch){
             //switch to prioritizing your org not just darc side
-            if(includedOne || data[i].author == "Voltcats"){
+            if(includedOne){
               data.splice(data.indexOf(data[i]), 1)
             }
             else includedOne = true
@@ -179,38 +187,6 @@ async function tableSetup() {
       else matchNumbers.push(currMatch)
     }
 
-
-    /*
-    Goes through all remaining filters and applies their effects
-     */
-    for (let filter of selectedFilters.value) {
-
-      if (filter.id == 0) {
-        let hasClimb = false
-        for (let match of data) {
-          if (match.endgame.endgame.includes("Onstage") || match.endgame.endgame.includes("Attempted Onstage")) {
-            hasClimb = true
-            break
-          }
-        }
-        if (!hasClimb) {
-          continue tableLoop
-        }
-      }
-
-      if (filter.id == 1) {
-        let hasAuto = false
-        for (let match of data) {
-          if (match.auto.amp > 0 || match.auto.speakerNA > 0 || match.auto.mobility) {
-            hasAuto = true
-            break
-          }
-        }
-        if (!hasAuto) {
-          continue tableLoop
-        }
-      }
-    }
     if (data.length > 0) {
       let arr = {
         team: {data: key, color: ''},
@@ -697,15 +673,58 @@ await tableSetup()
   <OuterComponents>
     <UCard class="max-h-dvh overflow-auto">
       <template #header>
-        <UFormGroup class="w-full" block>
-          <FilterMultiSelect v-model="selectedFilters" :options="filterOptions" :extra-options="extraFilterOptions"></FilterMultiSelect>
-        </UFormGroup>
-        <div class="flex m-2">
+        <div class="flex">
+          <UForm>
+            <UFormGroup class="inline-block mr-2" label="Filters">
+              <UButtonGroup>
+                <USelectMenu class="inline-block min-w-28 w-28 max-w-28" v-model="activeFilterOption" :options="filterOptions"/>
+                <UInput
+                    v-model="filterInput"
+                    class="inline-block max-w-40"
+                    placeholder="filter text..."
+                    :ui="{ icon: { trailing: { pointer: '' } } }"
+                    v-on:keyup.enter="addFilter"
+                >
+                  <template #trailing>
+                    <UButton
+                        v-show="filterInput != ''"
+                        color="coral"
+                        variant="link"
+                        icon="i-heroicons-plus-circle"
+                        :padded="false"
+                        @click="addFilter"
+                    />
+                  </template>
+                </UInput>
+              </UButtonGroup>
+            </UFormGroup>
+          </UForm>
+          <div class="inline-block m-2">
           <UBadge label="Bad: 0%-33%" class="rounded-2xl" variant="soft"/>
           <UBadge label="Ok: 33%-66%" class="rounded-2xl" variant="soft" color="gray"/>
           <UBadge label="Good: 66%-90%" class="rounded-2xl" variant="soft" color="green"/>
           <UBadge label="Insane: 90%-100%" class="rounded-2xl" variant="soft" color="blue"/>
+          </div>
         </div>
+          <UFormGroup>
+            <UButton
+                v-for="(value, index) in activeFilters"
+                :label="value"
+                variant="soft"
+                class="mt-2 mr-1"
+                trailing-icon="i-heroicons-x-mark"
+                size="2xs"
+                @click="activeFilters.splice(index, 1)"
+            />
+            <UBadge
+              v-if="activeFilters.length == 0"
+              variant="soft"
+              class="mt-2"
+              color="gray"
+              label="No filters selected"
+            />
+          </UFormGroup>
+
       </template>
       <div>
         <table id="teamTable" class="table-auto">
