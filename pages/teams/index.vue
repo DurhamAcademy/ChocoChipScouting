@@ -718,12 +718,6 @@ await tableSetup()
               </UButtonGroup>
             </UFormGroup>
           </UForm>
-          <div class="inline-block m-2">
-          <UBadge label="Bad: 0%-33%" class="rounded-2xl" variant="soft"/>
-          <UBadge label="Ok: 33%-66%" class="rounded-2xl" variant="soft" color="gray"/>
-          <UBadge label="Good: 66%-90%" class="rounded-2xl" variant="soft" color="green"/>
-          <UBadge label="Insane: 90%-100%" class="rounded-2xl" variant="soft" color="blue"/>
-          </div>
         </div>
           <UFormGroup>
             <UButton
@@ -738,12 +732,17 @@ await tableSetup()
             <UBadge
               v-if="activeFilters.length == 0"
               variant="soft"
-              class="mt-2"
+              class="mt-2 rounded-2xl"
               color="gray"
               label="No filters selected"
             />
           </UFormGroup>
-
+        <div class="inline-block m-2">
+          <UBadge label="Bad: 0%-33%" class="rounded-2xl" variant="soft"/>
+          <UBadge label="Ok: 33%-66%" class="rounded-2xl" variant="soft" color="gray"/>
+          <UBadge label="Good: 66%-90%" class="rounded-2xl" variant="soft" color="green"/>
+          <UBadge label="Insane: 90%-100%" class="rounded-2xl" variant="soft" color="blue"/>
+        </div>
       </template>
       <template #default>
         <div>
