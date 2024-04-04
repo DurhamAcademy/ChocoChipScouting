@@ -213,7 +213,7 @@ async function tableSetup() {
     }
     if (data.length > 0) {
       let arr = {
-        team: {data: key, color: ''},
+        team: {data: String(key), color: ''},
         offense: {data: Math.round(averageOffensiveScore(data)*100)/100, color: ''},
         defense: {data: Math.round(averageDefensiveScore(data)*100)/100, color: ''},
         ampAuto: {data: Math.round(averageAmpsAuto(data)*100)/100, color: ''},
@@ -331,6 +331,7 @@ async function tableSetup() {
     teamsData.value[i].traps.color = colorify(calculatePercent(teamsData.value[i].traps.data, Math.min(...data.traps), Math.max(...data.traps)))
     teamsData.value[i].endgamePoints.color = colorify(calculatePercent(teamsData.value[i].endgamePoints.data, Math.min(...data.endgamePoints), Math.max(...data.endgamePoints)))
   }
+  teamsData.value.sort((a: TeamTableData, b: TeamTableData) => Number(a.team.data) - Number(b.team.data))
 }
 
 function colorifyTeam(teamData: TeamTableData, data: DataArrayOrSum) {
@@ -570,18 +571,18 @@ let columns = ref([{
 }])
 
 function sortTable(n: number, sort: string, col: string) {
-  let table, rows, switching, i, x, y, shouldSwitch, dir, switchCount = 0, sortedBy;
-  sortedBy = document.getElementById("sortedBy")
+  let table, rows, switching, i, x, y, shouldSwitch;
   table = document.getElementById("teamTable") as HTMLTableElement | null
   // returning if nothing in the table
   if (!table) return;
   switching = true;
   // Set the sorting direction to ascending:
-  if(sort == 'none' || sort == 'asc')
+  if(sort == 'none')
     sort = 'desc'
   else if (sort == 'desc')
     sort = 'asc'
-  dir = sort;
+  else if (sort == 'asc')
+    sort = 'none'
   /* Make a loop that will continue until
   no switching has been done: */
   while (switching) {
@@ -596,47 +597,63 @@ function sortTable(n: number, sort: string, col: string) {
       shouldSwitch = false;
       /* Get the two elements you want to compare,
       one from current row and one from the next: */
+      if (sort == "none" || col == "Team") {
+        x = rows[i].getElementsByTagName("TD")[0];
+        y = rows[i+1].getElementsByTagName("TD")[0];
+      }
+      else if (sort == "desc" || sort == "asc") {
       x = rows[i].getElementsByTagName("TD")[n];
       y = rows[i + 1].getElementsByTagName("TD")[n];
-      /* Check if the two rows should switch place,
-      based on the direction, asc or desc: */
+      }
       if (x && y) {
-        let xInnerHTML = x.innerHTML
-        let yInnerHTML = y.innerHTML
-        let spanX = x.querySelector('span')
-        let spanY = y.querySelector('span')
-        if(spanX)
-          xInnerHTML = spanX.innerText
-        if(spanY)
-          yInnerHTML = spanY.innerText
-        if(col == 'Team') {
+        if(sort == "none") {
+          let xInnerHTML = x.innerHTML
+          let yInnerHTML = y.innerHTML
+          const regex = /<span[^>]*>(.*?)<\/span>/;
+          const xMatch = xInnerHTML.match(regex)
+          const yMatch = yInnerHTML.match(regex)
+          const xInnerText = xMatch ? xMatch[1] : ""
+          const yInnerText = yMatch ? yMatch[1] : ""
+          if (makeSortable(xInnerText) > makeSortable(yInnerText)) {
+            shouldSwitch = true;
+            break;
+          }
+        }
+        if(col == "Team") {
           let colorX = x.innerHTML.substring(x.innerHTML.search('bg-')).split('-')[1]
           let colorY = y.innerHTML.substring(y.innerHTML.search('bg-')).split('-')[1]
           let possibleColors = ['coral', 'gray', 'green', 'blue']
-          if (dir == "desc") {
+          if (sort == "desc") {
             if(possibleColors.indexOf(colorX) < possibleColors.indexOf(colorY)) {
               shouldSwitch = true;
               break;
             }
           }
-          else if (dir == "asc") {
+          else if (sort == "asc") {
             if(possibleColors.indexOf(colorX) > possibleColors.indexOf(colorY)) {
               shouldSwitch = true;
               break;
             }
           }
-        }
-        else if (dir == "desc") {
+        } else if (sort == "desc") {
+          let xInnerHTML = x.innerHTML
+          let yInnerHTML = y.innerHTML
+          let xInnerText = xInnerHTML.substring(xInnerHTML.indexOf('>') + 1, xInnerHTML.lastIndexOf('<'))
+          let yInnerText = yInnerHTML.substring(yInnerHTML.indexOf('>') + 1, yInnerHTML.lastIndexOf('<'))
           if (
-              makeSortable(xInnerHTML) < makeSortable(yInnerHTML)
+              makeSortable(xInnerText) < makeSortable(yInnerText)
           ) {
             // If so, mark as a switch and break the loop:
             shouldSwitch = true;
             break;
           }
-        } else if (dir == "asc") {
+        } else if (sort == "asc") {
+          let xInnerHTML = x.innerHTML
+          let yInnerHTML = y.innerHTML
+          let xInnerText = xInnerHTML.substring(xInnerHTML.indexOf('>') + 1, xInnerHTML.lastIndexOf('<'))
+          let yInnerText = yInnerHTML.substring(yInnerHTML.indexOf('>') + 1, yInnerHTML.lastIndexOf('<'))
           if (
-              makeSortable(xInnerHTML) > makeSortable(yInnerHTML)
+              makeSortable(xInnerText) > makeSortable(yInnerText)
           ) {
             // If so, mark as a switch and break the loop:
             shouldSwitch = true;
@@ -650,8 +667,6 @@ function sortTable(n: number, sort: string, col: string) {
       and mark that a switch has been done: */
       rows[i].parentNode?.insertBefore(rows[i + 1], rows[i]);
       switching = true;
-      // Each time a switch is done, increase this count by 1:
-      switchCount++;
     }
   }
   if(sort == 'desc') {
@@ -669,6 +684,10 @@ function sortTable(n: number, sort: string, col: string) {
     }
     columns.value[n].sort = 'asc'
     columns.value[n].icon = 'i-heroicons-bars-arrow-up'
+  }
+  else if (sort == 'none') {
+    columns.value[n].sort = 'none'
+    columns.value[n].icon = 'i-heroicons-arrows-up-down'
   }
 }
 
@@ -694,7 +713,7 @@ await tableSetup()
 </script>
 
 <template>
-  <OuterComponents>
+  <OuterComponents class="z[11]">
     <UCard class="max-h-dvh overflow-auto">
       <template #header>
         <UFormGroup class="w-full" block>
@@ -707,53 +726,55 @@ await tableSetup()
           <UBadge label="Insane: 90%-100%" class="rounded-2xl" variant="soft" color="blue"/>
         </div>
       </template>
-      <div>
-        <table id="teamTable" class="table-auto">
-          <colgroup span="2" class="odd:bg-gray-50"/>
-          <colgroup span="2" class="odd:bg-gray-50"/>
-          <colgroup span="3" class="odd:bg-gray-50"/>
-          <colgroup span="3" class="odd:bg-gray-50"/>
-          <colgroup span="3" class="odd:bg-gray-50"/>
-          <thead>
-            <tr>
-              <th colspan="2" class="my-auto"/>
-              <th colspan="2"><p class="text-xs font-light">Average</p>Ratings<p class="text-xs font-light">/5.00</p></th>
-              <th colspan="3" scope="colgroup"><p class="text-xs font-light">Average</p>Auto Cycles</th>
-              <th colspan="3" scope="colgroup"><p class="text-xs font-light">Average</p>Teleop Cycles</th>
-              <th colspan="3" scope="colgroup"><p class="text-xs font-light">Average</p>Endgame</th>
-            </tr>
-            <tr>
-              <th scope="col" v-for="(col, index) of columns" class="font-medium text-sm"><UButton v-if="col.sortable" @click="sortTable(index, col.sort, col.label)" :trailing-icon="col.icon" variant="ghost" class="rounded-full" size="xs" :label="col.label" color="gray"/><UButton v-else :label="col.label" size="xs" variant="ghost" class="rounded-full" color="gray"/></th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="team of teamsData" class="border-b border-gray-200 dark:border-gray-700">
-              <td class="text-right"><UButton :label="team.team.data" variant="soft" :color="team.team.color" size="xs" @click="navigateTo('/teams/'+team.team.data)" trailing-icon="i-heroicons-chart-bar-square"/></td>
-              <td class="text-center"><UButton size="xs" color="gray" icon="i-heroicons-photo" variant="soft" @click="navigateTo('/teams/attachments/'+team.team.data)"/></td>
-              <td class="text-center"><UBadge :label="team.offense.data" variant="soft" :color="team.offense.color"/></td>
-              <td class="text-center"><UBadge :label="team.defense.data" variant="soft" :color="team.defense.color"/></td>
-              <td class="text-center"><UBadge :label="team.ampAuto.data" variant="soft" :color="team.ampAuto.color"/></td>
-              <td class="text-center"><UBadge :label="team.speakerAuto.data" variant="soft" :color="team.speakerAuto.color"/></td>
-              <td class="text-center"><UBadge :label="team.autoAcc.data" variant="soft" :color="team.autoAcc.color"/></td>
-              <td class="text-center"><UBadge :label="team.teleAmp.data" variant="soft" :color="team.teleAmp.color"/></td>
-              <td class="text-center"><UBadge :label="team.teleSpeaker.data" variant="soft" :color="team.teleSpeaker.color"/></td>
-              <td class="text-center"><UBadge :label="team.teleAcc.data" variant="soft" :color="team.teleAcc.color"/></td>
-              <td class="text-center"><UBadge :label="team.endgamePoints.data" variant="soft" :color="team.endgamePoints.color"/></td>
-              <td class="text-center"><UBadge :label="team.traps.data" variant="soft"  :color="team.traps.color"/></td>
-              <td class="text-center"><UPopover mode="hover">
-                <UButton class="m-1 mx-auto" variant="soft" icon="i-heroicons-chart-pie" color="gray"/>
-                <template #panel>
-                  <UCard>
-                    <div class="max-w-xs min-w-[10rem] overflow-y-auto" style="max-height: 20rem; min-height: 10rem">
-                      <PieChart :labels="team.endgameChart.data[0]" :data="team.endgameChart.data[1]"/>
-                    </div>
-                  </UCard>
-                </template>
-              </UPopover></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+      <template #default>
+        <div>
+          <table id="teamTable" class="table-auto border-4 border-gray-50">
+            <colgroup span="2" class="odd:bg-gray-50"/>
+            <colgroup span="2" class="odd:bg-gray-50"/>
+            <colgroup span="3" class="odd:bg-gray-50"/>
+            <colgroup span="3" class="odd:bg-gray-50"/>
+            <colgroup span="3" class="odd:bg-gray-50"/>
+            <thead class="top-0 sticky bg-gray-50 z-10">
+              <tr>
+                <th colspan="2"/>
+                <th colspan="2"><p class="text-xs font-light">Average</p>Ratings<p class="text-xs font-light">/5.00</p></th>
+                <th colspan="3" scope="colgroup"><p class="text-xs font-light">Average</p>Auto Cycles</th>
+                <th colspan="3" scope="colgroup"><p class="text-xs font-light">Average</p>Teleop Cycles</th>
+                <th colspan="3" scope="colgroup"><p class="text-xs font-light">Average</p>Endgame</th>
+              </tr>
+              <tr>
+                <th scope="col" v-for="(col, index) of columns" class="font-medium text-sm"><UButton v-if="col.sortable" @click="sortTable(index, col.sort, col.label)" :trailing-icon="col.icon" variant="ghost" class="rounded-full" size="xs" :label="col.label" color="gray"/><UButton v-else :label="col.label" size="xs" variant="ghost" class="rounded-full" color="gray"/></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="team of teamsData" class="border-b border-gray-200 dark:border-gray-700">
+                <td class="text-right"><UButton :label="team.team.data" variant="soft" :color="team.team.color" size="xs" @click="navigateTo('/teams/'+team.team.data)" trailing-icon="i-heroicons-chart-bar-square"/></td>
+                <td class="text-center"><UButton size="xs" color="gray" icon="i-heroicons-photo" variant="soft" @click="navigateTo('/teams/attachments/'+team.team.data)"/></td>
+                <td class="text-center"><UBadge :label="team.offense.data" variant="soft" :color="team.offense.color"/></td>
+                <td class="text-center"><UBadge :label="team.defense.data" variant="soft" :color="team.defense.color"/></td>
+                <td class="text-center"><UBadge :label="team.ampAuto.data" variant="soft" :color="team.ampAuto.color"/></td>
+                <td class="text-center"><UBadge :label="team.speakerAuto.data" variant="soft" :color="team.speakerAuto.color"/></td>
+                <td class="text-center"><UBadge :label="team.autoAcc.data" variant="soft" :color="team.autoAcc.color"/></td>
+                <td class="text-center"><UBadge :label="team.teleAmp.data" variant="soft" :color="team.teleAmp.color"/></td>
+                <td class="text-center"><UBadge :label="team.teleSpeaker.data" variant="soft" :color="team.teleSpeaker.color"/></td>
+                <td class="text-center"><UBadge :label="team.teleAcc.data" variant="soft" :color="team.teleAcc.color"/></td>
+                <td class="text-center"><UBadge :label="team.endgamePoints.data" variant="soft" :color="team.endgamePoints.color"/></td>
+                <td class="text-center"><UBadge :label="team.traps.data" variant="soft"  :color="team.traps.color"/></td>
+                <td class="text-center"><UPopover mode="hover">
+                  <UButton class="m-1 mx-auto" variant="soft" icon="i-heroicons-chart-pie" color="gray"/>
+                  <template #panel>
+                    <UCard>
+                      <div class="max-w-xs min-w-[10rem] overflow-y-auto" style="max-height: 20rem; min-height: 10rem">
+                        <PieChart :labels="team.endgameChart.data[0]" :data="team.endgameChart.data[1]"/>
+                      </div>
+                    </UCard>
+                  </template>
+                </UPopover></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </template>
     </UCard>
 </OuterComponents>
 </template>
