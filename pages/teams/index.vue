@@ -190,7 +190,7 @@ async function tableSetup() {
     if (data.length > 0) {
       let arr = {
         team: {data: String(key), color: ''},
-        offense: {data: Math.round(averageOffensiveScore(data)*100)/100, color: ''},
+        offense: {data: Math.round(averageDriverScore(data)*100)/100, color: ''},
         defense: {data: Math.round(averageDefensiveScore(data)*100)/100, color: ''},
         ampAuto: {data: Math.round(averageAmpsAuto(data)*100)/100, color: ''},
         speakerAuto: {data: Math.round(averageSpeakersAuto(data)*100)/100, color: ''},
@@ -356,14 +356,14 @@ function averageDefensiveScore(teamArrays: Array<ScoutingData>){
   return (totalMatches != 0 ? total / totalMatches: 0)
 }
 
-function averageOffensiveScore(teamArrays: Array<ScoutingData>){
+function averageDriverScore(teamArrays: Array<ScoutingData>){
   let total = 0
   let totalMatches = 0
   for(let match of teamArrays){
     //Try catch needed due to old version of data
     try {
-      if (match.notes.promptedNotes[1].selected){
-        total += match.notes.promptedNotes[1].rating
+      if (match.notes.promptedNotes[2].selected){
+        total += match.notes.promptedNotes[2].rating
         totalMatches++
       }
     }
@@ -490,12 +490,12 @@ let columns = ref([{
   sortable: false,
   icon: 'i-heroicons-arrows-up-down'
 }, {
-  label: 'Offensive',
+  label: 'Driver',
   sort: 'none',
   sortable: true,
   icon: 'i-heroicons-arrows-up-down'
 }, {
-  label: 'Defensive',
+  label: 'Defense',
   sort: 'none',
   sortable: true,
   icon: 'i-heroicons-arrows-up-down'
