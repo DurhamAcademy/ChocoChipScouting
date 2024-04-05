@@ -144,7 +144,6 @@ async function tableSetup() {
       }
     }
   }
-  console.log(allowedTeams)
   tableLoop: for (let [key, value] of teamOrgMatches) {
     if(key == undefined) continue
     /*
@@ -194,10 +193,12 @@ async function tableSetup() {
         defense: {data: Math.round(averageDefensiveScore(data)*100)/100, color: ''},
         ampAuto: {data: Math.round(averageAmpsAuto(data)*100)/100, color: ''},
         speakerAuto: {data: Math.round(averageSpeakersAuto(data)*100)/100, color: ''},
-        autoAcc: {data: !isNaN(autoAccuracy(data)) ? Math.round(autoAccuracy(data)*1000)/10+'%' : '0%', color: ''},
+        autoAccData: autoAccuracy(data),
+        autoAcc: {data: !isNaN(+autoAccuracy(data)[1]) ? Math.round(+autoAccuracy(data)[1]*1000)/10+'%' : '0%', color: ''},
         teleAmp: {data: Math.round(getAverageAmpCycles(data)*100)/100, color: ''},
         teleSpeaker: {data: Math.round(getAverageSpeakerCycles(data)*100)/100, color: ''},
-        teleAcc: {data: !isNaN(teleAccuracy(data)) ? Math.round(teleAccuracy(data)*1000)/10+'%' : '0%', color: ''},
+        teleAccData: teleAccuracy(data),
+        teleAcc: {data: !isNaN(+teleAccuracy(data)[1]) ? Math.round(+teleAccuracy(data)[1]*1000)/10+'%' : '0%', color: ''},
         traps: {data: Math.round(getAverageTraps(data)*100)/100, color: ''},
         endgamePoints: {data: Math.round(endgamePoints(data)*100)/100, color: ''},
         endgameChart: {data: compileEndgames(data), color: ''},
@@ -412,26 +413,52 @@ function averageAuto(teamArrays: Array<ScoutingData>): number {
   return successfulMobilityCount/teamArrays.length
 }
 
-function autoAccuracy(teamArrays: Array<ScoutingData>): number {
-  let successfulScoreCount = 0
-  let missCount = 0
+function autoAccuracy(teamArrays: Array<ScoutingData>) {
+  let successfulAmpCount = 0
+  let successfulSpeakerCount = 0
+  let missedAmpCount = 0
+  let missedSpeakerCount = 0
+  let newData = false
   for (let match of teamArrays) {
-    successfulScoreCount += match.auto.amp
-    successfulScoreCount += match.auto.speakerNA
-    missCount += match.auto.missed
+    successfulAmpCount += match.auto.amp
+    successfulSpeakerCount += match.auto.speakerNA
+    if (match.auto.missedAmp != undefined) {
+      missedAmpCount += match.auto.missedAmp
+      missedSpeakerCount += match.auto.missedSpeaker
+      newData = true
+    }
+    else {
+      missedAmpCount += match.auto.missed
+    }
   }
-  return (successfulScoreCount/(successfulScoreCount+missCount))
+  if(newData)
+    return [true, (successfulAmpCount+successfulSpeakerCount)/(missedAmpCount+missedSpeakerCount+successfulSpeakerCount+successfulAmpCount), successfulAmpCount/(missedAmpCount+successfulAmpCount), successfulSpeakerCount/(missedSpeakerCount+successfulSpeakerCount)]
+  else
+    return [false, (successfulAmpCount+successfulSpeakerCount)/(missedAmpCount+successfulSpeakerCount+successfulAmpCount)]
 }
 
-function teleAccuracy(teamArrays: Array<ScoutingData>): number {
-  let successfulScoreCount = 0
-  let missCount = 0
+function teleAccuracy(teamArrays: Array<ScoutingData>) {
+  let successfulAmpCount = 0
+  let successfulSpeakerCount = 0
+  let missedAmpCount = 0
+  let missedSpeakerCount = 0
+  let newData = false
   for (let match of teamArrays) {
-    successfulScoreCount += match.teleop.amp
-    successfulScoreCount += match.teleop.speakerNA
-    missCount += match.teleop.missed
+    successfulAmpCount += match.teleop.amp
+    successfulSpeakerCount += match.teleop.speakerNA
+    if (match.teleop.missedAmp != undefined) {
+      missedAmpCount += match.teleop.missedAmp
+      missedSpeakerCount += match.teleop.missedSpeaker
+      newData = true
+    }
+    else {
+      missedAmpCount += match.teleop.missed
+    }
   }
-  return (successfulScoreCount/(successfulScoreCount+missCount))
+  if(newData)
+    return [true, (successfulAmpCount+successfulSpeakerCount)/(missedAmpCount+missedSpeakerCount+successfulSpeakerCount+successfulAmpCount), successfulAmpCount/(missedAmpCount+successfulAmpCount), successfulSpeakerCount/(missedSpeakerCount+successfulSpeakerCount)]
+  else
+    return [false, (successfulAmpCount+successfulSpeakerCount)/(missedAmpCount+successfulSpeakerCount+successfulAmpCount)]
 }
 
 function getAverageTraps(teamArrays: Array<ScoutingData>): number {
@@ -772,10 +799,44 @@ await tableSetup()
                 <td class="text-center"><UBadge :label="team.defense.data" variant="soft" :color="team.defense.color"/></td>
                 <td class="text-center"><UBadge :label="team.ampAuto.data" variant="soft" :color="team.ampAuto.color"/></td>
                 <td class="text-center"><UBadge :label="team.speakerAuto.data" variant="soft" :color="team.speakerAuto.color"/></td>
-                <td class="text-center"><UBadge :label="team.autoAcc.data" variant="soft" :color="team.autoAcc.color"/></td>
+                <td class="text-center">
+                  <UPopover v-if="team.autoAccData[0]" mode="hover">
+                    <UButton :label="team.autoAcc.data" variant="soft" :color="team.autoAcc.color" size="xs" class="mx-auto"/>
+                    <template #panel>
+                      <div class="flex">
+                        <div>
+                          <UBadge label="Amp" variant="soft" color="gray"/>
+                          <UBadge :label="!isNaN(team.autoAccData[2]) ? (Math.round(team.autoAccData[2]*1000)/10+'%') : '0%'" variant="soft" color="white"/>
+                        </div>
+                        <div>
+                          <UBadge label="Speaker" variant="soft" color="gray"/>
+                          <UBadge :label="!isNaN(team.autoAccData[3]) ? (Math.round(team.autoAccData[3]*1000)/10+'%') : '0%'" variant="soft" color="white"/>
+                        </div>
+                      </div>
+                    </template>
+                  </UPopover>
+                  <UBadge v-else :label="team.autoAcc.data" variant="soft" :color="team.autoAcc.color"/>
+                </td>
                 <td class="text-center"><UBadge :label="team.teleAmp.data" variant="soft" :color="team.teleAmp.color"/></td>
                 <td class="text-center"><UBadge :label="team.teleSpeaker.data" variant="soft" :color="team.teleSpeaker.color"/></td>
-                <td class="text-center"><UBadge :label="team.teleAcc.data" variant="soft" :color="team.teleAcc.color"/></td>
+                <td class="text-center">
+                  <UPopover v-if="team.teleAccData[0]" mode="hover">
+                    <UButton :label="team.teleAcc.data" variant="soft" :color="team.teleAcc.color" size="xs" class="mx-auto"/>
+                    <template #panel>
+                      <div class="flex">
+                        <div>
+                          <UBadge label="Amp" variant="soft" color="gray"/>
+                          <UBadge :label="!isNaN(team.teleAccData[2]) ? (Math.round(team.teleAccData[2]*1000)/10+'%') : '0%'" variant="soft" color="white"/>
+                        </div>
+                        <div>
+                          <UBadge label="Speaker" variant="soft" color="gray"/>
+                          <UBadge :label="!isNaN(team.teleAccData[3]) ? (Math.round(team.teleAccData[3]*1000)/10+'%') : '0%'" variant="soft" color="white"/>
+                        </div>
+                      </div>
+                    </template>
+                  </UPopover>
+                  <UBadge v-else :label="team.autoAcc.data" variant="soft" :color="team.autoAcc.color"/>
+                </td>
                 <td class="text-center"><UBadge :label="team.endgamePoints.data" variant="soft" :color="team.endgamePoints.color"/></td>
                 <td class="text-center"><UBadge :label="team.traps.data" variant="soft"  :color="team.traps.color"/></td>
                 <td class="text-center"><UPopover mode="hover">

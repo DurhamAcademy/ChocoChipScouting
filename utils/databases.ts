@@ -72,14 +72,14 @@ export type DataArrayOrSum = {
 }
 
 export type ScoutingData = {
-    auto: { speakerNA: number; amp: number; missed: number; mobility: boolean };
+    auto: { speakerNA: number; amp: number; missedAmp: number; missedSpeaker: number; mobility: boolean };
     notes: {  notes: string; promptedNotes: Array<{ selected: boolean, rating: number, notes: Array<string> }> };
     endgame: { endgame: string[]; trap: number; };
     teamNumber: any;
     event: string;
     matchNumber: any;
     author: string;
-    teleop: { speakerNA: number; amp: number; missed: number; }
+    teleop: { speakerNA: number; amp: number; missedAmp: number; missedSpeaker: number; }
 }
 
 export type TeamInfo = {
