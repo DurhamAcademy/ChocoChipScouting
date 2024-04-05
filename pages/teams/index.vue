@@ -295,8 +295,14 @@ async function tableSetup() {
     data.traps.push(Number(team.traps.data))
     data.endgamePoints.push(Number(team.endgamePoints.data))
   }
+  let teamPercents = []
   for (let i = 0; i < teamsData.value.length; i++) {
-    teamsData.value[i].team.color = colorifyTeam(teamsData.value[i], data)
+    teamPercents.push(colorifyTeam(teamsData.value[i], data))
+  }
+  let sortedTeamPercents = [...teamPercents]
+  sortedTeamPercents.sort((a, b) => a - b)
+  for (let i = 0; i < teamsData.value.length; i++) {
+    teamsData.value[i].team.color = colorify(((sortedTeamPercents.indexOf(teamPercents[i]) + 1)/ sortedTeamPercents.length)* 100)
     teamsData.value[i].offense.color = colorify(calculatePercent(teamsData.value[i].offense.data, Math.min(...data.offense), Math.max(...data.offense)))
     teamsData.value[i].defense.color = colorify(calculatePercent(teamsData.value[i].defense.data, Math.min(...data.defense), Math.max(...data.defense)))
     teamsData.value[i].ampAuto.color = colorify(calculatePercent(teamsData.value[i].ampAuto.data, Math.min(...data.ampAuto), Math.max(...data.ampAuto)))
@@ -323,7 +329,7 @@ function colorifyTeam(teamData: TeamTableData, data: DataArrayOrSum) {
   totalPercent += calculatePercent(Number(teamData.teleAcc.data.replace('%', '')), Math.min(...data.teleAcc), Math.max(...data.teleAcc))
   totalPercent += calculatePercent(teamData.traps.data, Math.min(...data.traps), Math.max(...data.traps))
   totalPercent += calculatePercent(teamData.endgamePoints.data, Math.min(...data.endgamePoints), Math.max(...data.endgamePoints))
-  return colorify(totalPercent/10)
+  return totalPercent/10
 }
 
 function calculatePercent(score: number, min: number, max: number) {
