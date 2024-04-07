@@ -661,8 +661,22 @@ function sortTable(n: number, sort: string, col: string) {
         } else if (sort == "desc") {
           let xInnerHTML = x.innerHTML
           let yInnerHTML = y.innerHTML
-          let xInnerText = xInnerHTML.substring(xInnerHTML.indexOf('>') + 1, xInnerHTML.lastIndexOf('<'))
-          let yInnerText = yInnerHTML.substring(yInnerHTML.indexOf('>') + 1, yInnerHTML.lastIndexOf('<'))
+          let xInnerText, yInnerText
+          if (col != 'Accuracy') {
+            xInnerText = xInnerHTML.substring(xInnerHTML.indexOf('>') + 1, xInnerHTML.lastIndexOf('<'))
+            yInnerText = yInnerHTML.substring(yInnerHTML.indexOf('>') + 1, yInnerHTML.lastIndexOf('<'))
+            if (xInnerText == 'N/A')
+              xInnerText = '0'
+            if (yInnerText == 'N/A')
+              yInnerText = '0'
+          }
+          else {
+            const regex = /<span[^>]*>(.*?)<\/span>/;
+            const xMatch = xInnerHTML.match(regex)
+            const yMatch = yInnerHTML.match(regex)
+            xInnerText = xMatch ? xMatch[1] : ""
+            yInnerText = yMatch ? yMatch[1] : ""
+          }
           if (
               makeSortable(xInnerText) < makeSortable(yInnerText)
           ) {
@@ -673,8 +687,22 @@ function sortTable(n: number, sort: string, col: string) {
         } else if (sort == "asc") {
           let xInnerHTML = x.innerHTML
           let yInnerHTML = y.innerHTML
-          let xInnerText = xInnerHTML.substring(xInnerHTML.indexOf('>') + 1, xInnerHTML.lastIndexOf('<'))
-          let yInnerText = yInnerHTML.substring(yInnerHTML.indexOf('>') + 1, yInnerHTML.lastIndexOf('<'))
+          let xInnerText, yInnerText
+          if (col != 'Accuracy') {
+            xInnerText = xInnerHTML.substring(xInnerHTML.indexOf('>') + 1, xInnerHTML.lastIndexOf('<'))
+            yInnerText = yInnerHTML.substring(yInnerHTML.indexOf('>') + 1, yInnerHTML.lastIndexOf('<'))
+            if (xInnerText == 'N/A')
+              xInnerText = '0'
+            if (yInnerText == 'N/A')
+              yInnerText = '0'
+          }
+          else {
+            const regex = /<span[^>]*>(.*?)<\/span>/;
+            const xMatch = xInnerHTML.match(regex)
+            const yMatch = yInnerHTML.match(regex)
+            xInnerText = xMatch ? xMatch[1] : ""
+            yInnerText = yMatch ? yMatch[1] : ""
+          }
           if (
               makeSortable(xInnerText) > makeSortable(yInnerText)
           ) {
@@ -715,8 +743,10 @@ function sortTable(n: number, sort: string, col: string) {
 }
 
 function makeSortable(thing: string) {
-  if(thing.endsWith('%'))
+  if(thing.endsWith('%')) {
     thing = thing.replace('%', '')
+    return Number(thing)
+  }
   if(!isNaN(+thing))
     return Number(thing)
   else
