@@ -43,7 +43,7 @@ class LocalRemoteDatabaseSyncHolder<Content extends {} = {}> {
 }
 export type TeamTableData = {
     team: { data: string; color: string };
-    offense: { data: number; color: string };
+    driver: { data: number; color: string };
     defense: { data: number; color: string };
     ampAuto: { data: number; color: string };
     speakerAuto: { data: number; color: string };
@@ -59,7 +59,7 @@ export type TeamTableData = {
     extraNotes: string
 };
 export type DataArrayOrSum = {
-    offense: number[];
+    driver: number[];
     defense: number[];
     ampAuto: number[];
     speakerAuto: number[];

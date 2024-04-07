@@ -189,7 +189,7 @@ async function tableSetup() {
     if (data.length > 0) {
       let arr = {
         team: {data: String(key), color: ''},
-        offense: {data: Math.round(averageDriverScore(data)*100)/100, color: ''},
+        driver: {data: Math.round(averageDriverScore(data)*100)/100, color: ''},
         defense: {data: Math.round(averageDefensiveScore(data)*100)/100, color: ''},
         ampAuto: {data: Math.round(averageAmpsAuto(data)*100)/100, color: ''},
         speakerAuto: {data: Math.round(averageSpeakersAuto(data)*100)/100, color: ''},
@@ -221,7 +221,7 @@ async function tableSetup() {
   }
   /* averages if i ever need
   let averages = {
-    offense: 0,
+    driver: 0,
     defense: 0,
     ampAuto: 0,
     speakerAuto: 0,
@@ -236,7 +236,7 @@ async function tableSetup() {
   let weight = 0
   for (let team of teamsData.value) {
     let totalMatches = team.rawData.length
-    averages.offense += team.offense.data * totalMatches
+    averages.driver += team.driver.data * totalMatches
     averages.defense += team.defense.data * totalMatches
     averages.ampAuto += team.ampAuto.data * totalMatches
     averages.speakerAuto += team.speakerAuto.data * totalMatches
@@ -248,7 +248,7 @@ async function tableSetup() {
     averages.endgamePoints += team.endgamePoints.data * totalMatches
     weight += totalMatches
   }
-  averages.offense /= weight
+  averages.driver /= weight
   averages.defense /= weight
   averages.ampAuto /= weight
   averages.speakerAuto /= weight
@@ -261,7 +261,7 @@ async function tableSetup() {
 */
 
   let data: {
-    offense: number[];
+    driver: number[];
     defense: number[];
     ampAuto: number[];
     speakerAuto: number[];
@@ -272,7 +272,7 @@ async function tableSetup() {
     traps: number[];
     endgamePoints: number[];
   } = {
-    offense: [],
+    driver: [],
     defense: [],
     ampAuto: [],
     speakerAuto: [],
@@ -284,7 +284,7 @@ async function tableSetup() {
     endgamePoints: []
   }
   for (let team of teamsData.value) {
-    data.offense.push(Number(team.offense.data))
+    data.driver.push(Number(team.driver.data))
     data.defense.push(Number(team.defense.data))
     data.ampAuto.push(Number(team.ampAuto.data))
     data.speakerAuto.push(Number(team.speakerAuto.data))
@@ -303,7 +303,7 @@ async function tableSetup() {
   sortedTeamPercents.sort((a, b) => a - b)
   for (let i = 0; i < teamsData.value.length; i++) {
     teamsData.value[i].team.color = colorify(((sortedTeamPercents.indexOf(teamPercents[i]) + 1)/ sortedTeamPercents.length)* 100)
-    teamsData.value[i].offense.color = colorify(calculatePercent(teamsData.value[i].offense.data, Math.min(...data.offense), Math.max(...data.offense)))
+    teamsData.value[i].driver.color = colorify(calculatePercent(teamsData.value[i].driver.data, Math.min(...data.driver), Math.max(...data.driver)))
     teamsData.value[i].defense.color = colorify(calculatePercent(teamsData.value[i].defense.data, Math.min(...data.defense), Math.max(...data.defense)))
     teamsData.value[i].ampAuto.color = colorify(calculatePercent(teamsData.value[i].ampAuto.data, Math.min(...data.ampAuto), Math.max(...data.ampAuto)))
     teamsData.value[i].speakerAuto.color = colorify(calculatePercent(teamsData.value[i].speakerAuto.data, Math.min(...data.speakerAuto), Math.max(...data.speakerAuto)))
@@ -319,17 +319,16 @@ async function tableSetup() {
 
 function colorifyTeam(teamData: TeamTableData, data: DataArrayOrSum) {
   let totalPercent = 0
-  totalPercent += calculatePercent(teamData.offense.data, Math.min(...data.offense), Math.max(...data.offense))
-  totalPercent += calculatePercent(teamData.defense.data, Math.min(...data.defense), Math.max(...data.defense))
-  totalPercent += calculatePercent(teamData.ampAuto.data, Math.min(...data.ampAuto), Math.max(...data.ampAuto))
+  totalPercent += calculatePercent(teamData.driver.data, Math.min(...data.driver), Math.max(...data.driver))*0.66
+  totalPercent += calculatePercent(teamData.defense.data, Math.min(...data.defense), Math.max(...data.defense))*0.33
+  totalPercent += calculatePercent(teamData.ampAuto.data, Math.min(...data.ampAuto), Math.max(...data.ampAuto))*0.8
   totalPercent += calculatePercent(teamData.speakerAuto.data, Math.min(...data.speakerAuto), Math.max(...data.speakerAuto))
-  totalPercent += calculatePercent(Number(teamData.autoAcc.data.replace('%', '')), Math.min(...data.autoAcc), Math.max(...data.autoAcc))
-  totalPercent += calculatePercent(teamData.teleAmp.data, Math.min(...data.teleAmp), Math.max(...data.teleAmp))
+  totalPercent += calculatePercent(Number(teamData.autoAcc.data.replace('%', '')), Math.min(...data.autoAcc), Math.max(...data.autoAcc))*0.5
+  totalPercent += calculatePercent(teamData.teleAmp.data, Math.min(...data.teleAmp), Math.max(...data.teleAmp))*0.8
   totalPercent += calculatePercent(teamData.teleSpeaker.data, Math.min(...data.teleSpeaker), Math.max(...data.teleSpeaker))
-  totalPercent += calculatePercent(Number(teamData.teleAcc.data.replace('%', '')), Math.min(...data.teleAcc), Math.max(...data.teleAcc))
-  totalPercent += calculatePercent(teamData.traps.data, Math.min(...data.traps), Math.max(...data.traps))
+  totalPercent += calculatePercent(Number(teamData.teleAcc.data.replace('%', '')), Math.min(...data.teleAcc), Math.max(...data.teleAcc))*0.5
   totalPercent += calculatePercent(teamData.endgamePoints.data, Math.min(...data.endgamePoints), Math.max(...data.endgamePoints))
-  return totalPercent/10
+  return totalPercent
 }
 
 function calculatePercent(score: number, min: number, max: number) {
@@ -804,7 +803,7 @@ await tableSetup()
               <tr v-for="team of teamsData" class="border-b border-gray-200 dark:border-gray-700">
                 <td class="text-right"><UButton :label="team.team.data" variant="soft" :color="team.team.color" size="xs" @click="navigateTo('/teams/'+team.team.data)" trailing-icon="i-heroicons-chart-bar-square"/></td>
                 <td class="text-center"><UButton size="xs" color="gray" icon="i-heroicons-photo" variant="soft" @click="navigateTo('/teams/attachments/'+team.team.data)"/></td>
-                <td class="text-center"><UBadge :label="team.offense.data" variant="soft" :color="team.offense.color"/></td>
+                <td class="text-center"><UBadge :label="team.driver.data" variant="soft" :color="team.driver.color"/></td>
                 <td class="text-center"><UBadge :label="team.defense.data" variant="soft" :color="team.defense.color"/></td>
                 <td class="text-center"><UBadge :label="team.ampAuto.data" variant="soft" :color="team.ampAuto.color"/></td>
                 <td class="text-center"><UBadge :label="team.speakerAuto.data" variant="soft" :color="team.speakerAuto.color"/></td>
