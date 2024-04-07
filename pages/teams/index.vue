@@ -333,6 +333,9 @@ function colorifyTeam(teamData: TeamTableData, data: DataArrayOrSum) {
 }
 
 function calculatePercent(score: number, min: number, max: number) {
+  if (max === min) {
+    return 0;
+  }
   return (score - min) / (max - min) * 100
 }
 
@@ -730,7 +733,6 @@ await tableSetup()
             <UFormGroup class="inline-block mr-2" label="Filters">
               <UButtonGroup>
                 <USelectMenu class="inline-block min-w-28 w-28 max-w-28" v-model="activeFilterOption" :options="filterOptions"/>
-                <p>hello</p>
                 <UInput
                     v-model="filterInput"
                     class="inline-block max-w-40"
