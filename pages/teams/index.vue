@@ -284,8 +284,15 @@ async function tableSetup() {
     endgamePoints: []
   }
   for (let team of teamsData.value) {
-    data.driver.push(Number(team.driver.data))
-    data.defense.push(Number(team.defense.data))
+    if (team.driver.data != 0)
+      data.driver.push(Number(team.driver.data))
+    else if(!(data.driver.includes(0)))
+      data.driver.push(0)
+
+    if (team.defense.data != 0)
+      data.defense.push(Number(team.defense.data))
+    else if(!(data.defense.includes(0)))
+      data.defense.push(0)
     data.ampAuto.push(Number(team.ampAuto.data))
     data.speakerAuto.push(Number(team.speakerAuto.data))
     data.autoAcc.push(Number(team.autoAcc.data.replace('%', '')))
@@ -319,8 +326,16 @@ async function tableSetup() {
 
 function colorifyTeam(teamData: TeamTableData, data: DataArrayOrSum) {
   let totalPercent = 0
-  totalPercent += calculatePercent(teamData.driver.data, Math.min(...data.driver), Math.max(...data.driver))*0.66
-  totalPercent += calculatePercent(teamData.defense.data, Math.min(...data.defense), Math.max(...data.defense))*0.33
+  if (teamData.driver.data != 0) {
+    totalPercent += calculatePercent(teamData.driver.data, Math.min(...data.driver), Math.max(...data.driver)) * 0.66
+  } else {
+    totalPercent += calculatePercent(average(data.driver), Math.min(...data.driver), Math.max(...data.driver)) * 0.66
+  }
+  if (teamData.defense.data != 0) {
+    totalPercent += calculatePercent(teamData.defense.data, Math.min(...data.defense), Math.max(...data.defense)) * 0.33
+  } else {
+    totalPercent += calculatePercent(average(data.defense), Math.min(...data.defense), Math.max(...data.defense)) * 0.33
+  }
   totalPercent += calculatePercent(teamData.ampAuto.data, Math.min(...data.ampAuto), Math.max(...data.ampAuto))*0.8
   totalPercent += calculatePercent(teamData.speakerAuto.data, Math.min(...data.speakerAuto), Math.max(...data.speakerAuto))
   totalPercent += calculatePercent(Number(teamData.autoAcc.data.replace('%', '')), Math.min(...data.autoAcc), Math.max(...data.autoAcc))*0.5
@@ -510,9 +525,6 @@ function compileEndgames(teamArrays: Array<ScoutingData>): [Array<string>, Array
   return [endgameOptionsArr, endgameDataArr]
 }
 
-async function view(teamNum: number) {
-  navigateTo("/teams/attachments/"+teamNum)
-}
 
 let columns = ref([{
   label: 'Team',
@@ -711,14 +723,17 @@ function makeSortable(thing: string) {
     return thing
 }
 
-function iconThingy(sort: string) {
-  if (sort == 'none')
-    return 'i-heroicons-arrows-up-down'
-  else if (sort == 'desc')
-    return 'i-heroicons-bars-arrow-down'
-  else if (sort == 'asc')
-    return 'i-heroicons-bars-arrow-up'
+function average(nums: number[]) {
+  let total = 0
+  for (let num of nums) {
+    total += num
+  }
+  if (nums.length != 0)
+    return total/nums.length
+  return 0
 }
+
+
 
 await tableSetup()
 </script>
@@ -803,8 +818,8 @@ await tableSetup()
               <tr v-for="team of teamsData" class="border-b border-gray-200 dark:border-gray-700">
                 <td class="text-right"><UButton :label="team.team.data" variant="soft" :color="team.team.color" size="xs" @click="navigateTo('/teams/'+team.team.data)" trailing-icon="i-heroicons-chart-bar-square"/></td>
                 <td class="text-center"><UButton size="xs" color="gray" icon="i-heroicons-photo" variant="soft" @click="navigateTo('/teams/attachments/'+team.team.data)"/></td>
-                <td class="text-center"><UBadge :label="team.driver.data" variant="soft" :color="team.driver.color"/></td>
-                <td class="text-center"><UBadge :label="team.defense.data" variant="soft" :color="team.defense.color"/></td>
+                <td class="text-center"><UBadge :label="team.driver.data != 0 ? team.driver.data : 'N/A'" variant="soft" :color="team.driver.data != 0 ? team.driver.color : 'gray'"/></td>
+                <td class="text-center"><UBadge :label="team.defense.data != 0 ? team.defense.data : 'N/A'" variant="soft" :color="team.defense.data != 0 ? team.defense.color : 'gray'"/></td>
                 <td class="text-center"><UBadge :label="team.ampAuto.data" variant="soft" :color="team.ampAuto.color"/></td>
                 <td class="text-center"><UBadge :label="team.speakerAuto.data" variant="soft" :color="team.speakerAuto.color"/></td>
                 <td class="text-center">
