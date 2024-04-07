@@ -99,12 +99,7 @@ const { pending, data: res } = await useLazyAsyncData('res', () => setup())
         </UPopover>
       </template>
       <template v-slot:item.author="row">
-        <UTooltip :text="row.value || 'not found'">
-          <UAvatar
-              class="select-none"
-              :alt="row.value.replace(/[0-9]/g, '') || '-'"
-          />
-        </UTooltip>
+        <UBadge :label="row.value.replace(/[0-9]/g, '') || '-'" color="gray" variant="soft"/>
       </template>
 
       <template v-slot:loading>
