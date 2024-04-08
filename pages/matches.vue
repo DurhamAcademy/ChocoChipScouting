@@ -1,36 +1,24 @@
 <script setup lang="ts">
 import databases, {type ScoutingData} from "~/utils/databases"
-import {eventOptions} from "~/utils/eventOptions";
 import IdMeta = PouchDB.Core.IdMeta;
 import {useLazyAsyncData} from "#app";
-const { scoutingData } = databases.locals
+import {useEventKey} from "~/composables/useEventKey";
 
+//gets scouting data
+const { scoutingData: db } = databases.locals
+
+//fetches the current event from useEventKey compostable
+const currentEvent = useEventKey()
+
+//sets how the table sorts match values
 const sortBy = ref([{ key: 'teamNumber', order: 'asc' }, { key: 'matchNumber', order: 'asc' }])
 
-let currentEvent = eventOptions[0]
-if (typeof window !== 'undefined') currentEvent = localStorage.getItem('currentEvent') || eventOptions[0]
-
-let db = scoutingData
-
-async function setup(){
-  const allDocs = (await db.allDocs()).rows
-  let promiseMatches = allDocs.map(async (doc): Promise<ScoutingData & IdMeta> => {
-    return await db.get(doc.id)
-  })
-  let matches = await Promise.all(promiseMatches)
-  for (let i=matches.length-1; i>=0; i--) {
-    if(matches[i].matchNumber === -1 || matches[i].matchNumber === null || (matches[i].event != currentEvent)){
-      matches.splice(i, 1)
-    }
-  }
-
-
-
-
-  items = matches
-}
-let items
-
+/*
+  TODO update seasonally
+  Sets the fields to be displayed
+  documentation on how to use vuetify tables => https://vuetifyjs.com/en/components/data-tables/basics/
+  likely keep info tab the same and work from there
+ */
 const headers = [
   {
     title: 'Info',
@@ -71,6 +59,24 @@ const headers = [
   }
 ]
 
+//sets up the data for the table
+let items
+async function setup(){
+  //gets all documents from the database asynchronously
+  const allDocs = (await db.allDocs()).rows
+  let promiseMatches = allDocs.map(async (doc): Promise<ScoutingData & IdMeta> => {
+    return await db.get(doc.id)
+  })
+  let matches = await Promise.all(promiseMatches)
+  //filters data to ensure all data is usable and of the current event
+  matches.forEach((match, index) => {
+    if(match.matchNumber === -1 || match.matchNumber === null || (match.event != currentEvent.value)){
+      matches.splice(index, 1)
+    }
+  })
+  items = matches
+}
+//asynchronously runs setup function
 const { pending, data: res } = await useLazyAsyncData('res', () => setup())
 </script>
 <template>
