@@ -98,9 +98,7 @@ const { pending, data: res } = await useLazyAsyncData('res', () => setup())
               <UContainer class="m-auto max-w-lg min-w-[15rem] overflow-y-auto" style="max-height: 20rem; min-height: 10rem">
                 <br>
                 <div class="whitespace-normal break-all"> Notes: {{row.value.notes}}</div>
-                <br>
-                <p v-if="row.value.playedDefense"> Defense: {{ row.value.defense }}</p>
-              </UContainer>
+                </UContainer>
           </template>
         </UPopover>
       </template>
