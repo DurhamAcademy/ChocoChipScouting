@@ -72,7 +72,7 @@ export type DataArrayOrSum = {
 }
 
 export type ScoutingData = {
-    auto: { speakerNA: number; amp: number; missedAmp: number; missedSpeaker: number; mobility: boolean };
+    auto: { speakerNA: number; amp: number; missedAmp: number; missedSpeaker: number; mobility: boolean; position: number };
     notes: {  notes: string; promptedNotes: Array<{ selected: boolean, rating: number, notes: Array<string> }> };
     endgame: { endgame: string[]; trap: number; };
     teamNumber: any;
