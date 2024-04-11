@@ -4,6 +4,7 @@ import IdMeta = PouchDB.Core.IdMeta;
 import Sentiment from 'sentiment';
 import {eventOptions} from "~/utils/eventOptions";
 import {useWindowSize} from "@vueuse/core";
+import {useEventKey} from "~/composables/useEventKey";
 
 let {width, height} = useWindowSize()
 
@@ -21,8 +22,7 @@ let options = {
 }
 
 const events = eventOptions
-let currentEvent = ref(eventOptions[0])
-if (typeof window !== 'undefined') currentEvent.value = localStorage.getItem('currentEvent') || eventOptions[0]
+const currentEvent = useEventKey()
 const fetch = useFetch<Array<any>>("/api/eventMatches/" + currentEvent.value)
 
 let filters = ref({
@@ -64,8 +64,7 @@ watch(activeFilters, async () => {
 })
 
 
-const { scoutingData } = databases.locals
-let db = scoutingData
+const { scoutingData: db } = databases.locals
 
 const matches = (await db.allDocs()).rows
 let match = matches.map(async (doc): Promise<ScoutingData & IdMeta> => {
