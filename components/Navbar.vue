@@ -3,6 +3,7 @@ import LoginState from "~/utils/authorization/LoginState";
 import {loginStateKey} from "~/utils/keys";
 import PouchDB from "pouchdb";
 import {eventOptions} from "~/utils/eventOptions";
+import {useEventKey} from "~/composables/useEventKey";
 const {usernameState, sessionState, logout}: {
   logout: () => Promise<void>;
   // noinspection TypeScriptUnresolvedReference
@@ -15,11 +16,13 @@ const {usernameState, sessionState, logout}: {
 } = inject(loginStateKey)!
 
 const events = eventOptions
-let selectedEvent = ref(eventOptions[0])
-if (typeof window !== 'undefined') selectedEvent.value = localStorage.getItem('currentEvent') || eventOptions[0]
-watch(selectedEvent, (value) => {
+const currentEvent = useEventKey()
+
+watch(currentEvent, (value) => {
   window.localStorage.setItem('currentEvent', value)
+  window.dispatchEvent(new Event("event-changed"));
 })
+
 let props = defineProps({
   scoutMode: {
     type: Boolean,
@@ -70,7 +73,7 @@ if (sessionState?.value?.userCtx?.roles?.indexOf('_admin') != -1)
                 </div>
               </template>
               <UFormGroup class="inputDiv" label="Event" name="event">
-                <USelectMenu v-model="selectedEvent" :options="events" @update:v-model="(value) => updateEvent(value)"/>
+                <USelectMenu v-model="currentEvent" :options="events"/>
               </UFormGroup>
               <template #footer>
                 <UButton block label="Logout" square @click="logout"/>
