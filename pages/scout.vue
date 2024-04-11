@@ -2,17 +2,16 @@
 import databases from "~/utils/databases"
 import IncrementalButton from '~/components/IncrementalButton.vue'
 import {eventOptions} from "~/utils/eventOptions";
-import PouchDB from "pouchdb";
 import type {Ref} from "@vue/reactivity";
 import type {UnwrapRef} from "vue";
 import {loginStateKey} from "~/utils/keys";
+import {useEventKey} from "~/composables/useEventKey";
 
+//gets username and scouting database
 const {usernameState}: {
   usernameState: Ref<UnwrapRef<string>>;
 } = inject(loginStateKey)!
-
-const {scoutingData} = databases.locals
-let db = scoutingData
+const {scoutingData: db} = databases.locals
 
 //An enum of tabs on the scout page
 enum GameTime {
@@ -25,21 +24,19 @@ enum GameTime {
 //The active tab used
 let gameTime = ref(GameTime.Autonomous)
 
-const events = eventOptions
-let selectedEvent = ref(eventOptions[0])
-if (typeof window !== 'undefined') selectedEvent.value = localStorage.getItem('currentEvent') || eventOptions[0]
-watch(selectedEvent, (value) => {
+//gets current event key
+const currentEvent = useEventKey()
+watch(currentEvent, (value) => {
   window.localStorage.setItem('currentEvent', value)
 })
 
-const {data: tbaEventData, pending: tbaPending} = await useLazyFetch<Array<any>>("/api/eventTeams/" + selectedEvent.value)
-
+//gets the blue alliance data for what teams are at the current event and puts them in an array
+const {data: tbaEventData, pending: tbaPending} = await useLazyFetch<Array<any>>("/api/eventTeams/" + currentEvent.value)
 watch(tbaPending, () => {
   if(!tbaPending.value && tbaEventData.value != null){
     validTeamNums.value = tbaEventData.value.map((value) => value.team_number)
   }
 })
-
 let validTeamNums = ref<Array<number>>()
 
 // Selectable options for the Multi-Select component
@@ -47,39 +44,8 @@ const endgameOptions = ["None", "Parked", "Attempted Onstage", "Onstage", "Harmo
 const connectedOptions = [1, 2, 2, 3, 3]
 let endgameIndex = [1, 0, 0, 0, 0]
 
-
-/*
-async function dataPull(team: integer): Promise<any>{
-  let refNum: integer = team;
-  let urlNoNum: string = "https://www.thebluealliance.com/api/v3/frc";
-  let urlFinal: string = urlNoNum + refNum.toString();
-  let grab: any;
-  grab = await fetch(urlFinal);
-  grab = await grab.json();
-  let grabParse: any;
-  grabParse = JSON.parse(grab);
-  return grabParse.nickname;
-}
-*/
-
-/*const ph: any = dataPull(info.teamNum)();
-let parsed = JSON.parse(await ph);
-let impData = {
-  nickname: parsed.nickname,
-  */
-
-
-//todo fix
-let scoutData: Ref<UnwrapRef<{
-  auto: { speakerNA: number; amp: number; missedAmp: number; missedSpeaker: number; mobility: boolean; position: number; };
-  teleop: { speakerNA: number; amp: number; missedAmp: number; missedSpeaker: number; };
-  endgame: { endgame: string[]; trap: number; };
-  notes: {  notes: string; promptedNotes: Array<{ selected: boolean, rating: number, notes: Array<string> }> };
-  teamNumber: any;
-  event: string;
-  matchNumber: any;
-  author: string;
-}>> = ref({
+//all the data collected on the scout page in the form of ScoutingData, a type found in the utils/databases.ts file
+let scoutData = ref<ScoutingData>({
   event: "",
   teamNumber: "",
   matchNumber: "",
@@ -147,8 +113,8 @@ async function submit() {
   scoutData.value.matchNumber = parseInt(scoutData.value.matchNumber)
   if(!Number.isNaN(scoutData.value.teamNumber) && !Number.isNaN(scoutData.value.matchNumber)) {
     scoutData.value.author = usernameState.value
-    scoutData.value.event = selectedEvent.value || eventOptions[0]
-    let newDoc = await db.post(scoutData.value)
+    scoutData.value.event = currentEvent.value || eventOptions[0]
+    await db.post(scoutData.value)
     await navigateTo("/matches")
   }
 }
@@ -182,7 +148,7 @@ const isOpen = ref(false) //prestons way of making the reference image modal ope
             </UInput>
           </div>
           <UFormGroup class="flex-1">
-            <USelectMenu v-model="selectedEvent" :options="events"/>
+            <USelectMenu v-model="currentEvent" :options="eventOptions"/>
           </UFormGroup>
         </div>
         <br>
