@@ -8,6 +8,7 @@ import type {VerticalNavigationLink} from "#ui/types";
 import type {Ref} from "@vue/reactivity";
 import type {UnwrapRef} from "vue";
 import {eventOptions} from "~/utils/eventOptions";
+import {useEventKey} from "~/composables/useEventKey";
 
 syncData()
 
@@ -29,11 +30,11 @@ let {width, height} = useWindowSize()
 let router = useRouter()
 
 const events = eventOptions
-let selectedEvent = ref(eventOptions[0])
-if (typeof window !== 'undefined') selectedEvent.value = localStorage.getItem('currentEvent') || eventOptions[0]
+const currentEvent = useEventKey()
 
-watch(selectedEvent, (value) => {
+watch(currentEvent, (value) => {
   window.localStorage.setItem('currentEvent', value)
+  window.dispatchEvent(new Event("event-changed"));
 })
 
 let links: VerticalNavigationLink[] = [
@@ -95,7 +96,7 @@ if (sessionState.value.userCtx.roles?.indexOf("admin") != -1 || sessionState.val
                       </div>
                     </template>
                     <UFormGroup class="inputDiv" label="Event" name="event">
-                      <USelectMenu v-model="selectedEvent" :options="events"/>
+                      <USelectMenu v-model="currentEvent" :options="events"/>
                     </UFormGroup>
                     <br>
                     <UButton

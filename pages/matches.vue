@@ -10,6 +10,13 @@ const { scoutingData: db } = databases.locals
 //fetches the current event from useEventKey compostable
 const currentEvent = useEventKey()
 
+//asynchronously runs setup function
+const { pending, data: res } = await useLazyAsyncData('res', () => setup())
+
+watch(currentEvent, () => {
+  useLazyAsyncData('res', () => setup())
+})
+
 //sets how the table sorts match values
 const sortBy = ref([{ key: 'teamNumber', order: 'asc' }, { key: 'matchNumber', order: 'asc' }])
 
@@ -61,6 +68,7 @@ const headers = [
 
 //sets up the data for the table
 let items
+
 async function setup(){
   //gets all documents from the database asynchronously
   const allDocs = (await db.allDocs()).rows
@@ -76,8 +84,6 @@ async function setup(){
   })
   items = matches
 }
-//asynchronously runs setup function
-const { pending, data: res } = await useLazyAsyncData('res', () => setup())
 </script>
 <template>
   <OuterComponents>
