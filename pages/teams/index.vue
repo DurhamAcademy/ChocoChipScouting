@@ -522,7 +522,7 @@ function autoAccuracy(teamArrays: Array<ScoutingData>) {
             missedSpeakerCount += match.auto.missedSpeaker
             newData = true
         } else {
-            missedAmpCount += match.auto.missed
+            missedAmpCount += match.auto.missedAmp
         }
     }
     if (newData)
@@ -555,7 +555,7 @@ function teleAccuracy(teamArrays: Array<ScoutingData>) {
             missedSpeakerCount += match.teleop.missedSpeaker
             newData = true
         } else {
-            missedAmpCount += match.teleop.missed
+            missedAmpCount += match.teleop.missedAmp
         }
     }
     if (newData)
