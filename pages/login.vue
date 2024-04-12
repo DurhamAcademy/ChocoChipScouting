@@ -1,98 +1,102 @@
 <script setup lang="ts">
-import PouchDB from "pouchdb";
-import auth from "../utils/authorization/Authorizer";
-import {couchDBBaseURL} from "~/utils/URIs"
-import {loginStateKey} from "~/utils/keys";
-import {eventOptions} from "~/utils/eventOptions";
+import PouchDB from 'pouchdb'
+import auth from '../utils/authorization/Authorizer'
+import { couchDBBaseURL } from '~/utils/URIs'
+import { loginStateKey } from '~/utils/keys'
+import { eventOptions } from '~/utils/eventOptions'
 
 PouchDB.plugin(auth)
-const usersDB = new PouchDB(`${couchDBBaseURL}/basic`, {skip_setup: true});
-  let username = ref("");
-  let password = ref("");
-  let error = ref(false)
+const usersDB = new PouchDB(`${couchDBBaseURL}/basic`, { skip_setup: true })
+let username = ref('')
+let password = ref('')
+let error = ref(false)
 let loading = ref(false)
 
-
 const events = eventOptions
-const selectedEvent = useState<String>("currentEvent", () => {
-  if (typeof window !== 'undefined') return localStorage.getItem('currentEvent') || eventOptions[0]
-  return eventOptions[0]
-});
+const selectedEvent = useState<String>('currentEvent', () => {
+    if (typeof window !== 'undefined') return localStorage.getItem('currentEvent') || eventOptions[0]
+    return eventOptions[0]
+})
 watch(selectedEvent, () => {
-  if (typeof window !== 'undefined') return localStorage.setItem('currentEvent', selectedEvent.value.toString())
+    if (typeof window !== 'undefined') return localStorage.setItem('currentEvent', selectedEvent.value.toString())
 })
 
-const {updateUsernameState}: { updateUsernameState: () => void } = inject(loginStateKey)!
+const { updateUsernameState }: { updateUsernameState: () => void } = inject(loginStateKey)!
 
-let errorVal = useState("error-val",()=>"")
+let errorVal = useState('error-val', () => '')
 
 async function login(username: string, password: string) {
-    try
-    {
-      loading.value = true
-      usersDB.logIn(username, password, async function (err, response) {
-        loading.value=false
-        if (response) {
-          updateUsernameState()
-          navigateTo("/dashboard")
-        }
-        else{
-          error.value = true
-        }
-      })
+    try {
+        loading.value = true
+        usersDB.logIn(username, password, async function (err, response) {
+            loading.value = false
+            if (response) {
+                updateUsernameState()
+                navigateTo('/dashboard')
+            } else {
+                error.value = true
+            }
+        })
+    } catch (e: any) {
+        error.value = true
     }
-    catch (e : any) {
-      error.value = true
-    }
-  }
-
-
-
+}
 </script>
 
 <template>
-  <html><head><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/></head></html>
-  <LazyUContainer :ui="{
-  'base': 'mx-auto',
-  'padding': 'p-4 sm:p-6 lg:p-8',
-  'constrained': 'max-w-sm'
-  }">
-    <LazyUCard>
-      <template #header>
-        <h2 class="font-semibold text-xl text-gray-900 dark:text-white leading-tight">
-          {{ "Login" }}
-        </h2>
-      </template>
+    <html>
+        <head>
+            <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+        </head>
+    </html>
+    <LazyUContainer
+        :ui="{
+            base: 'mx-auto',
+            padding: 'p-4 sm:p-6 lg:p-8',
+            constrained: 'max-w-sm',
+        }"
+    >
+        <LazyUCard>
+            <template #header>
+                <h2 class="font-semibold text-xl text-gray-900 dark:text-white leading-tight">
+                    {{ 'Login' }}
+                </h2>
+            </template>
 
-      <LazyUForm action="javascript:void(0);">
-        <LazyUFormGroup label="Username" name="username" autocomplete="username" required>
-          <UInput required
-                  :disabled="loading"
-                  v-model="username"
-                  type="text"/>
-        </LazyUFormGroup>
-        <LazyUFormGroup label="Password" name="password" autocomplete="current-password" required>
-          <LazyUInput v-model="password"
-                  placeholder="Password"
-                  required
-                  :disabled="loading"
-                  type="password"/>
-        </LazyUFormGroup>
-        <LazyUFormGroup class="inputDiv" label="Event" name="event" required>
-          <LazyUSelectMenu :disabled="loading" v-model="selectedEvent" :options="events" @update:v-model="value => {localStorage.setItem('currentEvent', value)}"/>
-        </LazyUFormGroup>
-        <LazyUFormGroup class="inputDiv" style="padding-top: 10px">
-          <LazyUButton
-              :loading="loading"
-                  @click="
-                  login(username, password)"
-                   type="submit">Login
-          </LazyUButton>
-        </LazyUFormGroup>
-        <p>{{ errorVal }}</p>
-      </LazyUForm>
-    </LazyUCard>
-  </LazyUContainer>
+            <LazyUForm action="javascript:void(0);">
+                <LazyUFormGroup label="Username" name="username" autocomplete="username" required>
+                    <UInput required :disabled="loading" v-model="username" type="text" />
+                </LazyUFormGroup>
+                <LazyUFormGroup label="Password" name="password" autocomplete="current-password" required>
+                    <LazyUInput
+                        v-model="password"
+                        placeholder="Password"
+                        required
+                        :disabled="loading"
+                        type="password"
+                    />
+                </LazyUFormGroup>
+                <LazyUFormGroup class="inputDiv" label="Event" name="event" required>
+                    <LazyUSelectMenu
+                        :disabled="loading"
+                        v-model="selectedEvent"
+                        :options="events"
+                        @update:v-model="
+                            (value) => {
+                                localStorage.setItem('currentEvent', value)
+                            }
+                        "
+                    />
+                </LazyUFormGroup>
+                <LazyUFormGroup class="inputDiv" style="padding-top: 10px">
+                    <LazyUButton :loading="loading" @click="login(username, password)" type="submit"
+                        >Login
+                    </LazyUButton>
+                </LazyUFormGroup>
+                <p>{{ errorVal }}</p>
+            </LazyUForm>
+        </LazyUCard>
+    </LazyUContainer>
 </template>
 
 <style scoped>

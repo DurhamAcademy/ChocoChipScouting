@@ -1,24 +1,26 @@
 <script setup lang="ts">
-import {useSync} from "~/composables/useSync";
+import { useSync } from '~/composables/useSync'
 
-let syncDatabasesState = useSync();
+let syncDatabasesState = useSync()
 
-const columns = [{
-  key: 'dbName',
-  label: 'Name'
-}, {
-  key: 'human',
-  label: 'Current Status'
-}, {
-  key: 'id',
-  label: 'Status ID'
-}];
+const columns = [
+    {
+        key: 'dbName',
+        label: 'Name',
+    },
+    {
+        key: 'human',
+        label: 'Current Status',
+    },
+    {
+        key: 'id',
+        label: 'Status ID',
+    },
+]
 </script>
 
 <template>
-  <UTable :rows="syncDatabasesState" :columns="columns"/>
+    <UTable :rows="syncDatabasesState" :columns="columns" />
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>
