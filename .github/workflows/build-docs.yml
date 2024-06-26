@@ -7,7 +7,7 @@ on:
 
 env:
   INSTANCE: 'Documentation/cid'
-  ARTIFACT: 'webHelpcid2-all.zip'
+  ARTIFACT: 'webHelpCID2-all.zip'
   DOCKER_VERSION: '241.16003'
 
 jobs:
