@@ -7,21 +7,24 @@
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare"
+    "postinstall": "nuxt prepare",
+    "prepare": "husky install"
   },
   "devDependencies": {
-    "@nuxt/devtools": "latest",
-    "@types/pouchdb": "6.4.0",
-    "@types/sentiment": "^5.0.4",
-    "nuxt": "^3.10.3",
     "@babel/eslint-parser": "^7.15.0",
+    "@nuxt/devtools": "latest",
     "@nuxtjs/eslint-config": "^6.0.1",
     "@nuxtjs/eslint-module": "^3.0.2",
+    "@types/pouchdb": "6.4.0",
+    "@types/sentiment": "^5.0.4",
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-nuxt": "^2.0.0",
     "eslint-plugin-prettier": "^3.4.0",
     "eslint-plugin-vue": "^7.15.1",
+    "husky": "^9.0.11",
+    "lint-staged": "^15.2.7",
+    "nuxt": "^3.10.3",
     "prettier": "^2.3.2"
   },
   "dependencies": {
@@ -42,11 +45,6 @@
     "vue-chart-3": "^3.1.8",
     "vuetify": "^3.4.10"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
   "lint-staged": {
     "*.{js,jsx}": [
       "prettier --write",
@@ -56,6 +54,7 @@
     "*.{html,css,less,ejs}": [
       "prettier --write",
       "git add"
-    ]
+    ],
+    "*.js": "eslint --cache --fix"
   }
 }
