@@ -2,7 +2,7 @@ name: Build documentation
 
 on:
   push:
-    branches: ["main"]
+    branches: ["production", "testing", "code-cleanup"]
   workflow_dispatch:
 
 env:
