@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import PouchDB from 'pouchdb';
 import auth from '../utils/authorization/Authorizer';
+import OuterComponents from '~/components/website-utils/OuterComponents.vue';
 import { couchDBBaseURL } from '~/utils/URIs';
 import { useLazyAsyncData } from '#app';
 

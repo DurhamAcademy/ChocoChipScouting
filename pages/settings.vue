@@ -1,6 +1,7 @@
 <script setup lang="ts">
 //a component that allows the user to see if their data has synced with the database
-import SyncStatusVisualization from '~/components/SyncStatusVisualization.vue';
+import SyncStatusVisualization from '~/components/website-utils/SyncStatusVisualization.vue';
+import OuterComponents from '~/components/website-utils/OuterComponents.vue';
 
 //allows the user to switch between light and dark mode
 const colorMode = useColorMode();
