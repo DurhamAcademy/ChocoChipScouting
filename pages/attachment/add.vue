@@ -196,7 +196,11 @@ const { isOverDropZone } = useDropZone(dropZoneRef, onDrop); // variable that ch
         variant="ghost"
       />
       <template #footer>
-        <UButton type="button" @click="submit" label="Submit" />
+        <UButton
+          type="button"
+          @click="submit"
+          label="Submit"
+        />
       </template>
     </UCard>
     <UCard class="m-3">
@@ -232,7 +236,10 @@ const { isOverDropZone } = useDropZone(dropZoneRef, onDrop); // variable that ch
         </template>
         <template #tags-data="{ row, index }">
           <UPopover>
-            <UButton label="+ Add Tags" variant="ghost" />
+            <UButton
+              label="+ Add Tags"
+              variant="ghost"
+            />
             <template #panel>
               <div class="flex-wrap flex max-w-64 justify-center">
                 <UButton
@@ -250,7 +257,10 @@ const { isOverDropZone } = useDropZone(dropZoneRef, onDrop); // variable that ch
         </template>
         <template #actions-data="{ row, index }">
           <div style="display: flex; align-items: center">
-            <UTooltip text="Extra Notes" :popper="{ placement: 'left' }">
+            <UTooltip
+              text="Extra Notes"
+              :popper="{ placement: 'left' }"
+            >
               <UPopover>
                 <UButton
                   color="gray"
@@ -262,8 +272,15 @@ const { isOverDropZone } = useDropZone(dropZoneRef, onDrop); // variable that ch
                 </template>
               </UPopover>
             </UTooltip>
-            <UPopover mode="hover" :popper="{ placement: 'left-end' }">
-              <UButton color="gray" variant="ghost" icon="i-heroicons-eye" />
+            <UPopover
+              mode="hover"
+              :popper="{ placement: 'left-end' }"
+            >
+              <UButton
+                color="gray"
+                variant="ghost"
+                icon="i-heroicons-eye"
+              />
               <template #panel="{ close }">
                 <NuxtImg
                   :src="row.photoURL"
