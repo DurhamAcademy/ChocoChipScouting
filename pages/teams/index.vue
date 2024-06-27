@@ -5,51 +5,16 @@ import databases, {
   type TeamTableData,
 } from '~/utils/databases';
 import IdMeta = PouchDB.Core.IdMeta;
-import Sentiment from 'sentiment';
-import { eventOptions } from '~/utils/eventOptions';
 import { useWindowSize } from '@vueuse/core';
 import PieChart from '~/components/charts/PieChart.vue';
 import OuterComponents from '~/components/website-utils/OuterComponents.vue';
 
+//TYLER IS THIS NEEDED IDK
 let { width, height } = useWindowSize();
 
-let sentiment = new Sentiment();
-let options = {
-  extras: {
-    mid: -2,
-    pretty: 0,
-    broke: -3.5,
-    disabled: -3.5,
-    quickly: 2,
-    easily: 2,
-    dog: -3,
-  },
-};
-
-const events = eventOptions;
-let currentEvent = ref(eventOptions[0]);
-if (typeof window !== 'undefined')
-  currentEvent.value = localStorage.getItem('currentEvent') || eventOptions[0];
-const fetch = useFetch<Array<any>>('/api/eventMatches/' + currentEvent.value);
-
-let filters = ref({
-  teamNum: {
-    include: [],
-    exclude: [],
-  },
-  matchNum: {
-    include: [],
-  },
-  author: {
-    include: [],
-    exclude: [],
-  },
-  auto: {
-    selected: false,
-  },
-  endgame: {
-    selected: false,
-  },
+let currentEvent = useEventKey();
+watch(currentEvent, () => {
+  tableSetup();
 });
 
 let filterOptions = ['Team #', 'Match #', '-Author'];
@@ -975,7 +940,10 @@ await tableSetup();
       <template #header>
         <div class="flex">
           <UForm>
-            <UFormGroup class="inline-block mr-2" label="Filters">
+            <UFormGroup
+              class="inline-block mr-2"
+              label="Filters"
+            >
               <UButtonGroup>
                 <USelectMenu
                   class="inline-block min-w-28 w-28 max-w-28"
@@ -1023,7 +991,11 @@ await tableSetup();
           />
         </UFormGroup>
         <div class="inline-block m-2">
-          <UBadge label="Bad: 0%-33%" class="rounded-2xl" variant="soft" />
+          <UBadge
+            label="Bad: 0%-33%"
+            class="rounded-2xl"
+            variant="soft"
+          />
           <UBadge
             label="Ok: 33%-66%"
             class="rounded-2xl"
@@ -1046,12 +1018,30 @@ await tableSetup();
       </template>
       <template #default>
         <div>
-          <table id="teamTable" class="table-auto border-4 border-gray-50">
-            <colgroup span="2" class="odd:bg-gray-50" />
-            <colgroup span="2" class="odd:bg-gray-50" />
-            <colgroup span="3" class="odd:bg-gray-50" />
-            <colgroup span="3" class="odd:bg-gray-50" />
-            <colgroup span="3" class="odd:bg-gray-50" />
+          <table
+            id="teamTable"
+            class="table-auto border-4 border-gray-50"
+          >
+            <colgroup
+              span="2"
+              class="odd:bg-gray-50"
+            />
+            <colgroup
+              span="2"
+              class="odd:bg-gray-50"
+            />
+            <colgroup
+              span="3"
+              class="odd:bg-gray-50"
+            />
+            <colgroup
+              span="3"
+              class="odd:bg-gray-50"
+            />
+            <colgroup
+              span="3"
+              class="odd:bg-gray-50"
+            />
             <thead class="top-0 sticky bg-gray-50 z-10">
               <tr>
                 <th colspan="2" />
@@ -1060,15 +1050,24 @@ await tableSetup();
                   Ratings
                   <p class="text-xs font-light">/5.00</p>
                 </th>
-                <th colspan="3" scope="colgroup">
+                <th
+                  colspan="3"
+                  scope="colgroup"
+                >
                   <p class="text-xs font-light">Average</p>
                   Auto Cycles
                 </th>
-                <th colspan="3" scope="colgroup">
+                <th
+                  colspan="3"
+                  scope="colgroup"
+                >
                   <p class="text-xs font-light">Average</p>
                   Teleop Cycles
                 </th>
-                <th colspan="3" scope="colgroup">
+                <th
+                  colspan="3"
+                  scope="colgroup"
+                >
                   <p class="text-xs font-light">Average</p>
                   Endgame
                 </th>
@@ -1154,7 +1153,10 @@ await tableSetup();
                   />
                 </td>
                 <td class="text-center">
-                  <UPopover v-if="team.autoAccData[0]" mode="hover">
+                  <UPopover
+                    v-if="team.autoAccData[0]"
+                    mode="hover"
+                  >
                     <UButton
                       :label="team.autoAcc.data"
                       variant="soft"
@@ -1165,7 +1167,11 @@ await tableSetup();
                     <template #panel>
                       <div class="flex">
                         <div>
-                          <UBadge label="Amp" variant="soft" color="gray" />
+                          <UBadge
+                            label="Amp"
+                            variant="soft"
+                            color="gray"
+                          />
                           <UBadge
                             :label="
                               !isNaN(team.autoAccData[2])
@@ -1178,7 +1184,11 @@ await tableSetup();
                           />
                         </div>
                         <div>
-                          <UBadge label="Speaker" variant="soft" color="gray" />
+                          <UBadge
+                            label="Speaker"
+                            variant="soft"
+                            color="gray"
+                          />
                           <UBadge
                             :label="
                               !isNaN(team.autoAccData[3])
@@ -1215,7 +1225,10 @@ await tableSetup();
                   />
                 </td>
                 <td class="text-center">
-                  <UPopover v-if="team.teleAccData[0]" mode="hover">
+                  <UPopover
+                    v-if="team.teleAccData[0]"
+                    mode="hover"
+                  >
                     <UButton
                       :label="team.teleAcc.data"
                       variant="soft"
@@ -1226,7 +1239,11 @@ await tableSetup();
                     <template #panel>
                       <div class="flex">
                         <div>
-                          <UBadge label="Amp" variant="soft" color="gray" />
+                          <UBadge
+                            label="Amp"
+                            variant="soft"
+                            color="gray"
+                          />
                           <UBadge
                             :label="
                               !isNaN(team.teleAccData[2])
@@ -1239,7 +1256,11 @@ await tableSetup();
                           />
                         </div>
                         <div>
-                          <UBadge label="Speaker" variant="soft" color="gray" />
+                          <UBadge
+                            label="Speaker"
+                            variant="soft"
+                            color="gray"
+                          />
                           <UBadge
                             :label="
                               !isNaN(team.teleAccData[3])

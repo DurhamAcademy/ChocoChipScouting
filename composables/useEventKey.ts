@@ -7,17 +7,21 @@ export const useEventKey = () => {
     if (typeof window !== 'undefined')
       eventKey.value = localStorage.getItem('currentEvent') || eventOptions[0];
     else {
-      console.log('ran error eventoptions 0');
       eventKey.value = eventOptions[0];
     }
   }
 
+  function onEventListener() {
+    updateEvent();
+  }
+
   onMounted(() => {
     updateEvent();
-    window.addEventListener('event-changed', () => {
-      updateEvent();
-      console.log('event changed');
-    });
+    window.addEventListener('event-changed', onEventListener);
+  });
+
+  onUnmounted(() => {
+    window.removeEventListener('event-changed', onEventListener);
   });
 
   return eventKey;
