@@ -12,12 +12,17 @@ export const useEventKey = () => {
     }
   }
 
+  function onEventListener() {
+    updateEvent();
+  }
+
   onMounted(() => {
     updateEvent();
-    window.addEventListener('event-changed', () => {
-      updateEvent();
-      console.log('event changed');
-    });
+    window.addEventListener('event-changed', onEventListener);
+  });
+
+  onUnmounted(() => {
+    window.removeEventListener('event-changed', onEventListener);
   });
 
   return eventKey;

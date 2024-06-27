@@ -85,16 +85,16 @@ async function setup() {
     },
   );
   let matches = await Promise.all(promiseMatches);
+  console.log(matches);
   //filters data to ensure all data is usable and of the current event
-  matches.forEach((match, index) => {
-    if (
+  matches = matches.filter(function (match) {
+    return !(
       match.matchNumber === -1 ||
       match.matchNumber === null ||
       match.event != currentEvent.value
-    ) {
-      matches.splice(index, 1);
-    }
+    );
   });
+  console.log(matches);
   items = matches;
 }
 </script>
