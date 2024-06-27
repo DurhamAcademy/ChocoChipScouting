@@ -48,6 +48,8 @@ let match = matches.map(async (doc): Promise<ScoutingData & IdMeta> => {
   return await db.get(doc.id);
 });
 
+console.dir(await match);
+
 let teamOrgMatches = new Map<number, Array<ScoutingData & IdMeta>>();
 let extraNotes = new Map<number, Array<string>>();
 
