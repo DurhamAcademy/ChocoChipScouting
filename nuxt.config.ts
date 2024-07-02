@@ -4,6 +4,7 @@ import vuetify, { transformAssetUrls } from 'vite-plugin-vuetify'
 var sw = true;
 export default defineNuxtConfig({
   modules: [
+    '@nuxt/test-utils/module',
     '@nuxt/image',
     '@vite-pwa/nuxt',
     '@nuxt/ui',

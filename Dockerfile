@@ -92,9 +92,17 @@ COPY ./utils ./utils
 COPY ./plugins ./plugins
 COPY ./service-worker ./service-worker
 COPY ./composables ./composables
+COPY vitest.config.ts .
 
 #ENTRYPOINT ["bash"]
 RUN ["bun", "--bun", "run", "postinstall"]
+
+FROM files as test
+
+COPY ./tests ./tests
+
+RUN bun run test run
+RUN echo hello > test.txt
 
 FROM files AS build
 ENV NODE_ENV development
@@ -107,6 +115,8 @@ RUN mkdir -p /usr/src/nuxt3-app
 WORKDIR /usr/src/nuxt3-app
 
 RUN #apk upgrade --no-cache && apk add --no-cache libstdc++
+
+COPY --from=test test.txt test.txt
 
 COPY --from=build /usr/src/nuxt3-app/.output .output
 

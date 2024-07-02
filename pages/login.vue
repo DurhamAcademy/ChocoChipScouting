@@ -69,14 +69,16 @@ async function login(username: string, password: string) {
           <UInput required
                   :disabled="loading"
                   v-model="username"
-                  type="text"/>
+                  type="text"
+                  data-testid="username"/>
         </LazyUFormGroup>
         <LazyUFormGroup label="Password" name="password" autocomplete="current-password" required>
           <LazyUInput v-model="password"
                   placeholder="Password"
                   required
                   :disabled="loading"
-                  type="password"/>
+                  type="password"
+                  data-testid="password"/>
         </LazyUFormGroup>
         <LazyUFormGroup class="inputDiv" label="Event" name="event" required>
           <LazyUSelectMenu :disabled="loading" v-model="selectedEvent" :options="events" @update:v-model="value => {localStorage.setItem('currentEvent', value)}"/>

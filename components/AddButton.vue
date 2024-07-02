@@ -22,9 +22,12 @@ let addButtonLinks = [{
                class="m-0 shadow-md"
                color="primary"
                icon="i-heroicons-plus-20-solid"
-               size="xl"/>
+               size="xl"
+               data-testid="AddButton"
+      />
       <template #panel>
         <UVerticalNavigation :links="addButtonLinks"/>
+        <!--class for ui testing-->
       </template>
     </UPopover>
   </UContainer>
