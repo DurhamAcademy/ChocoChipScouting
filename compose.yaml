@@ -1,4 +1,4 @@
-name: "scouting_app"
+name: "scouting-app"
 services:
   server:
     restart: on-failure
