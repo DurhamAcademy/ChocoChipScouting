@@ -107,7 +107,6 @@ services:
     volumes:
       - couchDB:/opt/couchdb/data
   couch-db-setup:
-    restart: no
     depends_on:
       couchdb:
         condition: service_healthy
