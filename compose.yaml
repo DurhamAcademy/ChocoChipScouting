@@ -20,6 +20,25 @@ services:
       couchDBHostname: couchdb
     networks:
       - intercom_network
+  testserver:
+    restart: on-failure
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: test
+    depends_on:
+      couchdb:
+        condition: service_healthy
+      couch-db-setup:
+        condition: service_completed_successfully
+    ports:
+      - "3000:3000"
+    links:
+      - couchdb:couchdb
+    environment:
+      couchDBHostname: couchdb
+    networks:
+      - intercom_network
   devserver:
     restart: on-failure
     build:

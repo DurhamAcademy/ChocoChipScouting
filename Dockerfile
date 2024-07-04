@@ -67,7 +67,7 @@ ENV NODE_TLS_REJECT_UNAUTHORIZED 0
 RUN NODE_TLS_REJECT_UNAUTHORIZED=0
 COPY .npmrc .
 COPY package.json .
-RUN ["bun", "install", "--ignore-scripts", "--no-progress"]
+RUN ["bun", "install", "--ignore-scripts", "--no-progress", "--development"]
 
 FROM bun-install AS bun-prepare
 
@@ -75,15 +75,18 @@ COPY .npmrc .
 
 #COPY package-lock.json .
 
-COPY package.json .
-COPY tsconfig.json .
+COPY package.json ./package.json
+COPY tsconfig.json ./tsconfig.json
 
-COPY nuxt.config.ts .
-COPY app.config.ts .
+COPY nuxt.config.ts ./nuxt.config.ts
+COPY app.config.ts ./app.config.ts
+
+COPY vitest.config.ts ./vitest.config.ts
 
 FROM bun-prepare AS files
 
 COPY app.vue .
+
 COPY ./pages ./pages
 COPY ./public ./public
 COPY ./server ./server
@@ -92,10 +95,54 @@ COPY ./utils ./utils
 COPY ./plugins ./plugins
 COPY ./service-worker ./service-worker
 COPY ./composables ./composables
-COPY vitest.config.ts .
 
-#ENTRYPOINT ["bash"]
+COPY ./tests ./tests
+
+COPY ./app.vue .
+
 RUN ["bun", "--bun", "run", "postinstall"]
+
+RUN bun i --development
+
+FROM node:lts AS test
+
+WORKDIR /usr/src/nuxt3-app
+
+ENV NODE_ENV development
+
+
+COPY --from=files /usr/src/nuxt3-app/pages ./pages
+COPY --from=files /usr/src/nuxt3-app/public ./public
+COPY --from=files /usr/src/nuxt3-app/server ./server
+COPY --from=files /usr/src/nuxt3-app/components ./components
+COPY --from=files /usr/src/nuxt3-app/utils ./utils
+COPY --from=files /usr/src/nuxt3-app/plugins ./plugins
+COPY --from=files /usr/src/nuxt3-app/service-worker ./service-worker
+COPY --from=files /usr/src/nuxt3-app/composables ./composables
+COPY --from=files /usr/src/nuxt3-app/tests ./tests
+COPY --from=files /usr/src/nuxt3-app/node_modules ./node_modules
+COPY --from=files /usr/src/nuxt3-app/.nuxt ./.nuxt
+
+COPY --from=files /usr/src/nuxt3-app/.npmrc .
+
+COPY --from=files /usr/src/nuxt3-app/package.json .
+COPY --from=files /usr/src/nuxt3-app/tsconfig.json .
+
+COPY --from=files /usr/src/nuxt3-app/nuxt.config.ts .
+COPY --from=files /usr/src/nuxt3-app/app.config.ts .
+COPY --from=files /usr/src/nuxt3-app/app.vue .
+
+COPY --from=files /usr/src/nuxt3-app/vitest.config.ts .
+
+RUN npm install @vitest/ui
+ENTRYPOINT ["sleep", "10000"]
+#or any similar command that does nothing but forces itself to stay open
+
+FROM files AS listdir
+
+RUN rm -rf ./node_modules;
+
+RUN ls -AR;
 
 FROM files AS build
 ENV NODE_ENV development

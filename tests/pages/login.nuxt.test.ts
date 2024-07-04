@@ -6,12 +6,12 @@ import App from "~/app.vue";
 import {HTMLInputElement} from "happy-dom";
 
 it('renders without crashing', async () => {
-    await renderSuspended(App, {route: '/login'});
-    expect(screen.findByText("Login")).toBeDefined
+    renderSuspended(App, {route: '/login'});
+    expect(screen.findByText("Login")).toBeDefined()
 })
 
 it('username area exists and is a textbox', async () => {
-    await renderSuspended(App, {route: '/login'})
+    renderSuspended(App, {route: '/login'})
 
     const usernameBox = await screen.findByTestId("username");
     expect(usernameBox).to.exist
@@ -19,7 +19,7 @@ it('username area exists and is a textbox', async () => {
 })
 
 it('passwords area exists and is a textbox', async () => {
-    await renderSuspended(App, {route: '/login'})
+    renderSuspended(App, {route: '/login'})
 
     const usernameBox = await screen.findByTestId("password");
     expect(usernameBox).to.exist

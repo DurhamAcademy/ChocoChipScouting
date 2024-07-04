@@ -10,6 +10,9 @@ export default defineVitestConfig({
                     indexedDb: true,
                 }
             }
-        }
-    }
+        },
+        testTimeout: 300,
+    },
+    mode: "test",
+    logLevel: "info"
 })

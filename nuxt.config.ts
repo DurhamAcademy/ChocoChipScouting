@@ -1,6 +1,17 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 import vuetify, { transformAssetUrls } from 'vite-plugin-vuetify'
 
+
+// https://github.com/nuxt/ui/issues/809
+import { createRequire } from 'node:module'
+const _require = createRequire(import.meta.url)
+const defaultColors = _require('tailwindcss/colors.js')
+delete defaultColors.lightBlue
+delete defaultColors.warmGray
+delete defaultColors.trueGray
+delete defaultColors.coolGray
+delete defaultColors.blueGray
+
 var sw = true;
 export default defineNuxtConfig({
   modules: [
