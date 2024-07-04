@@ -1,5 +1,4 @@
 name: "scouting_app"
-version: 1.0.0
 services:
   server:
     restart: on-failure
