@@ -135,6 +135,20 @@ COPY --from=files /usr/src/nuxt3-app/app.vue .
 COPY --from=files /usr/src/nuxt3-app/vitest.config.ts .
 
 RUN npm install @vitest/ui
+
+COPY <<EOF /usr/src/nuxt3-app/.env
+couchDBHostname=couchdb
+mode=development
+SERVER_USERNAME=admin
+SERVER_PASSWORD=password
+COUCHDB_SERVER_USER=admin
+COUCHDB_SERVER_PASSWORD=password
+NUXT_COUCH_DB_SCHEME=http
+NUXT_COUCH_DB_AUTHORITY=couchdb:5984
+NUXT_COUCH_DB_SERVER_ADMIN_USER_USERNAME=admin
+NUXT_COUCH_DB_SERVER_ADMIN_USER_PASSWORD=password
+EOF
+
 ENTRYPOINT ["sleep", "10000"]
 #or any similar command that does nothing but forces itself to stay open
 
