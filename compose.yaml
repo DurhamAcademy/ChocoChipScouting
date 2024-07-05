@@ -19,7 +19,6 @@ services:
     networks:
       - intercom_network
   testserver:
-    restart: on-failure
     build:
       context: .
       dockerfile: Dockerfile
@@ -29,12 +28,19 @@ services:
         condition: service_healthy
       couch-db-setup:
         condition: service_completed_successfully
-    ports:
-      - "3000:3000"
     links:
       - couchdb:couchdb
     environment:
       couchDBHostname: couchdb
+      mode: development
+      SERVER_USERNAME: admin
+      SERVER_PASSWORD: password
+      COUCHDB_SERVER_USER: admin
+      COUCHDB_SERVER_PASSWORD: password
+      NUXT_COUCH_DB_SCHEME: https
+      NUXT_COUCH_DB_AUTHORITY: couchdb:5984
+      NUXT_COUCH_DB_SERVER_ADMIN_USER_USERNAME: admin
+      NUXT_COUCH_DB_SERVER_ADMIN_USER_PASSWORD: password
     networks:
       - intercom_network
   devserver:
