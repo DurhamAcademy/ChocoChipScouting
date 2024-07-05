@@ -13,5 +13,6 @@ jobs:
       - name: Build and run Docker Compose
         run: |
           docker-compose up -d testserver
-          docker-compose exec testserver npm run test run
+          docker-compose exec -T testserver npm run test run
           docker-compose down
+        #idk what -T does but [this](https://stackoverflow.com/a/57565119/14994086) so thread told me to
