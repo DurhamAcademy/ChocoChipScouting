@@ -1,4 +1,3 @@
-name: "scouting-app"
 services:
   server:
     restart: on-failure
