@@ -5,6 +5,11 @@ import OuterComponents from '~/components/website-utils/OuterComponents.vue';
 
 //allows the user to switch between light and dark mode
 const colorMode = useColorMode();
+/**
+ * A computed variable that determines if the website mode is dark or light.
+ *
+ * @type {boolean}
+ */
 const isDark = computed({
   get() {
     return colorMode.value === 'dark';
@@ -19,7 +24,10 @@ const isDark = computed({
   <OuterComponents>
     <div class="flex justify-center">
       <UCard class="max-w-xl mt-5 flex-grow">
-        <UFormGroup class="inline-block inputDiv mb-2" label="Style">
+        <UFormGroup
+          class="inline-block inputDiv mb-2"
+          label="Style"
+        >
           <ClientOnly>
             <UButton
               :icon="

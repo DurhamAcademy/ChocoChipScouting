@@ -3,14 +3,24 @@ import databases from '~/utils/databases';
 import { eventOptions } from '~/utils/eventOptions';
 import OuterComponents from '~/components/website-utils/OuterComponents.vue';
 
+/*
+The current prediction algorithm calculates average team scores, using the scoreMatch.ts file (under utils).
+Then, the algorithm pairs all three alliance members together, calculating a predicted score for both alliances
+and comparing them. The algorithm also checks its work throughout the competition, displaying an accuracy rating.
+ */
+
 let currentEvent = eventOptions[0];
 if (typeof window !== 'undefined')
   currentEvent = localStorage.getItem('currentEvent') || eventOptions[0];
 
+/**
+ * Gets the event matches of the user's current event asynchronously
+ */
 const { data, pending } = await useLazyFetch<Array<any>>(
   '/api/eventMatches/' + currentEvent,
 );
 
+//gets and filters scouting data to use with predictions
 const { scoutingData } = databases.locals;
 let db = scoutingData;
 
@@ -59,17 +69,27 @@ for (let teamData of teamOrgMatches) {
   }
 }
 
+//blue and red teams
 let selectedBlueTeams = ref<Array<string>>(['', '', '']);
 let selectedRedTeams = ref<Array<string>>(['', '', '']);
+//which team is predicted to win
 let winningTeamColor = ref(['outline-red-100', 'outline-blue-100']);
+//how much the winning team is predicted to win by
 let winningPercentage = ref(-1);
 let teamsFound = ref([
   [false, false, false],
   [false, false, false],
 ]);
+//blue and red total predicted points
 let blueTotal = ref(0);
 let redTotal = ref(0);
 
+/**
+ * Calculates the average score of a team based on their matches.
+ *
+ * @param {number} team - The ID of the team.
+ * @return {number} - The average score of the team. Returns -1 if the team data doesn't exist.
+ */
 function calculateTeamAverageScore(team: number) {
   let teamMatches = teamOrgMatches.get(team);
   if (teamMatches) {
@@ -82,6 +102,12 @@ function calculateTeamAverageScore(team: number) {
   return -1;
 }
 
+/**
+ * Predicts the winning team and winning percentage based on selected teams and their average scores.
+ * Sets the page components to show the predicted results
+ *
+ * @return {void} This method does not return any value.
+ */
 function predict() {
   blueTotal.value = 0;
   redTotal.value = 0;
@@ -121,8 +147,18 @@ function predict() {
 }
 
 let matchNumber = ref<number>();
+//TODO I dont think this is implemented properly idk tho
 let playoffNumber = ref<number>();
 
+/**
+ * Populates the selected Red and Blue teams based on the provided data and match/playoff number.
+ * If the pending value is false and the data value is not null, the function populates the selected teams.
+ * If the matchNumber value is defined and not empty, the function populates the teams based on the match number.
+ * If the playoffNumber value is defined, the function populates the teams based on the playoff number.
+ * If neither matchNumber nor playoffNumber is defined, the function sets the selected teams to empty strings.
+ *
+ * @return {void}
+ */
 function populateMatch() {
   if (!pending.value && data.value != null) {
     let tbaMatchData = data.value;
@@ -176,8 +212,14 @@ function populateMatch() {
   }
 }
 
+//variables used to calculate how accurate predictions are
 let totalMatches = ref(0);
 let correctMatches = ref(0);
+
+/**
+ * Gets data from eventMatches call once it has returned asynchronously
+ * Updates the correct matches tally
+ */
 watch(pending, () => {
   if (!pending.value) {
     let md = data.value;
@@ -308,7 +350,12 @@ watch(pending, () => {
             >
               {{ blueTotal.toFixed(1) + ' - ' + redTotal.toFixed(1) }}
             </p>
-            <p v-else class="font-semibold">vs</p>
+            <p
+              v-else
+              class="font-semibold"
+            >
+              vs
+            </p>
           </div>
         </UContainer>
         <UContainer

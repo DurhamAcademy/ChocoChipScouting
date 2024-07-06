@@ -46,6 +46,9 @@ let data: Ref<
   },
 });
 
+/**
+ * Submits the data to the server though db.post
+ */
 async function submit() {
   data.value.event = selectedEvent;
   if (data.value.teamNumber != null) {
@@ -61,7 +64,10 @@ async function submit() {
     <UCard class="max-w-xl flex-grow m-5">
       <template #default>
         <div class="pb-1.5">
-          <UInput v-model="data.teamNumber" placeholder="Team #"></UInput>
+          <UInput
+            v-model="data.teamNumber"
+            placeholder="Team #"
+          ></UInput>
         </div>
         <UTextarea
           rows="10"
