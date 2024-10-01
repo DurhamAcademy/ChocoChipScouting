@@ -258,9 +258,12 @@ async function updateTeamData() {
       <div
         class="w-full my-8 text-center font-sans font-bold !text-primary text-5xl"
       >
-        Chocochips Scouting
+        ChocoChips Scouting
       </div>
-      <UCard class="mb-8 px-4 pb-4" v-if="displayRankings">
+      <UCard
+        class="mb-8 px-4 pb-4"
+        v-if="displayRankings"
+      >
         <div class="font-bold text-center text-lg justify-center">
           <p class="">{{ currentRankings[0][1] }}</p>
           <p class="!text-primary">Team 6502 Stats</p>
@@ -318,7 +321,10 @@ async function updateTeamData() {
                 >
                   {{ rank.rank }}
                 </td>
-                <td v-else class="whitespace-nowrap px-6 py-4 font-medium">
+                <td
+                  v-else
+                  class="whitespace-nowrap px-6 py-4 font-medium"
+                >
                   {{ rank.rank }}
                 </td>
                 <td class="whitespace-nowrap px-6 py-4 font-medium">
@@ -339,7 +345,10 @@ async function updateTeamData() {
         </div>
       </UCard>
       <UCard class="mb-8">
-        <UTabs :items="items" class="w-full max-h-52 overflow-hidden">
+        <UTabs
+          :items="items"
+          class="w-full max-h-52 overflow-hidden"
+        >
           <template #past="{ item }">
             <div class="h-40 overflow-y-auto px-4 rounded-md">
               <div
