@@ -3,64 +3,31 @@ import databases, {
   type DataArrayOrSum,
   type ScoutingData,
   type TeamTableData,
-} from "~/utils/databases";
+} from '~/utils/databases';
 import IdMeta = PouchDB.Core.IdMeta;
-import Sentiment from "sentiment";
-import { eventOptions } from "~/utils/eventOptions";
-import { useWindowSize } from "@vueuse/core";
+import { useWindowSize } from '@vueuse/core';
+import PieChart from '~/components/charts/PieChart.vue';
+import OuterComponents from '~/components/website-utils/OuterComponents.vue';
 
+//TYLER IS THIS NEEDED IDK
 let { width, height } = useWindowSize();
 
-let sentiment = new Sentiment();
-let options = {
-  extras: {
-    mid: -2,
-    pretty: 0,
-    broke: -3.5,
-    disabled: -3.5,
-    quickly: 2,
-    easily: 2,
-    dog: -3,
-  },
-};
-
-const events = eventOptions;
-let currentEvent = ref(eventOptions[0]);
-if (typeof window !== "undefined")
-  currentEvent.value = localStorage.getItem("currentEvent") || eventOptions[0];
-const fetch = useFetch<Array<any>>("/api/eventMatches/" + currentEvent.value);
-
-let filters = ref({
-  teamNum: {
-    include: [],
-    exclude: [],
-  },
-  matchNum: {
-    include: [],
-  },
-  author: {
-    include: [],
-    exclude: [],
-  },
-  auto: {
-    selected: false,
-  },
-  endgame: {
-    selected: false,
-  },
+let currentEvent = useEventKey();
+watch(currentEvent, () => {
+  tableSetup();
 });
 
-let filterOptions = ["Team #", "Match #", "-Author"];
+let filterOptions = ['Team #', 'Match #', '-Author'];
 let activeFilterOption = ref(filterOptions[0]);
-let filterInput = ref("");
+let filterInput = ref('');
 let activeFilters = ref<Array<string>>([]);
 
 function addFilter() {
-  if (filterInput.value != "") {
+  if (filterInput.value != '') {
     activeFilters.value.push(
-      activeFilterOption.value + ": " + filterInput.value
+      activeFilterOption.value + ': ' + filterInput.value,
     );
-    filterInput.value = "";
+    filterInput.value = '';
   }
 }
 
@@ -71,11 +38,10 @@ watch(
   },
   {
     deep: true,
-  }
+  },
 );
 
-const { scoutingData } = databases.locals;
-let db = scoutingData;
+const { scoutingData: db } = databases.locals;
 
 const matches = (await db.allDocs()).rows;
 let match = matches.map(async (doc): Promise<ScoutingData & IdMeta> => {
@@ -89,7 +55,7 @@ for (let i = 0; i < match.length; i++) {
   let currentMatch = await match[i];
   if (currentMatch.matchNumber != -1) {
     let team =
-      typeof currentMatch.teamNumber == "string"
+      typeof currentMatch.teamNumber == 'string'
         ? parseInt(currentMatch.teamNumber)
         : currentMatch.teamNumber;
     if (!teamOrgMatches.has(team)) {
@@ -101,7 +67,7 @@ for (let i = 0; i < match.length; i++) {
     }
   } else if (currentMatch.notes.notes != undefined) {
     let team =
-      typeof currentMatch.teamNumber == "string"
+      typeof currentMatch.teamNumber == 'string'
         ? parseInt(currentMatch.teamNumber)
         : currentMatch.teamNumber;
     if (!extraNotes.has(team)) {
@@ -129,26 +95,26 @@ async function tableSetup() {
 
   for (let filter of activeFilters.value) {
     if (filter.startsWith(filterOptions[0])) {
-      allowedTeams.push(filter.split(":")[1].trim());
+      allowedTeams.push(filter.split(':')[1].trim());
     }
     if (filter.startsWith(filterOptions[2])) {
-      bannedAuthors.push(filter.split(":")[1].trim());
+      bannedAuthors.push(filter.split(':')[1].trim());
     }
     if (filter.startsWith(filterOptions[1])) {
       let tbaMatchData = fetch.data.value;
       if (tbaMatchData != null) {
-        let userInput = filter.split(":")[1].trim();
+        let userInput = filter.split(':')[1].trim();
         for (let match of tbaMatchData) {
-          if (match.comp_level == "qm" && match.match_number == userInput) {
+          if (match.comp_level == 'qm' && match.match_number == userInput) {
             for (let team of match.alliances.blue.team_keys) {
-              let cleanedTeam = team.replace("frc", "");
+              let cleanedTeam = team.replace('frc', '');
               if (!allowedTeams.includes(cleanedTeam)) {
                 allowedTeams.push(cleanedTeam);
                 blueAlliance.push(cleanedTeam);
               }
             }
             for (let team of match.alliances.red.team_keys) {
-              let cleanedTeam = team.replace("frc", "");
+              let cleanedTeam = team.replace('frc', '');
               if (!allowedTeams.includes(cleanedTeam)) {
                 allowedTeams.push(cleanedTeam);
                 redAlliance.push(cleanedTeam);
@@ -167,11 +133,10 @@ async function tableSetup() {
     let data: Array<ScoutingData & IdMeta> = [];
     //if sorted by match apply alliance colors
     let alliance = blueAlliance.includes(key.toString())
-      ? "bg-blue-100"
+      ? 'bg-blue-100'
       : redAlliance.includes(key.toString())
-      ? "bg-red-100"
-      : "";
-
+      ? 'bg-red-100'
+      : '';
     if (allowedTeams.length == 0 || allowedTeams.includes(key.toString())) {
       for (let match of value) {
         if (
@@ -208,54 +173,54 @@ async function tableSetup() {
 
     if (data.length > 0) {
       let arr = {
-        team: { data: String(key), color: "" },
+        team: { data: String(key), color: '' },
         driver: {
           data: Math.round(averageDriverScore(data) * 100) / 100,
-          color: "",
+          color: '',
         },
         defense: {
           data: Math.round(averageDefensiveScore(data) * 100) / 100,
-          color: "",
+          color: '',
         },
         ampAuto: {
           data: Math.round(averageAmpsAuto(data) * 100) / 100,
-          color: "",
+          color: '',
         },
         speakerAuto: {
           data: Math.round(averageSpeakersAuto(data) * 100) / 100,
-          color: "",
+          color: '',
         },
         autoAccData: autoAccuracy(data),
         autoAcc: {
           data: !isNaN(+autoAccuracy(data)[1])
-            ? Math.round(+autoAccuracy(data)[1] * 1000) / 10 + "%"
-            : "0%",
-          color: "",
+            ? Math.round(+autoAccuracy(data)[1] * 1000) / 10 + '%'
+            : '0%',
+          color: '',
         },
         teleAmp: {
           data: Math.round(getAverageAmpCycles(data) * 100) / 100,
-          color: "",
+          color: '',
         },
         teleSpeaker: {
           data: Math.round(getAverageSpeakerCycles(data) * 100) / 100,
-          color: "",
+          color: '',
         },
         teleAccData: teleAccuracy(data),
         teleAcc: {
           data: !isNaN(+teleAccuracy(data)[1])
-            ? Math.round(+teleAccuracy(data)[1] * 1000) / 10 + "%"
-            : "0%",
-          color: "",
+            ? Math.round(+teleAccuracy(data)[1] * 1000) / 10 + '%'
+            : '0%',
+          color: '',
         },
         traps: {
           data: Math.round(getAverageTraps(data) * 100) / 100,
-          color: "",
+          color: '',
         },
         endgamePoints: {
           data: Math.round(endgamePoints(data) * 100) / 100,
-          color: "",
+          color: '',
         },
-        endgameChart: { data: compileEndgames(data), color: "" },
+        endgameChart: { data: compileEndgames(data), color: '' },
         class: alliance,
         rawData: data,
         extraNotes: teamExtraNotes,
@@ -268,7 +233,7 @@ async function tableSetup() {
   if (redAlliance.length > 0 || blueAlliance.length > 0) {
     let sortedData = [];
     for (let team of teamsData.value) {
-      if (team.class == "bg-blue-100") sortedData.unshift(team);
+      if (team.class == 'bg-blue-100') sortedData.unshift(team);
       else sortedData.push(team);
     }
     teamsData.value = sortedData;
@@ -345,10 +310,10 @@ async function tableSetup() {
     else if (!data.defense.includes(0)) data.defense.push(0);
     data.ampAuto.push(Number(team.ampAuto.data));
     data.speakerAuto.push(Number(team.speakerAuto.data));
-    data.autoAcc.push(Number(team.autoAcc.data.replace("%", "")));
+    data.autoAcc.push(Number(team.autoAcc.data.replace('%', '')));
     data.teleAmp.push(Number(team.teleAmp.data));
     data.teleSpeaker.push(Number(team.teleSpeaker.data));
-    data.teleAcc.push(Number(team.teleAcc.data.replace("%", "")));
+    data.teleAcc.push(Number(team.teleAcc.data.replace('%', '')));
     data.traps.push(Number(team.traps.data));
     data.endgamePoints.push(Number(team.endgamePoints.data));
   }
@@ -362,100 +327,99 @@ async function tableSetup() {
     teamsData.value[i].team.color = colorify(
       ((sortedTeamPercents.indexOf(teamPercents[i]) + 1) /
         sortedTeamPercents.length) *
-        100
+        100,
     );
     teamsData.value[i].driver.color = colorify(
       calculatePercent(
         teamsData.value[i].driver.data,
         Math.min(...data.driver),
-        Math.max(...data.driver)
-      )
+        Math.max(...data.driver),
+      ),
     );
     teamsData.value[i].defense.color = colorify(
       calculatePercent(
         teamsData.value[i].defense.data,
         Math.min(...data.defense),
-        Math.max(...data.defense)
-      )
+        Math.max(...data.defense),
+      ),
     );
     teamsData.value[i].ampAuto.color = colorify(
       calculatePercent(
         teamsData.value[i].ampAuto.data,
         Math.min(...data.ampAuto),
-        Math.max(...data.ampAuto)
-      )
+        Math.max(...data.ampAuto),
+      ),
     );
     teamsData.value[i].speakerAuto.color = colorify(
       calculatePercent(
         teamsData.value[i].speakerAuto.data,
         Math.min(...data.speakerAuto),
-        Math.max(...data.speakerAuto)
-      )
+        Math.max(...data.speakerAuto),
+      ),
     );
     teamsData.value[i].autoAcc.color = colorify(
       calculatePercent(
-        teamsData.value[i].autoAcc.data.replace("%", ""),
+        teamsData.value[i].autoAcc.data.replace('%', ''),
         Math.min(...data.autoAcc),
-        Math.max(...data.autoAcc)
-      )
+        Math.max(...data.autoAcc),
+      ),
     );
     teamsData.value[i].teleAmp.color = colorify(
       calculatePercent(
         teamsData.value[i].teleAmp.data,
         Math.min(...data.teleAmp),
-        Math.max(...data.teleAmp)
-      )
+        Math.max(...data.teleAmp),
+      ),
     );
     teamsData.value[i].teleSpeaker.color = colorify(
       calculatePercent(
         teamsData.value[i].teleSpeaker.data,
         Math.min(...data.teleSpeaker),
-        Math.max(...data.teleSpeaker)
-      )
+        Math.max(...data.teleSpeaker),
+      ),
     );
     teamsData.value[i].teleAcc.color = colorify(
       calculatePercent(
-        teamsData.value[i].teleAcc.data.replace("%", ""),
+        teamsData.value[i].teleAcc.data.replace('%', ''),
         Math.min(...data.teleAcc),
-        Math.max(...data.teleAcc)
-      )
+        Math.max(...data.teleAcc),
+      ),
     );
     teamsData.value[i].traps.color = colorify(
       calculatePercent(
         teamsData.value[i].traps.data,
         Math.min(...data.traps),
-        Math.max(...data.traps)
-      )
+        Math.max(...data.traps),
+      ),
     );
     teamsData.value[i].endgamePoints.color = colorify(
       calculatePercent(
         teamsData.value[i].endgamePoints.data,
         Math.min(...data.endgamePoints),
-        Math.max(...data.endgamePoints)
-      )
+        Math.max(...data.endgamePoints),
+      ),
     );
   }
   teamsData.value.sort(
     (a: TeamTableData, b: TeamTableData) =>
-      Number(a.team.data) - Number(b.team.data)
+      Number(a.team.data) - Number(b.team.data),
   );
 }
 
 function colorifyTeam(teamData: TeamTableData, data: DataArrayOrSum) {
   let totalPercent = 0;
   if (teamData.driver.data != 0) {
-    totalPercent +=
-      calculatePercent(
-        teamData.driver.data,
-        Math.min(...data.driver),
-        Math.max(...data.driver)
-      ) * 0.66;
+    totalPercent += calculatePercent(
+      teamData.driver.data,
+      Math.min(...data.driver),
+      Math.max(...data.driver),
+    );
   } else {
     totalPercent +=
       calculatePercent(
         average(data.driver),
         Math.min(...data.driver),
-        Math.max(...data.driver)
+        Math.max(...data.driver),
       ) * 0.66;
   }
   if (teamData.defense.data != 0) {
@@ -463,54 +427,53 @@ function colorifyTeam(teamData: TeamTableData, data: DataArrayOrSum) {
       calculatePercent(
         teamData.defense.data,
         Math.min(...data.defense),
-        Math.max(...data.defense)
+        Math.max(...data.defense),
       ) * 0.33;
   } else {
     totalPercent +=
       calculatePercent(
         average(data.defense),
         Math.min(...data.defense),
-        Math.max(...data.defense)
+        Math.max(...data.defense),
       ) * 0.33;
   }
-  totalPercent +=
-    calculatePercent(
-      teamData.ampAuto.data,
-      Math.min(...data.ampAuto),
-      Math.max(...data.ampAuto)
-    ) * 0.8;
   totalPercent += calculatePercent(
-    teamData.speakerAuto.data,
-    Math.min(...data.speakerAuto),
-    Math.max(...data.speakerAuto)
+    teamData.ampAuto.data,
+    Math.min(...data.ampAuto),
+    Math.max(...data.ampAuto),
+    (totalPercent += calculatePercent(
+      teamData.speakerAuto.data,
+      Math.min(...data.speakerAuto),
+      Math.max(...data.speakerAuto),
+    )),
   );
   totalPercent +=
     calculatePercent(
-      Number(teamData.autoAcc.data.replace("%", "")),
+      Number(teamData.autoAcc.data.replace('%', '')),
       Math.min(...data.autoAcc),
-      Math.max(...data.autoAcc)
+      Math.max(...data.autoAcc),
     ) * 0.5;
   totalPercent +=
     calculatePercent(
       teamData.teleAmp.data,
       Math.min(...data.teleAmp),
-      Math.max(...data.teleAmp)
+      Math.max(...data.teleAmp),
     ) * 0.8;
   totalPercent += calculatePercent(
     teamData.teleSpeaker.data,
     Math.min(...data.teleSpeaker),
-    Math.max(...data.teleSpeaker)
+    Math.max(...data.teleSpeaker),
   );
   totalPercent +=
     calculatePercent(
-      Number(teamData.teleAcc.data.replace("%", "")),
+      Number(teamData.teleAcc.data.replace('%', '')),
       Math.min(...data.teleAcc),
-      Math.max(...data.teleAcc)
+      Math.max(...data.teleAcc),
     ) * 0.5;
   totalPercent += calculatePercent(
     teamData.endgamePoints.data,
     Math.min(...data.endgamePoints),
-    Math.max(...data.endgamePoints)
+    Math.max(...data.endgamePoints),
   );
   return totalPercent;
 }
@@ -523,10 +486,10 @@ function calculatePercent(score: number, min: number, max: number) {
 }
 
 function colorify(percentage: number) {
-  if (percentage >= 90) return "blue";
-  else if (percentage >= 66) return "green";
-  else if (percentage >= 33) return "gray";
-  else return "coral";
+  if (percentage >= 90) return 'blue';
+  else if (percentage >= 66) return 'green';
+  else if (percentage >= 33) return 'gray';
+  else return 'coral';
 }
 
 function averageDefensiveScore(teamArrays: Array<ScoutingData>) {
@@ -682,11 +645,11 @@ function getAverageTraps(teamArrays: Array<ScoutingData>): number {
 function endgamePoints(teamArrays: Array<ScoutingData>): number {
   let totalEndgamePoints = 0;
   for (let event of teamArrays) {
-    if (event.endgame.endgame.includes("Harmony")) totalEndgamePoints += 5;
-    else if (event.endgame.endgame.includes("Onstage")) totalEndgamePoints += 3;
+    if (event.endgame.endgame.includes('Harmony')) totalEndgamePoints += 5;
+    else if (event.endgame.endgame.includes('Onstage')) totalEndgamePoints += 3;
     else if (
-      event.endgame.endgame.includes("Attempted Onstage") ||
-      event.endgame.endgame.includes("Parked")
+      event.endgame.endgame.includes('Attempted Onstage') ||
+      event.endgame.endgame.includes('Parked')
     )
       totalEndgamePoints += 1;
     totalEndgamePoints += event.endgame.trap * 5;
@@ -695,7 +658,7 @@ function endgamePoints(teamArrays: Array<ScoutingData>): number {
 }
 
 function compileEndgames(
-  teamArrays: Array<ScoutingData>
+  teamArrays: Array<ScoutingData>,
 ): [Array<string>, Array<number>] {
   let endgameMap = new Map<string, number>();
   for (let i = 0; i < teamArrays.length; i++) {
@@ -716,95 +679,95 @@ function compileEndgames(
 
 let columns = ref([
   {
-    label: "Team",
-    sort: "none",
+    label: 'Team',
+    sort: 'none',
     sortable: true,
-    icon: "i-heroicons-arrows-up-down",
+    icon: 'i-heroicons-arrows-up-down',
   },
   {
-    label: "Photos",
-    sort: "none",
+    label: 'Photos',
+    sort: 'none',
     sortable: false,
-    icon: "i-heroicons-arrows-up-down",
+    icon: 'i-heroicons-arrows-up-down',
   },
   {
-    label: "Driver",
-    sort: "none",
+    label: 'Driver',
+    sort: 'none',
     sortable: true,
-    icon: "i-heroicons-arrows-up-down",
+    icon: 'i-heroicons-arrows-up-down',
   },
   {
-    label: "Defense",
-    sort: "none",
+    label: 'Defense',
+    sort: 'none',
     sortable: true,
-    icon: "i-heroicons-arrows-up-down",
+    icon: 'i-heroicons-arrows-up-down',
   },
   {
-    label: "Amps",
-    sort: "none",
+    label: 'Amps',
+    sort: 'none',
     sortable: true,
-    icon: "i-heroicons-arrows-up-down",
+    icon: 'i-heroicons-arrows-up-down',
   },
   {
-    label: "Speakers",
-    sort: "none",
+    label: 'Speakers',
+    sort: 'none',
     sortable: true,
-    icon: "i-heroicons-arrows-up-down",
+    icon: 'i-heroicons-arrows-up-down',
   },
   {
-    label: "Accuracy",
-    sort: "none",
+    label: 'Accuracy',
+    sort: 'none',
     sortable: true,
-    icon: "i-heroicons-arrows-up-down",
+    icon: 'i-heroicons-arrows-up-down',
   },
   {
-    label: "Amps",
-    sort: "none",
+    label: 'Amps',
+    sort: 'none',
     sortable: true,
-    icon: "i-heroicons-arrows-up-down",
+    icon: 'i-heroicons-arrows-up-down',
   },
   {
-    label: "Speakers",
-    sort: "none",
+    label: 'Speakers',
+    sort: 'none',
     sortable: true,
-    icon: "i-heroicons-arrows-up-down",
+    icon: 'i-heroicons-arrows-up-down',
   },
   {
-    label: "Accuracy",
-    sort: "none",
+    label: 'Accuracy',
+    sort: 'none',
     sortable: true,
-    icon: "i-heroicons-arrows-up-down",
+    icon: 'i-heroicons-arrows-up-down',
   },
   {
-    label: "Points",
-    sort: "none",
+    label: 'Points',
+    sort: 'none',
     sortable: true,
-    icon: "i-heroicons-arrows-up-down",
+    icon: 'i-heroicons-arrows-up-down',
   },
   {
-    label: "Traps",
-    sort: "none",
+    label: 'Traps',
+    sort: 'none',
     sortable: true,
-    icon: "i-heroicons-arrows-up-down",
+    icon: 'i-heroicons-arrows-up-down',
   },
   {
-    label: "Chart",
-    sort: "none",
+    label: 'Chart',
+    sort: 'none',
     sortable: false,
-    icon: "i-heroicons-arrows-up-down",
+    icon: 'i-heroicons-arrows-up-down',
   },
 ]);
 
 function sortTable(n: number, sort: string, col: string) {
   let table, rows, switching, i, x, y, shouldSwitch;
-  table = document.getElementById("teamTable") as HTMLTableElement | null;
+  table = document.getElementById('teamTable') as HTMLTableElement | null;
   // returning if nothing in the table
   if (!table) return;
   switching = true;
   // Set the sorting direction to ascending:
-  if (sort == "none") sort = "desc";
-  else if (sort == "desc") sort = "asc";
-  else if (sort == "asc") sort = "none";
+  if (sort == 'none') sort = 'desc';
+  else if (sort == 'desc') sort = 'asc';
+  else if (sort == 'asc') sort = 'none';
   /* Make a loop that will continue until
   no switching has been done: */
   while (switching) {
@@ -819,43 +782,43 @@ function sortTable(n: number, sort: string, col: string) {
       shouldSwitch = false;
       /* Get the two elements you want to compare,
       one from current row and one from the next: */
-      if (sort == "none" || col == "Team") {
-        x = rows[i].getElementsByTagName("TD")[0];
-        y = rows[i + 1].getElementsByTagName("TD")[0];
-      } else if (sort == "desc" || sort == "asc") {
-        x = rows[i].getElementsByTagName("TD")[n];
-        y = rows[i + 1].getElementsByTagName("TD")[n];
+      if (sort == 'none' || col == 'Team') {
+        x = rows[i].getElementsByTagName('TD')[0];
+        y = rows[i + 1].getElementsByTagName('TD')[0];
+      } else if (sort == 'desc' || sort == 'asc') {
+        x = rows[i].getElementsByTagName('TD')[n];
+        y = rows[i + 1].getElementsByTagName('TD')[n];
       }
       if (x && y) {
-        if (sort == "none") {
+        if (sort == 'none') {
           let xInnerHTML = x.innerHTML;
           let yInnerHTML = y.innerHTML;
           const regex = /<span[^>]*>(.*?)<\/span>/;
           const xMatch = xInnerHTML.match(regex);
           const yMatch = yInnerHTML.match(regex);
-          const xInnerText = xMatch ? xMatch[1] : "";
-          const yInnerText = yMatch ? yMatch[1] : "";
+          const xInnerText = xMatch ? xMatch[1] : '';
+          const yInnerText = yMatch ? yMatch[1] : '';
           if (makeSortable(xInnerText) > makeSortable(yInnerText)) {
             shouldSwitch = true;
             break;
           }
         }
-        if (col == "Team") {
+        if (col == 'Team') {
           let colorX = x.innerHTML
-            .substring(x.innerHTML.search("bg-"))
-            .split("-")[1];
+            .substring(x.innerHTML.search('bg-'))
+            .split('-')[1];
           let colorY = y.innerHTML
-            .substring(y.innerHTML.search("bg-"))
-            .split("-")[1];
-          let possibleColors = ["coral", "gray", "green", "blue"];
-          if (sort == "desc") {
+            .substring(y.innerHTML.search('bg-'))
+            .split('-')[1];
+          let possibleColors = ['coral', 'gray', 'green', 'blue'];
+          if (sort == 'desc') {
             if (
               possibleColors.indexOf(colorX) < possibleColors.indexOf(colorY)
             ) {
               shouldSwitch = true;
               break;
             }
-          } else if (sort == "asc") {
+          } else if (sort == 'asc') {
             if (
               possibleColors.indexOf(colorX) > possibleColors.indexOf(colorY)
             ) {
@@ -863,54 +826,54 @@ function sortTable(n: number, sort: string, col: string) {
               break;
             }
           }
-        } else if (sort == "desc") {
+        } else if (sort == 'desc') {
           let xInnerHTML = x.innerHTML;
           let yInnerHTML = y.innerHTML;
           let xInnerText, yInnerText;
-          if (col != "Accuracy") {
+          if (col != 'Accuracy') {
             xInnerText = xInnerHTML.substring(
-              xInnerHTML.indexOf(">") + 1,
-              xInnerHTML.lastIndexOf("<")
+              xInnerHTML.indexOf('>') + 1,
+              xInnerHTML.lastIndexOf('<'),
             );
             yInnerText = yInnerHTML.substring(
-              yInnerHTML.indexOf(">") + 1,
-              yInnerHTML.lastIndexOf("<")
+              yInnerHTML.indexOf('>') + 1,
+              yInnerHTML.lastIndexOf('<'),
             );
-            if (xInnerText == "N/A") xInnerText = "0";
-            if (yInnerText == "N/A") yInnerText = "0";
+            if (xInnerText == 'N/A') xInnerText = '0';
+            if (yInnerText == 'N/A') yInnerText = '0';
           } else {
             const regex = /<span[^>]*>(.*?)<\/span>/;
             const xMatch = xInnerHTML.match(regex);
             const yMatch = yInnerHTML.match(regex);
-            xInnerText = xMatch ? xMatch[1] : "";
-            yInnerText = yMatch ? yMatch[1] : "";
+            xInnerText = xMatch ? xMatch[1] : '';
+            yInnerText = yMatch ? yMatch[1] : '';
           }
           if (makeSortable(xInnerText) < makeSortable(yInnerText)) {
             // If so, mark as a switch and break the loop:
             shouldSwitch = true;
             break;
           }
-        } else if (sort == "asc") {
+        } else if (sort == 'asc') {
           let xInnerHTML = x.innerHTML;
           let yInnerHTML = y.innerHTML;
           let xInnerText, yInnerText;
-          if (col != "Accuracy") {
+          if (col != 'Accuracy') {
             xInnerText = xInnerHTML.substring(
-              xInnerHTML.indexOf(">") + 1,
-              xInnerHTML.lastIndexOf("<")
+              xInnerHTML.indexOf('>') + 1,
+              xInnerHTML.lastIndexOf('<'),
             );
             yInnerText = yInnerHTML.substring(
-              yInnerHTML.indexOf(">") + 1,
-              yInnerHTML.lastIndexOf("<")
+              yInnerHTML.indexOf('>') + 1,
+              yInnerHTML.lastIndexOf('<'),
             );
-            if (xInnerText == "N/A") xInnerText = "0";
-            if (yInnerText == "N/A") yInnerText = "0";
+            if (xInnerText == 'N/A') xInnerText = '0';
+            if (yInnerText == 'N/A') yInnerText = '0';
           } else {
             const regex = /<span[^>]*>(.*?)<\/span>/;
             const xMatch = xInnerHTML.match(regex);
             const yMatch = yInnerHTML.match(regex);
-            xInnerText = xMatch ? xMatch[1] : "";
-            yInnerText = yMatch ? yMatch[1] : "";
+            xInnerText = xMatch ? xMatch[1] : '';
+            yInnerText = yMatch ? yMatch[1] : '';
           }
           if (makeSortable(xInnerText) > makeSortable(yInnerText)) {
             // If so, mark as a switch and break the loop:
@@ -927,29 +890,29 @@ function sortTable(n: number, sort: string, col: string) {
       switching = true;
     }
   }
-  if (sort == "desc") {
+  if (sort == 'desc') {
     for (let i = 0; i < columns.value.length; i++) {
-      columns.value[i].sort = "none";
-      columns.value[i].icon = "i-heroicons-arrows-up-down";
+      columns.value[i].sort = 'none';
+      columns.value[i].icon = 'i-heroicons-arrows-up-down';
     }
-    columns.value[n].sort = "desc";
-    columns.value[n].icon = "i-heroicons-bars-arrow-down";
-  } else if (sort == "asc") {
+    columns.value[n].sort = 'desc';
+    columns.value[n].icon = 'i-heroicons-bars-arrow-down';
+  } else if (sort == 'asc') {
     for (let i = 0; i < columns.value.length; i++) {
-      columns.value[i].sort = "none";
-      columns.value[i].icon = "i-heroicons-arrows-up-down";
+      columns.value[i].sort = 'none';
+      columns.value[i].icon = 'i-heroicons-arrows-up-down';
     }
-    columns.value[n].sort = "asc";
-    columns.value[n].icon = "i-heroicons-bars-arrow-up";
-  } else if (sort == "none") {
-    columns.value[n].sort = "none";
-    columns.value[n].icon = "i-heroicons-arrows-up-down";
+    columns.value[n].sort = 'asc';
+    columns.value[n].icon = 'i-heroicons-bars-arrow-up';
+  } else if (sort == 'none') {
+    columns.value[n].sort = 'none';
+    columns.value[n].icon = 'i-heroicons-arrows-up-down';
   }
 }
 
 function makeSortable(thing: string) {
-  if (thing.endsWith("%")) {
-    thing = thing.replace("%", "");
+  if (thing.endsWith('%')) {
+    thing = thing.replace('%', '');
     return Number(thing);
   }
   if (!isNaN(+thing)) return Number(thing);
@@ -974,7 +937,10 @@ await tableSetup();
       <template #header>
         <div class="flex">
           <UForm>
-            <UFormGroup class="inline-block mr-2" label="Filters">
+            <UFormGroup
+              class="inline-block mr-2"
+              label="Filters"
+            >
               <UButtonGroup>
                 <USelectMenu
                   class="inline-block min-w-28 w-28 max-w-28"
@@ -1022,7 +988,11 @@ await tableSetup();
           />
         </UFormGroup>
         <div class="inline-block m-2">
-          <UBadge label="Bad: 0%-33%" class="rounded-2xl" variant="soft" />
+          <UBadge
+            label="Bad: 0%-33%"
+            class="rounded-2xl"
+            variant="soft"
+          />
           <UBadge
             label="Ok: 33%-66%"
             class="rounded-2xl"
@@ -1045,12 +1015,30 @@ await tableSetup();
       </template>
       <template #default>
         <div>
-          <table id="teamTable" class="table-auto border-4 border-gray-50">
-            <colgroup span="2" class="odd:bg-gray-50" />
-            <colgroup span="2" class="odd:bg-gray-50" />
-            <colgroup span="3" class="odd:bg-gray-50" />
-            <colgroup span="3" class="odd:bg-gray-50" />
-            <colgroup span="3" class="odd:bg-gray-50" />
+          <table
+            id="teamTable"
+            class="table-auto border-4 border-gray-50"
+          >
+            <colgroup
+              span="2"
+              class="odd:bg-gray-50"
+            />
+            <colgroup
+              span="2"
+              class="odd:bg-gray-50"
+            />
+            <colgroup
+              span="3"
+              class="odd:bg-gray-50"
+            />
+            <colgroup
+              span="3"
+              class="odd:bg-gray-50"
+            />
+            <colgroup
+              span="3"
+              class="odd:bg-gray-50"
+            />
             <thead class="top-0 sticky bg-gray-50 z-10">
               <tr>
                 <th colspan="2" />
@@ -1059,15 +1047,24 @@ await tableSetup();
                   Ratings
                   <p class="text-xs font-light">/5.00</p>
                 </th>
-                <th colspan="3" scope="colgroup">
+                <th
+                  colspan="3"
+                  scope="colgroup"
+                >
                   <p class="text-xs font-light">Average</p>
                   Auto Cycles
                 </th>
-                <th colspan="3" scope="colgroup">
+                <th
+                  colspan="3"
+                  scope="colgroup"
+                >
                   <p class="text-xs font-light">Average</p>
                   Teleop Cycles
                 </th>
-                <th colspan="3" scope="colgroup">
+                <th
+                  colspan="3"
+                  scope="colgroup"
+                >
                   <p class="text-xs font-light">Average</p>
                   Endgame
                 </th>
@@ -1153,7 +1150,10 @@ await tableSetup();
                   />
                 </td>
                 <td class="text-center">
-                  <UPopover v-if="team.autoAccData[0]" mode="hover">
+                  <UPopover
+                    v-if="team.autoAccData[0]"
+                    mode="hover"
+                  >
                     <UButton
                       :label="team.autoAcc.data"
                       variant="soft"
@@ -1164,7 +1164,11 @@ await tableSetup();
                     <template #panel>
                       <div class="flex">
                         <div>
-                          <UBadge label="Amp" variant="soft" color="gray" />
+                          <UBadge
+                            label="Amp"
+                            variant="soft"
+                            color="gray"
+                          />
                           <UBadge
                             :label="
                               !isNaN(team.autoAccData[2])
@@ -1177,7 +1181,11 @@ await tableSetup();
                           />
                         </div>
                         <div>
-                          <UBadge label="Speaker" variant="soft" color="gray" />
+                          <UBadge
+                            label="Speaker"
+                            variant="soft"
+                            color="gray"
+                          />
                           <UBadge
                             :label="
                               !isNaN(team.autoAccData[3])
@@ -1214,7 +1222,10 @@ await tableSetup();
                   />
                 </td>
                 <td class="text-center">
-                  <UPopover v-if="team.teleAccData[0]" mode="hover">
+                  <UPopover
+                    v-if="team.teleAccData[0]"
+                    mode="hover"
+                  >
                     <UButton
                       :label="team.teleAcc.data"
                       variant="soft"
@@ -1225,7 +1236,11 @@ await tableSetup();
                     <template #panel>
                       <div class="flex">
                         <div>
-                          <UBadge label="Amp" variant="soft" color="gray" />
+                          <UBadge
+                            label="Amp"
+                            variant="soft"
+                            color="gray"
+                          />
                           <UBadge
                             :label="
                               !isNaN(team.teleAccData[2])
@@ -1238,7 +1253,11 @@ await tableSetup();
                           />
                         </div>
                         <div>
-                          <UBadge label="Speaker" variant="soft" color="gray" />
+                          <UBadge
+                            label="Speaker"
+                            variant="soft"
+                            color="gray"
+                          />
                           <UBadge
                             :label="
                               !isNaN(team.teleAccData[3])

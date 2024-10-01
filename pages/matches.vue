@@ -1,36 +1,35 @@
 <script setup lang="ts">
-import databases, {type ScoutingData} from "~/utils/databases"
-import {eventOptions} from "~/utils/eventOptions";
+import databases, { type ScoutingData } from '~/utils/databases';
 import IdMeta = PouchDB.Core.IdMeta;
-import {useLazyAsyncData} from "#app";
-const { scoutingData } = databases.locals
+import OuterComponents from '~/components/website-utils/OuterComponents.vue';
+import { useLazyAsyncData } from '#app';
+import { useEventKey } from '~/composables/useEventKey';
 
-const sortBy = ref([{ key: 'teamNumber', order: 'asc' }, { key: 'matchNumber', order: 'asc' }])
+//gets scouting data
+const { scoutingData: db } = databases.locals;
 
-let currentEvent = eventOptions[0]
-if (typeof window !== 'undefined') currentEvent = localStorage.getItem('currentEvent') || eventOptions[0]
+//fetches the current event from useEventKey compostable
+const currentEvent = useEventKey();
 
-let db = scoutingData
+//asynchronously runs setup function
+const { pending, data: res } = await useLazyAsyncData('res', () => setup());
 
-async function setup(){
-  const allDocs = (await db.allDocs()).rows
-  let promiseMatches = allDocs.map(async (doc): Promise<ScoutingData & IdMeta> => {
-    return await db.get(doc.id)
-  })
-  let matches = await Promise.all(promiseMatches)
-  for (let i=matches.length-1; i>=0; i--) {
-    if(matches[i].matchNumber === -1 || matches[i].matchNumber === null || (matches[i].event != currentEvent)){
-      matches.splice(i, 1)
-    }
-  }
+watch(currentEvent, () => {
+  useLazyAsyncData('res', () => setup());
+});
 
+//sets how the table sorts match values
+const sortBy = ref([
+  { key: 'teamNumber', order: 'asc' },
+  { key: 'matchNumber', order: 'asc' },
+]);
 
-
-
-  items = matches
-}
-let items
-
+/*
+  TODO update seasonally
+  Sets the fields to be displayed
+  documentation on how to use vuetify tables => https://vuetifyjs.com/en/components/data-tables/basics/
+  likely keep info tab the same and work from there
+ */
 const headers = [
   {
     title: 'Info',
@@ -40,8 +39,9 @@ const headers = [
       { title: 'Match', align: 'start', value: 'matchNumber' },
       { title: 'Notes', value: 'notes' },
       { title: 'Author', value: 'author' },
-    ]
-  }, {
+    ],
+  },
+  {
     title: 'Auto',
     align: 'center',
     children: [
@@ -50,9 +50,10 @@ const headers = [
       { title: 'Speaker', align: 'end', value: 'auto.speakerNA' },
       { title: 'Missed Speaker', align: 'end', value: 'auto.missedSpeaker' },
       { title: 'Position', align: 'start', value: 'auto.position' },
-      { title: 'Mobility', align: 'end', value: 'auto.mobility' }
-    ]
-  }, {
+      { title: 'Mobility', align: 'end', value: 'auto.mobility' },
+    ],
+  },
+  {
     title: 'Tele-op',
     align: 'center',
     children: [
@@ -60,46 +61,82 @@ const headers = [
       { title: 'Missed Amp', align: 'end', value: 'teleop.missedAmp' },
       { title: 'Speaker', align: 'end', value: 'teleop.speakerNA' },
       { title: 'Missed Speaker', align: 'end', value: 'teleop.missedSpeaker' },
-    ]
-  }, {
+    ],
+  },
+  {
     title: 'Endgame',
     align: 'center',
     children: [
-      {title: 'Onstage', align: 'end', value: 'endgame.endgame'},
-      {title: 'Trap', align: 'end', value: 'endgame.trap'}
-    ]
-  }
-]
+      { title: 'Onstage', align: 'end', value: 'endgame.endgame' },
+      { title: 'Trap', align: 'end', value: 'endgame.trap' },
+    ],
+  },
+];
 
-const { pending, data: res } = await useLazyAsyncData('res', () => setup())
+//sets up the data for the table
+let items;
+
+async function setup() {
+  //gets all documents from the database asynchronously
+  const allDocs = (await db.allDocs()).rows;
+  let promiseMatches = allDocs.map(
+    async (doc): Promise<ScoutingData & IdMeta> => {
+      return await db.get(doc.id);
+    },
+  );
+  let matches = await Promise.all(promiseMatches);
+  console.log(matches);
+  //filters data to ensure all data is usable and of the current event
+  matches = matches.filter(function (match) {
+    return !(
+      match.matchNumber === -1 ||
+      match.matchNumber === null ||
+      match.event != currentEvent.value
+    );
+  });
+  console.log(matches);
+  items = matches;
+}
 </script>
 <template>
   <OuterComponents>
     <VDataTable
-        :loading="pending"
-        class="max-h-dvh overflow-auto"
-        :headers="headers"
-        :items="items"
-        item-key="name"
-        density="compact"
-        :items-per-page="-1"
-        v-model:sort-by="sortBy"
+      :loading="pending"
+      class="max-h-dvh overflow-auto"
+      :headers="headers"
+      :items="items"
+      item-key="name"
+      density="compact"
+      :items-per-page="-1"
+      v-model:sort-by="sortBy"
     >
       <template v-slot:item.notes="row">
         <UPopover :popper="{ offsetDistance: 15 }">
-          <UButton class="mt-2 mb-2" color="yellow" label="Notes" variant="soft"/>
+          <UButton
+            class="mt-2 mb-2"
+            color="yellow"
+            label="Notes"
+            variant="soft"
+          />
           <template #panel>
-              <UContainer class="m-auto max-w-lg min-w-[15rem] overflow-y-auto" style="max-height: 20rem; min-height: 10rem">
-                <br>
-                <div class="whitespace-normal break-all"> Notes: {{row.value.notes}}</div>
-                <br>
-                <p v-if="row.value.playedDefense"> Defense: {{ row.value.defense }}</p>
-              </UContainer>
+            <UContainer
+              class="m-auto max-w-lg min-w-[15rem] overflow-y-auto"
+              style="max-height: 20rem; min-height: 10rem"
+            >
+              <br />
+              <div class="whitespace-normal break-all">
+                Notes: {{ row.value.notes }}
+              </div>
+            </UContainer>
           </template>
         </UPopover>
       </template>
       <template v-slot:item.author="row">
-        <UBadge :label="row.value.replace(/[0-9]/g, '') || '-'" color="gray" variant="soft"/>
+        <UBadge
+          :label="row.value.replace(/[0-9]/g, '') || '-'"
+          color="gray"
+          variant="soft"
+        />
       </template>
 
       <template v-slot:loading>
