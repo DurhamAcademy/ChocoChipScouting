@@ -6,4 +6,4 @@ In order to run a database, which is necessary to run the website, you must firs
 2. Find the "compose.yaml" file in your code editor
 3. Run line 91, `couch-db-setup:`
 
-Great! Now you are ready to start running.
+Great! Now you are ready to start coding.

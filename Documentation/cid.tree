@@ -12,5 +12,6 @@
         <toc-element topic="Running-the-Website.md"/>
     </toc-element>
     <toc-element topic="Seasonal-Updates.md">
+        <toc-element topic="Components.md"/>
     </toc-element>
 </instance-profile>
