@@ -48,7 +48,6 @@ let match = matches.map(async (doc): Promise<ScoutingData & IdMeta> => {
   return await db.get(doc.id);
 });
 
-
 let teamOrgMatches = new Map<number, Array<ScoutingData & IdMeta>>();
 let extraNotes = new Map<number, Array<string>>();
 
@@ -205,7 +204,6 @@ async function tableSetup() {
         teleSpeaker: {
           data: Math.round(getAverageSpeakerCycles(data) * 100) / 100,
           color: '',
-
         },
         teleAccData: teleAccuracy(data),
         teleAcc: {
@@ -411,11 +409,11 @@ async function tableSetup() {
 function colorifyTeam(teamData: TeamTableData, data: DataArrayOrSum) {
   let totalPercent = 0;
   if (teamData.driver.data != 0) {
-    totalPercent +=
-      calculatePercent(
-        teamData.driver.data,
-        Math.min(...data.driver),
-        Math.max(...data.driver),
+    totalPercent += calculatePercent(
+      teamData.driver.data,
+      Math.min(...data.driver),
+      Math.max(...data.driver),
+    );
   } else {
     totalPercent +=
       calculatePercent(
@@ -439,15 +437,15 @@ function colorifyTeam(teamData: TeamTableData, data: DataArrayOrSum) {
         Math.max(...data.defense),
       ) * 0.33;
   }
-  totalPercent +=
-    calculatePercent(
-      teamData.ampAuto.data,
-      Math.min(...data.ampAuto),
-      Math.max(...data.ampAuto),
   totalPercent += calculatePercent(
-    teamData.speakerAuto.data,
-    Math.min(...data.speakerAuto),
-    Math.max(...data.speakerAuto),
+    teamData.ampAuto.data,
+    Math.min(...data.ampAuto),
+    Math.max(...data.ampAuto),
+    (totalPercent += calculatePercent(
+      teamData.speakerAuto.data,
+      Math.min(...data.speakerAuto),
+      Math.max(...data.speakerAuto),
+    )),
   );
   totalPercent +=
     calculatePercent(
@@ -476,7 +474,6 @@ function colorifyTeam(teamData: TeamTableData, data: DataArrayOrSum) {
     teamData.endgamePoints.data,
     Math.min(...data.endgamePoints),
     Math.max(...data.endgamePoints),
-
   );
   return totalPercent;
 }
@@ -844,7 +841,6 @@ function sortTable(n: number, sort: string, col: string) {
             );
             if (xInnerText == 'N/A') xInnerText = '0';
             if (yInnerText == 'N/A') yInnerText = '0';
-
           } else {
             const regex = /<span[^>]*>(.*?)<\/span>/;
             const xMatch = xInnerHTML.match(regex);
@@ -1257,7 +1253,7 @@ await tableSetup();
                           />
                         </div>
                         <div>
-                        <UBadge
+                          <UBadge
                             label="Speaker"
                             variant="soft"
                             color="gray"
