@@ -5,11 +5,11 @@ import databases from '~/utils/databases'
 const { attachments } = databases.locals
 const db = attachments
 
-const showModal = ref<boolean>(false)
-const modalName = ref<string>('name')
-const modalAuthor = ref<string>('author')
-const modalTeam = ref<number>()
-const modalAttachments = ref<string[]>([])
+const showModal = ref<boolean>(false);
+const modalName = ref<string>("name");
+const modalAuthor = ref<string>("author");
+const modalTeam = ref<number>();
+const modalAttachments = ref<string[]>([]);
 
 async function view(id: string) {
     console.trace('view called', id)
