@@ -45,6 +45,7 @@ let links: VerticalNavigationLink[] = [
   { label: 'Matches', to: '/matches' },
   { label: 'Teams', to: '/teams' },
   { label: 'Predict', to: '/predict' },
+  { label: 'Pit', to: '/pit' },
 ];
 if (
   sessionState.value.userCtx.roles?.indexOf('admin') != -1 ||
