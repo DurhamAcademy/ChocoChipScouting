@@ -196,6 +196,7 @@ async function submit() {
                   "
                   >not found</span
                 >
+                <span v-else></span>
               </template>
             </UInput>
           </div>
@@ -216,6 +217,7 @@ async function submit() {
                   "
                   >error</span
                 >
+                <span v-else></span>
               </template>
             </UInput>
           </div>

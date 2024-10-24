@@ -313,6 +313,7 @@ watch(pending, () => {
                 class="text-red-400 dark:text-red-600 text-xs"
                 >not found</span
               >
+              <span v-else></span>
             </template>
           </UInput>
           <UInput
@@ -326,6 +327,7 @@ watch(pending, () => {
                 class="text-red-400 dark:text-red-600 text-xs"
                 >not found</span
               >
+              <span v-else></span>
             </template>
           </UInput>
           <UInput
@@ -339,6 +341,7 @@ watch(pending, () => {
                 class="text-red-400 dark:text-red-600 text-xs"
                 >not found</span
               >
+              <span v-else></span>
             </template>
           </UInput>
         </UContainer>
@@ -375,6 +378,7 @@ watch(pending, () => {
                 class="text-red-400 dark:text-red-600 text-xs"
                 >not found</span
               >
+              <span v-else></span>
             </template>
           </UInput>
           <UInput
@@ -388,6 +392,7 @@ watch(pending, () => {
                 class="text-red-400 dark:text-red-600 text-xs"
                 >not found</span
               >
+              <span v-else></span>
             </template>
           </UInput>
           <UInput
@@ -401,6 +406,7 @@ watch(pending, () => {
                 class="text-red-400 dark:text-red-600 text-xs"
                 >not found</span
               >
+              <span v-else></span>
             </template>
           </UInput>
         </UContainer>

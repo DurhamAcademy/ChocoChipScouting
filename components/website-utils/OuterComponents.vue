@@ -56,13 +56,22 @@ if (
 
 <template>
   <div class="flex min-h-screen w-screen flex-col">
-    <Navbar class="flex-grow basis-auto" :disable-sidebar="width > 800" />
+    <Navbar
+      class="flex-grow basis-auto"
+      :disable-sidebar="width > 800"
+    />
     <div
       class="flex flex-grow flex-shrink basis-auto flex-row w-screen overflow-x-clip max-h-none place-content-around min-h-full"
     >
       <Transition name="width-fade">
-        <div v-show="width > 800" class="vis min-h-screen h-screen max-w-full">
-          <UCard class="h-full" :ui="{ rounded: 'rounded-none' }">
+        <div
+          v-show="width > 800"
+          class="vis min-h-screen h-screen max-w-full"
+        >
+          <UCard
+            class="h-full"
+            :ui="{ rounded: 'rounded-none' }"
+          >
             <UVerticalNavigation :links="links" />
             <div class="settingsPopupDiv">
               <div class="flex">
@@ -113,8 +122,15 @@ if (
                         </span>
                       </div>
                     </template>
-                    <UFormGroup class="inputDiv" label="Event" name="event">
-                      <USelectMenu v-model="currentEvent" :options="events" />
+                    <UFormGroup
+                      class="inputDiv"
+                      label="Event"
+                      name="event"
+                    >
+                      <USelectMenu
+                        v-model="currentEvent"
+                        :options="events"
+                      />
                     </UFormGroup>
                     <br />
                     <UButton
@@ -126,7 +142,12 @@ if (
                       @click="navigateTo('/settings')"
                     />
                     <template #footer>
-                      <UButton block label="Logout" square @click="logout" />
+                      <UButton
+                        block
+                        label="Logout"
+                        square
+                        @click="logout"
+                      />
                     </template>
                   </UCard>
                 </template>
