@@ -1,12 +1,15 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 import vuetify, { transformAssetUrls } from 'vite-plugin-vuetify'
-
 var sw = true;
+
 export default defineNuxtConfig({
   modules: [
     '@nuxt/image',
     '@vite-pwa/nuxt',
     '@nuxt/ui',
+    '@nuxtjs/color-mode',
+
+
     (_options, nuxt) => {
       nuxt.hooks.hook('vite:extendConfig', (config) => {
         // @ts-expect-error
@@ -188,7 +191,15 @@ export default defineNuxtConfig({
     client: true
   },
   colorMode: {
-    preference: 'light' //eventually we will add color mode preference
+    preference: 'dark', // default value of $colorMode.preference
+    fallback: 'dark', // fallback value if not system preference found
+    hid: 'nuxt-color-mode-script',
+    globalName: '__NUXT_COLOR_MODE__',
+    componentName: 'ColorScheme',
+    classPrefix: '',
+    classSuffix: '-mode',
+    storage: 'localStorage', // or 'sessionStorage' or 'cookie'
+    storageKey: 'nuxt-color-mode'
   },
   tailwindcss:{
     config:{
