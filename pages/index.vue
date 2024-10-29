@@ -29,7 +29,7 @@ console.log(colorMode.preference)
 <style scoped></style>
 
 <style>
-/*
+
 body {
   background-color: #fff;
   color: rgba(0,0,0,0.8);
@@ -54,6 +54,4 @@ body {
   background-color: #f1e7d0;
   color: #433422;
 }
-/*
- */
 </style>
