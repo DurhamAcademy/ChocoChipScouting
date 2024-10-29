@@ -191,8 +191,8 @@ export default defineNuxtConfig({
     client: true
   },
   colorMode: {
-    preference: 'dark', // default value of $colorMode.preference
-    fallback: 'dark', // fallback value if not system preference found
+    preference: 'Darc', // default value of $colorMode.preference
+    fallback: 'Darc', // fallback value if not system preference found
     hid: 'nuxt-color-mode-script',
     globalName: '__NUXT_COLOR_MODE__',
     componentName: 'ColorScheme',

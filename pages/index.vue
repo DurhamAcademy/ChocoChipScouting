@@ -20,7 +20,7 @@ console.log(colorMode.preference)
       <option value="light">Light</option>
       <option value="dark">Dark</option>qw
       <option value="sepia">Sepia</option>
-      <option value="Darc">Darc</option>
+      <option value="darc">Darc</option>
     </select>
   </div>
 </template>
@@ -42,7 +42,7 @@ body {
   background-color: #f1e7d0;
   color: #433422;
 }
-.Darc-mode body {
+.darc-mode body {
 
   --color: #ebf4f1;
   --color-primary: #41b38a;
