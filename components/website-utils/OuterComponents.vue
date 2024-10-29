@@ -55,6 +55,7 @@ if (
 </script>
 
 <template>
+  <UCard>
   <div class="flex min-h-screen w-screen flex-col">
     <Navbar
       class="flex-grow basis-auto"
@@ -164,6 +165,7 @@ if (
     </div>
   </div>
   <AddButton />
+  </UCard>
 </template>
 
 <style scoped>
