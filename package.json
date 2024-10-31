@@ -14,7 +14,7 @@
     "@babel/eslint-parser": "^7.15.0",
     "@nuxt/devtools": "latest",
     "@nuxtjs/eslint-config": "^6.0.1",
-    "@nuxtjs/eslint-module": "^3.0.2",
+    "@nuxtjs/eslint-module": "^4.1.0",
     "@types/pouchdb": "6.4.0",
     "@types/sentiment": "^5.0.4",
     "eslint": "^7.32.0",
