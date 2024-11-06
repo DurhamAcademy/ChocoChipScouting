@@ -12,10 +12,10 @@ const colorMode = useColorMode();
  */
 const isDark = computed({
   get() {
-    return colorMode.value === 'darc';
+    return colorMode.value === 'dark';
   },
   set() {
-     colorMode.preference = colorMode.value === 'darc' ? 'light' : 'darc';
+     colorMode.preference = colorMode.value === 'dark' ? 'light' : 'dark';
   },
 });
 </script>
@@ -59,4 +59,30 @@ const isDark = computed({
 <style scoped></style>
 
 <style>
+
+body {
+  background-color: #fff;
+  color: rgba(0,0,0,0.8);
+}
+.dark-mode body {
+  background-color: #091a28;
+  color: #000000;
+}
+.sepia-mode body {
+  background-color: #f1e7d0;
+  color: #433422;
+}
+.darc-mode body {
+
+  --color: #ebf4f1;
+  --color-primary: #41b38a;
+  --color-secondary: #fdf9f3;
+  --bg: #091a28;
+  --bg-secondary: #071521;
+  --border-color: #0d2538;
+
+  background-color: #f1e7d0;
+  color: #433422;
+
+}
 </style>
