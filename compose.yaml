@@ -106,3 +106,4 @@ volumes:
   couchDB:
     driver: local
     name: CouchDB-Volume
+    external: true
