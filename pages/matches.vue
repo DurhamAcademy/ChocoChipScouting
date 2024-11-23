@@ -146,10 +146,10 @@ async function setup() {
   </OuterComponents>
 </template>
 <style scoped>
-.v-data-table ::v-deep th {
+.v-data-table :deep(th) {
   font-weight: 600 !important;
 }
-.v-data-table ::v-deep td {
+.v-data-table :deep(td) {
   color: gray;
 }
 </style>
