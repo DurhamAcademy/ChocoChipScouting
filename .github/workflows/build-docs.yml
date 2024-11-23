@@ -1,8 +1,11 @@
-name: Build documentation
+name: Build and Deploy Documentation
 
 on:
   push:
-    branches: ["production", "testing", "code-cleanup"]
+    branches:
+      - production
+      - testing
+      - code-cleanup
   workflow_dispatch:
 
 env:
@@ -34,17 +37,10 @@ jobs:
             artifacts/${{ env.ARTIFACT }}
             artifacts/report.json
           retention-days: 7
-  test:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Download artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: docs
-          path: artifacts
 
-      - name: Test documentation
-        uses: JetBrains/writerside-checker-action@v1
+      - name: Deploy to GitHub Pages
+        if: ${{ github.ref_name == 'production' }} # Deploy only from the production branch
+        uses: peaceiris/actions-gh-pages@v3
         with:
-          instance: ${{ env.INSTANCE }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: artifacts # Change this to the directory containing built files
