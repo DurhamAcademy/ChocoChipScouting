@@ -553,7 +553,7 @@ async function updateTeamData() {
             <div v-else>
               <p class="font-medium text-xl text-center">No Events Scheduled</p>
               <div class="flex-auto">
-                <img src="/public/sadcookie.png"/>
+                <img src="/public/sadcookie.png" style="vertical-align:middle"/>
               </div>
             </div>
           </template>
