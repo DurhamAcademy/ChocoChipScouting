@@ -244,7 +244,7 @@ watch(width, () => {
             </div>
         </div>
         <div v-else class="opacity-50">
-            <NuxtImg class="mx-auto" src="/sadcookie.png" height="400" width="400" />
+            <img src="/public/sadcookie.png" height="400" width="400" class="mx-auto"/>
             <h1 class="font-sans text-xl font-bold text-center">
                 Looks like there is no data on team {{ teamData.teamNum }} at {{ currentEvent }} :(
             </h1>
