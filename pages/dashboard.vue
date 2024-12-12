@@ -554,7 +554,7 @@ async function updateTeamData() {
               <p class="font-medium text-xl text-center">No Events Scheduled</p>
               <div class="flex-auto">
                 <NuxtImg
-                  src="sadcookie.png"
+                  src="/public/sadcookie.png"
                   class="mx-auto"
                   width="145"
                   height="145"
