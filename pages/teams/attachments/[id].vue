@@ -223,7 +223,7 @@ async function goBack() {
         </UContainer>
       </UContainer>
       <div v-else class="opacity-50">
-        <img src="/public/sadcookie.png" height="140" width="140" class="mx-auto"/>
+        <img src="/public/sadcookie.png" height="400" width="400" class="mx-auto"/>
         <h1 class="font-sans text-xl font-bold text-center">No Images</h1>
       </div>
     </template>
