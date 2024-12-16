@@ -552,12 +552,9 @@ async function updateTeamData() {
             </div>
             <div v-else>
               <p class="font-medium text-xl text-center">No Events Scheduled</p>
-              <NuxtImg
-                src="/sadcookie.png"
-                class="mx-auto"
-                width="145"
-                height="145"
-              />
+              <div class="flex-auto">
+                <img src="/public/sadcookie.png" height="140" width="140" class="mx-auto"/>
+              </div>
             </div>
           </template>
         </UTabs>
