@@ -34,7 +34,8 @@ const endgameOptions = [
 /*
 Used to configure coral buttons
  */
-const coralLevel = ref(0);
+const autoCoralLevel = ref(0);
+const teleopCoralLevel = ref(0);
 
 /*
 Configuration variables done
@@ -263,27 +264,27 @@ async function submit() {
             </h1>
             <div class="flex flex-auto justify-center">
               <SingleSelect
-                v-model="coralLevel"
+                v-model="autoCoralLevel"
                 :options="['L1', 'L2', 'L3', 'L4']"
               />
               <IncrementalButton
                 class="mb-1 mr-3 mt-1 ml-2"
-                v-model="scoutData.teleop.coralL1"
-                v-if="coralLevel==0"
+                v-model="scoutData.auto.coralL1"
+                v-if="autoCoralLevel==0"
               ></IncrementalButton>
               <IncrementalButton
                 class="mb-1 mr-3 mt-1 ml-2"
-                v-model="scoutData.teleop.coralL2"
-                v-else-if="coralLevel==1"
+                v-model="scoutData.auto.coralL2"
+                v-else-if="autoCoralLevel==1"
               ></IncrementalButton>
               <IncrementalButton
                 class="mb-1 mr-3 mt-1 ml-2"
-                v-model="scoutData.teleop.coralL3"
-                v-else-if="coralLevel==2"
+                v-model="scoutData.auto.coralL3"
+                v-else-if="autoCoralLevel==2"
               ></IncrementalButton>
               <IncrementalButton
                 class="mb-1 mr-3 mt-1 ml-2"
-                v-model="scoutData.teleop.coralL4"
+                v-model="scoutData.auto.coralL4"
                 v-else
               ></IncrementalButton>
             </div>
@@ -360,23 +361,23 @@ async function submit() {
             </h1>
             <div class="flex flex-auto justify-center">
               <SingleSelect
-                v-model="coralLevel"
+                v-model="teleopCoralLevel"
                 :options="['L1', 'L2', 'L3', 'L4']"
               />
               <IncrementalButton
                 class="mb-1 mr-3 mt-1 ml-2"
                 v-model="scoutData.teleop.coralL1"
-                v-if="coralLevel==0"
+                v-if="teleopCoralLevel==0"
               ></IncrementalButton>
               <IncrementalButton
                 class="mb-1 mr-3 mt-1 ml-2"
                 v-model="scoutData.teleop.coralL2"
-                v-else-if="coralLevel==1"
+                v-else-if="teleopCoralLevel==1"
               ></IncrementalButton>
               <IncrementalButton
                 class="mb-1 mr-3 mt-1 ml-2"
                 v-model="scoutData.teleop.coralL3"
-                v-else-if="coralLevel==2"
+                v-else-if="teleopCoralLevel==2"
               ></IncrementalButton>
               <IncrementalButton
                 class="mb-1 mr-3 mt-1 ml-2"
