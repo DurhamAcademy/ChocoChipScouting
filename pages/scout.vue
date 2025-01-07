@@ -83,7 +83,6 @@ let scoutData = ref<ScoutingData>({
     net: 0,
   },
   endgame: {
-    trap: 0,
     endgame: [endgameOptions[0]],
   },
   notes: {
