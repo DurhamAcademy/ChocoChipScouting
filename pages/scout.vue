@@ -26,9 +26,10 @@ just make sure you understand how they are used in case you wish to use the same
 const endgameOptions = [
   'None',
   'Parked',
-  'Attempted Onstage',
-  'Onstage',
-  'Harmony',
+  'Shallow Attempted',
+  'Shallow Successful',
+  'Deep Attempted',
+  'Deep Successful',
 ];
 //Auto Modal Image
 const isOpen = ref(false);
@@ -393,33 +394,34 @@ async function submit() {
           </div>
         </div>
       </div>
-      <!-- In this section put all the elements you want for the teleop tab -->
+      <!-- In this section put all the elements you want for the endgame tab -->
       <div v-if="gameTime == GameTime.Endgame">
-        <div class="flex text-center flex-wrap mb-3">
-          <div class="max-w-24 w-24">
-            <h1 class="text-gray-700 dark:text-gray-200 font-sans font-medium">
-              Trap
-            </h1>
-            <!-- a new scoring method, but same idea as above incremental buttons -->
-            <IncrementalButton
-              class="mt-1"
-              v-model="scoutData.endgame.trap"
-              :max-value="3"
-            ></IncrementalButton>
-          </div>
-        </div>
+<!--        <div class="flex text-center flex-wrap mb-3">-->
+<!--          <div class="max-w-24 w-24">-->
+<!--            <h1 class="text-gray-700 dark:text-gray-200 font-sans font-medium">-->
+<!--              Trap-->
+<!--            </h1>-->
+<!--            &lt;!&ndash; a new scoring method, but same idea as above incremental buttons &ndash;&gt;-->
+<!--            <IncrementalButton-->
+<!--              class="mt-1"-->
+<!--              v-model="scoutData.endgame.trap"-->
+<!--              :max-value="3"-->
+<!--            ></IncrementalButton>-->
+<!--          </div>-->
+<!--        </div>-->
         <!-- a multi select custom component. this acts like the single select but allows you to select multiple buttons at a time.
         the connection options optional param allows you to configure which options are allowed to be selected with each other
         notice the @update: which runs the updateEndgameOptions() function upon each update of the custom component-->
         <MultiSelect
-          :model-value="[1, 0, 0, 0, 0]"
+          :model-value="[1, 0, 0, 0, 0, 0]"
           :options="endgameOptions"
           @update:model-value="
             value => {
               updateEndgameOptions(value);
             }
           "
-          :connected-options="[1, 2, 2, 3, 3]"
+          :connected-options="[1, 2, 3, 4, 5, 6]"
+
         />
       </div>
       <!-- In this section put all the elements you want in the notes tab -->
