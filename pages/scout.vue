@@ -4,7 +4,6 @@ import IncrementalButton from '~/components/scouting-components/IncrementalButto
 import BooleanButton from '~/components/scouting-components/BooleanButton.vue';
 import MultiSelect from '~/components/scouting-components/MultiSelect.vue';
 import PromptedNote from '~/components/scouting-components/PromptedNote.vue';
-import SingleSelect from '~/components/scouting-components/SingleSelect.vue';
 import Navbar from '~/components/website-utils/Navbar.vue';
 import { eventOptions } from '~/utils/eventOptions';
 import type { Ref } from '@vue/reactivity';
