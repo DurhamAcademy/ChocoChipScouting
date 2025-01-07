@@ -53,7 +53,6 @@ export type TeamTableData = {
   teleAmp: { data: number; color: string };
   teleSpeaker: { data: number; color: string };
   teleAcc: { data: string; color: string };
-  traps: { data: number; color: string };
   endgamePoints: { data: number; color: string };
   endgameChart: { data: string; color: string };
   class: string;
@@ -69,7 +68,6 @@ export type DataArrayOrSum = {
   teleAmp: number[];
   teleSpeaker: number[];
   teleAcc: number[];
-  traps: number[];
   endgamePoints: number[];
 };
 
@@ -90,7 +88,7 @@ export type ScoutingData = {
       notes: Array<string>;
     }>;
   };
-  endgame: { endgame: string[]; trap: number };
+  endgame: { endgame: string[] };
   teamNumber: any;
   event: string;
   matchNumber: any;
