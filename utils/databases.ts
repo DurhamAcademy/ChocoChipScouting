@@ -73,12 +73,15 @@ export type DataArrayOrSum = {
 
 export type ScoutingData = {
   auto: {
-    speakerNA: number;
-    amp: number;
-    missedAmp: number;
-    missedSpeaker: number;
+    coralL1: number;
+    coralL2: number;
+    coralL3: number;
+    coralL4: number;
+    processorMiss: number;
+    processor: number;
+    netMiss: number;
+    net: number;
     mobility: boolean;
-    position: number;
   };
   notes: {
     notes: string;
@@ -94,10 +97,14 @@ export type ScoutingData = {
   matchNumber: any;
   author: string;
   teleop: {
-    speakerNA: number;
-    amp: number;
-    missedAmp: number;
-    missedSpeaker: number;
+    coralL1: number;
+    coralL2: number;
+    coralL3: number;
+    coralL4: number;
+    processorMiss: number;
+    processor: number;
+    netMiss: number;
+    net: number;
   };
 };
 

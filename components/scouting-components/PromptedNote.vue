@@ -19,7 +19,7 @@ const value = computed({
 
 <template>
   <div class="flex select-none">
-    <UTooltip :text="modelValue.selected ? 'Sumbmitting' : 'Not Submitting'">
+    <UTooltip :text="modelValue.selected ? 'Submitting' : 'Not Submitting'">
       <UToggle class="flex-0 mr-3 mt-0.5" v-model="modelValue.selected" />
     </UTooltip>
     <URange

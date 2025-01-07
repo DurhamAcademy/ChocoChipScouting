@@ -1,10 +1,9 @@
 <script lang="ts" setup>
-import databases from '~/utils/databases';
+import databases, { ScoutingData } from "~/utils/databases";
 import IncrementalButton from '~/components/scouting-components/IncrementalButton.vue';
 import BooleanButton from '~/components/scouting-components/BooleanButton.vue';
 import MultiSelect from '~/components/scouting-components/MultiSelect.vue';
 import PromptedNote from '~/components/scouting-components/PromptedNote.vue';
-import SingleSelect from '~/components/scouting-components/SingleSelect.vue';
 import Navbar from '~/components/website-utils/Navbar.vue';
 import { eventOptions } from '~/utils/eventOptions';
 import type { Ref } from '@vue/reactivity';
@@ -31,8 +30,8 @@ const endgameOptions = [
   'Deep Attempted',
   'Deep Successful',
 ];
-//Auto Modal Image
-const isOpen = ref(false);
+
+const currentLevel = ref(1);
 
 /*
 Configuration variables done
@@ -55,7 +54,7 @@ function updateEndgameOptions(value: Array<number>) {
   }
 }
 
-//all the data collected on the scout page in the form of a ScoutingData object,
+// all the data collected on the scout page in the form of a ScoutingData object,
 // you can edit this in the utils/databases.ts file
 let scoutData = ref<ScoutingData>({
   event: '',
@@ -63,18 +62,25 @@ let scoutData = ref<ScoutingData>({
   matchNumber: '',
   author: '',
   auto: {
-    speakerNA: 0,
-    amp: 0,
-    missedAmp: 0,
-    missedSpeaker: 0,
+    coralL1: 0,
+    coralL2: 0,
+    coralL3: 0,
+    coralL4: 0,
+    processorMiss: 0,
+    processor: 0,
+    netMiss: 0,
+    net: 0,
     mobility: false,
-    position: 0,
   },
   teleop: {
-    amp: 0,
-    speakerNA: 0,
-    missedAmp: 0,
-    missedSpeaker: 0,
+    coralL1: 0,
+    coralL2: 0,
+    coralL3: 0,
+    coralL4: 0,
+    processorMiss: 0,
+    processor: 0,
+    netMiss: 0,
+    net: 0,
   },
   endgame: {
     trap: 0,
@@ -195,7 +201,7 @@ async function submit() {
                     validTeamNums.length > 0 &&
                     !validTeamNums.includes(parseInt(scoutData.teamNumber))
                   "
-                  >not found</span
+                  >!!</span
                 >
                 <span v-else></span>
               </template>
@@ -249,10 +255,8 @@ async function submit() {
       <div v-if="gameTime == GameTime.Autonomous">
         <div class="flex text-center">
           <div class="max-w-24 w-24">
-            <h1
-              class="text-gray-700 dark:text-gray-200 font-sans mr-3 mb-1 font-bold underline"
-            >
-              Amp
+            <h1 class="text-gray-700 dark:text-gray-200 font-sans mr-3 mb-1 font-bold underline">
+              Net
             </h1>
             <h1 class="text-coral-400 font-sans mr-3 mt-1 font-light text-sm">
               Scored
@@ -261,7 +265,7 @@ async function submit() {
             amp is the 2024 game's name for a scoring method -->
             <IncrementalButton
               class="mb-1 mr-3 mt-1"
-              v-model="scoutData.auto.amp"
+              v-model="scoutData.auto.net"
             ></IncrementalButton>
             <br />
             <h1 class="text-coral-400 font-sans mr-3 mt-1 font-light text-sm">
@@ -271,14 +275,14 @@ async function submit() {
             so this does the same thing as the above incremental button but for missed shots -->
             <IncrementalButton
               class="mb-0 mr-3 mt-1"
-              v-model="scoutData.auto.missedAmp"
+              v-model="scoutData.auto.netMiss"
             ></IncrementalButton>
           </div>
           <div class="max-w-24 w-24">
             <h1
               class="text-gray-700 dark:text-gray-200 font-sans mr-3 mb-1 font-bold underline"
             >
-              Speaker
+              Processor
             </h1>
             <h1 class="text-coral-400 font-sans mr-3 mt-1 font-light text-sm">
               Scored
@@ -286,7 +290,7 @@ async function submit() {
             <!-- input method for auto and the scoring method 'speaker' for 24' season -->
             <IncrementalButton
               class="mb-1 mr-3 mt-1"
-              v-model="scoutData.auto.speakerNA"
+              v-model="scoutData.auto.processor"
             ></IncrementalButton>
             <br />
             <h1 class="text-coral-400 font-sans mr-3 mt-1 font-light text-sm">
@@ -295,7 +299,7 @@ async function submit() {
             <!-- missed points for speaker -->
             <IncrementalButton
               class="mb-0 mr-3 mt-1"
-              v-model="scoutData.auto.missedSpeaker"
+              v-model="scoutData.auto.processorMiss"
             ></IncrementalButton>
           </div>
           <div>
@@ -310,87 +314,68 @@ async function submit() {
             />
           </div>
         </div>
-        <div class="ml-6">
-          <br />
-          <h1 class="text-gray-700 dark:text-gray-200 font-sans font-medium">
-            Auto Position
-          </h1>
-        </div>
-        <div>
-          <!-- a single selection among multiple options custom component.
-          used for the starting position of the team's robot during auto -->
-          <SingleSelect
-            v-model="scoutData.auto.position"
-            :options="['1', '2', '3', '4']"
-          />
-          <!-- a button that opens a reference image for the previous element, a
-           starting position selector -->
-          <UButton
-            class="ml-1"
-            @click="isOpen = true"
-            label="Reference"
-          />
-        </div>
       </div>
-      <!-- the popup for the reference image -->
-      <UModal v-model="isOpen">
-        <div class="flex flex-auto">
-          <UButton
-            class="mr-2 mt-2 right-0 absolute"
-            @click="isOpen = false"
-            icon="i-heroicons-x-circle"
-          />
-          <img src="/public/referenceImage.png" />
-        </div>
-      </UModal>
 
       <!-- In this section put all the elements you want to be shown under the teleop tab -->
       <div v-if="gameTime == GameTime.Teleoperated">
         <div class="flex text-center">
           <div class="max-w-24 w-24">
-            <h1
-              class="text-gray-700 dark:text-gray-200 font-sans mr-3 mb-1 font-bold underline"
-            >
-              Amp
+            <h1 class="text-gray-700 dark:text-gray-200 font-sans mr-3 mb-1 font-bold underline">
+              Coral
             </h1>
-            <h1 class="text-coral-400 font-sans mr-3 mt-1 font-light text-sm">
-              Scored
-            </h1>
-            <!-- same thing as above incremental buttons but for teleop -->
-            <IncrementalButton
-              class="mb-1 mr-3 mt-1"
-              v-model="scoutData.teleop.amp"
-            ></IncrementalButton>
-            <br />
-            <h1 class="text-coral-400 font-sans mr-3 mt-1 font-light text-sm">
-              Missed
-            </h1>
-            <IncrementalButton
-              class="mb-0 mr-3 mt-1"
-              v-model="scoutData.teleop.missedAmp"
-            ></IncrementalButton>
-          </div>
-          <div class="max-w-24 w-24">
-            <h1
-              class="text-gray-700 dark:text-gray-200 font-sans mr-3 mb-1 font-bold underline"
-            >
-              Speaker
-            </h1>
-            <h1 class="text-coral-400 font-sans mr-3 mt-1 font-light text-sm">
-              Scored
-            </h1>
-            <IncrementalButton
-              class="mb-1 mr-3 mt-1"
-              v-model="scoutData.teleop.speakerNA"
-            ></IncrementalButton>
-            <br />
-            <h1 class="text-coral-400 font-sans mr-3 mt-1 font-light text-sm">
-              Missed
-            </h1>
-            <IncrementalButton
-              class="mb-0 mr-3 mt-1"
-              v-model="scoutData.teleop.missedSpeaker"
-            ></IncrementalButton>
+            <div class="flex flex-auto">
+            <URange :min="1" :max="4" size="md" v-model="currentLevel"/>
+            <UBadge class="ml-3" :label="currentLevel"/>
+            </div>
+            <br/>
+            <div class="flex text-center">
+              <div class="max-w-24 w-24">
+                <h1 class="text-gray-700 dark:text-gray-200 font-sans mr-3 mb-1 font-bold underline">
+                  Net
+                </h1>
+                <h1 class="text-coral-400 font-sans mr-3 mt-1 font-light text-sm">
+                  Scored
+                </h1>
+                <IncrementalButton
+                  class="mb-1 mr-3 mt-1"
+                  v-model="scoutData.teleop.net"
+                ></IncrementalButton>
+                <br/>
+                <h1 class="text-coral-400 font-sans mr-3 mt-1 font-light text-sm">
+                  Missed
+                </h1>
+                <!-- we decided it was easiest to separate scoring and missing this year
+                so this does the same thing as the above incremental button but for missed shots -->
+                <IncrementalButton
+                  class="mb-0 mr-3 mt-1"
+                  v-model="scoutData.teleop.netMiss"
+                ></IncrementalButton>
+              </div>
+              <div class="max-w-24 w-24">
+                <h1
+                  class="text-gray-700 dark:text-gray-200 font-sans mr-3 mb-1 font-bold underline"
+                >
+                  Processor
+                </h1>
+                <h1 class="text-coral-400 font-sans mr-3 mt-1 font-light text-sm">
+                  Scored
+                </h1>
+                <!-- input method for auto and the scoring method 'processor' for 24' season -->
+                <IncrementalButton
+                  class="mb-1 mr-3 mt-1"
+                  v-model="scoutData.teleop.processor"
+                ></IncrementalButton>
+                <br />
+                <h1 class="text-coral-400 font-sans mr-3 mt-1 font-light text-sm">
+                  Missed
+                </h1>
+                <!-- missed points for processor -->
+                <IncrementalButton
+                  class="mb-0 mr-3 mt-1"
+                  v-model="scoutData.teleop.processorMiss"
+                ></IncrementalButton>
+              </div>
+            </div>
           </div>
         </div>
       </div>
