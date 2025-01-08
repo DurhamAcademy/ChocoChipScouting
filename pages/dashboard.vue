@@ -4,7 +4,7 @@ import PouchDB from 'pouchdb';
 import databases, { type TeamInfo } from '~/utils/databases';
 import OuterComponents from '~/components/website-utils/OuterComponents.vue';
 let syncDisable = ref(false);
-//
+
 async function sync() {
   syncDisable.value = true;
   await PouchDB.sync(
@@ -553,7 +553,12 @@ async function updateTeamData() {
             <div v-else>
               <p class="font-medium text-xl text-center">No Events Scheduled</p>
               <div class="flex-auto">
-                <img src="/public/sadcookie.png" height="140" width="140" class="mx-auto"/>
+                <img
+                  src="/public/sadcookie.png"
+                  height="140"
+                  width="140"
+                  class="mx-auto"
+                />
               </div>
             </div>
           </template>
