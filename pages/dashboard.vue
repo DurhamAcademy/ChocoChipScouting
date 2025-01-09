@@ -258,7 +258,7 @@ async function updateTeamData() {
       <div
         class="w-full my-8 text-center font-sans font-bold !text-primary text-5xl"
       >
-        ChocoChips Scouting
+        ChocoChips Scouting 🍪<! -- title! -->
       </div>
       <UCard
         class="mb-8 px-4 pb-4"
