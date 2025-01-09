@@ -353,10 +353,10 @@ async function updateTeamData() {
             <div class="h-40 overflow-y-auto px-4 rounded-md">
               <div
                 v-for="(event, index) in pastEvents"
-                class="bg-gray-100 rounded-md"
+                class="bg-gray-100 rounded-md dark:bg-gray-800"
               >
                 <div class="my-2 p-2">
-                  <p class="font-medium">{{ event.name }}</p>
+                  <p class="font-medium dark:text-white">{{ event.name }}</p>
                   <UButton
                     class="rounded-full my-0.5"
                     icon="i-heroicons-map-pin-solid"
@@ -373,19 +373,19 @@ async function updateTeamData() {
                   />
                   <div class="flex my-0.5">
                     <UButton
-                      class="rounded-full mx-0.5"
+                      class="rounded-full mx-0.5 dark:hover:bg-primary-950"
                       icon="i-heroicons-calendar-days-solid"
                       variant="outline"
-                      color="gray"
+                      color="primary"
                     />
                     <UButton
                       v-if="typeof event.week === 'number'"
-                      class="rounded-full mx-0.5 mr-1"
+                      class="rounded-full mx-0.5 mr-1 dark:hover:bg-primary-950"
                       :label="'Week ' + (parseInt(event.week) + 1)"
-                      color="gray"
+                      color="primary"
                       variant="outline"
                     />
-                    <p class="my-auto mx-0.5">
+                    <p class="my-auto mx-0.5 dark:text-white">
                       {{
                         months.at(event.start_date.split('-')[1] - 1) +
                         ' ' +
@@ -416,7 +416,7 @@ async function updateTeamData() {
                         class="rounded-full mx-0.5 mr-1"
                         color="primary"
                       />
-                      <p class="my-auto mx-0.5 font-sans">
+                      <p class="my-auto mx-0.5 font-sans dark:text-white">
                         {{ placeify(teamEventData[index].rank) }} Place with a
                         Record of
                         {{

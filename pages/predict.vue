@@ -355,7 +355,7 @@ watch(pending, () => {
             </p>
             <p
               v-else
-              class="font-semibold"
+              class="font-semibold !text-primary"
             >
               vs
             </p>
@@ -411,7 +411,7 @@ watch(pending, () => {
           </UInput>
         </UContainer>
         <template #footer>
-          <div class="text-center text-xs">
+          <div class="text-center text-xs !text-primary">
             <p v-if="!pending">
               {{
                 'Accuracy: ' +
