@@ -73,7 +73,7 @@ const headers = [
 ];
 
 //sets up the data for the table
-let items;
+let items: Array<ScoutingData & IdMeta> = [];
 
 async function setup() {
   //gets all documents from the database asynchronously
@@ -124,7 +124,7 @@ async function setup() {
             >
               <br />
               <div class="whitespace-normal break-all">
-                Notes: {{ row.value.notes }}
+                <strong>Notes:</strong><br/>{{ row.value.notes }}
               </div>
             </UContainer>
           </template>

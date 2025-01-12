@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import databases from '~/utils/databases';
+import databases, { ScoutingData } from '~/utils/databases';
 import { eventOptions } from '~/utils/eventOptions';
 import Navbar from '~/components/website-utils/Navbar.vue';
 
@@ -10,39 +10,54 @@ let selectedEvent = eventOptions[0];
 if (typeof window !== 'undefined')
   selectedEvent = localStorage.getItem('currentEvent') || eventOptions[0];
 
-let data: Ref<
-  UnwrapRef<{
-    auto: { speakerNA: number; amp: number; missed: number; mobility: boolean };
-    notes: { efficiency: number; notes: string; reliability: number };
-    endgame: { endgame: string[]; trap: number };
-    teamNumber: null;
-    event: string;
-    matchNumber: null;
-    teleop: { speakerNA: number; amp: number; missed: number };
-  }>
-> = ref({
+let data = ref<ScoutingData>({
   event: '',
-  teamNumber: null,
+  teamNumber: '',
   matchNumber: -1,
+  author: '',
   auto: {
-    speakerNA: 0,
-    amp: 0,
-    missed: 0,
+    coralL1: 0,
+    coralL2: 0,
+    coralL3: 0,
+    coralL4: 0,
+    processorMiss: 0,
+    processor: 0,
+    netMiss: 0,
+    net: 0,
     mobility: false,
   },
   teleop: {
-    amp: 0,
-    speakerNA: 0,
-    missed: 0,
+    coralL1: 0,
+    coralL2: 0,
+    coralL3: 0,
+    coralL4: 0,
+    processorMiss: 0,
+    processor: 0,
+    netMiss: 0,
+    net: 0,
   },
   endgame: {
-    trap: 0,
-    endgame: '',
+    endgame: [""],
   },
   notes: {
-    playedDefense: false,
-    defense: 3,
     notes: '',
+    promptedNotes: [
+      {
+        selected: false,
+        rating: 1,
+        notes: [],
+      },
+      {
+        selected: false,
+        rating: 1,
+        notes: [],
+      },
+      {
+        selected: false,
+        rating: 1,
+        notes: [],
+      },
+    ],
   },
 });
 
@@ -91,7 +106,6 @@ async function submit() {
         <UDivider label="🍪" class="mt-2 mb-2"/>
         <UTextarea
           v-model="data.notes.notes"
-          color="yellow"
           placeholder="Other notes..."
           :rows="10"
         />
