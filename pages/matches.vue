@@ -39,6 +39,7 @@ const headers = [
       { title: 'Match', align: 'start', value: 'matchNumber' },
       { title: 'Notes', value: 'notes' },
       { title: 'Author', value: 'author' },
+      { title: 'Org', value: 'org' },
     ],
   },
   {
@@ -73,7 +74,7 @@ const headers = [
 ];
 
 //sets up the data for the table
-let items;
+let items: Array<ScoutingData & IdMeta> = [];
 
 async function setup() {
   //gets all documents from the database asynchronously
@@ -133,6 +134,14 @@ async function setup() {
       <template v-slot:item.author="row">
         <UBadge
           :label="row.value.replace(/[0-9]/g, '') || '-'"
+          color="gray"
+          variant="soft"
+        />
+      </template>
+
+      <template v-slot:item.org="row">
+        <UBadge
+          :label="row.value || '-'"
           color="gray"
           variant="soft"
         />

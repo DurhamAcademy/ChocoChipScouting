@@ -66,6 +66,7 @@ let scoutData = ref<ScoutingData>({
   teamNumber: '',
   matchNumber: '',
   author: '',
+  org: '',
   auto: {
     coralL1: 0,
     coralL2: 0,
@@ -176,7 +177,8 @@ async function submit() {
     !Number.isNaN(scoutData.value.teamNumber) &&
     !Number.isNaN(scoutData.value.matchNumber)
   ) {
-    scoutData.value.author = usernameState.value;
+    scoutData.value.author = usernameState.value.split("@")[0];
+    scoutData.value.org = usernameState.value.split("@")[1];
     scoutData.value.event = currentEvent.value || eventOptions[0];
     await db.post(scoutData.value);
     await navigateTo('/matches');

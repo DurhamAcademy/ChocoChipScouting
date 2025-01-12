@@ -4,12 +4,14 @@ import auth from '../utils/authorization/Authorizer';
 import { couchDBBaseURL } from '~/utils/URIs';
 import { loginStateKey } from '~/utils/keys';
 import { eventOptions } from '~/utils/eventOptions';
+import { orgOptions } from '~/utils/orgOptions';
 
 PouchDB.plugin(auth);
 //gets a database of users and sets up some vars
 const usersDB = new PouchDB(`${couchDBBaseURL}/basic`, { skip_setup: true });
 let username = ref('');
 let password = ref('');
+let org = ref(orgOptions[0]);
 let error = ref(false);
 let loading = ref(false);
 
@@ -38,6 +40,9 @@ let errorVal = useState('error-val', () => '');
  */
 async function login(username: string, password: string) {
   try {
+    if (username != "admin"){
+      username = username + "@" + org.value;
+    }
     loading.value = true;
     usersDB.logIn(username, password, async function (err, response) {
       loading.value = false;
@@ -105,6 +110,18 @@ async function login(username: string, password: string) {
             required
             :disabled="loading"
             type="password"
+          />
+        </LazyUFormGroup>
+        <LazyUFormGroup
+          label="Organization"
+          name="org"
+          autocomplete="current-org"
+          required
+        >
+          <LazyUSelectMenu
+            :disabled="loading"
+            v-model="org"
+            :options="orgOptions"
           />
         </LazyUFormGroup>
         <LazyUFormGroup

@@ -98,8 +98,9 @@ if (sessionState?.value?.userCtx?.roles?.indexOf('_admin') != -1)
           <template #panel>
             <UCard class="p-2">
               <template #header>
-                <div class="usernameLabel max-w-32 text-zinc-900">
-                  {{ usernameState }}
+                <div class="flex justify-center">
+                  <p class="font-semibold">{{ usernameState.split("@")[0] }} </p>
+                  <p class="font-semibold" v-if="usernameState.split('@').length > 1">&nbsp@ {{ usernameState.split("@")[1] }}</p>
                 </div>
               </template>
               <UFormGroup

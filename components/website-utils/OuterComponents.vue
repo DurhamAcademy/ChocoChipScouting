@@ -114,12 +114,11 @@ if (
                 <template #panel>
                   <UCard class="p-2">
                     <template #header>
-                      <div class="text-center">
-                        <span
-                          class="overflow-hidden flex-auto text-zinc-900 max-w-32"
-                        >
-                          {{ usernameState }}
-                        </span>
+                      <div class="justify-center flex">
+                        <p class="font-semibold">{{ usernameState.split("@")[0] }} </p>
+                        <p class="font-semibold" v-if="usernameState.split('@').length > 1">&nbsp@ {{ usernameState.split("@")[1] }}</p>
+<!--                        <UBadge size="md" variant="soft" class="flex-initial">{{ usernameState.split("@")[0] }}</UBadge>-->
+<!--                        <UBadge size="md" variant="soft" class="flex-initial ml-2">{{ usernameState.split("@")[1] }}</UBadge>-->
                       </div>
                     </template>
                     <UFormGroup

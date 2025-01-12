@@ -72,6 +72,11 @@ export type DataArrayOrSum = {
 };
 
 export type ScoutingData = {
+  teamNumber: any;
+  event: string;
+  matchNumber: any;
+  author: string;
+  org: string;
   auto: {
     coralL1: number;
     coralL2: number;
@@ -83,19 +88,6 @@ export type ScoutingData = {
     net: number;
     mobility: boolean;
   };
-  notes: {
-    notes: string;
-    promptedNotes: Array<{
-      selected: boolean;
-      rating: number;
-      notes: Array<string>;
-    }>;
-  };
-  endgame: { endgame: string[] };
-  teamNumber: any;
-  event: string;
-  matchNumber: any;
-  author: string;
   teleop: {
     coralL1: number;
     coralL2: number;
@@ -105,6 +97,15 @@ export type ScoutingData = {
     processor: number;
     netMiss: number;
     net: number;
+  };
+  endgame: { endgame: string[] };
+  notes: {
+    notes: string;
+    promptedNotes: Array<{
+      selected: boolean;
+      rating: number;
+      notes: Array<string>;
+    }>;
   };
 };
 

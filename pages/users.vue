@@ -4,6 +4,7 @@ import auth from '../utils/authorization/Authorizer';
 import OuterComponents from '~/components/website-utils/OuterComponents.vue';
 import { couchDBBaseURL } from '~/utils/URIs';
 import { useLazyAsyncData } from '#app';
+import { orgOptions } from '~/utils/orgOptions';
 
 //declaration for debug/error system
 const toast = useToast();
@@ -17,6 +18,7 @@ const usersDB = new PouchDB(`${couchDBBaseURL}/_users`, { skip_setup: true });
 let username = ref('');
 let password = ref('');
 let roles = ref([['']]);
+let selectedOrg = ref(orgOptions[0])
 
 //variables to have the role selection dropdown work => defaults to scout role
 let selectedRoles = ref(['scout']);
@@ -93,7 +95,7 @@ async function signUp() {
     return;
   //calls a couchdb function to sign up a user. not async in order to allow bulk user uploads on poor wifi
   usersDB.signUp(
-    username.value,
+    username.value + "@" + selectedOrg.value,
     password.value,
     {
       roles: selectedRoles.value,
@@ -263,6 +265,10 @@ const columns = [
     label: 'Roles',
   },
   {
+    key: 'org',
+    label: 'Organization'
+  },
+  {
     key: 'delete',
   },
 ];
@@ -276,38 +282,45 @@ const { pending, data: res } = await useLazyAsyncData('res', () => setup());
     <div class="flex justify-center overflow-y-scroll">
       <UCard class="max-w-xl flex-grow m-5 overflow-visible">
         <template #header>
-          <UForm class="flex">
-            <UFormGroup class="flex-auto basis-1/4">
-              <UInput
-                v-model="username"
-                autocomplete="off"
-                placeholder="Username"
-              />
-            </UFormGroup>
-            <UFormGroup class="flex-auto pl-2.5 basis-1/4">
-              <UInput
-                v-model="password"
-                autocomplete="off"
-                type="password"
-                placeholder="Password"
-              />
-            </UFormGroup>
+          <div class="flex p-0">
+              <UFormGroup class="flex-auto basis-1/4">
+                <UInput
+                  v-model="username"
+                  autocomplete="off"
+                  placeholder="Username"
+                />
+              </UFormGroup>
+              <UFormGroup class="flex-auto pl-2.5 basis-1/4">
+                <UInput
+                  v-model="password"
+                  autocomplete="off"
+                  type="password"
+                  placeholder="Password"
+                />
+              </UFormGroup>
+              <UFormGroup class="flex-auto pl-2.5 basis-1/8">
+                <USelectMenu
+                  v-model="selectedRoles"
+                  :options="roleOptions"
+                  multiple
+                  placeholder="0 Selected"
+                />
+              </UFormGroup>
             <UFormGroup class="flex-auto pl-2.5 basis-1/8">
               <USelectMenu
-                v-model="selectedRoles"
-                :options="roleOptions"
-                multiple
+                v-model="selectedOrg"
+                :options="orgOptions"
                 placeholder="0 Selected"
               />
             </UFormGroup>
-            <UFormGroup class="flex-auto pl-2.5 basis-1/3">
-              <UButton
-                :label="'Add/Edit User'"
-                @click="userManage"
-                block
-              ></UButton>
-            </UFormGroup>
-          </UForm>
+              <UFormGroup class="flex-auto pl-2.5 basis-1/3">
+                <UButton
+                  :label="'Add/Edit User'"
+                  @click="userManage"
+                  block
+                ></UButton>
+              </UFormGroup>
+          </div>
         </template>
         <template #default>
           <UTable
@@ -320,7 +333,7 @@ const { pending, data: res } = await useLazyAsyncData('res', () => setup());
             }"
           >
             <template #user-data="{ row }">
-              <p>{{ row[0] }}</p>
+              <p>{{ row[0].split("@")[0] }}</p>
             </template>
             <template #delete-data="{ row }">
               <UButton
@@ -332,12 +345,16 @@ const { pending, data: res } = await useLazyAsyncData('res', () => setup());
             </template>
             <template #roles-data="{ row }">
               <USelectMenu
+                @click="console.log(row)"
                 v-model="roles[userArr.indexOf(row)]"
                 :options="roleOptions"
                 multiple
                 placeholder="0 Selected"
                 class="max-w-36 w-36 min-w-24"
               />
+            </template>
+            <template #org-data="{ row }">
+              <p>{{row[0].split("@")[1]}}</p>
             </template>
           </UTable>
         </template>
