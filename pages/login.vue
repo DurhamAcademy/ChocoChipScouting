@@ -25,7 +25,6 @@ watch(selectedEvent, () => {
     return localStorage.setItem('currentEvent', selectedEvent.value.toString());
 });
 
-//TODO a1cd can u comment this stuff? idk what it does exactly
 const { updateUsernameState }: { updateUsernameState: () => void } =
   inject(loginStateKey)!;
 let errorVal = useState('error-val', () => '');

@@ -96,10 +96,9 @@ async function signUp() {
     username.value,
     password.value,
     {
-      metadata: {},
       roles: selectedRoles.value,
     },
-    function (err, response) {
+    async function (err, response) {
       if (err) {
         if (err.name === 'conflict') {
           console.log('Username already exists');
@@ -109,6 +108,21 @@ async function signUp() {
           console.log(err.name);
         }
       } else {
+        try {
+          const userId = `org.couchdb.user:${username.value}`;
+          const userDoc = await usersDB.get(userId);
+
+          // Add the metadata to the user document
+          userDoc.metadata = {
+            org: "6502",
+          };
+
+          // Save the updated document with the metadata
+          const updatedDoc = await usersDB.put(userDoc);
+        }
+        catch (error: any) {
+          console.log("ERROR")
+        }
         console.log('User created');
         username.value = '';
         password.value = '';
