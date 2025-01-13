@@ -168,7 +168,7 @@ if (
 
 <style scoped>
 .vis {
-  width: 37em;
+  width: 20em;
   left: 0;
   position: relative;
 }
