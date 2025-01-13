@@ -8,8 +8,6 @@ export default defineNuxtConfig({
     '@vite-pwa/nuxt',
     '@nuxt/ui',
     '@nuxtjs/color-mode',
-
-
     (_options, nuxt) => {
       nuxt.hooks.hook('vite:extendConfig', (config) => {
         // @ts-expect-error
@@ -191,15 +189,7 @@ export default defineNuxtConfig({
     client: true
   },
   colorMode: {
-    preference: 'Dark', // default value of $colorMode.preference
-    fallback: 'Dark', // fallback value if not system preference found
-    hid: 'nuxt-color-mode-script',
-    globalName: '__NUXT_COLOR_MODE__',
-    componentName: 'ColorScheme',
-    classPrefix: '',
-    classSuffix: '-mode',
-    storage: 'localStorage', // or 'sessionStorage' or 'cookie'
-    storageKey: 'nuxt-color-mode'
+    preference: 'light', // default value of $colorMode.preference
   },
   tailwindcss:{
     config:{
