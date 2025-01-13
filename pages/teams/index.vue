@@ -1502,7 +1502,7 @@ await tableSetup();
 
 <template>
   <OuterComponents class="z[11]">
-    <UCard class="max-h-dvh overflow-auto">
+    <UCard class="max-h-dvh overflow-auto ml-12 mr-2 mt-2">
       <template #header>
         <div class="flex">
           <UForm>
