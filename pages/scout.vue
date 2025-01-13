@@ -71,6 +71,12 @@ let scoutData = ref<ScoutingData>({
     coralL2: 0,
     coralL3: 0,
     coralL4: 0,
+    coralL1Miss: 0,
+    coralL2Miss: 0,
+    coralL3Miss: 0,
+    coralL4Miss: 0,
+    reef: 0,
+    reefMiss: 0,
     processorMiss: 0,
     processor: 0,
     netMiss: 0,
@@ -82,6 +88,12 @@ let scoutData = ref<ScoutingData>({
     coralL2: 0,
     coralL3: 0,
     coralL4: 0,
+    coralL1Miss: 0,
+    coralL2Miss: 0,
+    coralL3Miss: 0,
+    coralL4Miss: 0,
+    reef: 0,
+    reefMiss: 0,
     processorMiss: 0,
     processor: 0,
     netMiss: 0,
@@ -179,7 +191,7 @@ async function submit() {
     scoutData.value.author = usernameState.value;
     scoutData.value.event = currentEvent.value || eventOptions[0];
     await db.post(scoutData.value);
-    await navigateTo('/matches');
+    await navigateTo('/teams');
   }
 }
 </script>
@@ -262,6 +274,9 @@ async function submit() {
             <h1 class="text-gray-700 dark:text-gray-200 font-sans mr-6 mb-1 font-bold underline">
               Coral Level
             </h1>
+            <h1 class="text-coral-400 font-sans mr-3 mt-1 font-light text-sm">
+              Scored
+            </h1>
             <div class="flex flex-auto justify-center">
               <SingleSelect
                 v-model="autoCoralLevel"
@@ -285,6 +300,35 @@ async function submit() {
               <IncrementalButton
                 class="mb-1 mr-3 mt-1 ml-2"
                 v-model="scoutData.auto.coralL4"
+                v-else
+              ></IncrementalButton>
+            </div>
+            <h1 class="text-coral-400 font-sans mr-3 mt-1 font-light text-sm">
+              Missed
+            </h1>
+            <div class="flex flex-auto justify-center">
+              <SingleSelect
+                v-model="autoCoralLevel"
+                :options="['L1', 'L2', 'L3', 'L4']"
+              />
+              <IncrementalButton
+                class="mb-1 mr-3 mt-1 ml-2"
+                v-model="scoutData.auto.coralL1Miss"
+                v-if="autoCoralLevel==0"
+              ></IncrementalButton>
+              <IncrementalButton
+                class="mb-1 mr-3 mt-1 ml-2"
+                v-model="scoutData.auto.coralL2Miss"
+                v-else-if="autoCoralLevel==1"
+              ></IncrementalButton>
+              <IncrementalButton
+                class="mb-1 mr-3 mt-1 ml-2"
+                v-model="scoutData.auto.coralL3Miss"
+                v-else-if="autoCoralLevel==2"
+              ></IncrementalButton>
+              <IncrementalButton
+                class="mb-1 mr-3 mt-1 ml-2"
+                v-model="scoutData.auto.coralL4Miss"
                 v-else
               ></IncrementalButton>
             </div>
@@ -359,6 +403,9 @@ async function submit() {
             <h1 class="text-gray-700 dark:text-gray-200 font-sans mr-6 mb-1 font-bold underline">
               Coral Level
             </h1>
+            <h1 class="text-coral-400 font-sans mr-3 mt-1 font-light text-sm">
+              Scored
+            </h1>
             <div class="flex flex-auto justify-center">
               <SingleSelect
                 v-model="teleopCoralLevel"
@@ -382,6 +429,35 @@ async function submit() {
               <IncrementalButton
                 class="mb-1 mr-3 mt-1 ml-2"
                 v-model="scoutData.teleop.coralL4"
+                v-else
+              ></IncrementalButton>
+            </div>
+            <h1 class="text-coral-400 font-sans mr-3 mt-1 font-light text-sm">
+              Missed
+            </h1>
+            <div class="flex flex-auto justify-center">
+              <SingleSelect
+                v-model="teleopCoralLevel"
+                :options="['L1', 'L2', 'L3', 'L4']"
+              />
+              <IncrementalButton
+                class="mb-1 mr-3 mt-1 ml-2"
+                v-model="scoutData.teleop.coralL1Miss"
+                v-if="teleopCoralLevel==0"
+              ></IncrementalButton>
+              <IncrementalButton
+                class="mb-1 mr-3 mt-1 ml-2"
+                v-model="scoutData.teleop.coralL2Miss"
+                v-else-if="teleopCoralLevel==1"
+              ></IncrementalButton>
+              <IncrementalButton
+                class="mb-1 mr-3 mt-1 ml-2"
+                v-model="scoutData.teleop.coralL3Miss"
+                v-else-if="teleopCoralLevel==2"
+              ></IncrementalButton>
+              <IncrementalButton
+                class="mb-1 mr-3 mt-1 ml-2"
+                v-model="scoutData.teleop.coralL4Miss"
                 v-else
               ></IncrementalButton>
             </div>

@@ -220,7 +220,7 @@ watch(width, () => {
                 <div class="mx-auto flex justify-center align-center">
                     <UInputMenu
                         v-model="filterTeam"
-                        :options="teamOptions"
+                        :options[]="teamOptions"
                         @change="navigateTo('/teams/' + filterTeam)"
                         class="max-w-36 w-36 flex-auto h-8"
                         placeholder="Select a team"
