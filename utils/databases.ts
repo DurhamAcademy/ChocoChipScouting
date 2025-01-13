@@ -53,7 +53,6 @@ export type TeamTableData = {
   teleAmp: { data: number; color: string };
   teleSpeaker: { data: number; color: string };
   teleAcc: { data: string; color: string };
-  traps: { data: number; color: string };
   endgamePoints: { data: number; color: string };
   endgameChart: { data: string; color: string };
   class: string;
@@ -69,18 +68,20 @@ export type DataArrayOrSum = {
   teleAmp: number[];
   teleSpeaker: number[];
   teleAcc: number[];
-  traps: number[];
   endgamePoints: number[];
 };
 
 export type ScoutingData = {
   auto: {
-    speakerNA: number;
-    amp: number;
-    missedAmp: number;
-    missedSpeaker: number;
+    coralL1: number;
+    coralL2: number;
+    coralL3: number;
+    coralL4: number;
+    processorMiss: number;
+    processor: number;
+    netMiss: number;
+    net: number;
     mobility: boolean;
-    position: number;
   };
   notes: {
     notes: string;
@@ -90,16 +91,20 @@ export type ScoutingData = {
       notes: Array<string>;
     }>;
   };
-  endgame: { endgame: string[]; trap: number };
+  endgame: { endgame: string[] };
   teamNumber: any;
   event: string;
   matchNumber: any;
   author: string;
   teleop: {
-    speakerNA: number;
-    amp: number;
-    missedAmp: number;
-    missedSpeaker: number;
+    coralL1: number;
+    coralL2: number;
+    coralL3: number;
+    coralL4: number;
+    processorMiss: number;
+    processor: number;
+    netMiss: number;
+    net: number;
   };
 };
 
