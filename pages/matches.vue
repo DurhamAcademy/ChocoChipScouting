@@ -116,15 +116,45 @@ async function setup() {
             color="yellow"
             label="Notes"
             variant="soft"
+            @click="console.dir(row.value.promptedNotes[0])"
           />
           <template #panel>
             <UContainer
               class="m-auto max-w-lg min-w-[15rem] overflow-y-auto"
               style="max-height: 20rem; min-height: 10rem"
             >
-              <br />
-              <div class="whitespace-normal break-all">
-                Notes: {{ row.value.notes }}
+              <br/>
+              <div @click="console.dir(row.value.promptedNotes[0].selected)" class="whitespace-normal break-all" v-if="row.value.notes">
+
+                <div v-if="row.value.promptedNotes[0].selected">
+                  <p> <b>Coral notes:</b> {{row.value.promptedNotes[0].notes[0]}} //
+                    {{ row.value.promptedNotes[0].notes[1] }} //
+                    {{ row.value.promptedNotes[0].notes[2] }} </p>
+                  <br>
+                </div>
+                <div v-else><del> </del></div>
+                <div v-if="row.value.promptedNotes[1].selected">
+                  <p><b>Algae notes:</b> {{ row.value.promptedNotes[1].notes[0] }} //
+                    {{ row.value.promptedNotes[1].notes[1] }} //
+                    {{ row.value.promptedNotes[1].notes[2] }} </p>
+                  <br>
+                </div>
+                <div v-else><del> </del></div>
+                <div v-if="row.value.promptedNotes[2].selected">
+                  <p><b>Driver notes:</b> {{ row.value.promptedNotes[2].notes[0] }} //
+                    {{ row.value.promptedNotes[2].notes[1] }} //
+                    {{ row.value.promptedNotes[2].notes[2] }} </p>
+                  <br>
+                </div>
+                <div v-else><del> </del></div>
+                <div v-if="row.value.notes">
+                  <p><b>Other notes:</b> {{ row.value.notes }} </p>
+                  <br>
+                </div>
+                <div v-else><del> </del></div>
+              </div>
+              <div v-else>
+                <em>No notes written</em>
               </div>
             </UContainer>
           </template>
