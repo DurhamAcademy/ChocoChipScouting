@@ -416,20 +416,20 @@ async function submit() {
           open-icon="i-heroicons-plus"
           close-icon="i-heroicons-minus"
           :items="[
-            { label: 'Defense', slot: 'defense', defaultOpen: true },
-            { label: 'Offense', slot: 'offense' },
+            { label: 'Coral', slot: 'coral', defaultOpen: true },
+            { label: 'Algae', slot: 'algae' },
             { label: 'Driver', slot: 'driver' },
           ]"
         >
           <!-- templates fill the UAccordion's sections -->
-          <template #defense>
+          <template #coral>
             <!-- the PromptedNote custom component takes in an array of questions and how many lines should be expected as output for that question
             for example: 'Where did this team play defense?' is the question while '1' is the number of lines expected for that response
             it then returns an array of answers to the questions which is updated to the scoutData variable -->
             <PromptedNote
               v-model="scoutData.notes.promptedNotes[0]"
               :questions="[
-                ['Where did this team play defense?', 1],
+                ['How efficient and accurate was this team while scoring coral?', 1],
                 [
                   'Is this team at risk of causing fouls? If so, elaborate why.',
                   2,
@@ -438,16 +438,16 @@ async function submit() {
               ]"
             />
           </template>
-          <template #offense>
+          <template #algae>
             <PromptedNote
               v-model="scoutData.notes.promptedNotes[1]"
               :questions="[
-                ['Where can this team shoot from?', 1],
+                ['How efficient and accurate was this team while scoring algae?', 1],
                 [
                   'If applicable, how did the driver make efforts to avoid opposing defense?',
                   2,
                 ],
-                ['What slowed down their cycles?', 2],
+                ['What slowed down this teams scoring process with algae and/or coral?', 2],
                 ['What other factors contributed to your rating?', 1],
               ]"
             />

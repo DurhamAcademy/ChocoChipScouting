@@ -96,6 +96,8 @@ async function setup() {
   console.log(matches);
   items = matches;
 }
+
+let promptedNoteTitles = ["Coral", "Algae", "Driver"]
 </script>
 <template>
   <OuterComponents>
@@ -124,38 +126,18 @@ async function setup() {
               style="max-height: 20rem; min-height: 10rem"
             >
               <br/>
-              <div @click="console.dir(row.value.promptedNotes[0].selected)" class="whitespace-normal break-all" v-if="row.value.notes">
+                <div v-for="(promptedNote, index) in row.value.promptedNotes">
+                  <p v-if="promptedNote.notes.length > 0"> <b>{{promptedNoteTitles[index]}}</b> </p>
+                  <p v-else><del> </del></p>
+                  <p v-for="note in promptedNote.notes">{{note}}</p> <br>
+                </div>
+              <div>
+                <p v-if="row.value.notes.length > 0"> <b>Other</b><br>{{row.value.notes}}</p>
+                <p v-else><del> </del></p>
+                <br>
+              </div>
 
-                <div v-if="row.value.promptedNotes[0].selected">
-                  <p> <b>Coral notes:</b> {{row.value.promptedNotes[0].notes[0]}} //
-                    {{ row.value.promptedNotes[0].notes[1] }} //
-                    {{ row.value.promptedNotes[0].notes[2] }} </p>
-                  <br>
-                </div>
-                <div v-else><del> </del></div>
-                <div v-if="row.value.promptedNotes[1].selected">
-                  <p><b>Algae notes:</b> {{ row.value.promptedNotes[1].notes[0] }} //
-                    {{ row.value.promptedNotes[1].notes[1] }} //
-                    {{ row.value.promptedNotes[1].notes[2] }} </p>
-                  <br>
-                </div>
-                <div v-else><del> </del></div>
-                <div v-if="row.value.promptedNotes[2].selected">
-                  <p><b>Driver notes:</b> {{ row.value.promptedNotes[2].notes[0] }} //
-                    {{ row.value.promptedNotes[2].notes[1] }} //
-                    {{ row.value.promptedNotes[2].notes[2] }} </p>
-                  <br>
-                </div>
-                <div v-else><del> </del></div>
-                <div v-if="row.value.notes">
-                  <p><b>Other notes:</b> {{ row.value.notes }} </p>
-                  <br>
-                </div>
-                <div v-else><del> </del></div>
-              </div>
-              <div v-else>
-                <em>No notes written</em>
-              </div>
+
             </UContainer>
           </template>
         </UPopover>
