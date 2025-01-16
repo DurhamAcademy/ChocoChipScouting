@@ -53,7 +53,7 @@ async function submit() {
   data.value.event = selectedEvent;
   if (data.value.teamNumber != null) {
     let doc = db.post(data.value);
-    await navigateTo('dashboard');
+    await navigateTo('/dashboard');
   }
 }
 </script>
