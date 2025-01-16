@@ -96,6 +96,8 @@ async function setup() {
   console.log(matches);
   items = matches;
 }
+
+let promptedNoteTitles = ["Coral", "Algae", "Driver"]
 </script>
 <template>
   <OuterComponents>
@@ -116,16 +118,26 @@ async function setup() {
             color="yellow"
             label="Notes"
             variant="soft"
+            @click="console.dir(row.value.promptedNotes[0])"
           />
           <template #panel>
             <UContainer
               class="m-auto max-w-lg min-w-[15rem] overflow-y-auto"
               style="max-height: 20rem; min-height: 10rem"
             >
-              <br />
-              <div class="whitespace-normal break-all">
-                Notes: {{ row.value.notes }}
+              <br/>
+                <div v-for="(promptedNote, index) in row.value.promptedNotes">
+                  <p v-if="promptedNote.notes.length > 0"> <b>{{promptedNoteTitles[index]}}</b> </p>
+                  <p v-else><del> </del></p>
+                  <p v-for="note in promptedNote.notes">{{note}}</p> <br>
+                </div>
+              <div>
+                <p v-if="row.value.notes.length > 0"> <b>Other</b><br>{{row.value.notes}}</p>
+                <p v-else><del> </del></p>
+                <br>
               </div>
+
+
             </UContainer>
           </template>
         </UPopover>
