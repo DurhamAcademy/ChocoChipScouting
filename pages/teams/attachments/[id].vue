@@ -123,7 +123,7 @@ async function goBack() {
             <div class="p-2 flex-wrap justify-center">
               <p class="font-sans font-bold text-opacity-60">Choose Tags To Filter</p>
               <div class="flex justify-center">
-                <UButton v-for="(tag, index) in possibleTags" :label="tag" class="justify center" style="margin:5px" :variant="tagStyles[index]" :ui="{ rounded: 'rounded-full' }" @click="toggleTag(index)"/>
+                <UButton v-for="(tag, index) in possibleTags" :label="tag" class="justify center" style="margin:5px" :variant[]="tagStyles[index]" :ui="{ rounded: 'rounded-full' }" @click="toggleTag(index)"/>
               </div>
             </div>
           </template>
@@ -134,7 +134,7 @@ async function goBack() {
             <div class="flex-wrap justify-center p-2">
               <p class="font-sans font-bold text-opacity-60">Choose Events To Filter</p>
               <div class="flex justify-center">
-                <UButton v-for="(tag, index) in possibleEvents" :label="tag" class="justify center" style="margin:5px" :variant="eventStyles[index]" :ui="{ rounded: 'rounded-full' }" @click="toggleEvent(index)"/>
+                <UButton v-for="(tag, index) in possibleEvents" :label="tag" class="justify center" style="margin:5px" :variant[]="eventStyles[index]" :ui="{ rounded: 'rounded-full' }" @click="toggleEvent(index)"/>
               </div>
             </div>
           </template>

@@ -14,6 +14,7 @@ export default defineNuxtConfig({
       })
     },
   ],
+
   webpack: {
     aggressiveCodeRemoval: true,
     optimization: {
@@ -29,6 +30,7 @@ export default defineNuxtConfig({
       }
     },
   },
+
   nitro: {
     preset: 'bun',
     compressPublicAssets: {
@@ -37,6 +39,7 @@ export default defineNuxtConfig({
     },
 
   },
+
   app: {
     head: {
       script: [
@@ -46,10 +49,12 @@ export default defineNuxtConfig({
       ]
     }
   },
+
   build: {
     transpile: ['vuetify'],
 
   },
+
   // speedkit: {
   //
   //   detection: {
@@ -101,6 +106,7 @@ export default defineNuxtConfig({
       vimeo: 'https://i.vimeocdn.com',
     }
   },
+
   // buildModules: [
   //     'nuxt-speedkit',
   //     '@nuxtjs/pwa'
@@ -154,9 +160,11 @@ export default defineNuxtConfig({
       type: 'module',
     },
   },
+
   plugins: [
       '~/plugins/vuetify.ts'
   ],
+
   devtools: {
     enabled: true,
 
@@ -164,7 +172,9 @@ export default defineNuxtConfig({
       enabled: true
     }
   },
+
   ssr: false,
+
   vite: {
     vue: {
       template: {
@@ -172,7 +182,9 @@ export default defineNuxtConfig({
       }
     }
   },
+
   logLevel: "verbose",
+
   runtimeConfig:{
     tbaKey: process.env.NUXT_TBA_KEY,
     couchDB: {
@@ -183,13 +195,16 @@ export default defineNuxtConfig({
       }
     }
   },
+
   sourcemap: {
     server: true,
     client: true
   },
+
   colorMode: {
     preference: 'light' //eventually we will add color mode preference
   },
+
   tailwindcss:{
     config:{
       theme: {
@@ -215,5 +230,7 @@ export default defineNuxtConfig({
         }
       }
     }
-  }
+  },
+
+  compatibilityDate: '2025-01-08'
 })
