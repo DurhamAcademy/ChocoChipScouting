@@ -182,9 +182,10 @@ const { isOverDropZone } = useDropZone(dropZoneRef, onDrop); // variable that ch
 
 <template>
   <navbar></navbar>
+  <UCard class="h-screen w-screen dark:bg-gray-800 rounded-none">
   <UContainer>
     <UCard
-      class="w-lg h-96 flex flex-wrap justify-center content-center m-3 transition-colors"
+      class="w-lg h-96 flex flex-wrap justify-center content-center m-3 transition-colors text-coral-400"
       :class="{ 'bg-emerald-100': isOverDropZone }"
       ref="dropZoneRef"
     >
@@ -301,6 +302,7 @@ const { isOverDropZone } = useDropZone(dropZoneRef, onDrop); // variable that ch
       </UTable>
     </UCard>
   </UContainer>
+  </UCard>
 </template>
 
 <style scoped />

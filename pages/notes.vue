@@ -60,8 +60,9 @@ async function submit() {
 
 <template>
   <Navbar notes-mode></Navbar>
-  <div class="flex justify-center">
-    <UCard class="max-w-xl flex-grow m-5">
+  <UCard class="h-screen w-screen rounded-none">
+    <div class="flex justify-center">
+    <UCard class="max-w-xl flex-grow m-5 border-4 dark:border-gray-800">
       <template #default>
         <div class="pb-1.5">
           <UInput
@@ -97,6 +98,7 @@ async function submit() {
       </template>
     </UCard>
   </div>
+  </UCard>
 </template>
 
 <style scoped></style>

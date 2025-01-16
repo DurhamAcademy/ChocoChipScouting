@@ -102,7 +102,7 @@ async function setup() {
   <OuterComponents>
     <VDataTable
       :loading="pending"
-      class="max-h-dvh overflow-auto dark:bg-gray-800 dark:text-white"
+      class="max-h-dvh overflow-auto dark:bg-gray-800 dark:text-white border-4 dark:border-gray-700"
       :headers="headers"
       :items="items"
       item-key="name"

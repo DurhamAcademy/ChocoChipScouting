@@ -175,8 +175,9 @@ async function submit() {
 
 <template>
   <Navbar scout-mode></Navbar>
+  <UCard class="h-screen w-screen overflow-y-auto rounded-none">
   <div class="flex justify-center">
-    <UCard class="max-w-xl flex-grow m-5">
+    <UCard class="max-w-xl flex-grow m-5 dark:bg-gray-800">
       <template #header>
         <div style="display: flex">
           <div class="flex-0 pr-2">
@@ -482,7 +483,7 @@ async function submit() {
         <!-- A general notes area using the NUXT UI UTextarea-->
         <UTextarea
           v-model="scoutData.notes.notes"
-          color="yellow"
+          color="red"
           placeholder="Other notes..."
         />
         <br />
@@ -511,6 +512,7 @@ async function submit() {
       </template>
     </UCard>
   </div>
+  </UCard>
 </template>
 
 <style scoped></style>

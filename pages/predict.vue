@@ -363,7 +363,7 @@ watch(pending, () => {
         </UContainer>
         <UContainer
           :class="
-            'flex bg-red-100 p-5 mt-4 rounded-sm outline outline-3 ' +
+            'flex bg-red-100 dark:bg-red-400 dark:outline-red-400 p-5 mt-4 rounded-sm outline outline-3 ' +
             winningTeamColor[0]
           "
         >

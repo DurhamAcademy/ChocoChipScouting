@@ -933,7 +933,7 @@ await tableSetup();
 
 <template>
   <OuterComponents class="z[11]">
-    <UCard class="max-h-dvh overflow-auto">
+    <UCard class="max-h-dvh overflow-auto dark:bg-gray-800 border-4 dark:border-gray-700">
       <template #header>
         <div class="flex">
           <UForm>
@@ -1017,27 +1017,27 @@ await tableSetup();
         <div>
             <table
               id="teamTable"
-              class="table-auto border-4 border-gray-50 dark:border-gray-800 dark:bg-gray-900"
+              class="table-auto border-4 border-gray-50 dark:border-gray-800"
             >
               <colgroup
                 span="2"
-                class="odd:bg-gray-50 dark:bg-gray-800"
+                class="odd:bg-gray-50 dark:bg-gray-800 border-4 dark:border-gray-700"
               />
               <colgroup
                 span="2"
-                class="odd:bg-gray-50 dark:bg-gray-700"
+                class="odd:bg-gray-50 dark:bg-gray-700 border-4 dark:border-gray-700"
               />
               <colgroup
                 span="3"
-                class="odd:bg-gray-50 dark:bg-gray-800"
+                class="odd:bg-gray-50 dark:bg-gray-800 border-4 dark:border-gray-700"
               />
               <colgroup
                 span="3"
-                class="odd:bg-gray-50 dark:bg-gray-700"
+                class="odd:bg-gray-50 dark:bg-gray-700 border-4 dark:border-gray-700"
               />
               <colgroup
                 span="3"
-                class="odd:bg-gray-50 dark:bg-gray-800"
+                class="odd:bg-gray-50 dark:bg-gray-800 border-4 dark:border-gray-700"
               />
               <thead class="top-0 sticky bg-gray-50 z-10">
               <tr>
