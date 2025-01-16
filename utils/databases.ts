@@ -118,6 +118,7 @@ export type ScoutingData = {
     netMiss: number;
     net: number;
     mobility: boolean;
+    position: number;
   };
   notes: {
     notes: string;

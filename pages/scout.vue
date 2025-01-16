@@ -82,6 +82,7 @@ let scoutData = ref<ScoutingData>({
     netMiss: 0,
     net: 0,
     mobility: false,
+    position: 0,
   },
   teleop: {
     coralL1: 0,
@@ -390,6 +391,16 @@ async function submit() {
                   :default-value="'Mobility'"
                   :other-value="'Mobility'"
                 />
+                <div class="ml-6">
+                  <br />
+                  <h1 class="text-gray-700 dark:text-gray-200 font-sans font-medium">
+                    Auto Position
+                  </h1>
+                  <SingleSelect
+                    v-model="scoutData.auto.position"
+                    :options="['1', '2', '3', '4']"
+                  />
+                </div>
               </div>
             </div>
           </div>
