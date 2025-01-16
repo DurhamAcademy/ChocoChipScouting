@@ -32,6 +32,8 @@ const endgameOptions = [
   'Deep Successful',
 ];
 
+const isAutoPositionOpen = ref(false);
+
 /*
 Used to configure coral buttons
  */
@@ -403,6 +405,23 @@ async function submit() {
                 </div>
               </div>
             </div>
+            <UButton
+              class="ml-1"
+              @click="isAutoPositionOpen = true"
+              label="Reference"
+            />
+            <!-- the popup for the reference image -->
+            <UModal v-model="isAutoPositionOpen">
+              <div class="flex flex-auto">
+                <UButton
+                  class="mr-2 mt-2 right-0 absolute"
+                  @click="isAutoPositionOpen = false"
+                  icon="i-heroicons-x-circle"
+                />
+                <img src="/public/referenceImage2.png" />
+                <!-- next thing to work: shifting the image up for phone users -->
+              </div>
+            </UModal>
           </div>
         </div>
       </div>
