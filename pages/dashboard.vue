@@ -268,7 +268,7 @@ async function updateTeamData() {
           <p class="">{{ currentRankings[0][1] }}</p>
           <p class="!text-primary">Team 6502 Stats</p>
         </div>
-        <div class="flex justify-center my-1">
+        <div class="flex justify-center my-1" v-if="currentTeamRanking">
           <UButton
             class="rounded-2xl mx-0.5"
             color="gray"

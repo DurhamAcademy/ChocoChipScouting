@@ -46,17 +46,8 @@ Configuration variables done
  * updateEndgameOptions updates the scoutData variable to match the currently selected option in the endgame multiselect
  * @param value the currently selected option
  */
-function updateEndgameOptions(value: Array<number>) {
-  let arr = [];
-  for (let i = 0; i < value.length; i++) {
-    if (value[i] == 1) {
-      arr.push(endgameOptions[i]);
-    }
-  }
-  scoutData.value.endgame.endgame = arr;
-  if (scoutData.value.endgame.endgame.length < 1) {
-    scoutData.value.endgame.endgame = [endgameOptions[0]];
-  }
+function updateEndgameOptions(value: number) {
+  scoutData.value.endgame.endgame = [endgameOptions[value]]
 }
 
 // all the data collected on the scout page in the form of a ScoutingData object,
@@ -515,31 +506,17 @@ async function submit() {
       </div>
       <!-- In this section put all the elements you want for the endgame tab -->
       <div v-if="gameTime == GameTime.Endgame">
-<!--        <div class="flex text-center flex-wrap mb-3">-->
-<!--          <div class="max-w-24 w-24">-->
-<!--            <h1 class="text-gray-700 dark:text-gray-200 font-sans font-medium">-->
-<!--              Trap-->
-<!--            </h1>-->
-<!--            &lt;!&ndash; a new scoring method, but same idea as above incremental buttons &ndash;&gt;-->
-<!--            <IncrementalButton-->
-<!--              class="mt-1"-->
-<!--              v-model="scoutData.endgame.trap"-->
-<!--              :max-value="3"-->
-<!--            ></IncrementalButton>-->
-<!--          </div>-->
-<!--        </div>-->
         <!-- a multi select custom component. this acts like the single select but allows you to select multiple buttons at a time.
         the connection options optional param allows you to configure which options are allowed to be selected with each other
         notice the @update: which runs the updateEndgameOptions() function upon each update of the custom component-->
-        <MultiSelect
-          :model-value="[1, 0, 0, 0, 0, 0]"
+        <SingleSelect
+          :model-value="0"
           :options="endgameOptions"
           @update:model-value="
             value => {
               updateEndgameOptions(value);
             }
           "
-          :connected-options="[1, 2, 3, 4, 5, 6]"
 
         />
       </div>

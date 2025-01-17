@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import databases from '~/utils/databases';
+import databases, { ScoutingData } from '~/utils/databases';
 import { eventOptions } from '~/utils/eventOptions';
 import Navbar from '~/components/website-utils/Navbar.vue';
 
@@ -10,48 +10,67 @@ let selectedEvent = eventOptions[0];
 if (typeof window !== 'undefined')
   selectedEvent = localStorage.getItem('currentEvent') || eventOptions[0];
 
-let data: Ref<
-  UnwrapRef<{
-    auto: { speakerNA: number; amp: number; missed: number; mobility: boolean };
-    notes: { efficiency: number; notes: string; reliability: number };
-    endgame: { endgame: string[]; trap: number };
-    teamNumber: null;
-    event: string;
-    matchNumber: null;
-    teleop: { speakerNA: number; amp: number; missed: number };
-  }>
-> = ref({
+let data = ref<ScoutingData>({
   event: '',
-  teamNumber: null,
+  teamNumber: '',
   matchNumber: -1,
+  author: '',
   auto: {
-    speakerNA: 0,
-    amp: 0,
-    missed: 0,
+    coralL1: 0,
+    coralL2: 0,
+    coralL3: 0,
+    coralL4: 0,
+    processorMiss: 0,
+    processor: 0,
+    netMiss: 0,
+    net: 0,
     mobility: false,
   },
   teleop: {
-    amp: 0,
-    speakerNA: 0,
-    missed: 0,
+    coralL1: 0,
+    coralL2: 0,
+    coralL3: 0,
+    coralL4: 0,
+    processorMiss: 0,
+    processor: 0,
+    netMiss: 0,
+    net: 0,
   },
   endgame: {
-    trap: 0,
-    endgame: '',
+    endgame: [""],
   },
   notes: {
-    playedDefense: false,
-    defense: 3,
     notes: '',
+    promptedNotes: [
+      {
+        selected: false,
+        rating: 1,
+        notes: [],
+      },
+      {
+        selected: false,
+        rating: 1,
+        notes: [],
+      },
+      {
+        selected: false,
+        rating: 1,
+        notes: [],
+      },
+    ],
   },
 });
+
+function checkInvalidTeamNum(teamNum: number) {
+return !(teamNum != null && teamNum > 0 && teamNum < 10000);
+}
 
 /**
  * Submits the data to the server though db.post
  */
 async function submit() {
   data.value.event = selectedEvent;
-  if (data.value.teamNumber != null) {
+  if (!checkInvalidTeamNum(data.value.teamNumber)) {
     let doc = db.post(data.value);
     await navigateTo('/dashboard');
   }
@@ -62,17 +81,33 @@ async function submit() {
   <Navbar notes-mode></Navbar>
   <div class="flex justify-center">
     <UCard class="max-w-xl flex-grow m-5">
+      <template #header>
+        <strong class="text-2xl">Add Notes</strong>
+      </template>
       <template #default>
         <div class="pb-1.5">
           <UInput
             v-model="data.teamNumber"
             placeholder="Team #"
-          ></UInput>
+          >
+            <template #trailing>
+                <span
+                  class="text-red-400 dark:text-red-600 text-xs"
+                  v-if="
+                    checkInvalidTeamNum(data.teamNumber)
+                  "
+                >!!
+                </span
+                >
+              <span v-else></span>
+            </template>
+          </UInput>
         </div>
+        <UDivider label="🍪" class="mt-2 mb-2"/>
         <UTextarea
-          rows="10"
           v-model="data.notes.notes"
-          placeholder="Notes..."
+          placeholder="Other notes..."
+          :rows="10"
         />
       </template>
       <template #footer>
@@ -87,7 +122,6 @@ async function submit() {
           />
           <UButton
             class="m-1"
-            color="green"
             label="Submit"
             type="submit"
             variant="solid"

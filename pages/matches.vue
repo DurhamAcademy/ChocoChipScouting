@@ -73,7 +73,7 @@ const headers = [
 ];
 
 //sets up the data for the table
-let items;
+let items: Array<ScoutingData & IdMeta> = [];
 
 async function setup() {
   //gets all documents from the database asynchronously
