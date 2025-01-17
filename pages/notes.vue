@@ -72,7 +72,7 @@ async function submit() {
   data.value.event = selectedEvent;
   if (!checkInvalidTeamNum(data.value.teamNumber)) {
     let doc = db.post(data.value);
-    await navigateTo('dashboard');
+    await navigateTo('/dashboard');
   }
 }
 </script>

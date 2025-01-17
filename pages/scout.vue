@@ -62,6 +62,12 @@ let scoutData = ref<ScoutingData>({
     coralL2: 0,
     coralL3: 0,
     coralL4: 0,
+    coralL1Miss: 0,
+    coralL2Miss: 0,
+    coralL3Miss: 0,
+    coralL4Miss: 0,
+    reef: 0,
+    reefMiss: 0,
     processorMiss: 0,
     processor: 0,
     netMiss: 0,
@@ -73,6 +79,12 @@ let scoutData = ref<ScoutingData>({
     coralL2: 0,
     coralL3: 0,
     coralL4: 0,
+    coralL1Miss: 0,
+    coralL2Miss: 0,
+    coralL3Miss: 0,
+    coralL4Miss: 0,
+    reef: 0,
+    reefMiss: 0,
     processorMiss: 0,
     processor: 0,
     netMiss: 0,
@@ -170,7 +182,7 @@ async function submit() {
     scoutData.value.author = usernameState.value;
     scoutData.value.event = currentEvent.value || eventOptions[0];
     await db.post(scoutData.value);
-    await navigateTo('/matches');
+    await navigateTo('/teams');
   }
 }
 </script>
@@ -253,6 +265,9 @@ async function submit() {
             <h1 class="text-gray-700 dark:text-gray-200 font-sans mr-6 mb-1 font-bold underline">
               Coral Level
             </h1>
+            <h1 class="text-coral-400 font-sans mr-3 mt-1 font-light text-sm">
+              Scored
+            </h1>
             <div class="flex flex-auto justify-center">
               <SingleSelect
                 v-model="autoCoralLevel"
@@ -276,6 +291,35 @@ async function submit() {
               <IncrementalButton
                 class="mb-1 mr-3 mt-1 ml-2"
                 v-model="scoutData.auto.coralL4"
+                v-else
+              ></IncrementalButton>
+            </div>
+            <h1 class="text-coral-400 font-sans mr-3 mt-1 font-light text-sm">
+              Missed
+            </h1>
+            <div class="flex flex-auto justify-center">
+              <SingleSelect
+                v-model="autoCoralLevel"
+                :options="['L1', 'L2', 'L3', 'L4']"
+              />
+              <IncrementalButton
+                class="mb-1 mr-3 mt-1 ml-2"
+                v-model="scoutData.auto.coralL1Miss"
+                v-if="autoCoralLevel==0"
+              ></IncrementalButton>
+              <IncrementalButton
+                class="mb-1 mr-3 mt-1 ml-2"
+                v-model="scoutData.auto.coralL2Miss"
+                v-else-if="autoCoralLevel==1"
+              ></IncrementalButton>
+              <IncrementalButton
+                class="mb-1 mr-3 mt-1 ml-2"
+                v-model="scoutData.auto.coralL3Miss"
+                v-else-if="autoCoralLevel==2"
+              ></IncrementalButton>
+              <IncrementalButton
+                class="mb-1 mr-3 mt-1 ml-2"
+                v-model="scoutData.auto.coralL4Miss"
                 v-else
               ></IncrementalButton>
             </div>
@@ -350,6 +394,9 @@ async function submit() {
             <h1 class="text-gray-700 dark:text-gray-200 font-sans mr-6 mb-1 font-bold underline">
               Coral Level
             </h1>
+            <h1 class="text-coral-400 font-sans mr-3 mt-1 font-light text-sm">
+              Scored
+            </h1>
             <div class="flex flex-auto justify-center">
               <SingleSelect
                 v-model="teleopCoralLevel"
@@ -373,6 +420,35 @@ async function submit() {
               <IncrementalButton
                 class="mb-1 mr-3 mt-1 ml-2"
                 v-model="scoutData.teleop.coralL4"
+                v-else
+              ></IncrementalButton>
+            </div>
+            <h1 class="text-coral-400 font-sans mr-3 mt-1 font-light text-sm">
+              Missed
+            </h1>
+            <div class="flex flex-auto justify-center">
+              <SingleSelect
+                v-model="teleopCoralLevel"
+                :options="['L1', 'L2', 'L3', 'L4']"
+              />
+              <IncrementalButton
+                class="mb-1 mr-3 mt-1 ml-2"
+                v-model="scoutData.teleop.coralL1Miss"
+                v-if="teleopCoralLevel==0"
+              ></IncrementalButton>
+              <IncrementalButton
+                class="mb-1 mr-3 mt-1 ml-2"
+                v-model="scoutData.teleop.coralL2Miss"
+                v-else-if="teleopCoralLevel==1"
+              ></IncrementalButton>
+              <IncrementalButton
+                class="mb-1 mr-3 mt-1 ml-2"
+                v-model="scoutData.teleop.coralL3Miss"
+                v-else-if="teleopCoralLevel==2"
+              ></IncrementalButton>
+              <IncrementalButton
+                class="mb-1 mr-3 mt-1 ml-2"
+                v-model="scoutData.teleop.coralL4Miss"
                 v-else
               ></IncrementalButton>
             </div>
@@ -452,20 +528,20 @@ async function submit() {
           open-icon="i-heroicons-plus"
           close-icon="i-heroicons-minus"
           :items="[
-            { label: 'Defense', slot: 'defense', defaultOpen: true },
-            { label: 'Offense', slot: 'offense' },
+            { label: 'Coral', slot: 'coral', defaultOpen: true },
+            { label: 'Algae', slot: 'algae' },
             { label: 'Driver', slot: 'driver' },
           ]"
         >
           <!-- templates fill the UAccordion's sections -->
-          <template #defense>
+          <template #coral>
             <!-- the PromptedNote custom component takes in an array of questions and how many lines should be expected as output for that question
             for example: 'Where did this team play defense?' is the question while '1' is the number of lines expected for that response
             it then returns an array of answers to the questions which is updated to the scoutData variable -->
             <PromptedNote
               v-model="scoutData.notes.promptedNotes[0]"
               :questions="[
-                ['Where did this team play defense?', 1],
+                ['How efficient and accurate was this team while scoring coral?', 1],
                 [
                   'Is this team at risk of causing fouls? If so, elaborate why.',
                   2,
@@ -474,16 +550,16 @@ async function submit() {
               ]"
             />
           </template>
-          <template #offense>
+          <template #algae>
             <PromptedNote
               v-model="scoutData.notes.promptedNotes[1]"
               :questions="[
-                ['Where can this team shoot from?', 1],
+                ['How efficient and accurate was this team while scoring algae?', 1],
                 [
                   'If applicable, how did the driver make efforts to avoid opposing defense?',
                   2,
                 ],
-                ['What slowed down their cycles?', 2],
+                ['What slowed down this teams scoring process with algae and/or coral?', 2],
                 ['What other factors contributed to your rating?', 1],
               ]"
             />
