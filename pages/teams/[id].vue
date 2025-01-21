@@ -185,7 +185,7 @@ watch(width, () => {
 </script>
 
 <template>
-    <UCard class="w-full h-full">
+    <UCard class="w-full h-full rounded-none dark:bg-gray-800">
         <template #header>
             <UButton
                 class="absolute left-2 top-2"
@@ -194,7 +194,7 @@ watch(width, () => {
                 icon="i-heroicons-arrow-left"
                 @click="goBack"
             />
-            <div class="text-center justify-center">
+            <div class="text-center justify-center dark:!text-primary">
                 <UTooltip :text="'Avg Penalties: ' + teamData.penaltyScore.toFixed(2)" :popper="{ offsetDistance: -2 }">
                     <div>
                         <svg

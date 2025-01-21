@@ -116,7 +116,7 @@ if (
                     <template #header>
                       <div class="text-center">
                         <span
-                          class="overflow-hidden flex-auto text-zinc-900 max-w-32"
+                          class="overflow-hidden flex-auto !text-primary max-w-32"
                         >
                           {{ usernameState }}
                         </span>

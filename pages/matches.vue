@@ -114,8 +114,8 @@ async function setup() {
       <template v-slot:item.notes="row">
         <UPopover :popper="{ offsetDistance: 15 }">
           <UButton
-            class="mt-2 mb-2"
-            color="yellow"
+            class="mt-2 mb-2 dark:bg-slate-700"
+            color="coral"
             label="Notes"
             variant="soft"
           />

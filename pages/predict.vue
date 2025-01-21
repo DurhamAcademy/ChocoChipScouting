@@ -298,7 +298,7 @@ watch(pending, () => {
         </template>
         <UContainer
           :class="
-            'flex bg-blue-100 p-5 rounded-sm outline outline-3 ' +
+            'flex bg-blue-100 dark:bg-blue-500 dark:outline-blue-500 p-5 rounded-sm outline outline-3 ' +
             winningTeamColor[1]
           "
         >
@@ -363,7 +363,7 @@ watch(pending, () => {
         </UContainer>
         <UContainer
           :class="
-            'flex bg-red-100 dark:bg-red-400 dark:outline-red-400 p-5 mt-4 rounded-sm outline outline-3 ' +
+            'flex bg-red-100 dark:bg-red-700 dark:outline-red-700 p-5 mt-4 rounded-sm outline outline-3 ' +
             winningTeamColor[0]
           "
         >
