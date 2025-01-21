@@ -2,7 +2,6 @@
 import databases, { ScoutingData } from "~/utils/databases";
 import IncrementalButton from '~/components/scouting-components/IncrementalButton.vue';
 import BooleanButton from '~/components/scouting-components/BooleanButton.vue';
-import MultiSelect from '~/components/scouting-components/MultiSelect.vue';
 import PromptedNote from '~/components/scouting-components/PromptedNote.vue';
 import Navbar from '~/components/website-utils/Navbar.vue';
 import { eventOptions } from '~/utils/eventOptions';
@@ -36,7 +35,9 @@ const endgameOptions = [
 Used to configure coral buttons
  */
 const autoCoralLevel = ref(0);
+const autoMissCoralLevel = ref(0);
 const teleopCoralLevel = ref(0);
+const teleopMissCoralLevel = ref(0);
 
 /*
 Configuration variables done
@@ -299,23 +300,23 @@ async function submit() {
             </h1>
             <div class="flex flex-auto justify-center">
               <SingleSelect
-                v-model="autoCoralLevel"
+                v-model="autoMissCoralLevel"
                 :options="['L1', 'L2', 'L3', 'L4']"
               />
               <IncrementalButton
                 class="mb-1 mr-3 mt-1 ml-2"
                 v-model="scoutData.auto.coralL1Miss"
-                v-if="autoCoralLevel==0"
+                v-if="autoMissCoralLevel==0"
               ></IncrementalButton>
               <IncrementalButton
                 class="mb-1 mr-3 mt-1 ml-2"
                 v-model="scoutData.auto.coralL2Miss"
-                v-else-if="autoCoralLevel==1"
+                v-else-if="autoMissCoralLevel==1"
               ></IncrementalButton>
               <IncrementalButton
                 class="mb-1 mr-3 mt-1 ml-2"
                 v-model="scoutData.auto.coralL3Miss"
-                v-else-if="autoCoralLevel==2"
+                v-else-if="autoMissCoralLevel==2"
               ></IncrementalButton>
               <IncrementalButton
                 class="mb-1 mr-3 mt-1 ml-2"
@@ -428,23 +429,23 @@ async function submit() {
             </h1>
             <div class="flex flex-auto justify-center">
               <SingleSelect
-                v-model="teleopCoralLevel"
+                v-model="teleopMissCoralLevel"
                 :options="['L1', 'L2', 'L3', 'L4']"
               />
               <IncrementalButton
                 class="mb-1 mr-3 mt-1 ml-2"
                 v-model="scoutData.teleop.coralL1Miss"
-                v-if="teleopCoralLevel==0"
+                v-if="teleopMissCoralLevel==0"
               ></IncrementalButton>
               <IncrementalButton
                 class="mb-1 mr-3 mt-1 ml-2"
                 v-model="scoutData.teleop.coralL2Miss"
-                v-else-if="teleopCoralLevel==1"
+                v-else-if="teleopMissCoralLevel==1"
               ></IncrementalButton>
               <IncrementalButton
                 class="mb-1 mr-3 mt-1 ml-2"
                 v-model="scoutData.teleop.coralL3Miss"
-                v-else-if="teleopCoralLevel==2"
+                v-else-if="teleopMissCoralLevel==2"
               ></IncrementalButton>
               <IncrementalButton
                 class="mb-1 mr-3 mt-1 ml-2"
