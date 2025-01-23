@@ -16,7 +16,7 @@ if (typeof window !== 'undefined')
 /**
  * Gets the event matches of the user's current event asynchronously
  */
-const { data, pending } = await useLazyFetch<Array<any>>(
+const { data, status } = await useLazyFetch<Array<any>>(
   '/api/eventMatches/' + currentEvent,
 );
 
@@ -152,7 +152,7 @@ let playoffNumber = ref<number>();
 
 /**
  * Populates the selected Red and Blue teams based on the provided data and match/playoff number.
- * If the pending value is false and the data value is not null, the function populates the selected teams.
+ * If the status value is success, the function populates the selected teams.
  * If the matchNumber value is defined and not empty, the function populates the teams based on the match number.
  * If the playoffNumber value is defined, the function populates the teams based on the playoff number.
  * If neither matchNumber nor playoffNumber is defined, the function sets the selected teams to empty strings.
@@ -160,7 +160,7 @@ let playoffNumber = ref<number>();
  * @return {void}
  */
 function populateMatch() {
-  if (!pending.value && data.value != null) {
+  if (status.value == 'success' && data.value != null) {
     let tbaMatchData = data.value;
     if (matchNumber.value != undefined && matchNumber.value.toString() != '') {
       let tbaMatchData = data.value;
@@ -220,8 +220,8 @@ let correctMatches = ref(0);
  * Gets data from eventMatches call once it has returned asynchronously
  * Updates the correct matches tally
  */
-watch(pending, () => {
-  if (!pending.value) {
+watch(status, () => {
+  if (status.value == 'success') {
     let md = data.value;
     if (md != null) {
       let blueTeams = JSON.stringify(selectedBlueTeams.value);
@@ -412,7 +412,7 @@ watch(pending, () => {
         </UContainer>
         <template #footer>
           <div class="text-center text-xs dark:text-white">
-            <p v-if="!pending">
+            <p v-if="status == 'success'">
               {{
                 'Accuracy: ' +
                 ((correctMatches / totalMatches) * 100).toFixed(0) +

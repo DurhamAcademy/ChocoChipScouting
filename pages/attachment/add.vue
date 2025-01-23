@@ -181,30 +181,17 @@ const { isOverDropZone } = useDropZone(dropZoneRef, onDrop); // variable that ch
 </script>
 
 <template>
-  <navbar></navbar>
+  <Navbar></Navbar>
   <UCard class="h-screen w-screen dark:bg-gray-800 rounded-none">
   <UContainer>
     <UCard
-      class="w-lg h-96 flex flex-wrap justify-center content-center m-3 transition-colors text-coral-400"
+      class="w-lg justify-center content-center m-3 transition-colors text-coral-400"
       :class="{ 'bg-emerald-100': isOverDropZone }"
       ref="dropZoneRef"
     >
-      <template #header>Drop files here</template>
-      <UButton
-        type="button"
-        @click="open"
-        label="Choose file"
-        variant="ghost"
-      />
-      <template #footer>
-        <UButton
-          type="button"
-          @click="submit"
-          label="Submit"
-        />
+      <template #header>
+        <strong class="text-2xl">Add Attachments</strong>
       </template>
-    </UCard>
-    <UCard class="m-3">
       <UTable
         :rows="rows"
         :columns="[
@@ -300,6 +287,34 @@ const { isOverDropZone } = useDropZone(dropZoneRef, onDrop); // variable that ch
           </div>
         </template>
       </UTable>
+      <template #footer>
+        <div class="flex justify-between">
+            <UButton
+              type="button"
+              @click="open"
+              label="Choose file"
+              variant="soft"
+              icon="i-heroicons-arrow-up-tray"
+              trailing
+              >
+            </UButton>
+          <div>
+            <UButton
+              class="m-1"
+              color="rose"
+              label="Cancel"
+              to="/dashboard"
+              type="reset"
+              variant="outline"
+            />
+            <UButton
+              type="button"
+              @click="submit"
+              label="Submit"
+            />
+          </div>
+        </div>
+      </template>
     </UCard>
   </UContainer>
   </UCard>
