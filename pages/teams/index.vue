@@ -1082,7 +1082,7 @@ await tableSetup();
                     @click="sortTable(index, col.sort, col.label)"
                     :trailing-icon="col.icon"
                     variant="ghost"
-                    class="rounded-full dark:bg-gray-800"
+                    class="rounded-full dark:bg-gray-700"
                     size="xs"
                     :label="col.label"
                     color="gray"
@@ -1091,7 +1091,7 @@ await tableSetup();
                     :label="col.label"
                     size="xs"
                     variant="ghost"
-                    class="rounded-full dark:bg-gray-800"
+                    class="rounded-full dark:bg-gray-700"
                     color="gray"
                   />
                 </th>
