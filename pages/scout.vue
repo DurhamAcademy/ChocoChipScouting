@@ -262,7 +262,7 @@ async function submit() {
           <div class="max-w-30 w-30">
             <div class="w-fit text-center ml-4">
               <h1 class="text-gray-700 dark:text-gray-200 font-sans font-bold">
-                Coral Level
+                Coral
               </h1>
               <div class="flex flex-auto justify-center max-w-44">
                 <div class="flex-auto text-center mr-2">
@@ -404,7 +404,7 @@ async function submit() {
           <div class="max-w-30 w-30">
             <div class="w-fit text-center ml-4">
               <h1 class="text-gray-700 dark:text-gray-200 font-sans font-bold">
-                Coral Level
+                Coral
               </h1>
               <div class="flex flex-auto justify-center max-w-44">
                 <div class="flex-auto text-center mr-2">
