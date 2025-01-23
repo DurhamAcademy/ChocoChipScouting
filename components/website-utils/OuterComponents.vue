@@ -55,7 +55,9 @@ if (
 </script>
 
 <template>
-  <div class=" min-h-screen w-screen flex-col dark:bg-gray-800 m overflow-auto max-h-dvh ">
+  <div
+    class="min-h-screen w-screen flex-col dark:bg-gray-800 m overflow-auto max-h-dvh"
+  >
     <Navbar
       class="flex-grow basis-auto"
       :disable-sidebar="width > 800"
@@ -116,7 +118,7 @@ if (
                     <template #header>
                       <div class="text-center">
                         <span
-                          class="overflow-hidden flex-auto !text-primary max-w-32"
+                          class="overflow-hidden dark:text-white flex-auto max-w-32"
                         >
                           {{ usernameState }}
                         </span>

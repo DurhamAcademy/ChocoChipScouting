@@ -135,8 +135,8 @@ async function tableSetup() {
     let alliance = blueAlliance.includes(key.toString())
       ? 'bg-blue-100'
       : redAlliance.includes(key.toString())
-        ? 'bg-red-100'
-        : '';
+      ? 'bg-red-100'
+      : '';
     if (allowedTeams.length == 0 || allowedTeams.includes(key.toString())) {
       for (let match of value) {
         if (
@@ -327,7 +327,7 @@ async function tableSetup() {
     teamsData.value[i].team.color = colorify(
       ((sortedTeamPercents.indexOf(teamPercents[i]) + 1) /
         sortedTeamPercents.length) *
-      100,
+        100,
     );
     teamsData.value[i].driver.color = colorify(
       calculatePercent(
@@ -583,10 +583,10 @@ function autoAccuracy(teamArrays: Array<ScoutingData>) {
     return [
       true,
       (successfulAmpCount + successfulSpeakerCount) /
-      (missedAmpCount +
-        missedSpeakerCount +
-        successfulSpeakerCount +
-        successfulAmpCount),
+        (missedAmpCount +
+          missedSpeakerCount +
+          successfulSpeakerCount +
+          successfulAmpCount),
       successfulAmpCount / (missedAmpCount + successfulAmpCount),
       successfulSpeakerCount / (missedSpeakerCount + successfulSpeakerCount),
     ];
@@ -594,7 +594,7 @@ function autoAccuracy(teamArrays: Array<ScoutingData>) {
     return [
       false,
       (successfulAmpCount + successfulSpeakerCount) /
-      (missedAmpCount + successfulSpeakerCount + successfulAmpCount),
+        (missedAmpCount + successfulSpeakerCount + successfulAmpCount),
     ];
 }
 
@@ -619,10 +619,10 @@ function teleAccuracy(teamArrays: Array<ScoutingData>) {
     return [
       true,
       (successfulAmpCount + successfulSpeakerCount) /
-      (missedAmpCount +
-        missedSpeakerCount +
-        successfulSpeakerCount +
-        successfulAmpCount),
+        (missedAmpCount +
+          missedSpeakerCount +
+          successfulSpeakerCount +
+          successfulAmpCount),
       successfulAmpCount / (missedAmpCount + successfulAmpCount),
       successfulSpeakerCount / (missedSpeakerCount + successfulSpeakerCount),
     ];
@@ -630,7 +630,7 @@ function teleAccuracy(teamArrays: Array<ScoutingData>) {
     return [
       false,
       (successfulAmpCount + successfulSpeakerCount) /
-      (missedAmpCount + successfulSpeakerCount + successfulAmpCount),
+        (missedAmpCount + successfulSpeakerCount + successfulAmpCount),
     ];
 }
 
@@ -933,41 +933,44 @@ await tableSetup();
 
 <template>
   <OuterComponents class="z[11]">
-    <UCard class="max-h-dvh overflow-auto dark:bg-gray-800 border-4 dark:border-gray-700">
+    <UCard
+      class="max-h-dvh overflow-auto dark:bg-gray-800"
+      :ui="{
+        rounded: '',
+      }"
+    >
       <template #header>
         <div class="flex">
-          <UForm>
-            <UFormGroup
-              class="inline-block mr-2"
-              label="Filters"
-            >
-              <UButtonGroup>
-                <USelectMenu
-                  class="inline-block min-w-28 w-28 max-w-28"
-                  v-model="activeFilterOption"
-                  :options="filterOptions"
-                />
-                <UInput
-                  v-model="filterInput"
-                  class="inline-block max-w-40"
-                  placeholder="filter text..."
-                  :ui="{ icon: { trailing: { pointer: '' } } }"
-                  v-on:keyup.enter="addFilter"
-                >
-                  <template #trailing>
-                    <UButton
-                      v-show="filterInput != ''"
-                      color="coral"
-                      variant="link"
-                      icon="i-heroicons-plus-circle"
-                      :padded="false"
-                      @click="addFilter"
-                    />
-                  </template>
-                </UInput>
-              </UButtonGroup>
-            </UFormGroup>
-          </UForm>
+          <UFormGroup
+            class="inline-block mr-2"
+            label="Filters"
+          >
+            <UButtonGroup>
+              <USelectMenu
+                class="inline-block min-w-28 w-28 max-w-28"
+                v-model="activeFilterOption"
+                :options="filterOptions"
+              />
+              <UInput
+                v-model="filterInput"
+                class="inline-block max-w-40"
+                placeholder="filter text..."
+                :ui="{ icon: { trailing: { pointer: '' } } }"
+                v-on:keyup.enter="addFilter"
+              >
+                <template #trailing>
+                  <UButton
+                    v-show="filterInput != ''"
+                    color="coral"
+                    variant="link"
+                    icon="i-heroicons-plus-circle"
+                    :padded="false"
+                    @click="addFilter"
+                  />
+                </template>
+              </UInput>
+            </UButtonGroup>
+          </UFormGroup>
         </div>
         <UFormGroup>
           <UButton
@@ -1015,93 +1018,89 @@ await tableSetup();
       </template>
       <template #default>
         <div>
-            <table
-              id="teamTable"
-              class="table-auto border-4 border-gray-50 dark:border-gray-800"
-            >
-              <colgroup
-                span="2"
-                class="odd:bg-gray-50 dark:bg-gray-800 border-4 dark:border-gray-700"
-              />
-              <colgroup
-                span="2"
-                class="odd:bg-gray-50 dark:bg-gray-700 border-4 dark:border-gray-700"
-              />
-              <colgroup
-                span="3"
-                class="odd:bg-gray-50 dark:bg-gray-800 border-4 dark:border-gray-700"
-              />
-              <colgroup
-                span="3"
-                class="odd:bg-gray-50 dark:bg-gray-700 border-4 dark:border-gray-700"
-              />
-              <colgroup
-                span="3"
-                class="odd:bg-gray-50 dark:bg-gray-800 border-4 dark:border-gray-700"
-              />
-              <thead class="top-0 sticky bg-gray-50 z-10">
-              <tr>
-                <th colspan="2" class="dark:bg-gray-800"/>
-                  <th colspan="2" class="dark:bg-gray-800">
-                      <p class="text-xs font-light !text-primary">Average</p>
-                  <p class="!text-primary">Ratings</p>
-                  <p class="text-xs font-light !text-primary">/5.00</p>
+          <table
+            id="teamTable"
+            class="table-auto border-x-4 border-t-8 border-gray-50 dark:border-gray-700"
+          >
+            <colgroup
+              span="2"
+              class="odd:bg-gray-50 dark:bg-gray-700"
+            />
+            <colgroup
+              span="2"
+              class="odd:bg-gray-50 dark:bg-gray-800"
+            />
+            <colgroup
+              span="3"
+              class="odd:bg-gray-50 dark:bg-gray-700"
+            />
+            <colgroup
+              span="3"
+              class="odd:bg-gray-50 dark:bg-gray-800"
+            />
+            <colgroup
+              span="3"
+              class="odd:bg-gray-50 dark:bg-gray-700"
+            />
+            <thead class="top-0 sticky bg-gray-50 dark:bg-gray-700 z-10">
+              <tr class="border-b-2">
+                <th colspan="2" />
+                <th colspan="2">
+                  <p class="text-xs font-light dark:text-white">Average</p>
+                  <p class="dark:text-white">Ratings</p>
                 </th>
                 <th
                   colspan="3"
                   scope="colgroup"
-                  class="dark:bg-gray-800"
                 >
-                  <p class="text-xs font-light !text-primary">Average</p>
-                  <p class="!text-primary">Cycles</p>
+                  <p class="text-xs font-light dark:text-white">Average</p>
+                  <p class="dark:text-white">Cycles</p>
                 </th>
                 <th
                   colspan="3"
                   scope="colgroup"
-                  class="dark:bg-gray-800"
                 >
-                  <p class="text-xs font-light !text-primary">Average</p>
-                  <p class="!text-primary">Teleop Cycles</p>
+                  <p class="text-xs font-light dark:text-white">Average</p>
+                  <p class="dark:text-white">Teleop Cycles</p>
                 </th>
                 <th
                   colspan="3"
                   scope="colgroup"
-                  class="dark:bg-gray-800"
                 >
-                  <p class="text-xs font-light !text-primary">Average</p>
-                  <p class="!text-primary">Endgame</p>
+                  <p class="text-xs font-light dark:text-white">Average</p>
+                  <p class="dark:text-white">Endgame</p>
                 </th>
               </tr>
               <tr>
                 <th
                   scope="col"
                   v-for="(col, index) of columns"
-                  class="font-medium text-sm dark:bg-gray-800"
+                  class="font-medium text-sm"
                 >
                   <UButton
                     v-if="col.sortable"
                     @click="sortTable(index, col.sort, col.label)"
                     :trailing-icon="col.icon"
                     variant="ghost"
-                    class="rounded-full dark:bg-gray-700"
+                    class="rounded-full dark:bg-gray-800"
                     size="xs"
                     :label="col.label"
                     color="gray"
                   /><UButton
-                  v-else
-                  :label="col.label"
-                  size="xs"
-                  variant="ghost"
-                  class="rounded-full dark:bg-gray-700"
-                  color="gray"
-                />
+                    v-else
+                    :label="col.label"
+                    size="xs"
+                    variant="ghost"
+                    class="rounded-full dark:bg-gray-800"
+                    color="gray"
+                  />
                 </th>
               </tr>
-              </thead>
-              <tbody>
+            </thead>
+            <tbody>
               <tr
                 v-for="team of teamsData"
-                class="border-b border-gray-200 dark:border-gray-700"
+                class="mb-1"
               >
                 <td class="text-right">
                   <UButton
@@ -1111,7 +1110,7 @@ await tableSetup();
                     size="xs"
                     @click="navigateTo('/teams/' + team.team.data)"
                     trailing-icon="i-heroicons-chart-bar-square"
-                    class="dark:bg-gray-700"
+                    class="dark:border-gray-700"
                   />
                 </td>
                 <td class="text-center">
@@ -1322,9 +1321,9 @@ await tableSetup();
                   </UPopover>
                 </td>
               </tr>
-              </tbody>
-            </table>
-          </div>
+            </tbody>
+          </table>
+        </div>
       </template>
     </UCard>
   </OuterComponents>

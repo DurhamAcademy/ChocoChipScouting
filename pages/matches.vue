@@ -102,14 +102,13 @@ async function setup() {
   <OuterComponents>
     <VDataTable
       :loading="pending"
-      class="max-h-dvh overflow-auto dark:bg-gray-800 dark:text-white border-4 dark:border-gray-700"
+      class="max-h-dvh overflow-auto dark:bg-gray-800 dark:text-white"
       :headers="headers"
       :items="items"
       item-key="name"
       density="compact"
       :items-per-page="-1"
       v-model:sort-by="sortBy"
-
     >
       <template v-slot:item.notes="row">
         <UPopover :popper="{ offsetDistance: 15 }">
@@ -121,7 +120,7 @@ async function setup() {
           />
           <template #panel>
             <UContainer
-              class="m-auto max-w-lg min-w-[15rem] overflow-y-auto border-2"
+              class="m-auto max-w-lg min-w-[15rem] overflow-y-auto border-2 dark:border-primary rounded-lg"
               style="max-height: 20rem; min-height: 10rem"
             >
               <br />
