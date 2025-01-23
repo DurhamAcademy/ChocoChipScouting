@@ -37,7 +37,7 @@ let data = ref<ScoutingData>({
     net: 0,
   },
   endgame: {
-    endgame: [""],
+    endgame: [''],
   },
   notes: {
     notes: '',
@@ -62,7 +62,7 @@ let data = ref<ScoutingData>({
 });
 
 function checkInvalidTeamNum(teamNum: number) {
-return !(teamNum != null && teamNum > 0 && teamNum < 10000);
+  return !(teamNum != null && teamNum > 0 && teamNum < 10000);
 }
 
 /**
@@ -81,57 +81,57 @@ async function submit() {
   <Navbar notes-mode></Navbar>
   <UCard class="h-screen w-screen rounded-none">
     <div class="flex justify-center">
-    <UCard class="max-w-xl flex-grow m-5 border-4 dark:border-gray-800">
-      <template #header>
-        <strong class="text-2xl">Add Notes</strong>
-      </template>
-      <template #default>
-        <div class="pb-1.5">
-          <UInput
-            v-model="data.teamNumber"
-            placeholder="Team #"
-          >
-            <template #trailing>
+      <UCard class="max-w-xl flex-grow m-5 border-4 dark:border-gray-800">
+        <template #header>
+          <strong class="text-2xl">Add Notes</strong>
+        </template>
+        <template #default>
+          <div class="pb-1.5">
+            <UInput
+              v-model="data.teamNumber"
+              placeholder="Team #"
+            >
+              <template #trailing>
                 <span
-                  class="text-red-400 dark:text-red-600 text-xs"
-                  v-if="
-                    checkInvalidTeamNum(data.teamNumber)
-                  "
-                >!!
-                </span
-                >
-              <span v-else></span>
-            </template>
-          </UInput>
-        </div>
-        <UDivider label="🍪" class="mt-2 mb-2"/>
-        <UTextarea
-          v-model="data.notes.notes"
-          placeholder="Other notes..."
-          :rows="10"
-        />
-      </template>
-      <template #footer>
-        <div class="flex justify-between">
-          <UButton
-            class="m-1"
-            color="rose"
-            label="Cancel"
-            to="/dashboard"
-            type="reset"
-            variant="outline"
+                  class="text-red-400 dark:text-red-600 text-sm"
+                  v-if="checkInvalidTeamNum(data.teamNumber)"
+                  >!!
+                </span>
+                <span v-else></span>
+              </template>
+            </UInput>
+          </div>
+          <UDivider
+            label="🍪"
+            class="mt-2 mb-2"
           />
-          <UButton
-            class="m-1"
-            label="Submit"
-            type="submit"
-            variant="solid"
-            @click="submit"
+          <UTextarea
+            v-model="data.notes.notes"
+            placeholder="Other notes..."
+            :rows="10"
           />
-        </div>
-      </template>
-    </UCard>
-  </div>
+        </template>
+        <template #footer>
+          <div class="flex justify-between">
+            <UButton
+              class="m-1"
+              color="rose"
+              label="Cancel"
+              to="/dashboard"
+              type="reset"
+              variant="outline"
+            />
+            <UButton
+              class="m-1"
+              label="Submit"
+              type="submit"
+              variant="solid"
+              @click="submit"
+            />
+          </div>
+        </template>
+      </UCard>
+    </div>
   </UCard>
 </template>
 

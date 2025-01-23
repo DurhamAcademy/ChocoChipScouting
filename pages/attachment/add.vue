@@ -99,7 +99,7 @@ async function imageProcessor(files: File[] | null) {
                 fileType: realFileType,
                 fileSize: fileSize + ' MB',
                 photoURL: URL.createObjectURL(currentFile),
-                teamNumber: -1,
+                teamNumber: 0,
                 tags: new Array(tagsList.length),
                 tagStyle: tagStyles.map(item => {
                   return item;
@@ -167,8 +167,8 @@ function toggleTag(index: number, indexOfTag: number) {
 }
 
 function minMaxTeam(index: number) {
-  if (rows.value[index].teamNumber > 9999 || rows.value[index].teamNumber < -1)
-    rows.value[index].teamNumber = -1;
+  if (rows.value[index].teamNumber > 9999 || rows.value[index].teamNumber <= -1)
+    rows.value[index].teamNumber = 0;
 }
 
 function changeAllTeams(index: number) {
@@ -183,112 +183,112 @@ const { isOverDropZone } = useDropZone(dropZoneRef, onDrop); // variable that ch
 <template>
   <Navbar></Navbar>
   <UCard class="h-screen w-screen dark:bg-gray-800 rounded-none">
-  <UContainer>
-    <UCard
-      class="w-lg justify-center content-center m-3 transition-colors text-coral-400"
-      :class="{ 'bg-emerald-100': isOverDropZone }"
-      ref="dropZoneRef"
-    >
-      <template #header>
-        <strong class="text-2xl">Add Attachments</strong>
-      </template>
-      <UTable
-        :rows="rows"
-        :columns="[
-          { key: 'fileName', label: 'File Name' },
-          { key: 'fileType', label: 'File Type' },
-          { key: 'fileSize', label: 'File Size' },
-          { key: 'teamNum', label: 'Team # (0 for misc)' },
-          { key: 'tags', label: 'Tags' },
-          { key: 'actions' },
-        ]"
+    <UContainer>
+      <UCard
+        class="w-lg justify-center content-center m-3 transition-colors text-coral-400"
+        :class="{ 'bg-emerald-100': isOverDropZone }"
+        ref="dropZoneRef"
       >
-        <template #teamNum-data="{ row, index }">
-          <div class="flex">
-            <UInput
-              class="min-w-20"
-              v-model="row.teamNumber"
-              placeholder="Team #"
-              type="number"
-              @change="minMaxTeam(index)"
-            />
-            <UTooltip text="Apply team # to all">
+        <template #header>
+          <strong class="text-2xl text-center">Add Attachments</strong>
+        </template>
+        <UTable
+          :rows="rows"
+          :columns="[
+            { key: 'fileName', label: 'File Name' },
+            { key: 'fileType', label: 'File Type' },
+            { key: 'fileSize', label: 'File Size' },
+            { key: 'teamNum', label: 'Team # (0 for misc)' },
+            { key: 'tags', label: 'Tags' },
+            { key: 'actions' },
+          ]"
+        >
+          <template #teamNum-data="{ row, index }">
+            <div class="flex">
+              <UInput
+                class="min-w-20"
+                v-model="row.teamNumber"
+                placeholder="Team #"
+                type="number"
+                @change="minMaxTeam(index)"
+              />
+              <UTooltip text="Apply team # to all">
+                <UButton
+                  @click="changeAllTeams(index)"
+                  icon="i-heroicons-arrows-up-down"
+                  style="margin-left: 5px"
+                  variant="ghost"
+                />
+              </UTooltip>
+            </div>
+          </template>
+          <template #tags-data="{ row, index }">
+            <UPopover>
               <UButton
-                @click="changeAllTeams(index)"
-                icon="i-heroicons-arrows-up-down"
-                style="margin-left: 5px"
+                label="+ Add Tags"
                 variant="ghost"
               />
-            </UTooltip>
-          </div>
-        </template>
-        <template #tags-data="{ row, index }">
-          <UPopover>
-            <UButton
-              label="+ Add Tags"
-              variant="ghost"
-            />
-            <template #panel>
-              <div class="flex-wrap flex max-w-64 justify-center">
-                <UButton
-                  v-for="tag in tagsList"
-                  :label="tag"
-                  style="margin: 5px"
-                  :variant="row.tagStyle[tagsList.indexOf(tag)]"
-                  :ui="{ rounded: 'rounded-full' }"
-                  @click="toggleTag(index, tagsList.indexOf(tag))"
-                  class="flex-grow justify-center"
-                />
-              </div>
-            </template>
-          </UPopover>
-        </template>
-        <template #actions-data="{ row, index }">
-          <div style="display: flex; align-items: center">
-            <UTooltip
-              text="Extra Notes"
-              :popper="{ placement: 'left' }"
-            >
-              <UPopover>
+              <template #panel>
+                <div class="flex-wrap flex max-w-64 justify-center">
+                  <UButton
+                    v-for="tag in tagsList"
+                    :label="tag"
+                    style="margin: 5px"
+                    :variant="row.tagStyle[tagsList.indexOf(tag)]"
+                    :ui="{ rounded: 'rounded-full' }"
+                    @click="toggleTag(index, tagsList.indexOf(tag))"
+                    class="flex-grow justify-center"
+                  />
+                </div>
+              </template>
+            </UPopover>
+          </template>
+          <template #actions-data="{ row, index }">
+            <div style="display: flex; align-items: center">
+              <UTooltip
+                text="Extra Notes"
+                :popper="{ placement: 'left' }"
+              >
+                <UPopover>
+                  <UButton
+                    color="gray"
+                    variant="ghost"
+                    icon="i-heroicons-pencil-square"
+                  />
+                  <template #panel>
+                    <UTextarea v-model="row.extraNotes" />
+                  </template>
+                </UPopover>
+              </UTooltip>
+              <UPopover
+                mode="hover"
+                :popper="{ placement: 'left-end' }"
+              >
                 <UButton
                   color="gray"
                   variant="ghost"
-                  icon="i-heroicons-pencil-square"
+                  icon="i-heroicons-eye"
                 />
-                <template #panel>
-                  <UTextarea v-model="row.extraNotes" />
+                <template #panel="{ close }">
+                  <NuxtImg
+                    :src="row.photoURL"
+                    class="h-48 w-100"
+                    alt="Selected Image"
+                    @mouseenter="close"
+                  />
                 </template>
               </UPopover>
-            </UTooltip>
-            <UPopover
-              mode="hover"
-              :popper="{ placement: 'left-end' }"
-            >
               <UButton
-                color="gray"
+                color="red"
                 variant="ghost"
-                icon="i-heroicons-eye"
+                icon="i-heroicons-trash"
+                @click="rows.splice(index, 1)"
               />
-              <template #panel="{ close }">
-                <NuxtImg
-                  :src="row.photoURL"
-                  class="h-48 w-100"
-                  alt="Selected Image"
-                  @mouseenter="close"
-                />
-              </template>
-            </UPopover>
-            <UButton
-              color="red"
-              variant="ghost"
-              icon="i-heroicons-trash"
-              @click="rows.splice(index, 1)"
-            />
-          </div>
-        </template>
-      </UTable>
-      <template #footer>
-        <div class="flex justify-between">
+            </div>
+          </template>
+        </UTable>
+        <template #footer>
+          <div class="flex justify-between">
             <UButton
               type="button"
               @click="open"
@@ -296,27 +296,27 @@ const { isOverDropZone } = useDropZone(dropZoneRef, onDrop); // variable that ch
               variant="soft"
               icon="i-heroicons-arrow-up-tray"
               trailing
-              >
+            >
             </UButton>
-          <div>
-            <UButton
-              class="m-1"
-              color="rose"
-              label="Cancel"
-              to="/dashboard"
-              type="reset"
-              variant="outline"
-            />
-            <UButton
-              type="button"
-              @click="submit"
-              label="Submit"
-            />
+            <div>
+              <UButton
+                class="m-1"
+                color="rose"
+                label="Cancel"
+                to="/dashboard"
+                type="reset"
+                variant="outline"
+              />
+              <UButton
+                type="button"
+                @click="submit"
+                label="Submit"
+              />
+            </div>
           </div>
-        </div>
-      </template>
-    </UCard>
-  </UContainer>
+        </template>
+      </UCard>
+    </UContainer>
   </UCard>
 </template>
 
