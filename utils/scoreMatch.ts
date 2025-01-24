@@ -5,5 +5,5 @@ export function scoreMatch(match: any){
     if(match.endgame.endgame.includes("Parked")) endgameScores += 1
     if(match.endgame.endgame.includes("Onstage")) endgameScores += 3
     if(match.endgame.endgame.includes("Harmony")) endgameScores += 2
-    return autoScores + teleopScores + endgameScores
+    return [autoScores , teleopScores , endgameScores]
 }
