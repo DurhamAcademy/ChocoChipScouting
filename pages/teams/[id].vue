@@ -6,6 +6,7 @@ import { eventOptions } from '~/utils/eventOptions';
 import { useWindowSize } from '@vueuse/core';
 import AmpVisualization from '~/components/24-crescendo/AmpVisualization.vue';
 import SpeakerVisualization from '~/components/24-crescendo/SpeakerVisualization.vue';
+import AlgaeVisualization from "~/components/25-reefscape/AlgaeVisualization.vue";
 
 let { width, height } = useWindowSize();
 
@@ -261,19 +262,13 @@ watch(width, () => {
       </div>
     </template>
 
-    <div
-      class="flex flex-wrap"
-      v-if="teamData.rawData.length > 0"
-    >
-      <div class="flex-auto h-1/3 mr-2">
-        <MatchVisualization :row-data="teamData"></MatchVisualization>
-      </div>
-      <div :class="'flex-auto h-min max-h-min flex-wrap ' + margin">
-        <!--        <AmpVisualization :row-data="teamData"></AmpVisualization>-->
-        <!--        <SpeakerVisualization-->
-        <!--          class="mt-4"-->
-        <!--          :row-data="teamData"-->
-        <!--        ></SpeakerVisualization>-->
+        <div class="flex flex-wrap" v-if="teamData.rawData.length > 0">
+            <div class="flex-auto h-1/3 mr-2">
+<!--                <MatchVisualization :row-data="teamData"></MatchVisualization>-->
+            </div>
+            <div :class="'flex-auto h-min max-h-min flex-wrap ' + margin">
+                <AlgaeVisualization :row-data="teamData"></AlgaeVisualization>
+
       </div>
     </div>
     <div

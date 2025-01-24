@@ -118,7 +118,7 @@ let promptedNoteTitles = ["Coral", "Algae", "Driver"]
             color="yellow"
             label="Notes"
             variant="soft"
-            @click="console.dir(row.value.promptedNotes[0])"
+
           />
           <template #panel>
             <UContainer
