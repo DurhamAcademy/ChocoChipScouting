@@ -4,7 +4,7 @@ import PouchDB from 'pouchdb';
 import databases, { type TeamInfo } from '~/utils/databases';
 import OuterComponents from '~/components/website-utils/OuterComponents.vue';
 let syncDisable = ref(false);
-//
+
 async function sync() {
   syncDisable.value = true;
   await PouchDB.sync(
