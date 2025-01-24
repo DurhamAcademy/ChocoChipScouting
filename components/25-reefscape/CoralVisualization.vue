@@ -22,19 +22,21 @@ function compareMatchNumbers(a: any, b: any) {
   return 0;
 }
 
+let coralL1 = ref<Array<number>>([]);
+let coralL2 = ref<Array<number>>([]);
+let coralL3 = ref<Array<number>>([]);
+let coralL4 = ref<Array<number>>([]);
 let matchNums = ref<Array<number>>([]);
-let autoMatchScores = ref<Array<number>>([]);
-let matchScores = ref<Array<number>>([]);
-let missedScores = ref<Array<number>>([]);
 
 for (let match of props.rowData.rawData) {
   matchNums.value.push(match.matchNumber);
-  autoMatchScores.value.push(match.auto.coralNA);
+  coralL2.value.push(match.auto.coralNA);
   //TODO backwards compatability
-  missedScores.value.push(
+  coralL4.value.push(
     match.auto.missedCoral + match.teleop.missedCoral || 0,
   );
-  matchScores.value.push(match.auto.coralNA + match.teleop.coralNA);
+  coralL3.value.push(match.auto.coralNA + match.teleop.coralNA);
+  coralL1.value.push(match.auto.coralNA + match.teleop.coralNA);
 }
 
 const chartTitles = ['Total', 'Auto', 'Missed'];
@@ -111,7 +113,7 @@ let rows = [
     <div class="width=device-width flex-auto flex flex-wrap">
       <LineChart
         class="mr-5"
-        :data="[matchScores, autoMatchScores, missedScores]"
+        :data="[coralL3, coralL2, coralL4, coralL1]"
         :labels="matchNums"
         :chart-titles="chartTitles"
         :suggested-max="20"

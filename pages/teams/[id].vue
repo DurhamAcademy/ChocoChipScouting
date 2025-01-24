@@ -273,7 +273,7 @@ watch(width, () => {
         <!--        <SpeakerVisualization-->
         <!--          class="mt-4"-->
         <!--          :row-data="teamData"-->
-        <!--        ></SpeakerVisualization>-->
+        <!--        ></SpeakerVisualization-->
       </div>
     </div>
     <div
