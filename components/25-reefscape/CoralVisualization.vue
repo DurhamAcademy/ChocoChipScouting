@@ -39,7 +39,7 @@ for (let match of props.rowData.rawData) {
   coralL1.value.push(match.auto.coralNA + match.teleop.coralNA);
 }
 
-const chartTitles = ['Total', 'Auto', 'Missed'];
+const chartTitles = ['L1', 'L2', 'L3', 'L4'];
 
 let columns = [
   {
