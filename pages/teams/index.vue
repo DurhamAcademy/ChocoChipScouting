@@ -1423,7 +1423,7 @@ function sortTable(n: number, sort: string, col: string) {
           let xInnerHTML = x.innerHTML;
           let yInnerHTML = y.innerHTML;
           let xInnerText, yInnerText;
-          if (col != 'Accuracy') {
+          if (col != 'Accuracy' || col != 'Reef') {
             xInnerText = xInnerHTML.substring(
               xInnerHTML.indexOf('>') + 1,
               xInnerHTML.lastIndexOf('<'),
@@ -1450,7 +1450,7 @@ function sortTable(n: number, sort: string, col: string) {
           let xInnerHTML = x.innerHTML;
           let yInnerHTML = y.innerHTML;
           let xInnerText, yInnerText;
-          if (col != 'Accuracy') {
+          if (col != 'Accuracy' || col != 'Reef') {
             xInnerText = xInnerHTML.substring(
               xInnerHTML.indexOf('>') + 1,
               xInnerHTML.lastIndexOf('<'),
@@ -1526,7 +1526,7 @@ await tableSetup();
 
 <template>
   <OuterComponents class="z[11]">
-    <UCard class="overflow-y-scroll max-h-dvh ml-12 mr-12 mt-2 mb-2">
+    <UCard class="overflow-y-scroll max-h-[93ex] ml-12 mr-12 mt-2">
       <template #header>
         <div>
           <UForm>
@@ -1610,7 +1610,7 @@ await tableSetup();
         <div class="overflow-y-clip overflow-x-scroll">
           <table
             id="teamTable"
-            class="table-auto border-2 border-gray-50 mt-2 ml-2 mr-2"
+            class="table-autoborder-2 border-gray-50 mt-2 ml-2 mr-2"
           >
             <colgroup
               span="2"
@@ -1632,7 +1632,7 @@ await tableSetup();
               span="2"
               class="border-2 odd:bg-gray-50"
             />
-            <thead class="top-0 sticky z-10">
+            <thead class="sticky z-10">
               <tr>
                 <th colspan="2" />
                 <th colspan="2">
