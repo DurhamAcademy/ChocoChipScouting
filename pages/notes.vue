@@ -83,7 +83,7 @@ async function submit() {
     <div class="flex justify-center">
       <UCard class="max-w-xl flex-grow m-5 border-4 dark:border-gray-800">
         <template #header>
-          <strong class="text-2xl">Add Notes</strong>
+          <strong class="text-2xl dark:text-white">Add Notes</strong>
         </template>
         <template #default>
           <div class="pb-1.5">
