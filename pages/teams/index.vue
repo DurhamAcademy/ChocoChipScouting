@@ -1593,23 +1593,23 @@ await tableSetup();
           >
             <colgroup
               span="2"
-              class="border-2 odd:bg-gray-50 dark:bg-gray-700"
+              class="border-2 odd:bg-gray-50 dark:bg-gray-700 dark:border-gray-400"
             />
             <colgroup
               span="2"
-              class="border-2 odd:bg-gray-50 dark:bg-gray-800"
+              class="border-2 odd:bg-gray-50 dark:bg-gray-800 dark:border-gray-400"
             />
             <colgroup
               span="7"
-              class="border-2 odd:bg-gray-50 dark:bg-gray-700"
+              class="border-2 odd:bg-gray-50 dark:bg-gray-700 dark:border-gray-400"
             />
             <colgroup
               span="7"
-              class="border-2 odd:bg-gray-50 dark:bg-gray-800"
+              class="border-2 odd:bg-gray-50 dark:bg-gray-800 dark:border-gray-400"
             />
             <colgroup
               span="2"
-              class="border-2 odd:bg-gray-50 dark:bg-gray-700"
+              class="border-2 odd:bg-gray-50 dark:bg-gray-700 dark:border-gray-400"
             />
             <thead class="top-0 sticky bg-gray-50 dark:bg-gray-700 z-10">
               <tr class="border-b-2">
@@ -1877,7 +1877,7 @@ await tableSetup();
                       variant="soft"
                       :color="team.teleAcc.color"
                       size="xs"
-                      class="mx-auto"
+                      class="mx-auto dark:bg-gray-800"
                     />
                     <template #panel>
                       <div class="flex">

@@ -136,7 +136,7 @@ console.log(props.rowData.rawData);
             {{ rowData.rawData[selectedMatch - 1].auto.position }}
           </p>
         </div>
-        <p class="font-extrabold text-sm">Auto & Endgame:</p>
+        <p class="font-extrabold text-sm dark:!text-primary">Auto & Endgame:</p>
         <div class="pb-1">
           <UBadge
             color="sky"
@@ -186,7 +186,7 @@ console.log(props.rowData.rawData);
               </div>
             </div>
           </div>
-          <span class="font-extrabold text-sm">Other notes: </span>
+          <span class="font-extrabold text-sm dark:!text-primary">Other notes: </span>
           <UBadge
             :color="
               sentimentScore > 1
@@ -200,7 +200,7 @@ console.log(props.rowData.rawData);
             "
           >{{ sentimentScore }}</UBadge
           >
-          <p class="pb-2 text-xs">
+          <p class="pb-2 text-xs dark:!text-primary">
             {{
               rowData.rawData[selectedMatch - 1].notes.notes == ''
                 ? 'None'
