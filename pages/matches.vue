@@ -103,7 +103,7 @@ let promptedNoteTitles = ["Coral", "Algae", "Driver"]
   <OuterComponents>
     <VDataTable
       :loading="pending"
-      class="max-h-dvh overflow-auto"
+      class="max-h-dvh overflow-auto dark:bg-gray-800 dark:text-white"
       :headers="headers"
       :items="items"
       item-key="name"
@@ -114,15 +114,15 @@ let promptedNoteTitles = ["Coral", "Algae", "Driver"]
       <template v-slot:item.notes="row">
         <UPopover :popper="{ offsetDistance: 15 }">
           <UButton
-            class="mt-2 mb-2"
-            color="yellow"
+            class="mt-2 mb-2 dark:bg-slate-700"
+            color="coral"
             label="Notes"
             variant="soft"
             @click="console.dir(row.value.promptedNotes[0])"
           />
           <template #panel>
             <UContainer
-              class="m-auto max-w-lg min-w-[15rem] overflow-y-auto"
+              class="m-auto max-w-lg min-w-[15rem] overflow-y-auto border-2 dark:border-primary rounded-lg"
               style="max-height: 20rem; min-height: 10rem"
             >
               <br/>

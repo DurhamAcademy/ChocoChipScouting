@@ -1502,41 +1502,44 @@ await tableSetup();
 
 <template>
   <OuterComponents class="z[11]">
-    <UCard class="max-h-dvh overflow-auto">
+    <UCard
+      class="max-h-dvh overflow-auto dark:bg-gray-800"
+      :ui="{
+        rounded: '',
+      }"
+    >
       <template #header>
         <div class="flex">
-          <UForm>
-            <UFormGroup
-              class="inline-block mr-2"
-              label="Filters"
-            >
-              <UButtonGroup>
-                <USelectMenu
-                  class="inline-block min-w-28 w-28 max-w-28"
-                  v-model="activeFilterOption"
-                  :options="filterOptions"
-                />
-                <UInput
-                  v-model="filterInput"
-                  class="inline-block max-w-40"
-                  placeholder="filter text..."
-                  :ui="{ icon: { trailing: { pointer: '' } } }"
-                  v-on:keyup.enter="addFilter"
-                >
-                  <template #trailing>
-                    <UButton
-                      v-show="filterInput != ''"
-                      color="coral"
-                      variant="link"
-                      icon="i-heroicons-plus-circle"
-                      :padded="false"
-                      @click="addFilter"
-                    />
-                  </template>
-                </UInput>
-              </UButtonGroup>
-            </UFormGroup>
-          </UForm>
+          <UFormGroup
+            class="inline-block mr-2"
+            label="Filters"
+          >
+            <UButtonGroup>
+              <USelectMenu
+                class="inline-block min-w-28 w-28 max-w-28"
+                v-model="activeFilterOption"
+                :options="filterOptions"
+              />
+              <UInput
+                v-model="filterInput"
+                class="inline-block max-w-40"
+                placeholder="filter text..."
+                :ui="{ icon: { trailing: { pointer: '' } } }"
+                v-on:keyup.enter="addFilter"
+              >
+                <template #trailing>
+                  <UButton
+                    v-show="filterInput != ''"
+                    color="coral"
+                    variant="link"
+                    icon="i-heroicons-plus-circle"
+                    :padded="false"
+                    @click="addFilter"
+                  />
+                </template>
+              </UInput>
+            </UButtonGroup>
+          </UFormGroup>
         </div>
         <UFormGroup>
           <UButton
@@ -1586,56 +1589,55 @@ await tableSetup();
         <div>
           <table
             id="teamTable"
-            class="table-auto border-2 border-gray-50"
+            class="table-auto border-x-4 border-t-8 border-gray-50 dark:border-gray-700"
           >
             <colgroup
               span="2"
-              class="border-2 odd:bg-gray-50"
+              class="border-2 odd:bg-gray-50 dark:bg-gray-700"
             />
             <colgroup
               span="2"
-              class="border-2 odd:bg-gray-50"
+              class="border-2 odd:bg-gray-50 dark:bg-gray-800"
             />
             <colgroup
               span="7"
-              class="border-2 odd:bg-gray-50"
+              class="border-2 odd:bg-gray-50 dark:bg-gray-700"
             />
             <colgroup
               span="7"
-              class="border-2 odd:bg-gray-50"
+              class="border-2 odd:bg-gray-50 dark:bg-gray-800"
             />
             <colgroup
               span="2"
-              class="border-2 odd:bg-gray-50"
+              class="border-2 odd:bg-gray-50 dark:bg-gray-700"
             />
-            <thead class="top-0 sticky z-10">
-              <tr>
+            <thead class="top-0 sticky bg-gray-50 dark:bg-gray-700 z-10">
+              <tr class="border-b-2">
                 <th colspan="2" />
                 <th colspan="2">
-                  <p class="text-xs font-light">Average</p>
-                  Ratings
-                  <p class="text-xs font-light">/5.00</p>
+                  <p class="text-xs font-light dark:text-white">Average</p>
+                  <p class="dark:text-white">Ratings</p>
                 </th>
                 <th
                   colspan="7"
                   scope="colgroup"
                 >
-                  <p class="text-xs font-light">Average</p>
-                  Auto Cycles
+                  <p class="text-xs font-light dark:text-white">Average</p>
+                  <p class="dark:text-white">Cycles</p>
                 </th>
                 <th
                   colspan="7"
                   scope="colgroup"
                 >
-                  <p class="text-xs font-light">Average</p>
-                  Teleop Cycles
+                  <p class="text-xs font-light dark:text-white">Average</p>
+                  <p class="dark:text-white">Teleop Cycles</p>
                 </th>
                 <th
                   colspan="2"
                   scope="colgroup"
                 >
-                  <p class="text-xs font-light">Average</p>
-                  Endgame
+                  <p class="text-xs font-light dark:text-white">Average</p>
+                  <p class="dark:text-white">Endgame</p>
                 </th>
               </tr>
               <tr>
@@ -1649,7 +1651,7 @@ await tableSetup();
                     @click="sortTable(index, col.sort, col.label)"
                     :trailing-icon="col.icon"
                     variant="ghost"
-                    class="rounded-full"
+                    class="rounded-full dark:bg-gray-700"
                     size="xs"
                     :label="col.label"
                     color="gray"
@@ -1658,7 +1660,7 @@ await tableSetup();
                     :label="col.label"
                     size="xs"
                     variant="ghost"
-                    class="rounded-full"
+                    class="rounded-full dark:bg-gray-700"
                     color="gray"
                   />
                 </th>
@@ -1667,7 +1669,7 @@ await tableSetup();
             <tbody>
               <tr
                 v-for="team of teamsData"
-                class="border-b border-gray-200 dark:border-gray-700"
+                class="mb-1"
               >
                 <td class="text-right">
                   <UButton
@@ -1677,6 +1679,7 @@ await tableSetup();
                     size="xs"
                     @click="navigateTo('/teams/' + team.team.data)"
                     trailing-icon="i-heroicons-chart-bar-square"
+                    class="dark:border-gray-700"
                   />
                 </td>
                 <td class="text-center">
@@ -1686,6 +1689,7 @@ await tableSetup();
                     icon="i-heroicons-photo"
                     variant="soft"
                     @click="navigateTo('/teams/attachments/' + team.team.data)"
+                    class="dark:bg-gray-700"
                   />
                 </td>
                 <td class="text-center">
@@ -1756,7 +1760,7 @@ await tableSetup();
                       variant="soft"
                       :color="team.autoAcc.color"
                       size="xs"
-                      class="mx-auto"
+                      class="mx-auto dark:bg-gray-700"
                     />
                     <template #panel>
                       <div class="flex">
@@ -1948,7 +1952,7 @@ await tableSetup();
                 <td class="text-center">
                   <UPopover mode="hover">
                     <UButton
-                      class="m-1 mx-auto"
+                      class="m-1 mx-auto dark:bg-gray-700"
                       variant="soft"
                       icon="i-heroicons-chart-pie"
                       color="gray"

@@ -56,6 +56,7 @@ async function login(username: string, password: string) {
 </script>
 
 <template>
+  <UCard class="h-screen w-screen dark:bg-gray-800 rounded-none">
   <html>
     <head>
       <meta
@@ -74,7 +75,7 @@ async function login(username: string, password: string) {
     <LazyUCard>
       <template #header>
         <h2
-          class="font-semibold text-xl text-gray-900 dark:text-white leading-tight"
+          class="font-semibold text-xl text-gray-900 dark:text-primary leading-tight"
         >
           {{ 'Login' }}
         </h2>
@@ -140,6 +141,7 @@ async function login(username: string, password: string) {
       </LazyUForm>
     </LazyUCard>
   </LazyUContainer>
+  </UCard>
 </template>
 
 <style scoped>
