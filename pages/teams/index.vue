@@ -1527,7 +1527,7 @@ await tableSetup();
 </script>
 
 <template>
-  <OuterComponents class="z[11]">
+  <OuterComponents>
     <UCard class="max-h-[93ex] ml-12 mr-12 mt-2 overflow-y-scroll dark:bg-gray-800"
       :ui="{
         rounded: '',
