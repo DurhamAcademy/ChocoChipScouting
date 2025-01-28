@@ -1,8 +1,7 @@
 <script lang="ts" setup>
-import databases, { ScoutingData } from "~/utils/databases";
+import databases, { ScoutingData } from '~/utils/databases';
 import IncrementalButton from '~/components/scouting-components/IncrementalButton.vue';
 import BooleanButton from '~/components/scouting-components/BooleanButton.vue';
-import MultiSelect from '~/components/scouting-components/MultiSelect.vue';
 import PromptedNote from '~/components/scouting-components/PromptedNote.vue';
 import Navbar from '~/components/website-utils/Navbar.vue';
 import { eventOptions } from '~/utils/eventOptions';
@@ -10,7 +9,7 @@ import type { Ref } from '@vue/reactivity';
 import type { UnwrapRef } from 'vue';
 import { loginStateKey } from '~/utils/keys';
 import { useEventKey } from '~/composables/useEventKey';
-import SingleSelect from "~/components/scouting-components/SingleSelect.vue";
+import SingleSelect from '~/components/scouting-components/SingleSelect.vue';
 
 /*
 START SEASONAL UPDATE AREA
@@ -35,8 +34,7 @@ const endgameOptions = [
 /*
 Used to configure coral buttons
  */
-const autoCoralLevel = ref(0);
-const teleopCoralLevel = ref(0);
+const coralLevel = ref(0);
 
 /*
 Configuration variables done
@@ -46,17 +44,8 @@ Configuration variables done
  * updateEndgameOptions updates the scoutData variable to match the currently selected option in the endgame multiselect
  * @param value the currently selected option
  */
-function updateEndgameOptions(value: Array<number>) {
-  let arr = [];
-  for (let i = 0; i < value.length; i++) {
-    if (value[i] == 1) {
-      arr.push(endgameOptions[i]);
-    }
-  }
-  scoutData.value.endgame.endgame = arr;
-  if (scoutData.value.endgame.endgame.length < 1) {
-    scoutData.value.endgame.endgame = [endgameOptions[0]];
-  }
+function updateEndgameOptions(value: number) {
+  scoutData.value.endgame.endgame = [endgameOptions[value]];
 }
 
 // all the data collected on the scout page in the form of a ScoutingData object,
@@ -198,8 +187,9 @@ async function submit() {
 
 <template>
   <Navbar scout-mode></Navbar>
+  <UCard class="h-screen w-screen overflow-y-auto rounded-none">
   <div class="flex justify-center">
-    <UCard class="max-w-xl flex-grow m-5">
+    <UCard class="max-w-xl flex-grow m-5 dark:bg-gray-800">
       <template #header>
         <div style="display: flex">
           <div class="flex-0 pr-2">
@@ -269,84 +259,93 @@ async function submit() {
       </template>
       <!-- In this section put all the elements you want to be shown under the autonomous tab -->
       <div v-if="gameTime == GameTime.Autonomous">
-        <div class="flex text-center">
+        <div class="flex">
           <div class="max-w-30 w-30">
-            <h1 class="text-gray-700 dark:text-gray-200 font-sans mr-6 mb-1 font-bold underline">
-              Coral Level
-            </h1>
-            <h1 class="text-coral-400 font-sans mr-3 mt-1 font-light text-sm">
-              Scored
-            </h1>
-            <div class="flex flex-auto justify-center">
-              <SingleSelect
-                v-model="autoCoralLevel"
-                :options="['L1', 'L2', 'L3', 'L4']"
-              />
-              <IncrementalButton
-                class="mb-1 mr-3 mt-1 ml-2"
-                v-model="scoutData.auto.coralL1"
-                v-if="autoCoralLevel==0"
-              ></IncrementalButton>
-              <IncrementalButton
-                class="mb-1 mr-3 mt-1 ml-2"
-                v-model="scoutData.auto.coralL2"
-                v-else-if="autoCoralLevel==1"
-              ></IncrementalButton>
-              <IncrementalButton
-                class="mb-1 mr-3 mt-1 ml-2"
-                v-model="scoutData.auto.coralL3"
-                v-else-if="autoCoralLevel==2"
-              ></IncrementalButton>
-              <IncrementalButton
-                class="mb-1 mr-3 mt-1 ml-2"
-                v-model="scoutData.auto.coralL4"
-                v-else
-              ></IncrementalButton>
+            <div class="w-fit text-center ml-4">
+              <h1 class="text-gray-700 dark:text-gray-200 font-sans font-bold">
+                Coral
+              </h1>
+              <div class="flex flex-auto justify-center max-w-44">
+                <div class="flex-auto text-center mr-2">
+                  <h1 class="text-coral-400 font-sans mt-1 font-light text-sm">
+                    Missed
+                  </h1>
+                  <IncrementalButton
+                    class="my-1"
+                    v-model="scoutData.auto.coralL1Miss"
+                    v-if="coralLevel == 0"
+                  ></IncrementalButton>
+                  <IncrementalButton
+                    class="my-1"
+                    v-model="scoutData.auto.coralL2Miss"
+                    v-else-if="coralLevel == 1"
+                  ></IncrementalButton>
+                  <IncrementalButton
+                    class="my-1"
+                    v-model="scoutData.auto.coralL3Miss"
+                    v-else-if="coralLevel == 2"
+                  ></IncrementalButton>
+                  <IncrementalButton
+                    class="my-1"
+                    v-model="scoutData.auto.coralL4Miss"
+                    v-else
+                  ></IncrementalButton>
+                </div>
+                <div class="flex-auto text-center">
+                  <h1 class="text-coral-400 font-sans mt-1 font-light text-sm">
+                    Scored
+                  </h1>
+                  <IncrementalButton
+                    class="my-1"
+                    v-model="scoutData.auto.coralL1"
+                    v-if="coralLevel == 0"
+                  ></IncrementalButton>
+                  <IncrementalButton
+                    class="my-1"
+                    v-model="scoutData.auto.coralL2"
+                    v-else-if="coralLevel == 1"
+                  ></IncrementalButton>
+                  <IncrementalButton
+                    class="my-1"
+                    v-model="scoutData.auto.coralL3"
+                    v-else-if="coralLevel == 2"
+                  ></IncrementalButton>
+                  <IncrementalButton
+                    class="my-1"
+                    v-model="scoutData.auto.coralL4"
+                    v-else
+                  ></IncrementalButton>
+                </div>
+              </div>
+              <div class="ml-0.5">
+                <SingleSelect
+                  v-model="coralLevel"
+                  :options="['L1', 'L2', 'L3', 'L4']"
+                />
+              </div>
             </div>
-            <h1 class="text-coral-400 font-sans mr-3 mt-1 font-light text-sm">
-              Missed
-            </h1>
-            <div class="flex flex-auto justify-center">
-              <SingleSelect
-                v-model="autoCoralLevel"
-                :options="['L1', 'L2', 'L3', 'L4']"
-              />
-              <IncrementalButton
-                class="mb-1 mr-3 mt-1 ml-2"
-                v-model="scoutData.auto.coralL1Miss"
-                v-if="autoCoralLevel==0"
-              ></IncrementalButton>
-              <IncrementalButton
-                class="mb-1 mr-3 mt-1 ml-2"
-                v-model="scoutData.auto.coralL2Miss"
-                v-else-if="autoCoralLevel==1"
-              ></IncrementalButton>
-              <IncrementalButton
-                class="mb-1 mr-3 mt-1 ml-2"
-                v-model="scoutData.auto.coralL3Miss"
-                v-else-if="autoCoralLevel==2"
-              ></IncrementalButton>
-              <IncrementalButton
-                class="mb-1 mr-3 mt-1 ml-2"
-                v-model="scoutData.auto.coralL4Miss"
-                v-else
-              ></IncrementalButton>
-            </div>
-            <br/>
+            <div class="flex flex-auto justify-center"></div>
+            <br />
             <div class="flex text-center">
               <div class="max-w-24 w-24">
-                <h1 class="text-gray-700 dark:text-gray-200 font-sans mr-3 mb-1 font-bold underline">
+                <h1
+                  class="text-gray-700 dark:text-gray-200 font-sans mr-3 mb-1 font-bold underline"
+                >
                   Net
                 </h1>
-                <h1 class="text-coral-400 font-sans mr-3 mt-1 font-light text-sm">
+                <h1
+                  class="text-coral-400 font-sans mr-3 mt-1 font-light text-sm"
+                >
                   Scored
                 </h1>
                 <IncrementalButton
                   class="mb-1 mr-3 mt-1"
                   v-model="scoutData.auto.net"
                 ></IncrementalButton>
-                <br/>
-                <h1 class="text-coral-400 font-sans mr-3 mt-1 font-light text-sm">
+                <br />
+                <h1
+                  class="text-coral-400 font-sans mr-3 mt-1 font-light text-sm"
+                >
                   Missed
                 </h1>
                 <!-- we decided it was easiest to separate scoring and missing this year
@@ -362,7 +361,9 @@ async function submit() {
                 >
                   Processor
                 </h1>
-                <h1 class="text-coral-400 font-sans mr-3 mt-1 font-light text-sm">
+                <h1
+                  class="text-coral-400 font-sans mr-3 mt-1 font-light text-sm"
+                >
                   Scored
                 </h1>
                 <!-- input method for auto and the scoring method 'processor' for 24' season -->
@@ -371,7 +372,9 @@ async function submit() {
                   v-model="scoutData.auto.processor"
                 ></IncrementalButton>
                 <br />
-                <h1 class="text-coral-400 font-sans mr-3 mt-1 font-light text-sm">
+                <h1
+                  class="text-coral-400 font-sans mr-3 mt-1 font-light text-sm"
+                >
                   Missed
                 </h1>
                 <!-- missed points for processor -->
@@ -400,82 +403,90 @@ async function submit() {
       <div v-if="gameTime == GameTime.Teleoperated">
         <div class="flex text-center">
           <div class="max-w-30 w-30">
-            <h1 class="text-gray-700 dark:text-gray-200 font-sans mr-6 mb-1 font-bold underline">
-              Coral Level
-            </h1>
-            <h1 class="text-coral-400 font-sans mr-3 mt-1 font-light text-sm">
-              Scored
-            </h1>
-            <div class="flex flex-auto justify-center">
-              <SingleSelect
-                v-model="teleopCoralLevel"
-                :options="['L1', 'L2', 'L3', 'L4']"
-              />
-              <IncrementalButton
-                class="mb-1 mr-3 mt-1 ml-2"
-                v-model="scoutData.teleop.coralL1"
-                v-if="teleopCoralLevel==0"
-              ></IncrementalButton>
-              <IncrementalButton
-                class="mb-1 mr-3 mt-1 ml-2"
-                v-model="scoutData.teleop.coralL2"
-                v-else-if="teleopCoralLevel==1"
-              ></IncrementalButton>
-              <IncrementalButton
-                class="mb-1 mr-3 mt-1 ml-2"
-                v-model="scoutData.teleop.coralL3"
-                v-else-if="teleopCoralLevel==2"
-              ></IncrementalButton>
-              <IncrementalButton
-                class="mb-1 mr-3 mt-1 ml-2"
-                v-model="scoutData.teleop.coralL4"
-                v-else
-              ></IncrementalButton>
+            <div class="w-fit text-center ml-4">
+              <h1 class="text-gray-700 dark:text-gray-200 font-sans font-bold">
+                Coral
+              </h1>
+              <div class="flex flex-auto justify-center max-w-44">
+                <div class="flex-auto text-center mr-2">
+                  <h1 class="text-coral-400 font-sans mt-1 font-light text-sm">
+                    Missed
+                  </h1>
+                  <IncrementalButton
+                    class="my-1"
+                    v-model="scoutData.teleop.coralL1Miss"
+                    v-if="coralLevel == 0"
+                  ></IncrementalButton>
+                  <IncrementalButton
+                    class="my-1"
+                    v-model="scoutData.teleop.coralL2Miss"
+                    v-else-if="coralLevel == 1"
+                  ></IncrementalButton>
+                  <IncrementalButton
+                    class="my-1"
+                    v-model="scoutData.teleop.coralL3Miss"
+                    v-else-if="coralLevel == 2"
+                  ></IncrementalButton>
+                  <IncrementalButton
+                    class="my-1"
+                    v-model="scoutData.teleop.coralL4Miss"
+                    v-else
+                  ></IncrementalButton>
+                </div>
+                <div class="flex-auto text-center">
+                  <h1 class="text-coral-400 font-sans mt-1 font-light text-sm">
+                    Scored
+                  </h1>
+                  <IncrementalButton
+                    class="my-1"
+                    v-model="scoutData.teleop.coralL1"
+                    v-if="coralLevel == 0"
+                  ></IncrementalButton>
+                  <IncrementalButton
+                    class="my-1"
+                    v-model="scoutData.teleop.coralL2"
+                    v-else-if="coralLevel == 1"
+                  ></IncrementalButton>
+                  <IncrementalButton
+                    class="my-1"
+                    v-model="scoutData.teleop.coralL3"
+                    v-else-if="coralLevel == 2"
+                  ></IncrementalButton>
+                  <IncrementalButton
+                    class="my-1"
+                    v-model="scoutData.teleop.coralL4"
+                    v-else
+                  ></IncrementalButton>
+                </div>
+              </div>
+              <div class="ml-0.5">
+                <SingleSelect
+                  v-model="coralLevel"
+                  :options="['L1', 'L2', 'L3', 'L4']"
+                />
+              </div>
             </div>
-            <h1 class="text-coral-400 font-sans mr-3 mt-1 font-light text-sm">
-              Missed
-            </h1>
-            <div class="flex flex-auto justify-center">
-              <SingleSelect
-                v-model="teleopCoralLevel"
-                :options="['L1', 'L2', 'L3', 'L4']"
-              />
-              <IncrementalButton
-                class="mb-1 mr-3 mt-1 ml-2"
-                v-model="scoutData.teleop.coralL1Miss"
-                v-if="teleopCoralLevel==0"
-              ></IncrementalButton>
-              <IncrementalButton
-                class="mb-1 mr-3 mt-1 ml-2"
-                v-model="scoutData.teleop.coralL2Miss"
-                v-else-if="teleopCoralLevel==1"
-              ></IncrementalButton>
-              <IncrementalButton
-                class="mb-1 mr-3 mt-1 ml-2"
-                v-model="scoutData.teleop.coralL3Miss"
-                v-else-if="teleopCoralLevel==2"
-              ></IncrementalButton>
-              <IncrementalButton
-                class="mb-1 mr-3 mt-1 ml-2"
-                v-model="scoutData.teleop.coralL4Miss"
-                v-else
-              ></IncrementalButton>
-            </div>
-            <br/>
+            <br />
             <div class="flex text-center">
               <div class="max-w-24 w-24">
-                <h1 class="text-gray-700 dark:text-gray-200 font-sans mr-3 mb-1 font-bold underline">
+                <h1
+                  class="text-gray-700 dark:text-gray-200 font-sans mr-3 mb-1 font-bold underline"
+                >
                   Net
                 </h1>
-                <h1 class="text-coral-400 font-sans mr-3 mt-1 font-light text-sm">
+                <h1
+                  class="text-coral-400 font-sans mr-3 mt-1 font-light text-sm"
+                >
                   Scored
                 </h1>
                 <IncrementalButton
                   class="mb-1 mr-3 mt-1"
                   v-model="scoutData.teleop.net"
                 ></IncrementalButton>
-                <br/>
-                <h1 class="text-coral-400 font-sans mr-3 mt-1 font-light text-sm">
+                <br />
+                <h1
+                  class="text-coral-400 font-sans mr-3 mt-1 font-light text-sm"
+                >
                   Missed
                 </h1>
                 <!-- we decided it was easiest to separate scoring and missing this year
@@ -491,7 +502,9 @@ async function submit() {
                 >
                   Processor
                 </h1>
-                <h1 class="text-coral-400 font-sans mr-3 mt-1 font-light text-sm">
+                <h1
+                  class="text-coral-400 font-sans mr-3 mt-1 font-light text-sm"
+                >
                   Scored
                 </h1>
                 <!-- input method for auto and the scoring method 'processor' for 24' season -->
@@ -500,7 +513,9 @@ async function submit() {
                   v-model="scoutData.teleop.processor"
                 ></IncrementalButton>
                 <br />
-                <h1 class="text-coral-400 font-sans mr-3 mt-1 font-light text-sm">
+                <h1
+                  class="text-coral-400 font-sans mr-3 mt-1 font-light text-sm"
+                >
                   Missed
                 </h1>
                 <!-- missed points for processor -->
@@ -515,32 +530,17 @@ async function submit() {
       </div>
       <!-- In this section put all the elements you want for the endgame tab -->
       <div v-if="gameTime == GameTime.Endgame">
-<!--        <div class="flex text-center flex-wrap mb-3">-->
-<!--          <div class="max-w-24 w-24">-->
-<!--            <h1 class="text-gray-700 dark:text-gray-200 font-sans font-medium">-->
-<!--              Trap-->
-<!--            </h1>-->
-<!--            &lt;!&ndash; a new scoring method, but same idea as above incremental buttons &ndash;&gt;-->
-<!--            <IncrementalButton-->
-<!--              class="mt-1"-->
-<!--              v-model="scoutData.endgame.trap"-->
-<!--              :max-value="3"-->
-<!--            ></IncrementalButton>-->
-<!--          </div>-->
-<!--        </div>-->
         <!-- a multi select custom component. this acts like the single select but allows you to select multiple buttons at a time.
         the connection options optional param allows you to configure which options are allowed to be selected with each other
         notice the @update: which runs the updateEndgameOptions() function upon each update of the custom component-->
-        <MultiSelect
-          :model-value="[1, 0, 0, 0, 0, 0]"
+        <SingleSelect
+          :model-value="0"
           :options="endgameOptions"
           @update:model-value="
             value => {
               updateEndgameOptions(value);
             }
           "
-          :connected-options="[1, 2, 3, 4, 5, 6]"
-
         />
       </div>
       <!-- In this section put all the elements you want in the notes tab -->
@@ -551,20 +551,23 @@ async function submit() {
           open-icon="i-heroicons-plus"
           close-icon="i-heroicons-minus"
           :items="[
-            { label: 'Defense', slot: 'defense', defaultOpen: true },
-            { label: 'Offense', slot: 'offense' },
+            { label: 'Coral', slot: 'coral', defaultOpen: true },
+            { label: 'Algae', slot: 'algae' },
             { label: 'Driver', slot: 'driver' },
           ]"
         >
           <!-- templates fill the UAccordion's sections -->
-          <template #defense>
+          <template #coral>
             <!-- the PromptedNote custom component takes in an array of questions and how many lines should be expected as output for that question
             for example: 'Where did this team play defense?' is the question while '1' is the number of lines expected for that response
             it then returns an array of answers to the questions which is updated to the scoutData variable -->
             <PromptedNote
               v-model="scoutData.notes.promptedNotes[0]"
               :questions="[
-                ['Where did this team play defense?', 1],
+                [
+                  'How efficient and accurate was this team while scoring coral?',
+                  1,
+                ],
                 [
                   'Is this team at risk of causing fouls? If so, elaborate why.',
                   2,
@@ -573,16 +576,22 @@ async function submit() {
               ]"
             />
           </template>
-          <template #offense>
+          <template #algae>
             <PromptedNote
               v-model="scoutData.notes.promptedNotes[1]"
               :questions="[
-                ['Where can this team shoot from?', 1],
+                [
+                  'How efficient and accurate was this team while scoring algae?',
+                  1,
+                ],
                 [
                   'If applicable, how did the driver make efforts to avoid opposing defense?',
                   2,
                 ],
-                ['What slowed down their cycles?', 2],
+                [
+                  'What slowed down this teams scoring process with algae and/or coral?',
+                  2,
+                ],
                 ['What other factors contributed to your rating?', 1],
               ]"
             />
@@ -603,7 +612,7 @@ async function submit() {
         <!-- A general notes area using the NUXT UI UTextarea-->
         <UTextarea
           v-model="scoutData.notes.notes"
-          color="yellow"
+          color="red"
           placeholder="Other notes..."
         />
         <br />
@@ -632,6 +641,7 @@ async function submit() {
       </template>
     </UCard>
   </div>
+  </UCard>
 </template>
 
 <style scoped></style>

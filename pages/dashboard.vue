@@ -4,7 +4,7 @@ import PouchDB from 'pouchdb';
 import databases, { type TeamInfo } from '~/utils/databases';
 import OuterComponents from '~/components/website-utils/OuterComponents.vue';
 let syncDisable = ref(false);
-//
+
 async function sync() {
   syncDisable.value = true;
   await PouchDB.sync(
@@ -258,7 +258,7 @@ async function updateTeamData() {
       <div
         class="w-full my-8 text-center font-sans font-bold !text-primary text-5xl"
       >
-        ChocoChips Scouting 🍪<! -- title! -->
+        ChocoChips Scouting
       </div>
       <UCard
         class="mb-8 px-4 pb-4"
@@ -266,9 +266,9 @@ async function updateTeamData() {
       >
         <div class="font-bold text-center text-lg justify-center">
           <p class="">{{ currentRankings[0][1] }}</p>
-          <p class="!text-primary">Team 6502 Stats</p>
+          <p class="dark:text-white">Team 6502 Stats</p>
         </div>
-        <div class="flex justify-center my-1">
+        <div class="flex justify-center my-1" v-if="currentTeamRanking">
           <UButton
             class="rounded-2xl mx-0.5"
             color="gray"
@@ -353,10 +353,10 @@ async function updateTeamData() {
             <div class="h-40 overflow-y-auto px-4 rounded-md">
               <div
                 v-for="(event, index) in pastEvents"
-                class="bg-gray-100 rounded-md"
+                class="bg-gray-100 rounded-md dark:bg-gray-800"
               >
                 <div class="my-2 p-2">
-                  <p class="font-medium">{{ event.name }}</p>
+                  <p class="font-medium dark:text-white">{{ event.name }}</p>
                   <UButton
                     class="rounded-full my-0.5"
                     icon="i-heroicons-map-pin-solid"
@@ -373,19 +373,19 @@ async function updateTeamData() {
                   />
                   <div class="flex my-0.5">
                     <UButton
-                      class="rounded-full mx-0.5"
+                      class="rounded-full mx-0.5 dark:hover:bg-primary-950"
                       icon="i-heroicons-calendar-days-solid"
                       variant="outline"
-                      color="gray"
+                      color="primary"
                     />
                     <UButton
                       v-if="typeof event.week === 'number'"
-                      class="rounded-full mx-0.5 mr-1"
+                      class="rounded-full mx-0.5 mr-1 dark:hover:bg-primary-950"
                       :label="'Week ' + (parseInt(event.week) + 1)"
-                      color="gray"
+                      color="primary"
                       variant="outline"
                     />
-                    <p class="my-auto mx-0.5">
+                    <p class="my-auto mx-0.5 dark:text-white">
                       {{
                         months.at(event.start_date.split('-')[1] - 1) +
                         ' ' +
@@ -416,7 +416,7 @@ async function updateTeamData() {
                         class="rounded-full mx-0.5 mr-1"
                         color="primary"
                       />
-                      <p class="my-auto mx-0.5 font-sans">
+                      <p class="my-auto mx-0.5 font-sans dark:text-white">
                         {{ placeify(teamEventData[index].rank) }} Place with a
                         Record of
                         {{
@@ -551,15 +551,15 @@ async function updateTeamData() {
               </div>
             </div>
             <div v-else>
-              <p class="font-medium text-xl text-center">No Events Scheduled</p>
-              <div class="flex-auto">
-                <img
-                  src="/public/sadcookie.png"
-                  height="140"
-                  width="140"
-                  class="mx-auto"
-                />
-              </div>
+              <p class="font-medium text-xl text-center dark:text-white">
+                No Events Scheduled
+              </p>
+              <NuxtImg
+                src="/sadcookie.png"
+                class="mx-auto"
+                width="145"
+                height="145"
+              />
             </div>
           </template>
         </UTabs>
