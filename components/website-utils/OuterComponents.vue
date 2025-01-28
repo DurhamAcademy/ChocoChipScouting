@@ -59,6 +59,7 @@ if (
     class="min-h-screen w-screen flex-col dark:bg-gray-800 m overflow-auto max-h-dvh"
   >
     <Navbar
+      class="flex-grow basis-auto"
       :disable-sidebar="width > 800"
     />
     <div
