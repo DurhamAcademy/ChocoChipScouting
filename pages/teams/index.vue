@@ -1529,7 +1529,7 @@ await tableSetup();
     <UCard class="max-h-[93ex] ml-12 mr-12 mt-2 overflow-y-scroll dark:bg-gray-800"
       :ui="{
         rounded: '',
-      }"
+      }">
       <template #header>
         <div>
           <UForm>
@@ -1613,7 +1613,6 @@ await tableSetup();
         <div class="overflow-y-clip overflow-x-scroll">
           <table
             id="teamTable"
-            class="table-autoborder-2 border-gray-50 mt-2 ml-2 mr-2"
             class="table-auto border-x-4 border-t-8 border-gray-50 dark:border-gray-700 mt-2 ml-2 mr-2"
           >
             <colgroup
