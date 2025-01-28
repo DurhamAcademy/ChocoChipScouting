@@ -401,6 +401,7 @@ async function tableSetup() {
     coralL3Auto: number[];
     coralL4Auto: number[];
     reefAuto: number[];
+    reefAutoAcc: number[];
     coralL1AutoAcc: number[];
     coralL2AutoAcc: number[];
     coralL3AutoAcc: number[];
@@ -427,6 +428,7 @@ async function tableSetup() {
     coralL3Auto: [],
     coralL4Auto: [],
     reefAuto: [],
+    reefAutoAcc: [],
     coralL1AutoAcc: [],
     coralL2AutoAcc: [],
     coralL3AutoAcc: [],
@@ -1423,7 +1425,7 @@ function sortTable(n: number, sort: string, col: string) {
           let xInnerHTML = x.innerHTML;
           let yInnerHTML = y.innerHTML;
           let xInnerText, yInnerText;
-          if (col != 'Accuracy' || col != 'Reef') {
+          if (col != 'Accuracy') {
             xInnerText = xInnerHTML.substring(
               xInnerHTML.indexOf('>') + 1,
               xInnerHTML.lastIndexOf('<'),
@@ -1450,7 +1452,7 @@ function sortTable(n: number, sort: string, col: string) {
           let xInnerHTML = x.innerHTML;
           let yInnerHTML = y.innerHTML;
           let xInnerText, yInnerText;
-          if (col != 'Accuracy' || col != 'Reef') {
+          if (col != 'Reef') {
             xInnerText = xInnerHTML.substring(
               xInnerHTML.indexOf('>') + 1,
               xInnerHTML.lastIndexOf('<'),
