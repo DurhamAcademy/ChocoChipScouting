@@ -56,7 +56,7 @@ if (
 
 <template>
   <div
-    class="min-h-screen w-screen flex-col dark:bg-gray-800 m overflow-auto max-h-dvh"
+    class="min-h-screen w-screen flex-col dark:bg-gray-800 overflow-auto max-h-dvh"
   >
     <Navbar
       class="flex-grow basis-auto"
@@ -165,7 +165,7 @@ if (
       </div>
     </div>
   </div>
-  <AddButton />
+  <AddButton/>
 </template>
 
 <style scoped>
