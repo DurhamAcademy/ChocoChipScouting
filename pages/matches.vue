@@ -68,9 +68,7 @@ const headers = [
   {
     title: 'Endgame',
     align: 'center',
-    children: [
-      { title: 'Climb', align: 'end', value: 'endgame.endgame' },
-    ],
+    children: [{ title: 'Climb', align: 'end', value: 'endgame.endgame' }],
   },
 ];
 
@@ -99,13 +97,13 @@ async function setup() {
   items = matches;
 }
 
-let promptedNoteTitles = ["Coral", "Algae", "Driver"]
+let promptedNoteTitles = ['Coral', 'Algae', 'Driver'];
 </script>
 <template>
   <OuterComponents>
     <VDataTable
       :loading="pending"
-      class="max-h-dvh overflow-auto dark:bg-gray-800 dark:text-white"
+      class="max-h-dvh ml-10 overflow-auto dark:bg-gray-800 dark:text-white"
       :headers="headers"
       :items="items"
       item-key="name"
@@ -127,19 +125,22 @@ let promptedNoteTitles = ["Coral", "Algae", "Driver"]
               class="m-auto max-w-lg min-w-[15rem] overflow-y-auto border-2 dark:border-primary rounded-lg"
               style="max-height: 20rem; min-height: 10rem"
             >
-              <br/>
-                <div v-for="(promptedNote, index) in row.value.promptedNotes">
-                  <p v-if="promptedNote.notes.length > 0"> <b>{{promptedNoteTitles[index]}}</b> </p>
-                  <p v-else><del> </del></p>
-                  <p v-for="note in promptedNote.notes">{{note}}</p> <br>
-                </div>
-              <div>
-                <p v-if="row.value.notes.length > 0"> <b>Other</b><br>{{row.value.notes}}</p>
+              <br />
+              <div v-for="(promptedNote, index) in row.value.promptedNotes">
+                <p v-if="promptedNote.notes.length > 0">
+                  <b>{{ promptedNoteTitles[index] }}</b>
+                </p>
                 <p v-else><del> </del></p>
-                <br>
+                <p v-for="note in promptedNote.notes">{{ note }}</p>
+                <br />
               </div>
-
-
+              <div>
+                <p v-if="row.value.notes.length > 0">
+                  <b>Other</b><br />{{ row.value.notes }}
+                </p>
+                <p v-else><del> </del></p>
+                <br />
+              </div>
             </UContainer>
           </template>
         </UPopover>
