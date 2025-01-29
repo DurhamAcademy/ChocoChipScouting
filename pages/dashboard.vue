@@ -594,6 +594,7 @@ async function updateTeamData() {
           />
         </UCarousel>
       </UCard>
+      <div v-else></div>
     </div>
   </OuterComponents>
 </template>
