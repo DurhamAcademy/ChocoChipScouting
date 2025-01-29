@@ -110,10 +110,10 @@ async function goBack() {
 </script>
 
 <template>
-  <UCard>
+  <UCard class="rounded-none w-screen h-screen">
     <template #header>
       <UButton class="absolute left-2 top-2" variant="ghost" size="xl" icon="i-heroicons-arrow-left" @click="goBack"/>
-      <h1 class="font-extrabold text-4xl text-center">Team {{ route.params.id }} Attachments</h1>
+      <h1 class="font-extrabold text-4xl text-center dark:!text-primary">Team {{ route.params.id }} Attachments</h1>
       <div class="flex mt-2 justify-center">
         <UButton class="font-sans font-medium mr-2" variant="ghost" color="primary" icon="i-heroicons-adjustments-horizontal" label="Filters: "></UButton>
         <UInput icon="i-heroicons-magnifying-glass" color="primary" class="w-32" v-model="filterInput"/> <!-- wip -->
@@ -222,9 +222,9 @@ async function goBack() {
           </UCard>
         </UContainer>
       </UContainer>
-      <div v-else class="opacity-50">
+      <div v-else class="opacity-50t">
         <img src="/public/sadcookie.png" height="400" width="400" class="mx-auto"/>
-        <h1 class="font-sans text-xl font-bold text-center">No Images</h1>
+        <h1 class="font-sans text-xl font-bold text-center dark:!text-primary">No Images</h1>
       </div>
     </template>
   </UCard>

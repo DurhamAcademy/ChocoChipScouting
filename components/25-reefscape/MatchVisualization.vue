@@ -39,30 +39,36 @@ function compareMatchNumbers(a: any, b: any) {
 }
 
 const chartLabels = [
-  'Auto Amp',
-  'Auto Amp Miss',
-  'Auto Speaker',
-  'Auto Speaker Miss',
-  'Amp',
-  'Amp Miss',
-  'Speaker',
-  'Speaker Miss',
-  'Trap',
+  'Auto Coral L1',
+  'Auto Coral L2',
+  'Auto Coral L3',
+  'Auto Coral L4',
+  'Coral L1',
+  'Coral L2',
+  'Coral L3',
+  'Coral L4',
+  'Net',
+  'Net Miss',
+  'Processor',
+  'Processor Miss'
 ];
 let currData: any = ref(props.rowData.rawData[selectedMatch.value - 1]);
 
 watch(selectedMatch, () => {
   currData.value = props.rowData.rawData[selectedMatch.value - 1];
   chartData.value = [
-    currData.value.auto.amp,
-    currData.value.auto.missedAmp || 0,
-    currData.value.auto.speakerNA,
-    currData.value.auto.missedSpeaker || 0,
-    currData.value.teleop.amp,
-    currData.value.teleop.missedAmp || 0,
-    currData.value.teleop.speakerNA,
-    currData.value.teleop.missedSpeaker || 0,
-    currData.value.endgame.trap,
+    currData.value.auto.coralL1,
+    currData.value.auto.coralL2,
+    currData.value.auto.coralL3,
+    currData.value.auto.coralL4,
+    currData.value.teleop.coralL1,
+    currData.value.teleop.coralL2,
+    currData.value.teleop.coralL3,
+    currData.value.teleop.coralL4,
+    currData.value.teleop.net,
+    currData.value.teleop.netMiss,
+    currData.value.teleop.processor,
+    currData.value.teleop.processorMiss,
   ];
   chartTitle.value = 'Match ' + currData.value.matchNumber;
   sentimentScore = sentiment.analyze(
@@ -74,18 +80,20 @@ let sentimentScore = sentiment.analyze(
   props.rowData.rawData[selectedMatch.value - 1].notes.notes,
 ).score;
 
-//TODO eventually get rid of the || 0s because they are just backwards compatability
 
 let chartData = ref([
-  currData.value.auto.amp,
-  currData.value.auto.missedAmp || 0,
-  currData.value.auto.speakerNA,
-  currData.value.auto.missedSpeaker || 0,
-  currData.value.teleop.amp,
-  currData.value.teleop.missedAmp || 0,
-  currData.value.teleop.speakerNA,
-  currData.value.teleop.missedSpeaker || 0,
-  currData.value.endgame.trap,
+  currData.value.auto.coralL1,
+  currData.value.auto.coralL2,
+  currData.value.auto.coralL3,
+  currData.value.auto.coralL4,
+  currData.value.teleop.coralL1,
+  currData.value.teleop.coralL2,
+  currData.value.teleop.coralL3,
+  currData.value.teleop.coralL4,
+  currData.value.teleop.net,
+  currData.value.teleop.netMiss,
+  currData.value.teleop.processor,
+  currData.value.teleop.processorMiss,
 ]);
 let chartTitle = ref('Match ' + currData.value.matchNumber);
 
@@ -113,29 +121,29 @@ console.log(props.rowData.rawData);
           :labels="chartLabels"
           :data="chartData"
           :chart-title="chartTitle"
-          height="h-64"
-          width="w-64"
+          height="h-80"
+          width="w-80"
         ></BarChart>
       </div>
       <div class="flex-auto whitespace-normal max-h-72 w-72 max-w-72">
         <div
           v-if="rowData.rawData[selectedMatch - 1].auto.position != undefined"
         >
-          <p class="font-extrabold text-sm inline-block dark:text-gray-400">
+          <p class="font-extrabold text-sm inline-block">
             Auto Position: &nbsp;
           </p>
           <p class="text-sm inline-block">
             {{ rowData.rawData[selectedMatch - 1].auto.position }}
           </p>
         </div>
-        <p class="font-extrabold text-sm dark:text-gray-400">Auto & Endgame:</p>
+        <p class="font-extrabold text-sm dark:!text-primary">Auto & Endgame:</p>
         <div class="pb-1">
           <UBadge
             color="sky"
             variant="subtle"
             v-if="rowData.rawData[selectedMatch - 1].auto.mobility"
             class="mr-1.5 mt-2"
-            >Mobility</UBadge
+          >Mobility</UBadge
           >
           <UBadge
             color="indigo"
@@ -155,8 +163,8 @@ console.log(props.rowData.rawData);
             <div v-if="item.selected">
               <div class="pb-1">
                 <span class="font-extrabold mr-2 text-sm">{{
-                  promptedNotesOptions[index] + ':'
-                }}</span>
+                    promptedNotesOptions[index] + ':'
+                  }}</span>
                 <UBadge
                   :color="
                     item.rating > 3 ? 'green' : item.rating < 3 ? 'red' : 'gray'
@@ -164,7 +172,7 @@ console.log(props.rowData.rawData);
                   :variant="
                     item.rating == 2 || item.rating == 4 ? 'soft' : 'subtle'
                   "
-                  >{{ item.rating }}</UBadge
+                >{{ item.rating }}</UBadge
                 >
               </div>
               <div v-for="(text, i) in item.notes">
@@ -178,7 +186,7 @@ console.log(props.rowData.rawData);
               </div>
             </div>
           </div>
-          <span class="font-extrabold text-sm dark:text-gray-400">Other notes: </span>
+          <span class="font-extrabold text-sm dark:!text-primary">Other notes: </span>
           <UBadge
             :color="
               sentimentScore > 1
@@ -190,9 +198,9 @@ console.log(props.rowData.rawData);
             :variant="
               sentimentScore < 1 && sentimentScore > -1 ? 'soft' : 'subtle'
             "
-            >{{ sentimentScore }}</UBadge
+          >{{ sentimentScore }}</UBadge
           >
-          <p class="pb-2 text-xs dark:text-gray-400">
+          <p class="pb-2 text-xs dark:!text-primary">
             {{
               rowData.rawData[selectedMatch - 1].notes.notes == ''
                 ? 'None'
