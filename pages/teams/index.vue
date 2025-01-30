@@ -5,13 +5,10 @@ import databases, {
   type TeamTableData,
 } from '~/utils/databases';
 import IdMeta = PouchDB.Core.IdMeta;
-import { useWindowSize } from '@vueuse/core';
 import PieChart from '~/components/charts/PieChart.vue';
 import OuterComponents from '~/components/website-utils/OuterComponents.vue';
-import { TokenFormat } from 'vscode-languageserver-protocol';
 
 //TYLER IS THIS NEEDED IDK
-let { width, height } = useWindowSize();
 
 let currentEvent = useEventKey();
 watch(currentEvent, () => {
@@ -136,8 +133,8 @@ async function tableSetup() {
     let alliance = blueAlliance.includes(key.toString())
       ? 'bg-blue-100'
       : redAlliance.includes(key.toString())
-      ? 'bg-red-100'
-      : '';
+        ? 'bg-red-100'
+        : '';
     if (allowedTeams.length == 0 || allowedTeams.includes(key.toString())) {
       for (let match of value) {
         if (
@@ -438,7 +435,9 @@ async function tableSetup() {
     data.netAuto.push(Number(team.netAuto.data));
     data.netAutoAcc.push(Number(team.netAutoAcc.data.replace('%', '')));
     data.processorAuto.push(Number(team.processorAuto.data));
-    data.processorAutoAcc.push(Number(team.processorAutoAcc.data.replace('%', '')));
+    data.processorAutoAcc.push(
+      Number(team.processorAutoAcc.data.replace('%', '')),
+    );
     data.coralL1Auto.push(Number(team.coralL1Auto.data));
     data.coralL2Auto.push(Number(team.coralL2Auto.data));
     data.coralL3Auto.push(Number(team.coralL3Auto.data));
@@ -603,29 +602,26 @@ function colorifyTeam(teamData: TeamTableData, data: DataArrayOrSum) {
       teamData.driver.data,
       Math.min(...data.driver),
       Math.max(...data.driver),
-    ) ;
+    );
   } else {
-    totalPercent +=
-      calculatePercent(
-        average(data.driver),
-        Math.min(...data.driver),
-        Math.max(...data.driver),
-      );
+    totalPercent += calculatePercent(
+      average(data.driver),
+      Math.min(...data.driver),
+      Math.max(...data.driver),
+    );
   }
   if (teamData.defense.data != 0) {
-    totalPercent +=
-      calculatePercent(
-        teamData.defense.data,
-        Math.min(...data.defense),
-        Math.max(...data.defense),
-      );
+    totalPercent += calculatePercent(
+      teamData.defense.data,
+      Math.min(...data.defense),
+      Math.max(...data.defense),
+    );
   } else {
-    totalPercent +=
-      calculatePercent(
-        average(data.defense),
-        Math.min(...data.defense),
-        Math.max(...data.defense),
-      );
+    totalPercent += calculatePercent(
+      average(data.defense),
+      Math.min(...data.defense),
+      Math.max(...data.defense),
+    );
   }
   totalPercent += calculatePercent(
     teamData.netAuto.data,
@@ -661,13 +657,12 @@ function colorifyTeam(teamData: TeamTableData, data: DataArrayOrSum) {
     Number(teamData.autoAcc.data.replace('%', '')),
     Math.min(...data.autoAcc),
     Math.max(...data.autoAcc),
-    );
-  totalPercent +=
-    calculatePercent(
-      teamData.teleProcessor.data,
-      Math.min(...data.teleProcessor),
-      Math.max(...data.teleProcessor),
-    );
+  );
+  totalPercent += calculatePercent(
+    teamData.teleProcessor.data,
+    Math.min(...data.teleProcessor),
+    Math.max(...data.teleProcessor),
+  );
   totalPercent += calculatePercent(
     teamData.teleNet.data,
     Math.min(...data.teleNet),
@@ -693,12 +688,11 @@ function colorifyTeam(teamData: TeamTableData, data: DataArrayOrSum) {
     Math.min(...data.teleCoralL4),
     Math.max(...data.teleCoralL4),
   );
-  totalPercent +=
-    calculatePercent(
-      Number(teamData.teleAcc.data.replace('%', '')),
-      Math.min(...data.teleAcc),
-      Math.max(...data.teleAcc),
-    );
+  totalPercent += calculatePercent(
+    Number(teamData.teleAcc.data.replace('%', '')),
+    Math.min(...data.teleAcc),
+    Math.max(...data.teleAcc),
+  );
   totalPercent += calculatePercent(
     teamData.endgamePoints.data,
     Math.min(...data.endgamePoints),
@@ -847,7 +841,6 @@ function getAverageCoralL4Cycles(teamArrays: Array<ScoutingData>) {
   return nonAveragedValue / teamArrays.length;
 }
 
-
 function averageAuto(teamArrays: Array<ScoutingData>): number {
   let successfulMobilityCount = 0;
   for (let match of teamArrays) {
@@ -870,17 +863,8 @@ function netAutoAccuracy(teamArrays: Array<ScoutingData>) {
     }
   }
   if (newData)
-    return [
-      true,
-      (successfulNetCount) /
-      (missedNetCount + successfulNetCount),
-    ];
-  else
-    return [
-      false,
-      (successfulNetCount) /
-      (successfulNetCount),
-    ];
+    return [true, successfulNetCount / (missedNetCount + successfulNetCount)];
+  else return [false, successfulNetCount / successfulNetCount];
 }
 
 function processorAutoAccuracy(teamArrays: Array<ScoutingData>) {
@@ -892,23 +876,17 @@ function processorAutoAccuracy(teamArrays: Array<ScoutingData>) {
     if (match.auto.processorMiss != undefined) {
       missedProcessorCount += match.auto.processorMiss;
       newData = true;
-    }
-    else {
+    } else {
       missedProcessorCount += match.auto.processorMiss;
     }
   }
   if (newData)
     return [
       true,
-      (successfulProcessorCount) /
-      (missedProcessorCount + successfulProcessorCount),
+      successfulProcessorCount /
+        (missedProcessorCount + successfulProcessorCount),
     ];
-  else
-    return [
-      false,
-      (successfulProcessorCount) /
-      (successfulProcessorCount),
-    ];
+  else return [false, successfulProcessorCount / successfulProcessorCount];
 }
 
 function coralL1AutoAccuracy(teamArrays: Array<ScoutingData>) {
@@ -920,23 +898,16 @@ function coralL1AutoAccuracy(teamArrays: Array<ScoutingData>) {
     if (match.auto.coralL1Miss != undefined) {
       missedCoralCount += match.auto.coralL1Miss;
       newData = true;
-    }
-    else {
+    } else {
       missedCoralCount += match.auto.coralL1Miss;
     }
   }
   if (newData)
     return [
       true,
-      (successfulCoralCount) /
-      (missedCoralCount + successfulCoralCount),
+      successfulCoralCount / (missedCoralCount + successfulCoralCount),
     ];
-  else
-    return [
-      false,
-      (successfulCoralCount) /
-      (successfulCoralCount),
-    ];
+  else return [false, successfulCoralCount / successfulCoralCount];
 }
 
 function coralL2AutoAccuracy(teamArrays: Array<ScoutingData>) {
@@ -948,23 +919,16 @@ function coralL2AutoAccuracy(teamArrays: Array<ScoutingData>) {
     if (match.auto.coralL2Miss != undefined) {
       missedCoralCount += match.auto.coralL2Miss;
       newData = true;
-    }
-    else {
+    } else {
       missedCoralCount += match.auto.coralL2Miss;
     }
   }
   if (newData)
     return [
       true,
-      (successfulCoralCount) /
-      (missedCoralCount + successfulCoralCount),
+      successfulCoralCount / (missedCoralCount + successfulCoralCount),
     ];
-  else
-    return [
-      false,
-      (successfulCoralCount) /
-      (successfulCoralCount),
-    ];
+  else return [false, successfulCoralCount / successfulCoralCount];
 }
 
 function coralL3AutoAccuracy(teamArrays: Array<ScoutingData>) {
@@ -976,23 +940,16 @@ function coralL3AutoAccuracy(teamArrays: Array<ScoutingData>) {
     if (match.auto.coralL3Miss != undefined) {
       missedCoralCount += match.auto.coralL3Miss;
       newData = true;
-    }
-    else {
+    } else {
       missedCoralCount += match.auto.coralL3Miss;
     }
   }
   if (newData)
     return [
       true,
-      (successfulCoralCount) /
-      (missedCoralCount + successfulCoralCount),
+      successfulCoralCount / (missedCoralCount + successfulCoralCount),
     ];
-  else
-    return [
-      false,
-      (successfulCoralCount) /
-      (successfulCoralCount),
-    ];
+  else return [false, successfulCoralCount / successfulCoralCount];
 }
 
 function reefAutoAccuracy(teamArrays: Array<ScoutingData>) {
@@ -1000,27 +957,38 @@ function reefAutoAccuracy(teamArrays: Array<ScoutingData>) {
   let missedCoralCount = 0;
   let newData = false;
   for (let match of teamArrays) {
-    successfulCoralCount += (match.auto.coralL1 + match.auto.coralL2 + match.auto.coralL3 + match.auto.coralL4);
-    if ((match.auto.coralL1Miss + match.auto.coralL2Miss + match.auto.coralL3Miss + match.auto.coralL4Miss) != undefined) {
-      missedCoralCount += (match.auto.coralL1Miss + match.auto.coralL2Miss + match.auto.coralL3Miss + match.auto.coralL4Miss);
+    successfulCoralCount +=
+      match.auto.coralL1 +
+      match.auto.coralL2 +
+      match.auto.coralL3 +
+      match.auto.coralL4;
+    if (
+      match.auto.coralL1Miss +
+        match.auto.coralL2Miss +
+        match.auto.coralL3Miss +
+        match.auto.coralL4Miss !=
+      undefined
+    ) {
+      missedCoralCount +=
+        match.auto.coralL1Miss +
+        match.auto.coralL2Miss +
+        match.auto.coralL3Miss +
+        match.auto.coralL4Miss;
       newData = true;
-    }
-    else {
-      missedCoralCount += (match.auto.coralL1Miss + match.auto.coralL2Miss + match.auto.coralL3Miss + match.auto.coralL4Miss);
+    } else {
+      missedCoralCount +=
+        match.auto.coralL1Miss +
+        match.auto.coralL2Miss +
+        match.auto.coralL3Miss +
+        match.auto.coralL4Miss;
     }
   }
   if (newData)
     return [
       true,
-      (successfulCoralCount) /
-      (missedCoralCount + successfulCoralCount),
+      successfulCoralCount / (missedCoralCount + successfulCoralCount),
     ];
-  else
-    return [
-      false,
-      (successfulCoralCount) /
-      (successfulCoralCount),
-    ];
+  else return [false, successfulCoralCount / successfulCoralCount];
 }
 
 function coralL4AutoAccuracy(teamArrays: Array<ScoutingData>) {
@@ -1032,23 +1000,16 @@ function coralL4AutoAccuracy(teamArrays: Array<ScoutingData>) {
     if (match.auto.coralL4Miss != undefined) {
       missedCoralCount += match.auto.coralL4Miss;
       newData = true;
-    }
-    else {
+    } else {
       missedCoralCount += match.auto.coralL4Miss;
     }
   }
   if (newData)
     return [
       true,
-      (successfulCoralCount) /
-      (missedCoralCount + successfulCoralCount),
+      successfulCoralCount / (missedCoralCount + successfulCoralCount),
     ];
-  else
-    return [
-      false,
-      (successfulCoralCount) /
-      (successfulCoralCount),
-    ];
+  else return [false, successfulCoralCount / successfulCoralCount];
 }
 
 function autoAccuracy(teamArrays: Array<ScoutingData>) {
@@ -1074,7 +1035,11 @@ function autoAccuracy(teamArrays: Array<ScoutingData>) {
     successfulCoralL2Count += match.auto.coralL2;
     successfulCoralL3Count += match.auto.coralL3;
     successfulCoralL4Count += match.auto.coralL4;
-    successfulReefCount += match.auto.coralL1 + match.auto.coralL2 + match.auto.coralL3 + match.auto.coralL4;
+    successfulReefCount +=
+      match.auto.coralL1 +
+      match.auto.coralL2 +
+      match.auto.coralL3 +
+      match.auto.coralL4;
     if (match.auto.netMiss != undefined) {
       missedNetCount += match.auto.netMiss;
       missedProcessorCount += match.auto.processorMiss;
@@ -1082,7 +1047,11 @@ function autoAccuracy(teamArrays: Array<ScoutingData>) {
       missedCoralL2Count += match.auto.coralL2Miss;
       missedCoralL3Count += match.auto.coralL3Miss;
       missedCoralL4Count += match.auto.coralL4Miss;
-      missedReefCount += match.auto.coralL1Miss + match.auto.coralL2Miss + match.auto.coralL3Miss + match.auto.coralL4Miss;
+      missedReefCount +=
+        match.auto.coralL1Miss +
+        match.auto.coralL2Miss +
+        match.auto.coralL3Miss +
+        match.auto.coralL4Miss;
       //TODO: talk about adding coral misses to scouting and then put them here
       newData = true;
     } else {
@@ -1094,16 +1063,26 @@ function autoAccuracy(teamArrays: Array<ScoutingData>) {
     return [
       true,
       (successfulNetCount + successfulProcessorCount + successfulReefCount) /
-        (missedNetCount + missedProcessorCount + successfulProcessorCount + successfulNetCount + successfulReefCount + missedReefCount),
+        (missedNetCount +
+          missedProcessorCount +
+          successfulProcessorCount +
+          successfulNetCount +
+          successfulReefCount +
+          missedReefCount),
       successfulNetCount / (missedNetCount + successfulNetCount),
-      successfulProcessorCount / (missedProcessorCount + successfulProcessorCount),
+      successfulProcessorCount /
+        (missedProcessorCount + successfulProcessorCount),
       successfulReefCount / (missedReefCount + successfulReefCount),
     ];
   else
     return [
       false,
       (successfulNetCount + successfulReefCount + successfulProcessorCount) /
-        (missedProcessorCount + successfulProcessorCount + successfulNetCount + missedReefCount + successfulReefCount),
+        (missedProcessorCount +
+          successfulProcessorCount +
+          successfulNetCount +
+          missedReefCount +
+          successfulReefCount),
     ];
 }
 
@@ -1130,7 +1109,11 @@ function teleAccuracy(teamArrays: Array<ScoutingData>) {
     successfulCoralL2Count += match.teleop.coralL2;
     successfulCoralL3Count += match.teleop.coralL3;
     successfulCoralL4Count += match.teleop.coralL4;
-    successfulReefCount += match.teleop.coralL1 + match.teleop.coralL2 + match.teleop.coralL3 + match.teleop.coralL4;
+    successfulReefCount +=
+      match.teleop.coralL1 +
+      match.teleop.coralL2 +
+      match.teleop.coralL3 +
+      match.teleop.coralL4;
     if (match.teleop.processorMiss != undefined) {
       //TODO: talk about adding coral misses to scouting and then put them here
       missedNetCount += match.teleop.netMiss;
@@ -1139,7 +1122,11 @@ function teleAccuracy(teamArrays: Array<ScoutingData>) {
       missedCoralL2Count += match.teleop.coralL2Miss;
       missedCoralL3Count += match.teleop.coralL3Miss;
       missedCoralL4Count += match.teleop.coralL4Miss;
-      missedReefCount += match.teleop.coralL1Miss + match.teleop.coralL2Miss + match.teleop.coralL3Miss + match.teleop.coralL4Miss;
+      missedReefCount +=
+        match.teleop.coralL1Miss +
+        match.teleop.coralL2Miss +
+        match.teleop.coralL3Miss +
+        match.teleop.coralL4Miss;
 
       newData = true;
     } else {
@@ -1151,26 +1138,39 @@ function teleAccuracy(teamArrays: Array<ScoutingData>) {
     return [
       true,
       (successfulNetCount + successfulProcessorCount + successfulReefCount) /
-      (missedNetCount + missedProcessorCount + successfulProcessorCount + successfulNetCount + successfulReefCount + missedReefCount),
+        (missedNetCount +
+          missedProcessorCount +
+          successfulProcessorCount +
+          successfulNetCount +
+          successfulReefCount +
+          missedReefCount),
       successfulNetCount / (missedNetCount + successfulNetCount),
-      successfulProcessorCount / (missedProcessorCount + successfulProcessorCount),
+      successfulProcessorCount /
+        (missedProcessorCount + successfulProcessorCount),
       successfulReefCount / (missedReefCount + successfulReefCount),
     ];
   else
     return [
       false,
       (successfulNetCount + successfulReefCount + successfulProcessorCount) /
-      (missedProcessorCount + successfulProcessorCount + successfulNetCount + successfulReefCount + missedReefCount),
+        (missedProcessorCount +
+          successfulProcessorCount +
+          successfulNetCount +
+          successfulReefCount +
+          missedReefCount),
     ];
 }
 function endgamePoints(teamArrays: Array<ScoutingData>): number {
   let totalEndgamePoints = 0;
   for (let event of teamArrays) {
-    if (event.endgame.endgame.includes('Deep Successful')) totalEndgamePoints += 12;
-    else if (event.endgame.endgame.includes('Shallow Successful')) totalEndgamePoints += 6;
+    if (event.endgame.endgame.includes('Deep Successful'))
+      totalEndgamePoints += 12;
+    else if (event.endgame.endgame.includes('Shallow Successful'))
+      totalEndgamePoints += 6;
     else if (
       event.endgame.endgame.includes('Deep Attempted') ||
-      event.endgame.endgame.includes('Parked') || event.endgame.endgame.includes('Shallow Attempted')
+      event.endgame.endgame.includes('Parked') ||
+      event.endgame.endgame.includes('Shallow Attempted')
     )
       totalEndgamePoints += 2;
   }
