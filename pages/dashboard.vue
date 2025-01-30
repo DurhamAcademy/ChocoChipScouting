@@ -5,6 +5,7 @@ import databases, { type TeamInfo } from '~/utils/databases';
 import OuterComponents from '~/components/website-utils/OuterComponents.vue';
 let syncDisable = ref(false);
 
+//test
 async function sync() {
   syncDisable.value = true;
   await PouchDB.sync(
@@ -268,7 +269,10 @@ async function updateTeamData() {
           <p class="">{{ currentRankings[0][1] }}</p>
           <p class="dark:text-white">Team 6502 Stats</p>
         </div>
-        <div class="flex justify-center my-1" v-if="currentTeamRanking">
+        <div
+          class="flex justify-center my-1"
+          v-if="currentTeamRanking"
+        >
           <UButton
             class="rounded-2xl mx-0.5"
             color="gray"
