@@ -49,7 +49,8 @@ const headers = [
       { title: 'Coral L2', align: 'end', value: 'auto.coralL2' },
       { title: 'Coral L3', align: 'end', value: 'auto.coralL3' },
       { title: 'Coral L4', align: 'end', value: 'auto.coralL4' },
-      { title: 'Algae in Processor', align: 'end', value: 'auto.processor' },
+      { title: 'Processor', align: 'end', value: 'auto.processor' },
+      { title: 'Net', align: 'end', value: 'auto.net' },
     ],
   },
   {
@@ -60,7 +61,8 @@ const headers = [
       { title: 'Coral L2', align: 'end', value: 'teleop.coralL2' },
       { title: 'Coral L3', align: 'end', value: 'teleop.coralL3' },
       { title: 'Coral L4', align: 'end', value: 'teleop.coralL4' },
-      { title: 'Algae in Processor', align: 'end', value: 'teleop.processor' },
+      { title: 'Processor', align: 'end', value: 'teleop.processor' },
+      { title: 'Net', align: 'end', value: 'teleop.net' },
     ],
   },
   {

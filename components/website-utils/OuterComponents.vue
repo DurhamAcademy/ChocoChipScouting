@@ -56,7 +56,7 @@ if (
 
 <template>
   <div
-    class="min-h-screen w-screen flex-col dark:bg-gray-800 m overflow-auto max-h-dvh"
+    class="min-h-screen w-screen flex-col dark:bg-gray-800 overflow-auto max-h-dvh"
   >
     <Navbar
       class="flex-grow basis-auto"
@@ -71,7 +71,7 @@ if (
           class="vis min-h-screen h-screen max-w-full"
         >
           <UCard
-            class="h-full fixed w-[20em]"
+            class="h-full fixed w-[16em]"
             :ui="{ rounded: 'rounded-none' }"
           >
             <UVerticalNavigation :links="links" />
@@ -165,7 +165,7 @@ if (
       </div>
     </div>
   </div>
-  <AddButton />
+  <AddButton/>
 </template>
 
 <style scoped>

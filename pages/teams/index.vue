@@ -18,6 +18,7 @@ watch(currentEvent, () => {
   tableSetup();
 });
 
+
 let filterOptions = ['Team #', 'Match #', '-Author'];
 let activeFilterOption = ref(filterOptions[0]);
 let filterInput = ref('');
@@ -228,6 +229,10 @@ async function tableSetup() {
           data: Math.round(averageCoralL4Auto(data) * 100) / 100,
           color: '',
         },
+        reefAuto: {
+          data: Math.round(averageReefAuto(data) * 100) / 100,
+          color: '',
+        },
         coralL1AutoAccData: coralL1AutoAccuracy(data),
         coralL1AutoAcc: {
           data: !isNaN(+coralL1AutoAccuracy(data)[1])
@@ -285,6 +290,10 @@ async function tableSetup() {
         },
         teleCoralL4: {
           data: Math.round(getAverageCoralL4Cycles(data) * 100) / 100,
+          color: '',
+        },
+        teleReef: {
+          data: Math.round(getAverageReefCycles(data) * 100) / 100,
           color: '',
         },
         teleAccData: teleAccuracy(data),
@@ -391,6 +400,8 @@ async function tableSetup() {
     coralL2Auto: number[];
     coralL3Auto: number[];
     coralL4Auto: number[];
+    reefAuto: number[];
+    reefAutoAcc: number[];
     coralL1AutoAcc: number[];
     coralL2AutoAcc: number[];
     coralL3AutoAcc: number[];
@@ -402,6 +413,7 @@ async function tableSetup() {
     teleCoralL2: number[];
     teleCoralL3: number[];
     teleCoralL4: number[];
+    teleReef: number[];
     teleAcc: number[];
     endgamePoints: number[];
   } = {
@@ -415,6 +427,8 @@ async function tableSetup() {
     coralL2Auto: [],
     coralL3Auto: [],
     coralL4Auto: [],
+    reefAuto: [],
+    reefAutoAcc: [],
     coralL1AutoAcc: [],
     coralL2AutoAcc: [],
     coralL3AutoAcc: [],
@@ -426,6 +440,7 @@ async function tableSetup() {
     teleCoralL2: [],
     teleCoralL3: [],
     teleCoralL4: [],
+    teleReef: [],
     teleAcc: [],
     endgamePoints: [],
   };
@@ -443,6 +458,7 @@ async function tableSetup() {
     data.coralL2Auto.push(Number(team.coralL2Auto.data));
     data.coralL3Auto.push(Number(team.coralL3Auto.data));
     data.coralL4Auto.push(Number(team.coralL4Auto.data));
+    data.reefAuto.push(Number(team.reefAuto.data));
     data.coralL1AutoAcc.push(Number(team.coralL1AutoAcc.data.replace('%', '')));
     data.coralL2AutoAcc.push(Number(team.coralL2AutoAcc.data.replace('%', '')));
     data.coralL3AutoAcc.push(Number(team.coralL3AutoAcc.data.replace('%', '')));
@@ -454,6 +470,7 @@ async function tableSetup() {
     data.teleCoralL2.push(Number(team.teleCoralL2.data));
     data.teleCoralL3.push(Number(team.teleCoralL3.data));
     data.teleCoralL4.push(Number(team.teleCoralL4.data));
+    data.teleReef.push(Number(team.teleReef.data));
     data.teleAcc.push(Number(team.teleAcc.data.replace('%', '')));
     data.endgamePoints.push(Number(team.endgamePoints.data));
   }
@@ -525,6 +542,13 @@ async function tableSetup() {
         Math.max(...data.coralL4Auto),
       ),
     );
+    teamsData.value[i].reefAuto.color = colorify(
+      calculatePercent(
+        teamsData.value[i].reefAuto.data,
+        Math.min(...data.reefAuto),
+        Math.max(...data.reefAuto),
+      ),
+    );
     teamsData.value[i].autoAcc.color = colorify(
       calculatePercent(
         teamsData.value[i].autoAcc.data.replace('%', ''),
@@ -572,6 +596,13 @@ async function tableSetup() {
         teamsData.value[i].teleCoralL4.data,
         Math.min(...data.teleCoralL4),
         Math.max(...data.teleCoralL4),
+      ),
+    );
+    teamsData.value[i].teleReef.color = colorify(
+      calculatePercent(
+        teamsData.value[i].teleReef.data,
+        Math.min(...data.teleReef),
+        Math.max(...data.teleReef),
       ),
     );
     teamsData.value[i].teleAcc.color = colorify(
@@ -798,6 +829,13 @@ function averageCoralL4Auto(teamArrays: Array<ScoutingData>) {
   }
   return nonAveragedValue / teamArrays.length;
 }
+function averageReefAuto(teamArrays: Array<ScoutingData>) {
+  let nonAveragedValue = 0;
+  for (let i = 0; i < teamArrays.length; i++) {
+    nonAveragedValue += teamArrays[i].auto.coralL1 + teamArrays[i].auto.coralL2 + teamArrays[i].auto.coralL3 + teamArrays[i].auto.coralL4;
+  }
+  return nonAveragedValue / teamArrays.length;
+}
 
 function getAverageNetCycles(teamArrays: Array<ScoutingData>) {
   let nonAveragedValue = 0;
@@ -847,6 +885,13 @@ function getAverageCoralL4Cycles(teamArrays: Array<ScoutingData>) {
   return nonAveragedValue / teamArrays.length;
 }
 
+function getAverageReefCycles(teamArrays: Array<ScoutingData>) {
+  let nonAveragedValue = 0;
+  for (let i = 0; i < teamArrays.length; i++) {
+    nonAveragedValue += teamArrays[i].teleop.coralL1 + teamArrays[i].teleop.coralL2 + teamArrays[i].teleop.coralL3 + teamArrays[i].teleop.coralL4;
+  }
+  return nonAveragedValue / teamArrays.length;
+}
 
 function averageAuto(teamArrays: Array<ScoutingData>): number {
   let successfulMobilityCount = 0;
@@ -1234,14 +1279,13 @@ let columns = ref([
     sortable: true,
     icon: 'i-heroicons-arrows-up-down',
   },
-  /*
   {
     label: 'Reef',
     sort: 'none',
     sortable: true,
     icon: 'i-heroicons-arrows-up-down',
-  },*/
-  {
+  },
+  /*{
     label: 'Coral L1',
     sort: 'none',
     sortable: true,
@@ -1264,7 +1308,7 @@ let columns = ref([
     sort: 'none',
     sortable: true,
     icon: 'i-heroicons-arrows-up-down',
-  },
+  },*/
   {
     label: 'Accuracy',
     sort: 'none',
@@ -1284,25 +1328,7 @@ let columns = ref([
     icon: 'i-heroicons-arrows-up-down',
   },
   {
-    label: 'Coral L1',
-    sort: 'none',
-    sortable: true,
-    icon: 'i-heroicons-arrows-up-down',
-  },
-  {
-    label: 'Coral L2',
-    sort: 'none',
-    sortable: true,
-    icon: 'i-heroicons-arrows-up-down',
-  },
-  {
-    label: 'Coral L3',
-    sort: 'none',
-    sortable: true,
-    icon: 'i-heroicons-arrows-up-down',
-  },
-  {
-    label: 'Coral L4',
+    label: 'Reef',
     sort: 'none',
     sortable: true,
     icon: 'i-heroicons-arrows-up-down',
@@ -1426,7 +1452,7 @@ function sortTable(n: number, sort: string, col: string) {
           let xInnerHTML = x.innerHTML;
           let yInnerHTML = y.innerHTML;
           let xInnerText, yInnerText;
-          if (col != 'Accuracy') {
+          if (col != 'Reef') {
             xInnerText = xInnerHTML.substring(
               xInnerHTML.indexOf('>') + 1,
               xInnerHTML.lastIndexOf('<'),
@@ -1502,44 +1528,44 @@ await tableSetup();
 
 <template>
   <OuterComponents class="z[11]">
-    <UCard
-      class="max-h-dvh overflow-auto dark:bg-gray-800"
+    <UCard class="max-h-[93ex] ml-12 mr-12 mt-2 overflow-y-scroll dark:bg-gray-800"
       :ui="{
         rounded: '',
-      }"
-    >
+      }">
       <template #header>
-        <div class="flex">
-          <UFormGroup
-            class="inline-block mr-2"
-            label="Filters"
-          >
-            <UButtonGroup>
-              <USelectMenu
-                class="inline-block min-w-28 w-28 max-w-28"
-                v-model="activeFilterOption"
-                :options="filterOptions"
-              />
-              <UInput
-                v-model="filterInput"
-                class="inline-block max-w-40"
-                placeholder="filter text..."
-                :ui="{ icon: { trailing: { pointer: '' } } }"
-                v-on:keyup.enter="addFilter"
-              >
-                <template #trailing>
-                  <UButton
-                    v-show="filterInput != ''"
-                    color="coral"
-                    variant="link"
-                    icon="i-heroicons-plus-circle"
-                    :padded="false"
-                    @click="addFilter"
-                  />
-                </template>
-              </UInput>
-            </UButtonGroup>
-          </UFormGroup>
+        <div>
+          <UForm>
+            <UFormGroup
+              class="inline-block mr-2"
+              label="Filters"
+            >
+              <UButtonGroup>
+                <USelectMenu
+                  class="inline-block min-w-28 w-28 max-w-28"
+                  v-model="activeFilterOption"
+                  :options="filterOptions"
+                />
+                <UInput
+                  v-model="filterInput"
+                  class="inline-block max-w-40"
+                  placeholder="filter text..."
+                  :ui="{ icon: { trailing: { pointer: '' } } }"
+                  v-on:keyup.enter="addFilter"
+                >
+                  <template #trailing>
+                    <UButton
+                      v-show="filterInput != ''"
+                      color="coral"
+                      variant="link"
+                      icon="i-heroicons-plus-circle"
+                      :padded="false"
+                      @click="addFilter"
+                    />
+                  </template>
+                </UInput>
+              </UButtonGroup>
+            </UFormGroup>
+          </UForm>
         </div>
         <UFormGroup>
           <UButton
@@ -1586,10 +1612,10 @@ await tableSetup();
         </div>
       </template>
       <template #default>
-        <div>
+        <div class="overflow-y-clip overflow-x-scroll">
           <table
             id="teamTable"
-            class="table-auto border-x-4 border-t-8 border-gray-50 dark:border-gray-700"
+            class="table-auto border-x-4 border-t-8 border-gray-50 dark:border-gray-700 mt-2 ml-2 mr-2"
           >
             <colgroup
               span="2"
@@ -1600,11 +1626,11 @@ await tableSetup();
               class="border-2 odd:bg-gray-50 dark:bg-gray-800 dark:border-gray-400"
             />
             <colgroup
-              span="7"
+              span="4"
               class="border-2 odd:bg-gray-50 dark:bg-gray-700 dark:border-gray-400"
             />
             <colgroup
-              span="7"
+              span="4"
               class="border-2 odd:bg-gray-50 dark:bg-gray-800 dark:border-gray-400"
             />
             <colgroup
@@ -1619,14 +1645,14 @@ await tableSetup();
                   <p class="dark:text-white">Ratings</p>
                 </th>
                 <th
-                  colspan="7"
+                  colspan="4"
                   scope="colgroup"
                 >
                   <p class="text-xs font-light dark:text-white">Average</p>
                   <p class="dark:text-white">Cycles</p>
                 </th>
                 <th
-                  colspan="7"
+                  colspan="4"
                   scope="colgroup"
                 >
                   <p class="text-xs font-light dark:text-white">Average</p>
@@ -1723,31 +1749,81 @@ await tableSetup();
                   />
                 </td>
                 <td class="text-center">
+                  <UPopover
+                    v-if="team.reefAuto"
+                    mode="hover"
+                  >
+                    <UButton
+                      :label="team.reefAuto.data"
+                      variant="soft"
+                      :color="team.reefAuto.color"
+                      size="xs"
+                      class="mx-auto"
+                    />
+                    <template #panel>
+                      <div class="flex">
+                        <div>
+                          <UBadge
+                            label="L1"
+                            variant="soft"
+                            color="gray"
+                          />
+                          <UBadge
+                            :label="
+                              team.coralL1Auto.data
+                            "
+                            variant="soft"
+                            color="white"
+                          />
+                        </div>
+                        <div>
+                          <UBadge
+                            label="L2"
+                            variant="soft"
+                            color="gray"
+                          />
+                          <UBadge
+                            :label=" team.coralL2Auto.data
+                            "
+                            variant="soft"
+                            color="white"
+                          />
+                        </div>
+                        <div>
+                          <UBadge
+                            label="L3"
+                            variant="soft"
+                            color="gray"
+                          />
+                          <UBadge
+                            :label="
+                              team.coralL3Auto.data
+                            "
+                            variant="soft"
+                            color="white"
+                          />
+                        </div>
+                        <div>
+                          <UBadge
+                            label="L4"
+                            variant="soft"
+                            color="gray"
+                          />
+                          <UBadge
+                            :label=" team.coralL4Auto.data
+                            "
+                            variant="soft"
+                            color="white"
+                          />
+                        </div>
+                      </div>
+                    </template>
+                  </UPopover>
                   <UBadge
-                    :label="team.coralL1Auto.data"
+                    v-else
+                    :label="team.reefAuto.data"
                     variant="soft"
-                    :color="team.coralL1Auto.color"
-                  />
-                </td>
-                <td class="text-center">
-                  <UBadge
-                    :label="team.coralL2Auto.data"
-                    variant="soft"
-                    :color="team.coralL2Auto.color"
-                  />
-                </td>
-                <td class="text-center">
-                  <UBadge
-                    :label="team.coralL3Auto.data"
-                    variant="soft"
-                    :color="team.coralL3Auto.color"
-                  />
-                </td>
-                <td class="text-center">
-                  <UBadge
-                    :label="team.coralL4Auto.data"
-                    variant="soft"
-                    :color="team.coralL4Auto.color"
+                    :color="team.reefAuto.color"
                   />
                 </td>
                 <td class="text-center">
@@ -1839,7 +1915,86 @@ await tableSetup();
                     :color="team.teleProcessor.color"
                   />
                 </td>
+
                 <td class="text-center">
+                  <UPopover
+                    v-if="team.teleReef"
+                    mode="hover"
+                  >
+                    <UButton
+                      :label="team.teleReef.data"
+                      variant="soft"
+                      :color="team.teleReef.color"
+                      size="xs"
+                      class="mx-auto"
+                    />
+                    <template #panel>
+                      <div class="flex">
+                        <div>
+                          <UBadge
+                            label="L1"
+                            variant="soft"
+                            color="gray"
+                          />
+                          <UBadge
+                            :label="
+                              team.teleCoralL1.data
+                            "
+                            variant="soft"
+                            color="white"
+                          />
+                        </div>
+                        <div>
+                          <UBadge
+                            label="L2"
+                            variant="soft"
+                            color="gray"
+                          />
+                          <UBadge
+                            :label=" team.teleCoralL2.data
+                            "
+                            variant="soft"
+                            color="white"
+                          />
+                        </div>
+                        <div>
+                          <UBadge
+                            label="L3"
+                            variant="soft"
+                            color="gray"
+                          />
+                          <UBadge
+                            :label="
+                              team.teleCoralL3.data
+                            "
+                            variant="soft"
+                            color="white"
+                          />
+                        </div>
+                        <div>
+                          <UBadge
+                            label="L4"
+                            variant="soft"
+                            color="gray"
+                          />
+                          <UBadge
+                            :label=" team.teleCoralL4.data
+                            "
+                            variant="soft"
+                            color="white"
+                          />
+                        </div>
+                      </div>
+                    </template>
+                  </UPopover>
+                  <UBadge
+                    v-else
+                    :label="team.teleReef.data"
+                    variant="soft"
+                    :color="team.teleReef.color"
+                  />
+                </td>
+<!--            <td class="text-center">
                   <UBadge
                     :label="team.teleCoralL1.data"
                     variant="soft"
@@ -1866,7 +2021,7 @@ await tableSetup();
                     variant="soft"
                     :color="team.teleCoralL4.color"
                   />
-                </td>
+                </td>-->
                 <td class="text-center">
                   <UPopover
                     v-if="team.teleAccData[0]"
