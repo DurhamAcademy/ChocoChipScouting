@@ -165,12 +165,12 @@ if (
       </div>
     </div>
   </div>
-  <AddButton/>
+  <AddButton />
 </template>
 
 <style scoped>
 .vis {
-  width: 20em;
+  width: 16em;
   left: 0;
   position: relative;
 }
