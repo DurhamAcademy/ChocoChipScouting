@@ -55,7 +55,9 @@ if (
 </script>
 
 <template>
-  <div class="flex min-h-screen w-screen flex-col">
+  <div
+    class="min-h-screen w-screen flex-col dark:bg-gray-800 overflow-auto max-h-dvh"
+  >
     <Navbar
       class="flex-grow basis-auto"
       :disable-sidebar="width > 800"
@@ -69,7 +71,7 @@ if (
           class="vis min-h-screen h-screen max-w-full"
         >
           <UCard
-            class="h-full fixed w-[20em]"
+            class="h-full fixed w-[16em]"
             :ui="{ rounded: 'rounded-none' }"
           >
             <UVerticalNavigation :links="links" />
@@ -116,7 +118,7 @@ if (
                     <template #header>
                       <div class="text-center">
                         <span
-                          class="overflow-hidden flex-auto text-zinc-900 max-w-32"
+                          class="overflow-hidden dark:text-white flex-auto max-w-32"
                         >
                           {{ usernameState }}
                         </span>
@@ -168,7 +170,7 @@ if (
 
 <style scoped>
 .vis {
-  width: 20em;
+  width: 16em;
   left: 0;
   position: relative;
 }
