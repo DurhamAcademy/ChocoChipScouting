@@ -262,10 +262,10 @@ watch(width, () => {
     </template>
 
     <div class="flex flex-wrap" v-if="teamData.rawData.length > 0">
-      <div class="flex-auto h-1/3 mr-2">
+      <div class=" h-1/3 w-auto">
                         <MatchVisualization :row-data="teamData"></MatchVisualization>
       </div>
-      <div :class="'flex-auto h-min max-h-min flex-wrap ' + margin">
+      <div class="flex-auto h-min max-h-min flex-wrap">
         <CoralVisualization :row-data="teamData"></CoralVisualization>
       </div>
     </div>

@@ -115,7 +115,7 @@ console.log(props.rowData.rawData);
 <template>
   <UCard>
     <div class="flex flex-wrap">
-      <div class="flex-auto">
+      <div>
         <BarChart
           class="mb-1"
           :labels="chartLabels"
