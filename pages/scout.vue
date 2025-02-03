@@ -31,6 +31,8 @@ const endgameOptions = [
   'Deep Successful',
 ];
 
+const isAutoPositionOpen = ref(false);
+
 /*
 Used to configure coral buttons
  */
@@ -71,6 +73,7 @@ let scoutData = ref<ScoutingData>({
     netMiss: 0,
     net: 0,
     mobility: false,
+    position: 0,
   },
   teleop: {
     coralL1: 0,
@@ -386,15 +389,43 @@ async function submit() {
               <div>
                 <br />
                 <br />
-                <!-- a true/false button (custom component) -->
-                <BooleanButton
-                  class="mt-1"
-                  v-model="scoutData.auto.mobility"
-                  :default-value="'Mobility'"
-                  :other-value="'Mobility'"
-                />
+                <div class="ml-5">
+                  <br />
+                  <h1 class="text-gray-700 dark:text-gray-200 font-sans font-bold underline">
+                    Auto Position
+                  </h1>
+                  <SingleSelect
+                    v-model="scoutData.auto.position"
+                    :options="['1', '2', '3', '4']"
+                  />
+                  <!-- a true/false button (custom component) -->
+                  <BooleanButton
+                    class="mt-1"
+                    v-model="scoutData.auto.mobility"
+                    :default-value="'Mobility'"
+                    :other-value="'Mobility'"
+                  />
+                </div>
               </div>
             </div>
+            <UButton
+              class="flex auto-center, md:mt-5"
+              @click="isAutoPositionOpen = true"
+              label="Reference"
+            />
+            <!-- the popup for the reference image -->
+            <UModal v-model="isAutoPositionOpen">
+              <div class="flex flex-auto">
+                <UButton
+                  class="mr-2 mt-2 right-0 absolute"
+                  @click="isAutoPositionOpen = false"
+                  icon="i-heroicons-x-circle"
+                />
+                <img src="/public/referenceImage2.png" />
+                <!-- main focus: fixing auto tab, specifically shifting auto position buttons up
+                also, figuring out why "coral level", "score", "missed" all shift with the buttons-->
+              </div>
+            </UModal>
           </div>
         </div>
       </div>
