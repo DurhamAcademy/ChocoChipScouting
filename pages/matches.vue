@@ -105,7 +105,7 @@ let promptedNoteTitles = ["Coral", "Algae", "Driver"]
   <OuterComponents>
     <VDataTable
       :loading="pending"
-      class="max-h-dvh overflow-auto dark:bg-gray-800 dark:text-white"
+      class="max-h-dvh overflow-auto dark:bg-gray-800 dark:text-white ml-10"
       :headers="headers"
       :items="items"
       item-key="name"
@@ -124,14 +124,14 @@ let promptedNoteTitles = ["Coral", "Algae", "Driver"]
           />
           <template #panel>
             <UContainer
-              class="m-auto max-w-lg min-w-[15rem] overflow-y-auto border-2 dark:border-primary rounded-lg"
+              class="m-auto max-w-md min-w-[15rem] overflow-y-auto border-2 dark:border-primary rounded-lg"
               style="max-height: 20rem; min-height: 10rem"
             >
               <br/>
                 <div v-for="(promptedNote, index) in row.value.promptedNotes">
-                  <p v-if="promptedNote.notes.length > 0"> <b>{{promptedNoteTitles[index]}}</b> </p>
+                  <p v-if="promptedNote.notes.length > 0"> <b>{{promptedNoteTitles[index]}}:</b> {{promptedNote.rating}}/5 </p>
                   <p v-else><del> </del></p>
-                  <p v-for="note in promptedNote.notes">{{note}}</p> <br>
+                  <p class="overflow-auto" v-for="note in promptedNote.notes">{{note}}</p> <br>
                 </div>
               <div>
                 <p v-if="row.value.notes.length > 0"> <b>Other</b><br>{{row.value.notes}}</p>
@@ -163,6 +163,6 @@ let promptedNoteTitles = ["Coral", "Algae", "Driver"]
   font-weight: 600 !important;
 }
 .v-data-table :deep(td) {
-  color: gray;
+  color: rgb(128, 128, 128);
 }
 </style>

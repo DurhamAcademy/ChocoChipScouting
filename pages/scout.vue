@@ -10,6 +10,7 @@ import type { UnwrapRef } from 'vue';
 import { loginStateKey } from '~/utils/keys';
 import { useEventKey } from '~/composables/useEventKey';
 import SingleSelect from '~/components/scouting-components/SingleSelect.vue';
+import MultiSelect from "~/components/scouting-components/MultiSelect.vue";
 
 /*
 START SEASONAL UPDATE AREA
@@ -520,14 +521,15 @@ async function submit() {
           <!-- a multi select custom component. this acts like the single select but allows you to select multiple buttons at a time.
         the connection options optional param allows you to configure which options are allowed to be selected with each other
         notice the @update: which runs the updateEndgameOptions() function upon each update of the custom component-->
-          <SingleSelect
-            :model-value="0"
+          <MultiSelect
+            :model-value="[1, 0, 0, 0, 0, 0]"
             :options="endgameOptions"
             @update:model-value="
-              value => {
-                updateEndgameOptions(value);
-              }
-            "
+            value => {
+              updateEndgameOptions(value);
+            }
+          "
+            :connected-options="[1, 2, 2, 3, 2, 4]"
           />
         </div>
         <!-- In this section put all the elements you want in the notes tab -->
