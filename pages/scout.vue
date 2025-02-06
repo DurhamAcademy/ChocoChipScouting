@@ -381,7 +381,7 @@ async function submit() {
                     @click="isAutoPositionOpen = false"
                     icon="i-heroicons-x-circle"
                   />
-                  <img src="/public/referenceImage2.png" />
+                  <img src="/public/referenceImage2.png" alt="A picture of the playfield of this year's game"/>
                   <!-- main focus: fixing auto tab, specifically shifting auto position buttons up
                 also, figuring out why "coral level", "score", "missed" all shift with the buttons-->
                 </div>
