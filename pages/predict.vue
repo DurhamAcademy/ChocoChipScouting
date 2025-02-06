@@ -101,7 +101,7 @@ function calculateTeamAverageScore(team: number) {
   if (teamMatches) {
     let totalScore = 0;
     for (let match of teamMatches) {
-      totalScore += scoreMatch(match[0]) + scoreMatch(match[1]) + scoreMatch(match[2]);
+      totalScore += scoreMatch(match) + scoreMatch(match) + scoreMatch(match);
     }
     return totalScore / teamMatches.length;
   }
@@ -113,7 +113,7 @@ function calculateTeamAverageAuto(team: number) {
   if (teamMatches) {
     let totalAutoPoints = 0;
     for (let match of teamMatches) {
-      totalAutoPoints += scoreMatch(match[0]);
+      totalAutoPoints += scoreMatch(match);
     }
     return totalAutoPoints / teamMatches.length;
   }
@@ -125,7 +125,7 @@ function calculateTeamAverageTeleOp(team: number) {
   if (teamMatches) {
     let totalTeleOpPoints = 0;
     for (let match of teamMatches) {
-      totalTeleOpPoints += scoreMatch(match[1]);
+      totalTeleOpPoints += scoreMatch(match);
     }
     return totalTeleOpPoints / teamMatches.length;
   }
@@ -137,7 +137,7 @@ function calculateTeamAverageEndGame(team: number) {
   if (teamMatches) {
     let totalEndGamePoints = 0;
     for (let match of teamMatches) {
-      totalEndGamePoints += scoreMatch(match[2]);
+      totalEndGamePoints += scoreMatch(match);
     }
     return totalEndGamePoints / teamMatches.length;
   }
