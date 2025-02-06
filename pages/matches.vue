@@ -49,8 +49,6 @@ const headers = [
       { title: 'Coral L2', align: 'end', value: 'auto.coralL2' },
       { title: 'Coral L3', align: 'end', value: 'auto.coralL3' },
       { title: 'Coral L4', align: 'end', value: 'auto.coralL4' },
-      { title: 'Processor', align: 'end', value: 'auto.processor' },
-      { title: 'Net', align: 'end', value: 'auto.net' },
     ],
   },
   {
@@ -77,6 +75,8 @@ const headers = [
 //sets up the data for the table
 let items: Array<ScoutingData & IdMeta> = [];
 
+let promptedNoteTitles = ["Coral", "Algae", "Driver"]
+
 async function setup() {
   //gets all documents from the database asynchronously
   const allDocs = (await db.allDocs()).rows;
@@ -99,13 +99,12 @@ async function setup() {
   items = matches;
 }
 
-let promptedNoteTitles = ["Coral", "Algae", "Driver"]
 </script>
 <template>
   <OuterComponents>
     <VDataTable
       :loading="pending"
-      class="max-h-dvh overflow-auto dark:bg-gray-800 dark:text-white ml-10"
+      class="max-h-dvh pl-12 overflow-y-auto overflow-x-scroll dark:bg-gray-800 dark:text-white"
       :headers="headers"
       :items="items"
       item-key="name"
@@ -138,8 +137,6 @@ let promptedNoteTitles = ["Coral", "Algae", "Driver"]
                 <p v-else><del> </del></p>
                 <br>
               </div>
-
-
             </UContainer>
           </template>
         </UPopover>
