@@ -1,9 +1,8 @@
 export function scoreMatch(match: any){
-    let autoScores = match.auto.speakerNA * 5 + match.auto.amp * 2 + match.auto.mobility * 2
-    let teleopScores = match.teleop.speakerNA * 2 + match.teleop.amp
-    let endgameScores = match.endgame.trap * 5
-    if(match.endgame.endgame.includes("Parked")) endgameScores += 1
-    if(match.endgame.endgame.includes("Onstage")) endgameScores += 3
-    if(match.endgame.endgame.includes("Harmony")) endgameScores += 2
-    return [autoScores , teleopScores , endgameScores]
-}
+    let autoScores = match.auto.coralL1 * 3 + match.auto.coralL2 * 4 + match.auto.coralL3 * 6 + match.auto.coralL4 * 7 + match.auto.processor * 6
+    let teleopScores = match.teleop.coralL1 * 2 + match.teleop.coralL2 * 3 + match.teleop.coralL3 * 4 + match.teleop.coralL4 * 5 + match.teleop.processor * 6
+    let endgameScores = 0
+    if(match.endgame.endgame.includes("Parked")) endgameScores += 2
+    if(match.endgame.endgame.includes("Shallow")) endgameScores += 6
+    if(match.endgame.endgame.includes("Deep")) endgameScores += 12
+    return autoScores + teleopScores + endgameScores
