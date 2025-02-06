@@ -6,3 +6,4 @@ export function scoreMatch(match: any){
     if(match.endgame.endgame.includes("Shallow")) endgameScores += 6
     if(match.endgame.endgame.includes("Deep")) endgameScores += 12
     return autoScores + teleopScores + endgameScores
+}
