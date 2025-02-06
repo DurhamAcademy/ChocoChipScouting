@@ -398,7 +398,7 @@ const scoreBreakDown = [{
         </template>
         <UContainer
           :class="
-            'flex bg-blue-100 p-5 rounded-sm outline outline-3 ' +
+            'flex bg-blue-100 dark:bg-blue-500 dark:outline-blue-500 p-5 rounded-sm outline outline-3 ' +
             winningTeamColor[1]
           "
         >
@@ -470,7 +470,7 @@ const scoreBreakDown = [{
           </div>
         <UContainer
           :class="
-            'flex bg-red-100 p-5 mt-4 rounded-sm outline outline-3 ' +
+            'flex bg-red-100 dark:bg-red-700 dark:outline-red-700 p-5 mt-4 rounded-sm outline outline-3 ' +
             winningTeamColor[0]
           "
         >
@@ -518,7 +518,7 @@ const scoreBreakDown = [{
           </UInput>
         </UContainer>
         <template #footer>
-          <div class="text-center text-xs">
+          <div class="text-center text-xs dark:text-white">
             <p v-if="status == 'success'">
               {{
                 'Accuracy: ' +

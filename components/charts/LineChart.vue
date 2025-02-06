@@ -62,7 +62,15 @@ let options = {
     y: {
       suggestedMax: props.suggestedMax || 10,
       suggestedMin: 0,
+      grid: {
+        color: 'rgba(193,193,193,0.5)',
+      }
     },
+    x: {
+      grid: {
+        color: 'rgba(193,193,193,0.5)',
+      }
+    }
   },
   responsive: true,
 };

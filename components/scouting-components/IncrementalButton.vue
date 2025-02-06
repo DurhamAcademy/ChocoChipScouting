@@ -65,6 +65,7 @@ function subtractFromValue() {
       color="primary"
       variant="solid"
       :label="value.toString()"
+      class="min-w-10 justify-center"
     ></UButton>
     <UButton
       color="primary"

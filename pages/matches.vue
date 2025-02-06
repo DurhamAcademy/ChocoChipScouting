@@ -45,36 +45,37 @@ const headers = [
     title: 'Auto',
     align: 'center',
     children: [
-      { title: 'Amp', align: 'end', value: 'auto.amp' },
-      { title: 'Missed Amp', align: 'end', value: 'auto.missedAmp' },
-      { title: 'Speaker', align: 'end', value: 'auto.speakerNA' },
-      { title: 'Missed Speaker', align: 'end', value: 'auto.missedSpeaker' },
-      { title: 'Position', align: 'start', value: 'auto.position' },
-      { title: 'Mobility', align: 'end', value: 'auto.mobility' },
+      { title: 'Coral L1', align: 'end', value: 'auto.coralL1' },
+      { title: 'Coral L2', align: 'end', value: 'auto.coralL2' },
+      { title: 'Coral L3', align: 'end', value: 'auto.coralL3' },
+      { title: 'Coral L4', align: 'end', value: 'auto.coralL4' },
+      { title: 'Processor', align: 'end', value: 'auto.processor' },
+      { title: 'Net', align: 'end', value: 'auto.net' },
     ],
   },
   {
     title: 'Tele-op',
     align: 'center',
     children: [
-      { title: 'Amp', align: 'end', value: 'teleop.amp' },
-      { title: 'Missed Amp', align: 'end', value: 'teleop.missedAmp' },
-      { title: 'Speaker', align: 'end', value: 'teleop.speakerNA' },
-      { title: 'Missed Speaker', align: 'end', value: 'teleop.missedSpeaker' },
+      { title: 'Coral L1', align: 'end', value: 'teleop.coralL1' },
+      { title: 'Coral L2', align: 'end', value: 'teleop.coralL2' },
+      { title: 'Coral L3', align: 'end', value: 'teleop.coralL3' },
+      { title: 'Coral L4', align: 'end', value: 'teleop.coralL4' },
+      { title: 'Processor', align: 'end', value: 'teleop.processor' },
+      { title: 'Net', align: 'end', value: 'teleop.net' },
     ],
   },
   {
     title: 'Endgame',
     align: 'center',
     children: [
-      { title: 'Onstage', align: 'end', value: 'endgame.endgame' },
-      { title: 'Trap', align: 'end', value: 'endgame.trap' },
+      { title: 'Climb', align: 'end', value: 'endgame.endgame' },
     ],
   },
 ];
 
 //sets up the data for the table
-let items;
+let items: Array<ScoutingData & IdMeta> = [];
 
 async function setup() {
   //gets all documents from the database asynchronously
@@ -97,12 +98,14 @@ async function setup() {
   console.log(matches);
   items = matches;
 }
+
+let promptedNoteTitles = ["Coral", "Algae", "Driver"]
 </script>
 <template>
   <OuterComponents>
     <VDataTable
       :loading="pending"
-      class="max-h-dvh overflow-auto"
+      class="max-h-dvh overflow-auto dark:bg-gray-800 dark:text-white"
       :headers="headers"
       :items="items"
       item-key="name"
@@ -113,20 +116,30 @@ async function setup() {
       <template v-slot:item.notes="row">
         <UPopover :popper="{ offsetDistance: 15 }">
           <UButton
-            class="mt-2 mb-2"
-            color="yellow"
+            class="mt-2 mb-2 dark:bg-slate-700"
+            color="coral"
             label="Notes"
             variant="soft"
+            @click="console.dir(row.value.promptedNotes[0])"
           />
           <template #panel>
             <UContainer
-              class="m-auto max-w-lg min-w-[15rem] overflow-y-auto"
+              class="m-auto max-w-lg min-w-[15rem] overflow-y-auto border-2 dark:border-primary rounded-lg"
               style="max-height: 20rem; min-height: 10rem"
             >
-              <br />
-              <div class="whitespace-normal break-all">
-                Notes: {{ row.value.notes }}
+              <br/>
+                <div v-for="(promptedNote, index) in row.value.promptedNotes">
+                  <p v-if="promptedNote.notes.length > 0"> <b>{{promptedNoteTitles[index]}}</b> </p>
+                  <p v-else><del> </del></p>
+                  <p v-for="note in promptedNote.notes">{{note}}</p> <br>
+                </div>
+              <div>
+                <p v-if="row.value.notes.length > 0"> <b>Other</b><br>{{row.value.notes}}</p>
+                <p v-else><del> </del></p>
+                <br>
               </div>
+
+
             </UContainer>
           </template>
         </UPopover>

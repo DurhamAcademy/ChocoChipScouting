@@ -4,6 +4,7 @@ import { loginStateKey } from '~/utils/keys';
 import PouchDB from 'pouchdb';
 import { eventOptions } from '~/utils/eventOptions';
 import { useEventKey } from '~/composables/useEventKey';
+import { VerticalNavigationLink } from '#ui/types';
 const {
   usernameState,
   sessionState,
