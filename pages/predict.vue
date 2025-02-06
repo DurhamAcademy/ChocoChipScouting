@@ -2,7 +2,7 @@
 import databases from '~/utils/databases';
 import { eventOptions } from '~/utils/eventOptions';
 import OuterComponents from '~/components/website-utils/OuterComponents.vue';
-import { scoreMatch } from '~/utils/scoreMatch';
+import { scoreMatch, scoreMatchAuto, scoreMatchTeleop, scoreMatchEndgame} from "~/utils/scoreMatch";
 /*
 The current prediction algorithm calculates average team scores, using the scoreMatch.ts file (under utils).
 Then, the algorithm pairs all three alliance members together, calculating a predicted score for both alliances
@@ -101,7 +101,7 @@ function calculateTeamAverageScore(team: number) {
   if (teamMatches) {
     let totalScore = 0;
     for (let match of teamMatches) {
-      totalScore += scoreMatch(match) + scoreMatch(match) + scoreMatch(match);
+      totalScore += scoreMatch(match)
     }
     return totalScore / teamMatches.length;
   }
@@ -113,7 +113,7 @@ function calculateTeamAverageAuto(team: number) {
   if (teamMatches) {
     let totalAutoPoints = 0;
     for (let match of teamMatches) {
-      totalAutoPoints += scoreMatch(match);
+      totalAutoPoints += scoreMatchAuto(match);
     }
     return totalAutoPoints / teamMatches.length;
   }
@@ -125,7 +125,7 @@ function calculateTeamAverageTeleOp(team: number) {
   if (teamMatches) {
     let totalTeleOpPoints = 0;
     for (let match of teamMatches) {
-      totalTeleOpPoints += scoreMatch(match);
+      totalTeleOpPoints += scoreMatchTeleop(match);
     }
     return totalTeleOpPoints / teamMatches.length;
   }
@@ -137,7 +137,7 @@ function calculateTeamAverageEndGame(team: number) {
   if (teamMatches) {
     let totalEndGamePoints = 0;
     for (let match of teamMatches) {
-      totalEndGamePoints += scoreMatch(match);
+      totalEndGamePoints += scoreMatchEndgame(match);
     }
     return totalEndGamePoints / teamMatches.length;
   }
