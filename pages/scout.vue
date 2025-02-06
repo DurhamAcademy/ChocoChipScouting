@@ -47,8 +47,17 @@ Configuration variables done
  * updateEndgameOptions updates the scoutData variable to match the currently selected option in the endgame multiselect
  * @param value the currently selected option
  */
-function updateEndgameOptions(value: number) {
-  scoutData.value.endgame.endgame = [endgameOptions[value]];
+function updateEndgameOptions(value: Array<number>) {
+  let arr = [];
+  for (let i = 0; i < value.length; i++) {
+    if (value[i] == 1) {
+      arr.push(endgameOptions[i]);
+    }
+  }
+  scoutData.value.endgame.endgame = arr;
+  if (scoutData.value.endgame.endgame.length < 1) {
+    scoutData.value.endgame.endgame = [endgameOptions[0]];
+  }
 }
 
 // all the data collected on the scout page in the form of a ScoutingData object,
