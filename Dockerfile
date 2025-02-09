@@ -84,8 +84,7 @@ COPY app.config.ts .
 FROM bun-prepare AS files
 
 ARG NUXT_TBA_KEY
-ENV NUXT_TBA_KEY=$NUXT_TBA_KEY
-RUN echo "NUXT_TBA_KEY is: $NUXT_TBA_KEY"
+RUN echo "NUXT_TBA_KEY IS: ${NUXT_TBA_KEY}"
 
 COPY app.vue .
 COPY ./pages ./pages
