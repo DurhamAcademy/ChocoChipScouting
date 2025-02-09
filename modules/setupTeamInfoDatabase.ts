@@ -40,53 +40,54 @@ export default defineNuxtModule({
         let updatedEvents: EventData[] = [];
 
         for (let event of eventOptions) {
-          if (TBA_KEY) {
-            let urlNoNum: string = 'https://www.thebluealliance.com/api/v3/';
-            let urlFinal: string =
-              urlNoNum + 'event/' + event + '/teams/simple';
-            let grab: any;
-            grab = await fetch(urlFinal, {
-              method: 'GET',
-              headers: {
-                'X-TBA-Auth-Key': TBA_KEY,
-              },
-            });
-            const tbaEventData = await grab.json();
-            if (tbaEventData.hasOwnProperty('Error')) continue;
-
-            let previousEventDataObj = previouslySavedEvents.find(
-              savedEvent => savedEvent.eventKey === event,
-            );
-
-            let eventTeams: Array<TeamInfo> = previousEventDataObj
-              ? previousEventDataObj.teamInfo
-              : [];
-
-            let eventTeamsStartingLength: number = eventTeams.length;
-
-            for (let team of tbaEventData) {
-              let teamDataObj: TeamInfo = {
-                teamNum: parseInt(team.key.replace('frc', '')),
-                teamName: team.nickname,
-              };
-
-              if (
-                !eventTeams.some(
-                  obj =>
-                    obj.teamNum === teamDataObj.teamNum &&
-                    obj.teamName === teamDataObj.teamName,
-                )
-              ) {
-                eventTeams.push(teamDataObj);
-              }
-            }
-            if (eventTeams.length > eventTeamsStartingLength) {
-              updatedEvents.push({
-                eventKey: event,
-                teamInfo: eventTeams,
-              });
-            }
-          }
+          console.log(event);
+          // if (TBA_KEY) {
+          //   let urlNoNum: string = 'https://www.thebluealliance.com/api/v3/';
+          //   let urlFinal: string =
+          //     urlNoNum + 'event/' + event + '/teams/simple';
+          //   let grab: any;
+          //   grab = await fetch(urlFinal, {
+          //     method: 'GET',
+          //     headers: {
+          //       'X-TBA-Auth-Key': TBA_KEY,
+          //     },
+          //   });
+          //   const tbaEventData = await grab.json();
+          //   if (tbaEventData.hasOwnProperty('Error')) continue;
+          //
+          //   let previousEventDataObj = previouslySavedEvents.find(
+          //     savedEvent => savedEvent.eventKey === event,
+          //   );
+          //
+          //   let eventTeams: Array<TeamInfo> = previousEventDataObj
+          //     ? previousEventDataObj.teamInfo
+          //     : [];
+          //
+          //   let eventTeamsStartingLength: number = eventTeams.length;
+          //
+          //   for (let team of tbaEventData) {
+          //     let teamDataObj: TeamInfo = {
+          //       teamNum: parseInt(team.key.replace('frc', '')),
+          //       teamName: team.nickname,
+          //     };
+          //
+          //     if (
+          //       !eventTeams.some(
+          //         obj =>
+          //           obj.teamNum === teamDataObj.teamNum &&
+          //           obj.teamName === teamDataObj.teamName,
+          //       )
+          //     ) {
+          //       eventTeams.push(teamDataObj);
+          //     }
+          //   }
+          //   if (eventTeams.length > eventTeamsStartingLength) {
+          //     updatedEvents.push({
+          //       eventKey: event,
+          //       teamInfo: eventTeams,
+          //     });
+          //   }
+          // }
           //
           //   if (updatedEvents.length > 0) {
           //     for (let previousEvent of previouslySavedEvents) {
