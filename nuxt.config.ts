@@ -1,5 +1,6 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 import vuetify, { transformAssetUrls } from 'vite-plugin-vuetify';
+import path from 'node:path';
 var sw = true;
 
 export default defineNuxtConfig({
@@ -102,6 +103,7 @@ export default defineNuxtConfig({
     domains: ['img.youtube.com', 'i.vimeocdn.com'],
 
     alias: {
+      '~': path.resolve(__dirname),
       youtube: 'https://img.youtube.com',
       vimeo: 'https://i.vimeocdn.com',
     },
