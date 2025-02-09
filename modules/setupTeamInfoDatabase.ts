@@ -86,8 +86,6 @@ export default defineNuxtModule({
                 teamInfo: eventTeams,
               });
             }
-          } else {
-            throw new Error('TBA key missing');
           }
           //
           //   if (updatedEvents.length > 0) {
