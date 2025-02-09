@@ -6,9 +6,11 @@ import { existsSync } from 'node:fs';
 import { defineNuxtModule } from '@nuxt/kit'; // Adjust path as needed
 
 // paths to server storage of eventInfo
+// TODO i am guessing the server compiling is due to this section here
 const TEAM_INFO_PATH = resolve('./server/data/eventTeamInfo.json');
 const DATA_DIR = resolve('./server/data/');
 const TBA_KEY = process.env['NUXT_TBA_KEY'];
+// ^ TODO likely path or env
 
 export default defineNuxtModule({
   setup(options, nuxt) {
