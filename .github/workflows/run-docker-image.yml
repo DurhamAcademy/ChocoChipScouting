@@ -45,6 +45,8 @@ jobs:
         push: false
         cache-from: type=gha
         cache-to: type=gha,mode=max
+        build-args:
+          NUXT_TBA_KEY=${{ secrets.NUXT_TBA_KEY }}
     - name: Build Docker image
       uses: docker/build-push-action@v5.1.0
       if: ${{ !inputs.useCache }}
