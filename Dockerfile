@@ -87,6 +87,8 @@ COPY app.vue .
 COPY ./pages ./pages
 COPY ./public ./public
 COPY ./server ./server
+COPY ./modules ./modules
+COPY ./stores ./stores
 COPY ./components ./components
 COPY ./utils ./utils
 COPY ./plugins ./plugins
