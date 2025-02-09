@@ -9,13 +9,14 @@ import { defineNuxtModule } from '@nuxt/kit'; // Adjust path as needed
 // TODO i am guessing the server compiling is due to this section here
 // const TEAM_INFO_PATH = resolve('./server/data/eventTeamInfo.json');
 // const DATA_DIR = resolve('./server/data/');
-// const TBA_KEY = process.env.NUXT_TBA_KEY;
+const TBA_KEY = process.env.NUXT_TBA_KEY;
 // ^ TODO likely path or env
 
 export default defineNuxtModule({
   setup(options, nuxt) {
     nuxt.hook('modules:done', async () => {
       console.log('RUNNING NUXT MODULE SETUP FOR EVENT DATA');
+      console.log(TBA_KEY);
       // try {
       //   let previouslySavedEvents: EventData[] = [];
       //
