@@ -16,7 +16,11 @@ export default defineNuxtModule({
   setup(options, nuxt) {
     nuxt.hook('modules:done', async () => {
       console.log('RUNNING NUXT MODULE SETUP FOR EVENT DATA');
-      console.log(TBA_KEY);
+      if (TBA_KEY) {
+        console.log('TBA KEY EXISTS');
+      } else {
+        console.log('TBA KEY UNDEFINED');
+      }
       // try {
       //   let previouslySavedEvents: EventData[] = [];
       //
