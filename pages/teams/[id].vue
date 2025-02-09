@@ -1,21 +1,29 @@
 <script setup lang="ts">
-import databases, { type ScoutingData, type TeamInfo } from '~/utils/databases';
+import databases, { type ScoutingData } from '~/utils/databases';
 import MatchVisualization from '~/components/25-reefscape/MatchVisualization.vue';
 import IdMeta = PouchDB.Core.IdMeta;
 import { eventOptions } from '~/utils/eventOptions';
 import { useWindowSize } from '@vueuse/core';
-import AmpVisualization from '~/components/24-crescendo/AmpVisualization.vue';
-import SpeakerVisualization from '~/components/24-crescendo/SpeakerVisualization.vue';
+import { useTeamStore } from '~/stores/useTeamStore';
+import { useEventKey } from '~/composables/useEventKey';
 
 let { width, height } = useWindowSize();
 
-const events = eventOptions.map(event => event.replace(/[0-9]/g, ''));
-let currentEvent = ref(eventOptions[0]);
-if (typeof window !== 'undefined')
-  currentEvent.value = localStorage.getItem('currentEvent') || eventOptions[0];
+let currentEvent = useEventKey();
+watch(currentEvent, value => {
+  setup();
+  try {
+    localStorage.setItem('currentEvent', value);
+  } catch {}
+});
 
 const { scoutingData } = databases.locals;
 let db = scoutingData;
+
+const teamStore = useTeamStore();
+onMounted(() => {
+  teamStore.fetchTeams(); // Fetch teams from API or use localStorage if already available
+});
 
 const route = useRoute();
 
@@ -98,21 +106,23 @@ function setup() {
 }
 setup();
 
-async function findTeamName() {
-  let { teamInfo: db } = databases.locals;
-  //gets all the teamsData docs from the database and adds them to one array
-  let dbTeams = (await db.allDocs()).rows.map(
-    async (doc): Promise<TeamInfo> => {
-      return db.get(doc.id);
-    },
+function findTeamName() {
+  let eventInfo: EventData[] = teamStore.events;
+  let currentEventIndex: number = eventInfo.findIndex(
+    event => event.eventKey === currentEvent.value,
   );
-  Promise.all(dbTeams).then((teams: Array<TeamInfo>) => {
-    teams.forEach(team => {
-      if (team.teamNum == teamData.value.teamNum) {
-        teamData.value.teamName = team.teamName;
-      }
-    });
-  });
+  if (currentEventIndex !== -1) {
+    // gets all TeamInfo (team # and team name) at the current event
+    let allEventTeamInfo: TeamInfo[] = eventInfo[currentEventIndex].teamInfo;
+    // gets the TeamInfo of the current team this page is on
+    let currentTeamsInfo = allEventTeamInfo.find(
+      info => info.teamNum === teamData.value.teamNum,
+    );
+    // if this team exists at the event, update the team name
+    if (currentTeamsInfo) {
+      teamData.value.teamName = currentTeamsInfo.teamName;
+    }
+  }
 }
 
 const { data: tbaMatchData, pending: tbaPending } = useLazyFetch<Array<any>>(
@@ -189,13 +199,6 @@ watch(tbaPending, value => {
       teamData.value.penaltyScore = mapValues[0] / mapValues[1] || 0;
     }
   }
-});
-
-watch(currentEvent, value => {
-  setup();
-  try {
-    localStorage.setItem('currentEvent', value);
-  } catch {}
 });
 
 async function goBack() {

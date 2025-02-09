@@ -35,3 +35,4 @@ sw.*
 
 # Other
 package-lock.json
+server/data/eventTeamInfo.json
