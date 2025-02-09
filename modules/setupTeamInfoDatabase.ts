@@ -7,8 +7,8 @@ import { defineNuxtModule } from '@nuxt/kit'; // Adjust path as needed
 
 // paths to server storage of eventInfo
 // TODO i am guessing the server compiling is due to this section here
-const TEAM_INFO_PATH = resolve('./server/data/eventTeamInfo.json');
-const DATA_DIR = resolve('./server/data/');
+// const TEAM_INFO_PATH = resolve('./server/data/eventTeamInfo.json');
+// const DATA_DIR = resolve('./server/data/');
 const TBA_KEY = process.env['NUXT_TBA_KEY'];
 // ^ TODO likely path or env
 
@@ -20,11 +20,11 @@ export default defineNuxtModule({
 
         // Try to read the existing file
         try {
-          if (!existsSync(DATA_DIR)) {
-            await mkdir(DATA_DIR, { recursive: true });
-          }
-          const fileData = await readFile(TEAM_INFO_PATH, 'utf-8');
-          previouslySavedEvents = JSON.parse(fileData).events || [];
+          // if (!existsSync(DATA_DIR)) {
+          //   await mkdir(DATA_DIR, { recursive: true });
+          // }
+          // const fileData = await readFile(TEAM_INFO_PATH, 'utf-8');
+          // previouslySavedEvents = JSON.parse(fileData).events || [];
         } catch (error) {
           console.log(
             'No existing eventTeamInfo.json found. Creating a new one.',
@@ -97,12 +97,12 @@ export default defineNuxtModule({
             // Merge new teams with existing ones
             const finalEvents = [...previouslySavedEvents, ...updatedEvents];
 
-            // Save updated data to file
-            await writeFile(
-              TEAM_INFO_PATH,
-              JSON.stringify({ events: finalEvents }, null, 2),
-              'utf-8',
-            );
+            // // Save updated data to file
+            // await writeFile(
+            //   TEAM_INFO_PATH,
+            //   JSON.stringify({ events: finalEvents }, null, 2),
+            //   'utf-8',
+            // );
             console.log(
               `Updated eventTeamInfo.json with ${finalEvents.length} new events.`,
             );
