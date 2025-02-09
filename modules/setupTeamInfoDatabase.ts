@@ -39,81 +39,81 @@ export default defineNuxtModule({
 
         let updatedEvents: EventData[] = [];
 
-        for (let event of eventOptions) {
-          if (TBA_KEY) {
-            let urlNoNum: string = 'https://www.thebluealliance.com/api/v3/';
-            let urlFinal: string =
-              urlNoNum + 'event/' + event + '/teams/simple';
-            let grab: any;
-            grab = await fetch(urlFinal, {
-              method: 'GET',
-              headers: {
-                'X-TBA-Auth-Key': TBA_KEY,
-              },
-            });
-            const tbaEventData = await grab.json();
-            if (tbaEventData.hasOwnProperty('Error')) continue;
-
-            let previousEventDataObj = previouslySavedEvents.find(
-              savedEvent => savedEvent.eventKey === event,
-            );
-
-            let eventTeams: Array<TeamInfo> = previousEventDataObj
-              ? previousEventDataObj.teamInfo
-              : [];
-
-            let eventTeamsStartingLength: number = eventTeams.length;
-
-            for (let team of tbaEventData) {
-              let teamDataObj: TeamInfo = {
-                teamNum: parseInt(team.key.replace('frc', '')),
-                teamName: team.nickname,
-              };
-
-              if (
-                !eventTeams.some(
-                  obj =>
-                    obj.teamNum === teamDataObj.teamNum &&
-                    obj.teamName === teamDataObj.teamName,
-                )
-              ) {
-                eventTeams.push(teamDataObj);
-              }
-            }
-            if (eventTeams.length > eventTeamsStartingLength) {
-              updatedEvents.push({
-                eventKey: event,
-                teamInfo: eventTeams,
-              });
-            }
-          } else {
-            throw new Error('TBA key missing');
-          }
-
-          if (updatedEvents.length > 0) {
-            for (let previousEvent of previouslySavedEvents) {
-              let arrIndex = updatedEvents.findIndex(
-                updatedEvent =>
-                  updatedEvent.eventKey === previousEvent.eventKey,
-              );
-              if (arrIndex !== -1) {
-                previouslySavedEvents.splice(arrIndex, 1);
-              }
-            }
-            // Merge new teams with existing ones
-            const finalEvents = [...previouslySavedEvents, ...updatedEvents];
-
-            // Save updated data to file
-            // await writeFile(
-            //   TEAM_INFO_PATH,
-            //   JSON.stringify({ events: finalEvents }, null, 2),
-            //   'utf-8',
-            // );
-            console.log(
-              `Updated eventTeamInfo.json with ${finalEvents.length} new events.`,
-            );
-          }
-        }
+        // for (let event of eventOptions) {
+        //   if (TBA_KEY) {
+        //     let urlNoNum: string = 'https://www.thebluealliance.com/api/v3/';
+        //     let urlFinal: string =
+        //       urlNoNum + 'event/' + event + '/teams/simple';
+        //     let grab: any;
+        //     grab = await fetch(urlFinal, {
+        //       method: 'GET',
+        //       headers: {
+        //         'X-TBA-Auth-Key': TBA_KEY,
+        //       },
+        //     });
+        //     const tbaEventData = await grab.json();
+        //     if (tbaEventData.hasOwnProperty('Error')) continue;
+        //
+        //     let previousEventDataObj = previouslySavedEvents.find(
+        //       savedEvent => savedEvent.eventKey === event,
+        //     );
+        //
+        //     let eventTeams: Array<TeamInfo> = previousEventDataObj
+        //       ? previousEventDataObj.teamInfo
+        //       : [];
+        //
+        //     let eventTeamsStartingLength: number = eventTeams.length;
+        //
+        //     for (let team of tbaEventData) {
+        //       let teamDataObj: TeamInfo = {
+        //         teamNum: parseInt(team.key.replace('frc', '')),
+        //         teamName: team.nickname,
+        //       };
+        //
+        //       if (
+        //         !eventTeams.some(
+        //           obj =>
+        //             obj.teamNum === teamDataObj.teamNum &&
+        //             obj.teamName === teamDataObj.teamName,
+        //         )
+        //       ) {
+        //         eventTeams.push(teamDataObj);
+        //       }
+        //     }
+        //     if (eventTeams.length > eventTeamsStartingLength) {
+        //       updatedEvents.push({
+        //         eventKey: event,
+        //         teamInfo: eventTeams,
+        //       });
+        //     }
+        //   } else {
+        //     throw new Error('TBA key missing');
+        //   }
+        //
+        //   if (updatedEvents.length > 0) {
+        //     for (let previousEvent of previouslySavedEvents) {
+        //       let arrIndex = updatedEvents.findIndex(
+        //         updatedEvent =>
+        //           updatedEvent.eventKey === previousEvent.eventKey,
+        //       );
+        //       if (arrIndex !== -1) {
+        //         previouslySavedEvents.splice(arrIndex, 1);
+        //       }
+        //     }
+        //     // Merge new teams with existing ones
+        //     const finalEvents = [...previouslySavedEvents, ...updatedEvents];
+        //
+        //     // Save updated data to file
+        //     // await writeFile(
+        //     //   TEAM_INFO_PATH,
+        //     //   JSON.stringify({ events: finalEvents }, null, 2),
+        //     //   'utf-8',
+        //     // );
+        //     console.log(
+        //       `Updated eventTeamInfo.json with ${finalEvents.length} new events.`,
+        //     );
+        //   }
+        // }
       } catch (error) {
         console.error('An error occurred while processing team data:', error);
       }
