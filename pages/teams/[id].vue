@@ -5,7 +5,6 @@ import IdMeta = PouchDB.Core.IdMeta;
 import { eventOptions } from '~/utils/eventOptions';
 import { useWindowSize } from '@vueuse/core';
 import AlgaeVisualization from "~/components/25-reefscape/AlgaeVisualization.vue";
-import SpiderGraph from "~/components/charts/SpiderGraph.vue";
 import TeamVisualization from "~/components/25-reefscape/TeamVisualization.vue";
 
 let { width, height } = useWindowSize();
@@ -269,17 +268,11 @@ watch(width, () => {
       <div class="flex-auto h-1/3 mr-2">
         <MatchVisualization :row-data="teamData"></MatchVisualization>
       </div>
+      <div :class="'flex-auto h-min max-h-min flex-wrap ' + margin">
+        <AlgaeVisualization :row-data="teamData"></AlgaeVisualization>
+      </div>
       <div class="flex-auto h-1/3 mr-2">
         <TeamVisualization :team-data="teamData"/>
-      </div>
-      <div :class="'flex-auto h-min max-h-min flex-wrap ' + margin">
-          <AlgaeVisualization :row-data="teamData"></AlgaeVisualization>
-
-        <!--        <AmpVisualization :row-data="teamData"></AmpVisualization>-->
-        <!--        <SpeakerVisualization-->
-        <!--          class="mt-4"-->
-        <!--          :row-data="teamData"-->
-        <!--        ></SpeakerVisualization>-->
       </div>
     </div>
     <div

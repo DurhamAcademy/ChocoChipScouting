@@ -10,6 +10,7 @@ const props = defineProps<{
 }>()
 
 Chart.register(...registerables)
+Chart.defaults.scales.radialLinear.min = 0;
 
 let pieChartColors = ['#77CEFF', '#0079AF', '#123E6B', '#97B0C4', '#A5C8ED']
 if (props.backgroundColors) pieChartColors = props.backgroundColors
@@ -22,6 +23,7 @@ const testData = {
       fill: true,
       data: props.data,
       borderColor: 'rgb(255, 99, 132)',
+      backgroundColor: 'rgba(255, 99, 132, 0.2)',
       pointBackgroundColor: 'rgb(255, 99, 132)',
       pointBorderColor: '#fff',
       pointHoverBackgroundColor: '#fff',
@@ -31,7 +33,6 @@ const testData = {
   ],
   options: {
     scales: {
-      min: 0,
     }
   },
 }

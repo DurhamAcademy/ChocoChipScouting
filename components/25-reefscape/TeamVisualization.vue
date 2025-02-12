@@ -26,26 +26,30 @@ watch(selectedMatch, () => {
   ];
 });
 
+
+//TODO standardize
 let spiderGraphData = ref([
-  currData.value.auto.coralL1 + currData.value.auto.coralL2 +currData.value.auto.coralL3 + currData.value.auto.coralL4,
-  currData.value.teleop.coralL1 + currData.value.teleop.coralL2 + currData.value.teleop.coralL3 + currData.value.teleop.coralL4,
-  currData.value.teleop.net,
-  currData.value.teleop.processor,
+  currData.value.auto.coralL1 * 3 + currData.value.auto.coralL2 * 4 + currData.value.auto.coralL3 * 6
+    + currData.value.auto.coralL4 * 7 + currData.value.auto.mobility * 2,
+  currData.value.teleop.coralL1 * 2 + currData.value.teleop.coralL2 * 3 +
+    currData.value.teleop.coralL3 * 4 + currData.value.teleop.coralL4 * 5,
+  currData.value.teleop.net * 4 + currData.value.teleop.processor * 6,
+  5,
+
 ]);
 
 const spiderGraphLabels = [
-  'Auto Coral',
-  'Teleop Coral',
-  'Net',
-  'Processor',
-  //TODO: average penalties
+  'Auto',
+  'Coral',
+  'Algae',
+  'Endgame',
 ];
 
-//TODO: turn this into a variable
-const chartTitle = "temp title"
+const chartTitle = "Team " + props.teamData.teamNum;
+
 </script>
 <template>
-    <UCard>
+    <UCard class="mt-4">
       <div class="flex-auto">
         <SpiderGraph
           class="mb-40 flex flex-auto"
