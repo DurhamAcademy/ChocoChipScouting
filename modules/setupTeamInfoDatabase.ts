@@ -1,6 +1,6 @@
 import { resolve } from 'path';
 import { writeFile, readFile, mkdir } from 'fs/promises';
-import { eventOptions } from '~/utils/eventOptions';
+import { eventOptions } from './utils/eventOptions';
 import { EventData, TeamInfo } from '~/utils/databases';
 import { existsSync } from 'node:fs';
 import { defineNuxtModule } from '@nuxt/kit'; // Adjust path as needed
