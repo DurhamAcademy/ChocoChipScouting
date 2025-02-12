@@ -13,7 +13,7 @@ const value = computed({
       if (props.modelValue.notes[i] == undefined) {
         props.modelValue.notes[i] = '';
       }
-    }
+
     return props.modelValue;
   },
   set(value) {

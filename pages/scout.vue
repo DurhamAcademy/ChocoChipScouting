@@ -11,6 +11,7 @@ import { loginStateKey } from '~/utils/keys';
 import { useEventKey } from '~/composables/useEventKey';
 import SingleSelect from '~/components/scouting-components/SingleSelect.vue';
 import { promptedNoteOptions } from '~/utils/promptedNoteOptions';
+import MultiSelect from "~/components/scouting-components/MultiSelect.vue";
 
 /*
 START SEASONAL UPDATE AREA
@@ -47,8 +48,17 @@ Configuration variables done
  * updateEndgameOptions updates the scoutData variable to match the currently selected option in the endgame multiselect
  * @param value the currently selected option
  */
-function updateEndgameOptions(value: number) {
-  scoutData.value.endgame.endgame = [endgameOptions[value]];
+function updateEndgameOptions(value: Array<number>) {
+  let arr = [];
+  for (let i = 0; i < value.length; i++) {
+    if (value[i] == 1) {
+      arr.push(endgameOptions[i]);
+    }
+  }
+  scoutData.value.endgame.endgame = arr;
+  if (scoutData.value.endgame.endgame.length < 1) {
+    scoutData.value.endgame.endgame = [endgameOptions[0]];
+  }
 }
 
 // all the data collected on the scout page in the form of a ScoutingData object,
@@ -377,7 +387,7 @@ async function submit() {
                     @click="isAutoPositionOpen = false"
                     icon="i-heroicons-x-circle"
                   />
-                  <img src="/public/referenceImage2.png" />
+                  <img src="/public/referenceImage2.png" alt="A picture of the playfield of this year's game"/>
                   <!-- main focus: fixing auto tab, specifically shifting auto position buttons up
                 also, figuring out why "coral level", "score", "missed" all shift with the buttons-->
                 </div>
@@ -526,14 +536,15 @@ async function submit() {
           <!-- a multi select custom component. this acts like the single select but allows you to select multiple buttons at a time.
         the connection options optional param allows you to configure which options are allowed to be selected with each other
         notice the @update: which runs the updateEndgameOptions() function upon each update of the custom component-->
-          <SingleSelect
-            :model-value="0"
+          <MultiSelect
+            :model-value="[1, 0, 0, 0, 0, 0]"
             :options="endgameOptions"
             @update:model-value="
-              value => {
-                updateEndgameOptions(value);
-              }
-            "
+            value => {
+              updateEndgameOptions(value);
+            }
+          "
+            :connected-options="[1, 2, 2, 3, 2, 4]"
           />
         </div>
         <!-- In this section put all the elements you want in the notes tab -->
