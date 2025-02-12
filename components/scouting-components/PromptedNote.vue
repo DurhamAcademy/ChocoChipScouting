@@ -9,11 +9,6 @@ const props = defineProps<{
 
 const value = computed({
   get() {
-    for (let i in props.modelValue.notes) {
-      if (props.modelValue.notes[i] == undefined) {
-        props.modelValue.notes[i] = '';
-      }
-
     return props.modelValue;
   },
   set(value) {
