@@ -4,7 +4,6 @@ import MatchVisualization from '~/components/25-reefscape/MatchVisualization.vue
 import IdMeta = PouchDB.Core.IdMeta;
 import { eventOptions } from '~/utils/eventOptions';
 import { useWindowSize } from '@vueuse/core';
-import AmpVisualization from '~/components/24-crescendo/AmpVisualization.vue';
 import SpeakerVisualization from '~/components/24-crescendo/SpeakerVisualization.vue';
 import AlgaeVisualization from "~/components/25-reefscape/AlgaeVisualization.vue";
 
