@@ -4,8 +4,8 @@ import MatchVisualization from '~/components/25-reefscape/MatchVisualization.vue
 import IdMeta = PouchDB.Core.IdMeta;
 import { eventOptions } from '~/utils/eventOptions';
 import { useWindowSize } from '@vueuse/core';
-import AmpVisualization from '~/components/24-crescendo/AmpVisualization.vue';
-import SpeakerVisualization from '~/components/24-crescendo/SpeakerVisualization.vue';
+import SpiderGraph from "~/components/charts/SpiderGraph.vue";
+import TeamVisualization from "~/components/25-reefscape/TeamVisualization.vue";
 
 let { width, height } = useWindowSize();
 
@@ -268,6 +268,9 @@ watch(width, () => {
       <div class="flex-auto h-1/3 mr-2">
         <MatchVisualization :row-data="teamData"></MatchVisualization>
       </div>
+      <div class="flex-auto h-1/3 mr-2">
+        <TeamVisualization :team-data="teamData"/>
+      </div>
       <div :class="'flex-auto h-min max-h-min flex-wrap ' + margin">
         <!--        <AmpVisualization :row-data="teamData"></AmpVisualization>-->
         <!--        <SpeakerVisualization-->
@@ -285,6 +288,7 @@ watch(width, () => {
         height="400"
         width="400"
         class="mx-auto"
+        alt="No results found"
       />
       <h1 class="font-sans text-xl font-bold text-center">
         Looks like there is no data on team {{ teamData.teamNum }} at

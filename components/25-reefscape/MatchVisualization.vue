@@ -129,10 +129,10 @@ console.log(props.rowData.rawData);
         <div
           v-if="rowData.rawData[selectedMatch - 1].auto.position != undefined"
         >
-          <p class="font-extrabold text-sm inline-block">
+          <p class="font-extrabold text-sm inline-block dark:!text-primary">
             Auto Position: &nbsp;
           </p>
-          <p class="text-sm inline-block">
+          <p class="text-sm inline-block dark:!text-primary">
             {{ rowData.rawData[selectedMatch - 1].auto.position }}
           </p>
         </div>
@@ -155,7 +155,7 @@ console.log(props.rowData.rawData);
             {{ endgame }}
           </UBadge>
         </div>
-        <div class="text-wrap max-w-72 h-2/3 max-h-2/3 overflow-y-scroll">
+        <div class="text-wrap max-w-72 h-2/3 max-h-2/3 overflow-y-scroll dark:!text-primary">
           <div
             v-for="(item, index) in rowData.rawData[selectedMatch - 1].notes
               .promptedNotes"
