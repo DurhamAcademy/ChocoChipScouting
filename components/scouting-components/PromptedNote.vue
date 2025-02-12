@@ -4,14 +4,13 @@ const emit = defineEmits(['update:modelValue']);
 
 const props = defineProps<{
   modelValue: { selected: boolean; rating: number; notes: Array<string> };
-  questions: Array<any>;
+  questions: Array<string>;
 }>();
 
 const value = computed({
   get() {
     for (let i in props.modelValue.notes){
       if (props.modelValue.notes[i] == undefined) {
-        console.log("ran update")
         props.modelValue.notes[i] = ""
       }
     }

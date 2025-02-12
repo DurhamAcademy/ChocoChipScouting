@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import Sentiment from 'sentiment';
 import BarChart from '../charts/BarChart.vue';
+import { promptedNoteOptions } from '~/utils/promptedNoteOptions';
 
 let sentiment = new Sentiment();
 let options = {
@@ -96,17 +97,8 @@ let chartData = ref([
 ]);
 let chartTitle = ref('Match ' + currData.value.matchNumber);
 
-let promptedNotesOptions = ['Defense', 'Offense', 'Driver'];
-let promptedNotesDetailedOptions = [
-  ['Defense location', 'Risk of fouls', 'Other'],
-  [
-    'Shooing location(s)',
-    'Ability to avoid defense',
-    'Weakness of cycles',
-    'Other',
-  ],
-  ['Strengths', 'Weaknesses', 'Other'],
-];
+let promptedNotesOptions = promptedNoteOptions.map(option => option.name);
+let promptedNotesDetailedOptions = promptedNoteOptions.map(option => option.questions);
 
 console.log(props.rowData.rawData);
 </script>

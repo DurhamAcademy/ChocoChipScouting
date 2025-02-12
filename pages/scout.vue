@@ -192,6 +192,7 @@ async function submit() {
     await navigateTo('/teams');
   }
 }
+
 </script>
 
 <template>
