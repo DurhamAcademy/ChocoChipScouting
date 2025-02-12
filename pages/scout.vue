@@ -192,7 +192,6 @@ async function submit() {
     await navigateTo('/teams');
   }
 }
-
 </script>
 
 <template>
@@ -547,8 +546,8 @@ async function submit() {
             :items="[
               { label: 'Offense', slot: 'offense', defaultOpen: true },
               { label: 'Defense', slot: 'defense' },
-              { label: 'Robustness', slot: 'robustness' },
               { label: 'Driver', slot: 'driver' },
+              { label: 'Robustness', slot: 'robustness' },
             ]"
           >
             <!-- templates fill the UAccordion's sections -->

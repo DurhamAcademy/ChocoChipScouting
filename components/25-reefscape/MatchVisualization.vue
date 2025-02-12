@@ -98,7 +98,9 @@ let chartData = ref([
 let chartTitle = ref('Match ' + currData.value.matchNumber);
 
 let promptedNotesOptions = promptedNoteOptions.map(option => option.name);
-let promptedNotesDetailedOptions = promptedNoteOptions.map(option => option.questions);
+let promptedNotesDetailedOptions = promptedNoteOptions.map(
+  option => option.summaries,
+);
 </script>
 
 <template>
