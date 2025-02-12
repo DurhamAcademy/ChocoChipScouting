@@ -107,8 +107,6 @@ let promptedNotesDetailedOptions = [
   ],
   ['Strengths', 'Weaknesses', 'Other'],
 ];
-
-console.log(props.rowData.rawData);
 </script>
 
 <template>

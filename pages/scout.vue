@@ -554,7 +554,8 @@ async function submit() {
             <template #offense>
               <!-- the PromptedNote custom component takes in an array of questions and how many lines should be expected as output for that question
             for example: 'Where did this team play defense?' is the question while '1' is the number of lines expected for that response
-            it then returns an array of answers to the questions which is updated to the scoutData variable -->
+            it then returns an array of answers to the questions which is updated to the scoutData variable
+             These are stored in an object under /utils/promptedNoteOptions and used below -->
               <PromptedNote
                 v-model="scoutData.notes.promptedNotes[0]"
                 :questions="promptedNoteOptions[0].questions"
