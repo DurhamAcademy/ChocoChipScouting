@@ -103,7 +103,6 @@ export default defineNuxtConfig({
     domains: ['img.youtube.com', 'i.vimeocdn.com'],
 
     alias: {
-      '~': path.resolve(__dirname),
       youtube: 'https://img.youtube.com',
       vimeo: 'https://i.vimeocdn.com',
     },

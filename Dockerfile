@@ -89,13 +89,13 @@ COPY app.vue .
 COPY ./pages ./pages
 COPY ./public ./public
 COPY ./server ./server
-COPY ./stores ./stores
 COPY ./components ./components
 COPY ./utils ./utils
 COPY ./plugins ./plugins
 COPY ./service-worker ./service-worker
 COPY ./composables ./composables
 COPY ./modules ./modules
+COPY ./stores ./stores
 
 #ENTRYPOINT ["bash"]
 RUN ["bun", "--bun", "run", "postinstall"]
