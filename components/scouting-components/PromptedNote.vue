@@ -11,7 +11,6 @@ const value = computed({
   get() {
     for (let i in props.modelValue.notes) {
       if (props.modelValue.notes[i] == undefined) {
-        console.log('ran update');
         props.modelValue.notes[i] = '';
       }
     }
