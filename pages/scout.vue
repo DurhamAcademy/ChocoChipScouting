@@ -262,123 +262,122 @@ async function submit() {
         </template>
         <!-- In this section put all the elements you want to be shown under the autonomous tab -->
         <div v-if="gameTime == GameTime.Autonomous">
-          <div class="flex">
-            <div class="max-w-30 w-30">
-              <div class="w-fit text-center ml-4">
-                <h1
-                  class="text-gray-700 dark:text-gray-200 font-sans font-bold"
-                >
-                  Coral
-                </h1>
-                <div class="flex flex-auto justify-center max-w-44">
-                  <div class="flex-auto text-center mr-2">
-                    <h1
-                      class="text-coral-400 font-sans mt-1 font-light text-sm"
-                    >
-                      Missed
-                    </h1>
-                    <IncrementalButton
-                      class="my-1"
-                      v-model="scoutData.auto.coralL1Miss"
-                      v-if="coralLevel == 0"
-                    ></IncrementalButton>
-                    <IncrementalButton
-                      class="my-1"
-                      v-model="scoutData.auto.coralL2Miss"
-                      v-else-if="coralLevel == 1"
-                    ></IncrementalButton>
-                    <IncrementalButton
-                      class="my-1"
-                      v-model="scoutData.auto.coralL3Miss"
-                      v-else-if="coralLevel == 2"
-                    ></IncrementalButton>
-                    <IncrementalButton
-                      class="my-1"
-                      v-model="scoutData.auto.coralL4Miss"
-                      v-else
-                    ></IncrementalButton>
-                  </div>
-                  <div class="flex-auto text-center">
-                    <h1
-                      class="text-coral-400 font-sans mt-1 font-light text-sm"
-                    >
-                      Scored
-                    </h1>
-                    <IncrementalButton
-                      class="my-1"
-                      v-model="scoutData.auto.coralL1"
-                      v-if="coralLevel == 0"
-                    ></IncrementalButton>
-                    <IncrementalButton
-                      class="my-1"
-                      v-model="scoutData.auto.coralL2"
-                      v-else-if="coralLevel == 1"
-                    ></IncrementalButton>
-                    <IncrementalButton
-                      class="my-1"
-                      v-model="scoutData.auto.coralL3"
-                      v-else-if="coralLevel == 2"
-                    ></IncrementalButton>
-                    <IncrementalButton
-                      class="my-1"
-                      v-model="scoutData.auto.coralL4"
-                      v-else
-                    ></IncrementalButton>
-                  </div>
+        <div class="flex flex-wrap">
+          <div class="max-w-30 w-30">
+            <div class="w-fit text-center ml-4">
+              <h1 class="text-gray-700 dark:text-gray-200 font-sans font-bold">
+                Coral
+              </h1>
+              <div class="flex flex-auto justify-center max-w-44">
+                <div class="flex-auto text-center mr-2">
+                  <h1 class="text-coral-400 font-sans mt-1 font-light text-sm">
+                    Missed
+                  </h1>
+                  <IncrementalButton
+                    class="my-1"
+                    v-model="scoutData.auto.coralL1Miss"
+                    v-if="coralLevel == 0"
+                  ></IncrementalButton>
+                  <IncrementalButton
+                    class="my-1"
+                    v-model="scoutData.auto.coralL2Miss"
+                    v-else-if="coralLevel == 1"
+                  ></IncrementalButton>
+                  <IncrementalButton
+                    class="my-1"
+                    v-model="scoutData.auto.coralL3Miss"
+                    v-else-if="coralLevel == 2"
+                  ></IncrementalButton>
+                  <IncrementalButton
+                    class="my-1"
+                    v-model="scoutData.auto.coralL4Miss"
+                    v-else
+                  ></IncrementalButton>
                 </div>
-                <div class="ml-0.5">
+                <div class="flex-auto text-center">
+                  <h1 class="text-coral-400 font-sans mt-1 font-light text-sm">
+                    Scored
+                  </h1>
+                  <IncrementalButton
+                    class="my-1"
+                    v-model="scoutData.auto.coralL1"
+                    v-if="coralLevel == 0"
+                  ></IncrementalButton>
+                  <IncrementalButton
+                    class="my-1"
+                    v-model="scoutData.auto.coralL2"
+                    v-else-if="coralLevel == 1"
+                  ></IncrementalButton>
+                  <IncrementalButton
+                    class="my-1"
+                    v-model="scoutData.auto.coralL3"
+                    v-else-if="coralLevel == 2"
+                  ></IncrementalButton>
+                  <IncrementalButton
+                    class="my-1"
+                    v-model="scoutData.auto.coralL4"
+                    v-else
+                  ></IncrementalButton>
+                </div>
+              </div>
+              <div class="ml-0.5">
+                <SingleSelect
+                  v-model="coralLevel"
+                  :options="['L1', 'L2', 'L3', 'L4']"
+                />
+              </div>
+            </div>
+            <div class="flex flex-auto justify-center"></div>
+            <br />
+          </div>
+          <div class="ml-0 sm:ml-10">
+            <div class="flex text-center space-x-4">
+              <div class="w-auto max-w-xs">
+                <div class="ml-0 sm:ml-5">
+                  <h1 class="text-gray-700 dark:text-gray-200 font-sans font-bold">
+                    Auto Position
+                  </h1>
+                  <br/>
                   <SingleSelect
-                    v-model="coralLevel"
-                    :options="['L1', 'L2', 'L3', 'L4']"
+                    v-model="scoutData.auto.position"
+                    :options="['1', '2', '3', '4']"
+                    class="mr-4"
                   />
-                </div>
-              </div>
-              <div class="flex flex-auto justify-center"></div>
-              <br />
-              <div class="flex text-center">
-                <div>
-                  <div class="ml-5">
-                    <br />
-                    <h1
-                      class="text-gray-700 dark:text-gray-200 font-sans font-bold underline"
-                    >
-                      Auto Position
-                    </h1>
-                    <SingleSelect
-                      v-model="scoutData.auto.position"
-                      :options="['1', '2', '3', '4']"
-                    />
-                    <!-- a true/false button (custom component) -->
-                    <BooleanButton
-                      class="mt-1"
-                      v-model="scoutData.auto.mobility"
-                      :default-value="'Mobility'"
-                      :other-value="'Mobility'"
-                    />
-                  </div>
-                </div>
-              </div>
-              <UButton
-                class="flex auto-center, md:mt-5"
-                @click="isAutoPositionOpen = true"
-                label="Reference"
-              />
-              <!-- the popup for the reference image -->
-              <UModal v-model="isAutoPositionOpen">
-                <div class="flex flex-auto">
+                  <!-- a true/false button (custom component) -->
+                  <BooleanButton
+                    v-model="scoutData.auto.mobility"
+                    :default-value="'Mobility'"
+                    :other-value="'Mobility'"
+                    class="ml-4"
+                  />
                   <UButton
-                    class="mr-2 mt-2 right-0 absolute"
-                    @click="isAutoPositionOpen = false"
-                    icon="i-heroicons-x-circle"
+                    class="flex auto-center, md:ml-1 mt-1"
+                    @click="isAutoPositionOpen = true"
+                    label="Reference"
+                    variant="solid"
+                    :ui="{ rounded: 'rounded-full'}"
                   />
-                  <img src="/public/referenceImage2.png" />
-                  <!-- main focus: fixing auto tab, specifically shifting auto position buttons up
-                also, figuring out why "coral level", "score", "missed" all shift with the buttons-->
+                  <!-- the popup for the reference image -->
+                  <UModal v-model="isAutoPositionOpen">
+                    <div class="fixed inset-0 flex items-center justify-center">
+                      <UCard class="relative w-full sm:w-3/4 lg:w-1/2 max-h-screen p-4 overflow-auto">
+                        <UButton
+                          class="absolute top-2 right-2"
+                          @click="isAutoPositionOpen = false"
+                          icon="i-heroicons-x-circle"
+                        />
+                        <img src="/public/referenceImage2.png"
+                             class="w-full h-auto max-h-[80vh] object-contain"
+                        />
+                      </UCard>
+                    </div>
+                  </UModal>
                 </div>
-              </UModal>
+              </div>
             </div>
           </div>
         </div>
+      </div>
 
         <!-- In this section put all the elements you want to be shown under the teleop tab -->
         <div v-if="gameTime == GameTime.Teleoperated">
