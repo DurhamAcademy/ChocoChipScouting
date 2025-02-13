@@ -39,7 +39,7 @@ export default defineNuxtModule({
 
         let updatedEvents: EventData[] = [];
 
-        for (let event of eventOptions) {
+        for (let event of ['2025ncmec']) {
           console.log(event);
           // if (TBA_KEY) {
           //   let urlNoNum: string = 'https://www.thebluealliance.com/api/v3/';
