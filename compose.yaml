@@ -16,8 +16,11 @@ services:
       - "3000:3000"
     links:
       - couchdb:couchdb
+    env_file:
+      .env
     environment:
       couchDBHostname: couchdb
+      NUXT_TBA_KEY: ${NUXT_TBA_KEY}
     networks:
       - intercom_network
   devserver:
