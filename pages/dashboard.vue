@@ -554,12 +554,12 @@ async function updateTeamData() {
               <p class="font-medium text-xl text-center dark:text-white">
                 No Events Scheduled
               </p>
-              <NuxtImg
+              <img
                 src="/sadcookie.png"
                 class="mx-auto"
                 width="145"
                 height="145"
-              />
+               alt="No results found"/>
             </div>
           </template>
         </UTabs>
