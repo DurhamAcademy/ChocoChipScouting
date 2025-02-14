@@ -3,7 +3,7 @@ import { writeFile, readFile, mkdir } from 'fs/promises';
 import { eventOptions } from '~/utils/eventOptions';
 import { EventData, TeamInfo } from '~/utils/databases';
 import { existsSync } from 'node:fs';
-import { defineNuxtModule } from '@nuxt/kit'; // Adjust path as needed
+import { defineNuxtModule } from '@nuxt/kit';
 
 // paths to server storage of eventInfo
 // TODO i am guessing the server compiling is due to this section here
