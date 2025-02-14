@@ -4,38 +4,67 @@ const props = defineProps<{
   teamData: any;
 }>();
 
-const selectedMatch = ref(1);
+let autoPoints = 0; let algaePoints = 0; let coralPoints = 0; let endgamePoints = 0;
 
-let currData: any = ref(props.teamData.rawData[selectedMatch.value - 1]);
+for(let i = 0; i<(props.teamData.rawData.length); i++){
+  let match = props.teamData.rawData[i];
+  console.dir(match)
+  autoPoints = autoPoints + scoreAuto(match);
+  coralPoints = coralPoints + scoreCoral(match);
+  algaePoints = algaePoints + scoreAlgae(match);
+  endgamePoints = endgamePoints + scoreEndgame(match);
+}
 
-watch(selectedMatch, () => {
-  currData.value = props.teamData.rawData[selectedMatch.value - 1];
-  spiderGraphData.value = [
-    currData.value.auto.coralL1,
-    currData.value.auto.coralL2,
-    currData.value.auto.coralL3,
-    currData.value.auto.coralL4,
-    currData.value.teleop.coralL1,
-    currData.value.teleop.coralL2,
-    currData.value.teleop.coralL3,
-    currData.value.teleop.coralL4,
-    currData.value.teleop.net,
-    currData.value.teleop.netMiss,
-    currData.value.teleop.processor,
-    currData.value.teleop.processorMiss,
-  ];
-});
+//four methods to calculate total of a specific match to be used above
+//TODO use scoreMatch.ts once that gets merged
+function scoreAuto(match: any){
+  if(match.auto.mobility == true){
+    return match.auto.coralL1 * 3 + match.auto.coralL2 * 4 +
+      match.auto.coralL3 * 6 + match.auto.coralL4 * 7 +
+      + 2;//mobility
+  }
+  else{
+    return match.auto.coralL1 * 3 + match.auto.coralL2 * 4 +
+      match.auto.coralL3 * 6 + match.auto.coralL4 * 7; //no mobility
+  }
+}
 
+function scoreCoral(match: any){
+  return match.teleop.coralL1 * 2 + match.teleop.coralL2 * 3 +
+    match.teleop.coralL3 * 4 + match.teleop.coralL4 * 5;
+}
 
-//TODO standardize
+function scoreAlgae(match: any){
+  return match.teleop.net * 4 + match.teleop.processor * 6;
+}
+
+function scoreEndgame(match: any){
+  const endgameOutcomes = match.endgame.endgame;
+  let tempEndgamePoints = 0;
+  if(endgameOutcomes != null) {
+    for (let outcome of endgameOutcomes) {
+      if (outcome == "Deep Successful") {
+        tempEndgamePoints = 12;
+      } else if (outcome == "Shallow Successful") {
+        tempEndgamePoints = 6;
+      } else if (outcome == "Parked") {
+        tempEndgamePoints = 2;
+      }
+    }
+  }
+  else {
+    tempEndgamePoints = 0;
+  }
+  return tempEndgamePoints
+}
+
+//TODO standardize and add defense
+//the /100 will be replaced with max score
 let spiderGraphData = ref([
-  currData.value.auto.coralL1 * 3 + currData.value.auto.coralL2 * 4 + currData.value.auto.coralL3 * 6
-    + currData.value.auto.coralL4 * 7 + currData.value.auto.mobility * 2,
-  currData.value.teleop.coralL1 * 2 + currData.value.teleop.coralL2 * 3 +
-    currData.value.teleop.coralL3 * 4 + currData.value.teleop.coralL4 * 5,
-  currData.value.teleop.net * 4 + currData.value.teleop.processor * 6,
-  5,
-
+  (autoPoints/100)*100,
+  (coralPoints/100)*100,
+  (algaePoints/100)*100,
+  (endgamePoints/100)*100,
 ]);
 
 const spiderGraphLabels = [
@@ -43,20 +72,22 @@ const spiderGraphLabels = [
   'Coral',
   'Algae',
   'Endgame',
+  //TODO add defense
 ];
 
 const chartTitle = "Team " + props.teamData.teamNum;
-
 </script>
 <template>
-    <UCard class="mt-4">
-      <div class="flex-auto">
-        <SpiderGraph
-          class="mb-40 flex flex-auto"
-          :labels="spiderGraphLabels"
-          :data="spiderGraphData"
-          :title="chartTitle"
-        ></SpiderGraph>
-      </div>
-    </UCard>
+  <UCard class="mt-4">
+    <div class="flex-auto">
+      <SpiderGraph
+        class="mb-40 flex flex-auto"
+        :labels="spiderGraphLabels"
+        :data="spiderGraphData"
+        :title="chartTitle"
+        max="100"
+        min="0"
+      />
+    </div>
+  </UCard>
 </template>

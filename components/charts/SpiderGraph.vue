@@ -1,20 +1,32 @@
 <script lang="ts" setup>
-import { RadarChart } from 'vue-chart-3'
-import { Chart, registerables } from 'chart.js'
+import { RadarChart } from 'vue-chart-3';
+import { Chart, registerables } from 'chart.js';
 
 const props = defineProps<{
-  labels: Array<string>
-  data: Array<number>
-  backgroundColors?: Array<any>
-  title: string
-}>()
+  labels: Array<string>;
+  data: Array<number>;
+  backgroundColors?: Array<any>;
+  title: string;
+  min: string;
+  max: string;
+}>();
 
-Chart.register(...registerables)
-Chart.defaults.scales.radialLinear.min = 0;
+Chart.register(...registerables);
 
-let pieChartColors = ['#77CEFF', '#0079AF', '#123E6B', '#97B0C4', '#A5C8ED']
-if (props.backgroundColors) pieChartColors = props.backgroundColors
+//sets max and min (if specified)
+if (props.min != null) {
+  Chart.defaults.scales.radialLinear.min = parseInt(props.min);
+}
+if (props.max != null) {
+  Chart.defaults.scales.radialLinear.max = Math.round(parseInt(props.max));
+  //this was made due to the existence of a ton of zeroes but may need to be changed
+  //in the future if we make these with decimal maxes but it works for now
+}
 
+let pieChartColors = ['#77CEFF', '#0079AF', '#123E6B', '#97B0C4', '#A5C8ED'];
+if (props.backgroundColors) pieChartColors = props.backgroundColors;
+
+//sets up the data for the spider graph
 const testData = {
   labels: props.labels,
   datasets: [
@@ -31,12 +43,8 @@ const testData = {
       borderWidth: 1,
     },
   ],
-  options: {
-    scales: {
-    }
-  },
-}
+};
 </script>
 <template>
-  <RadarChart :chartData="testData"/>
+  <RadarChart :chartData="testData" />
 </template>
