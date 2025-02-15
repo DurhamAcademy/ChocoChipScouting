@@ -159,7 +159,7 @@ if (
         </div>
       </Transition>
       <div
-        class="flex-col min-w-0 min-h-full max-h-none max-w-full overflow-x-auto flex-grow"
+        class="flex-col min-w-0 min-h-full max-h-none max-w-full overflow-x-hidden flex-grow"
       >
         <slot />
       </div>
