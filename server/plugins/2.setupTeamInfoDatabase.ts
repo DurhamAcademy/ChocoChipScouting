@@ -41,7 +41,6 @@ export default defineNitroPlugin(nitroApp => {
           const url = `https://www.thebluealliance.com/api/v3/event/${event}/teams/simple`;
 
           try {
-            // fixme why is this a type bug?
             const response = await fetch(url, {
               method: 'GET',
               headers: {
