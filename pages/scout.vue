@@ -10,6 +10,8 @@ import type { UnwrapRef } from 'vue';
 import { loginStateKey } from '~/utils/keys';
 import { useEventKey } from '~/composables/useEventKey';
 import SingleSelect from '~/components/scouting-components/SingleSelect.vue';
+import { promptedNoteOptions } from '~/utils/promptedNoteOptions';
+import MultiSelect from "~/components/scouting-components/MultiSelect.vue";
 
 /*
 START SEASONAL UPDATE AREA
@@ -46,8 +48,17 @@ Configuration variables done
  * updateEndgameOptions updates the scoutData variable to match the currently selected option in the endgame multiselect
  * @param value the currently selected option
  */
-function updateEndgameOptions(value: number) {
-  scoutData.value.endgame.endgame = [endgameOptions[value]];
+function updateEndgameOptions(value: Array<number>) {
+  let arr = [];
+  for (let i = 0; i < value.length; i++) {
+    if (value[i] == 1) {
+      arr.push(endgameOptions[i]);
+    }
+  }
+  scoutData.value.endgame.endgame = arr;
+  if (scoutData.value.endgame.endgame.length < 1) {
+    scoutData.value.endgame.endgame = [endgameOptions[0]];
+  }
 }
 
 // all the data collected on the scout page in the form of a ScoutingData object,
@@ -97,6 +108,11 @@ let scoutData = ref<ScoutingData>({
   notes: {
     notes: '',
     promptedNotes: [
+      {
+        selected: false,
+        rating: 1,
+        notes: [],
+      },
       {
         selected: false,
         rating: 1,
@@ -371,7 +387,7 @@ async function submit() {
                     @click="isAutoPositionOpen = false"
                     icon="i-heroicons-x-circle"
                   />
-                  <img src="/public/referenceImage2.png" />
+                  <img src="/public/referenceImage2.png" alt="A picture of the playfield of this year's game"/>
                   <!-- main focus: fixing auto tab, specifically shifting auto position buttons up
                 also, figuring out why "coral level", "score", "missed" all shift with the buttons-->
                 </div>
@@ -520,14 +536,15 @@ async function submit() {
           <!-- a multi select custom component. this acts like the single select but allows you to select multiple buttons at a time.
         the connection options optional param allows you to configure which options are allowed to be selected with each other
         notice the @update: which runs the updateEndgameOptions() function upon each update of the custom component-->
-          <SingleSelect
-            :model-value="0"
+          <MultiSelect
+            :model-value="[1, 0, 0, 0, 0, 0]"
             :options="endgameOptions"
             @update:model-value="
-              value => {
-                updateEndgameOptions(value);
-              }
-            "
+            value => {
+              updateEndgameOptions(value);
+            }
+          "
+            :connected-options="[1, 2, 2, 3, 2, 4]"
           />
         </div>
         <!-- In this section put all the elements you want in the notes tab -->
@@ -538,59 +555,39 @@ async function submit() {
             open-icon="i-heroicons-plus"
             close-icon="i-heroicons-minus"
             :items="[
-              { label: 'Coral', slot: 'coral', defaultOpen: true },
-              { label: 'Algae', slot: 'algae' },
+              { label: 'Offense', slot: 'offense', defaultOpen: true },
+              { label: 'Defense', slot: 'defense' },
               { label: 'Driver', slot: 'driver' },
+              { label: 'Robustness', slot: 'robustness' },
             ]"
           >
             <!-- templates fill the UAccordion's sections -->
-            <template #coral>
+            <template #offense>
               <!-- the PromptedNote custom component takes in an array of questions and how many lines should be expected as output for that question
             for example: 'Where did this team play defense?' is the question while '1' is the number of lines expected for that response
-            it then returns an array of answers to the questions which is updated to the scoutData variable -->
+            it then returns an array of answers to the questions which is updated to the scoutData variable
+             These are stored in an object under /utils/promptedNoteOptions and used below -->
               <PromptedNote
                 v-model="scoutData.notes.promptedNotes[0]"
-                :questions="[
-                  [
-                    'How efficient and accurate was this team while scoring coral?',
-                    1,
-                  ],
-                  [
-                    'Is this team at risk of causing fouls? If so, elaborate why.',
-                    2,
-                  ],
-                  ['What other factors contributed to your rating?', 1],
-                ]"
+                :questions="promptedNoteOptions[0].questions"
               />
             </template>
-            <template #algae>
+            <template #defense>
               <PromptedNote
                 v-model="scoutData.notes.promptedNotes[1]"
-                :questions="[
-                  [
-                    'How efficient and accurate was this team while scoring algae?',
-                    1,
-                  ],
-                  [
-                    'If applicable, how did the driver make efforts to avoid opposing defense?',
-                    2,
-                  ],
-                  [
-                    'What slowed down this teams scoring process with algae and/or coral?',
-                    2,
-                  ],
-                  ['What other factors contributed to your rating?', 1],
-                ]"
+                :questions="promptedNoteOptions[1].questions"
               />
             </template>
             <template #driver>
               <PromptedNote
                 v-model="scoutData.notes.promptedNotes[2]"
-                :questions="[
-                  ['What makes their driving strong?', 1],
-                  ['What makes their driving weak?', 1],
-                  ['What other factors contributed to your rating?', 1],
-                ]"
+                :questions="promptedNoteOptions[2].questions"
+              />
+            </template>
+            <template #robustness>
+              <PromptedNote
+                v-model="scoutData.notes.promptedNotes[3]"
+                :questions="promptedNoteOptions[3].questions"
               />
             </template>
           </UAccordion>
