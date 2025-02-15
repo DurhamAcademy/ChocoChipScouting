@@ -9,7 +9,6 @@ export default defineNuxtConfig({
     '@vite-pwa/nuxt',
     '@nuxt/ui',
     '@nuxtjs/color-mode',
-    '~/modules/setupTeamInfoDatabase',
     (_options, nuxt) => {
       nuxt.hooks.hook('vite:extendConfig', config => {
         // @ts-expect-error
