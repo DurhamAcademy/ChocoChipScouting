@@ -94,7 +94,6 @@ COPY ./utils ./utils
 COPY ./plugins ./plugins
 COPY ./service-worker ./service-worker
 COPY ./composables ./composables
-COPY ./modules ./modules
 COPY ./stores ./stores
 
 #ENTRYPOINT ["bash"]
