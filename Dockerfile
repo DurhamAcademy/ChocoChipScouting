@@ -24,7 +24,6 @@ WORKDIR /usr/src/nuxt3-app
 COPY package.json package.json
 #COPY .npmrc .
 ARG NODE_ENV=development
-ENV NODE_ENV=${NODE_ENV}
 #COPY package-lock.json .
 #RUN echo "{\"name\": \"scouting-app\",\"lockfileVersion\": 3,\"requires\": true,\"packages\": {}}" > package-lock.json
 #RUN ["npm", "install", "--package-lock-only", "--ignore-scripts"]
@@ -82,8 +81,6 @@ COPY nuxt.config.ts .
 COPY app.config.ts .
 
 FROM bun-prepare AS files
-
-ARG NUXT_TBA_KEY
 
 COPY app.vue .
 COPY ./pages ./pages
