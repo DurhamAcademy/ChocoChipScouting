@@ -75,129 +75,61 @@ let columns = [
 ];
 
 function getCoralStats() {
-  let totalAutoL1 = 0;
-  let totalAutoL2 = 0;
-  let totalAutoL3 = 0;
-  let totalAutoL4 = 0;
-  let minAutoL1 = null;
-  let minAutoL2 = null;
-  let minAutoL3 = null;
-  let minAutoL4 = null;
-  let maxAutoL1 = null;
-  let maxAutoL2 = null;
-  let maxAutoL3 = null;
-  let maxAutoL4 = null;
-  let totalTeleopL1 = 0;
-  let totalTeleopL2 = 0;
-  let totalTeleopL3 = 0;
-  let totalTeleopL4 = 0;
-  let minTeleopL1 = null;
-  let minTeleopL2 = null;
-  let minTeleopL3 = null;
-  let minTeleopL4 = null;
-  let maxTeleopL1 = null;
-  let maxTeleopL2 = null;
-  let maxTeleopL3 = null;
-  let maxTeleopL4 = null;
-  let totalL1 = 0;
-  let totalL2 = 0;
-  let totalL3 = 0;
-  let totalL4 = 0;
-  let minL1 = null;
-  let minL2 = null;
-  let minL3 = null;
-  let minL4 = null;
-  let maxL1 = null;
-  let maxL2 = null;
-  let maxL3 = null;
-  let maxL4 = null;
-  for (let match of props.rowData.rawData) {
-    if (match.auto.coralL1 > maxAutoL1) maxAutoL1 = match.auto.coralL1;
-    if (match.auto.coralL2 > maxAutoL2) maxAutoL2 = match.auto.coralL2;
-    if (match.auto.coralL3 > maxAutoL3) maxAutoL3 = match.auto.coralL3;
-    if (match.auto.coralL4 > maxAutoL4) maxAutoL4 = match.auto.coralL4;
-    if (match.teleop.coralL1 > maxTeleopL1) maxTeleopL1 = match.teleop.coralL1;
-    if (match.teleop.coralL2 > maxTeleopL2) maxTeleopL2 = match.teleop.coralL2;
-    if (match.teleop.coralL3 > maxTeleopL3) maxTeleopL3 = match.teleop.coralL3;
-    if (match.teleop.coralL4 > maxTeleopL4) maxTeleopL4 = match.teleop.coralL4;
-    if (minAutoL1 == null || minAutoL1 > match.auto.coralL1) minAutoL1 = match.auto.coralL1;
-    if (minAutoL2 == null || minAutoL2 > match.auto.coralL2) minAutoL2 = match.auto.coralL2;
-    if (minAutoL3 == null || minAutoL3 > match.auto.coralL3) minAutoL3 = match.auto.coralL3;
-    if (minAutoL4 == null || minAutoL4 > match.auto.coralL4) minAutoL4 = match.auto.coralL4;
-    if (minTeleopL1 == null || minTeleopL1 > match.teleop.coralL1) minTeleopL1 = match.teleop.coralL1;
-    if (minTeleopL2 == null || minTeleopL2 > match.teleop.coralL2) minTeleopL2 = match.teleop.coralL2;
-    if (minTeleopL3 == null || minTeleopL3 > match.teleop.coralL3) minTeleopL3 = match.teleop.coralL3;
-    if (minTeleopL4 == null || minTeleopL4 > match.teleop.coralL4) minTeleopL4 = match.teleop.coralL4;
-    if (minTeleopL1 > minAutoL1) minL1 = minAutoL1;
-    if (minTeleopL1 < minAutoL1) minL1 = minTeleopL1;
-    if (minTeleopL2 > minAutoL2) minL2 = minAutoL2;
-    if (minTeleopL2 < minAutoL2) minL2 = minTeleopL2;
-    if (minTeleopL3 > minAutoL3) minL3 = minAutoL3;
-    if (minTeleopL3 < minAutoL3) minL3 = minTeleopL3;
-    if (minTeleopL4 > minAutoL4) minL4 = minAutoL4;
-    if (minTeleopL4 < minAutoL4) minL4 = minTeleopL4;
-    if (maxTeleopL1 > maxAutoL1) maxL1 = maxTeleopL1;
-    if (maxTeleopL1 < maxAutoL1) maxL1 = maxAutoL1;
-    if (maxTeleopL2 > maxAutoL2) maxL2 = maxTeleopL2;
-    if (maxTeleopL2 < maxAutoL2) maxL2 = maxAutoL2;
-    if (maxTeleopL3 > maxAutoL3) maxL3 = maxTeleopL3;
-    if (maxTeleopL3 < maxAutoL3) maxL3 = maxAutoL3;
-    if (maxTeleopL4 > maxAutoL4) maxL4 = maxTeleopL4;
-    if (maxTeleopL4 < maxAutoL3) maxL4 = maxAutoL4;
+  const numLevels = 4;
+  const totalAuto = Array(numLevels).fill(0);
+  const totalTeleop = Array(numLevels).fill(0);
+  const minAuto = Array(numLevels).fill(null);
+  const maxAuto = Array(numLevels).fill(null);
+  const minTeleop = Array(numLevels).fill(null);
+  const maxTeleop = Array(numLevels).fill(null);
+  const minL = Array(numLevels).fill(null);
+  const maxL = Array(numLevels).fill(null);
 
-    totalAutoL1 += match.auto.coralL1;
-    totalAutoL2 += match.auto.coralL2;
-    totalAutoL3 += match.auto.coralL3;
-    totalAutoL4 += match.auto.coralL4;
-    totalTeleopL1 += match.teleop.coralL1;
-    totalTeleopL2 += match.teleop.coralL2;
-    totalTeleopL3 += match.teleop.coralL3;
-    totalTeleopL4 += match.teleop.coralL4;
-    totalL1 = totalTeleopL1 + totalAutoL1;
-    totalL2 = totalTeleopL2 + totalAutoL2;
-    totalL3 = totalTeleopL3 + totalAutoL3;
-    totalL4 = totalTeleopL4 + totalAutoL4;
+  for (let match of props.rowData.rawData) {
+    for (let i = 0; i < numLevels; i++) {
+      const autoVal = match.auto[`coralL${i + 1}`];
+      const teleopVal = match.teleop[`coralL${i + 1}`];
+
+      // Update totals
+      totalAuto[i] += autoVal;
+      totalTeleop[i] += teleopVal;
+
+      // Update min/max for auto
+      //minAuto[i] = minAuto[i] === null ? autoVal : Math.min(minAuto[i], autoVal);
+      //maxAuto[i] = maxAuto[i] === null ? autoVal : Math.max(maxAuto[i], autoVal);
+
+      // Update min/max for teleop
+      //minTeleop[i] = minTeleop[i] === null ? teleopVal : Math.min(minTeleop[i], teleopVal);
+      //maxTeleop[i] = maxTeleop[i] === null ? teleopVal : Math.max(maxTeleop[i], teleopVal);
+
+      // Update min/max for total levels
+      const totalMin = autoVal + teleopVal;
+      const totalMax = autoVal + teleopVal;
+      if (totalMax > maxL[i] || maxL == null) maxAuto[i] = autoVal, maxTeleop[i] = teleopVal;
+      if(totalMin < minL[i]|| minL == null) minAuto[i] = autoVal, minTeleop[i] = teleopVal;
+      minL[i] = minL[i] === null ? totalMin : Math.min(minL[i], totalMin);
+      maxL[i] = maxL[i] === null ? totalMax : Math.max(maxL[i], totalMax);
+    }
   }
+
+  const numMatches = props.rowData.rawData.length;
+  const totalL = totalAuto.map((val, i) => totalTeleop[i] + val);
+
   return [
-    minAutoL1,//0
-    minAutoL2,//1
-    minAutoL3,//2
-    minAutoL4,//3
-    maxAutoL1,//4
-    maxAutoL2,//5
-    maxAutoL3,//6
-    maxAutoL4,//7
-    totalAutoL1 / props.rowData.rawData.length,//8
-    totalAutoL2 / props.rowData.rawData.length,//9
-    totalAutoL3 / props.rowData.rawData.length,//10
-    totalAutoL4 / props.rowData.rawData.length,//11
-    minTeleopL1,//12
-    minTeleopL2,//13
-    minTeleopL3,//14
-    minTeleopL4,//15
-    maxTeleopL1,//16
-    maxTeleopL2,//17
-    maxTeleopL3,//18
-    maxTeleopL4,//19
-    totalTeleopL1 / props.rowData.rawData.length,//20
-    totalTeleopL2 / props.rowData.rawData.length,//21
-    totalTeleopL3 /props.rowData.rawData.length,//22
-    totalTeleopL4 /props.rowData.rawData.length,//23
-    totalL1 / props.rowData.rawData.length  /2,//24
-    totalL2 / props.rowData.rawData.length  /2,//25
-    totalL3  / props.rowData.rawData.length /2,//26
-    totalL4 / props.rowData.rawData.length  /2, //27
-    minL1,//28
-    minL2,//29
-    minL3,//30
-    minL4,//31
-    maxL1,//32
-    maxL2,//33
-    maxL3,//34
-    maxL4,//35
+    ...minAuto, // 0-3
+    ...maxAuto, // 4-7
+    ...totalAuto.map(val => val / numMatches), // 8-11
+    ...minTeleop, // 12-15
+    ...maxTeleop, // 16-19
+    ...totalTeleop.map(val => val / numMatches), // 20-23
+    ...totalL.map(val => val / numMatches / 2), // 24-27
+    ...minL, // 28-31
+    ...maxL // 32-35
   ];
 }
+
 console.log(getCoralStats());
+
 let coralStats = getCoralStats().map(value => value?.toFixed?.(2));
 let rows = [
   {
@@ -242,21 +174,21 @@ let rows = [
 
 <template>
 
-  <UCard class="w-2/3">
+  <UCard class="w-auto h-auto">
 
     <div class="flex-auto flex flex-wrap">
       <LineChart
-        class="m-auto"
+        class="m-auto my-11"
         :data="[coralL1, coralL2, coralL3, coralL4]"
         :labels="matchNums"
         :chart-titles="chartTitles"
         :suggested-max="20"
-        height="h-81"
-        width="w-81"
+        height="h-100"
+        width="w-100"
       ></LineChart>
       <div class="flex-auto whitespace-normal">
         <div
-        class="font-semibold underline underline-offset-2 mb-1 w-full text-center text-lg"
+        class="font-semibold underline underline-offset-2 mb-1 w-full text-center text-lg my-11"
       >
         <h1>Coral</h1>
       </div>
