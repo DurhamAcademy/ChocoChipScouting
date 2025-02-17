@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import databases, { type ScoutingData, type TeamInfo } from '~/utils/databases';
-import MatchVisualization from '~/components/25-reefscape/MatchVisualization.vue';
 import IdMeta = PouchDB.Core.IdMeta;
 import { eventOptions } from '~/utils/eventOptions';
 import { useWindowSize } from '@vueuse/core';
-import SpeakerVisualization from '~/components/24-crescendo/SpeakerVisualization.vue';
+import MatchVisualization from '~/components/25-reefscape/MatchVisualization.vue';
 import CoralVisualization from '~/components/25-reefscape/CoralVisualization.vue';
 import AlgaeVisualization from "~/components/25-reefscape/AlgaeVisualization.vue";
 import TeamVisualization from "~/components/25-reefscape/TeamVisualization.vue";
@@ -208,6 +207,8 @@ let margin = ref(width.value > 800 ? 'ml-2' : '');
 watch(width, () => {
   margin.value = width.value > 800 ? 'ml-2' : 'mt-4';
 });
+
+const maxScores = [50, 50, 50, 50]; //TODO remove this at some point, temporary fix
 </script>
 
 <template>
@@ -270,11 +271,12 @@ watch(width, () => {
           <CoralVisualization :row-data="teamData"></CoralVisualization>
       </div>
       <div class="flex-auto h-1/3 mr-2">
-        <TeamVisualization :team-data="teamData"/>
+        <TeamVisualization :team-data="teamData" :maxScores="maxScores"/>
       </div>
       <div :class="'flex-auto h-min max-h-min flex-wrap ' + margin">
         <AlgaeVisualization :row-data="teamData"></AlgaeVisualization>
       </div>
+    </div>
     <div
       v-else
       class="opacity-50"

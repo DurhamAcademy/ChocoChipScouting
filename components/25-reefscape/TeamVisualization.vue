@@ -2,6 +2,7 @@
 import SpiderGraph from "~/components/charts/SpiderGraph.vue";
 const props = defineProps<{
   teamData: any;
+  maxScores: any;
 }>();
 
 let autoPoints = 0; let algaePoints = 0;
@@ -72,10 +73,10 @@ function addDefense(match: any){
 //TODO standardize
 //the /100 will be replaced with max score
 let spiderGraphData = ref([
-  (autoPoints/100)*100,
-  (coralPoints/100)*100,
-  (algaePoints/100)*100,
-  (endgamePoints/100)*100,
+  (autoPoints/props.maxScores[0])*100,
+  (coralPoints/props.maxScores[1])*100,
+  (algaePoints/props.maxScores[2])*100,
+  (endgamePoints/props.maxScores[3])*100,
   (defenseTotal/defenseNum)*20 || 0, // THE || MAKES IT SO TEAMS WITH NO DATA DONT BREAK
 ]);
 
