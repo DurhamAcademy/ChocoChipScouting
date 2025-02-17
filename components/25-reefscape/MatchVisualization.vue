@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import Sentiment from 'sentiment';
 import BarChart from '../charts/BarChart.vue';
+import { promptedNoteOptions } from '~/utils/promptedNoteOptions';
 
 let sentiment = new Sentiment();
 let options = {
@@ -24,7 +25,7 @@ const selectedMatch = ref(1);
 props.rowData.rawData.sort(compareMatchNumbers);
 
 function compareMatchNumbers(a: any, b: any) {
-  //TODO i hate this work around rly need to fix this
+  //TODO this is a bad solution to a typing problem
   let matchA =
     typeof a.matchNumber == 'string' ? parseInt(a.matchNumber) : a.matchNumber;
   let matchB =
@@ -50,7 +51,7 @@ const chartLabels = [
   'Net',
   'Net Miss',
   'Processor',
-  'Processor Miss'
+  'Processor Miss',
 ];
 let currData: any = ref(props.rowData.rawData[selectedMatch.value - 1]);
 
@@ -80,7 +81,6 @@ let sentimentScore = sentiment.analyze(
   props.rowData.rawData[selectedMatch.value - 1].notes.notes,
 ).score;
 
-
 let chartData = ref([
   currData.value.auto.coralL1,
   currData.value.auto.coralL2,
@@ -97,19 +97,10 @@ let chartData = ref([
 ]);
 let chartTitle = ref('Match ' + currData.value.matchNumber);
 
-let promptedNotesOptions = ['Defense', 'Offense', 'Driver'];
-let promptedNotesDetailedOptions = [
-  ['Defense location', 'Risk of fouls', 'Other'],
-  [
-    'Shooing location(s)',
-    'Ability to avoid defense',
-    'Weakness of cycles',
-    'Other',
-  ],
-  ['Strengths', 'Weaknesses', 'Other'],
-];
-
-console.log(props.rowData.rawData);
+let promptedNotesOptions = promptedNoteOptions.map(option => option.name);
+let promptedNotesDetailedOptions = promptedNoteOptions.map(
+  option => option.summaries,
+);
 </script>
 
 <template>
@@ -136,14 +127,14 @@ console.log(props.rowData.rawData);
             {{ rowData.rawData[selectedMatch - 1].auto.position }}
           </p>
         </div>
-        <p class="font-extrabold text-sm">Auto & Endgame:</p>
+        <p class="font-extrabold text-sm dark:!text-primary">Auto & Endgame:</p>
         <div class="pb-1">
           <UBadge
             color="sky"
             variant="subtle"
             v-if="rowData.rawData[selectedMatch - 1].auto.mobility"
             class="mr-1.5 mt-2"
-          >Mobility</UBadge
+            >Mobility</UBadge
           >
           <UBadge
             color="indigo"
@@ -163,8 +154,8 @@ console.log(props.rowData.rawData);
             <div v-if="item.selected">
               <div class="pb-1">
                 <span class="font-extrabold mr-2 text-sm">{{
-                    promptedNotesOptions[index] + ':'
-                  }}</span>
+                  promptedNotesOptions[index] + ':'
+                }}</span>
                 <UBadge
                   :color="
                     item.rating > 3 ? 'green' : item.rating < 3 ? 'red' : 'gray'
@@ -172,7 +163,7 @@ console.log(props.rowData.rawData);
                   :variant="
                     item.rating == 2 || item.rating == 4 ? 'soft' : 'subtle'
                   "
-                >{{ item.rating }}</UBadge
+                  >{{ item.rating }}</UBadge
                 >
               </div>
               <div v-for="(text, i) in item.notes">
@@ -182,25 +173,32 @@ console.log(props.rowData.rawData);
                 >
                   {{ promptedNotesDetailedOptions[index][i] + ':' }}
                 </p>
-                <p v-if="text != ''" class="pb-2.5 text-xs">{{ text }}</p>
+                <p
+                  v-if="text != ''"
+                  class="pb-2.5 text-xs"
+                >
+                  {{ text }}
+                </p>
               </div>
             </div>
           </div>
-          <span class="font-extrabold text-sm">Other notes: </span>
+          <span class="font-extrabold text-sm dark:!text-primary"
+            >Other notes:
+          </span>
           <UBadge
             :color="
               sentimentScore > 1
                 ? 'green'
                 : sentimentScore < -1
-                ? 'red'
-                : 'gray'
+                  ? 'red'
+                  : 'gray'
             "
             :variant="
               sentimentScore < 1 && sentimentScore > -1 ? 'soft' : 'subtle'
             "
-          >{{ sentimentScore }}</UBadge
+            >{{ sentimentScore }}</UBadge
           >
-          <p class="pb-2 text-xs">
+          <p class="pb-2 text-xs dark:!text-primary">
             {{
               rowData.rawData[selectedMatch - 1].notes.notes == ''
                 ? 'None'

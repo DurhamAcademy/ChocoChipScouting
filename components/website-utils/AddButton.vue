@@ -23,7 +23,7 @@ let addButtonLinks = [
         <UPopover>
             <UButton
                 :ui="{ rounded: 'rounded-full' }"
-                class="m-0 shadow-md"
+                class="ml-20 shadow-md"
                 color="primary"
                 icon="i-heroicons-plus-20-solid"
                 size="xl"

@@ -266,7 +266,7 @@ async function updateTeamData() {
       >
         <div class="font-bold text-center text-lg justify-center">
           <p class="">{{ currentRankings[0][1] }}</p>
-          <p class="!text-primary">Team 6502 Stats</p>
+          <p class="dark:text-white">Team 6502 Stats</p>
         </div>
         <div class="flex justify-center my-1" v-if="currentTeamRanking">
           <UButton
@@ -551,7 +551,9 @@ async function updateTeamData() {
               </div>
             </div>
             <div v-else>
-              <p class="font-medium text-xl text-center !text-primary">No Events Scheduled</p>
+              <p class="font-medium text-xl text-center dark:text-white">
+                No Events Scheduled
+              </p>
               <NuxtImg
                 src="/sadcookie.png"
                 class="mx-auto"
@@ -592,6 +594,7 @@ async function updateTeamData() {
           />
         </UCarousel>
       </UCard>
+      <div v-else></div>
     </div>
   </OuterComponents>
 </template>

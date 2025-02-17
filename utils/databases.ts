@@ -55,6 +55,7 @@ export type TeamTableData = {
   coralL2Auto: { data: number; color: string };
   coralL3Auto: { data: number; color: string };
   coralL4Auto: { data: number; color: string };
+  reefAuto: { data: number; color: string };
   coralL1AutoAcc: { data: number; color: string };
   coralL2AutoAcc: { data: number; color: string };
   coralL3AutoAcc: { data: number; color: string };
@@ -68,6 +69,7 @@ export type TeamTableData = {
   teleCoralL2: { data: number; color: string };
   teleCoralL3: { data: number; color: string };
   teleCoralL4: { data: number; color: string };
+  teleReef: { data: number; color: string };
   endgamePoints: { data: number; color: string };
   endgameChart: { data: string; color: string };
   class: string;
@@ -85,6 +87,7 @@ export type DataArrayOrSum = {
   coralL2Auto: number[];
   coralL3Auto: number[];
   coralL4Auto: number[];
+  reefAuto: number[];
   coralL1AutoAcc: number[];
   coralL2AutoAcc: number[];
   coralL3AutoAcc: number[];
@@ -97,6 +100,7 @@ export type DataArrayOrSum = {
   teleCoralL2: number[];
   teleCoralL3: number[];
   teleCoralL4: number[];
+  teleReef: number[];
   teleAcc: number[];
   endgamePoints: number[];
 };
@@ -118,6 +122,7 @@ export type ScoutingData = {
     netMiss: number;
     net: number;
     mobility: boolean;
+    position: number;
   };
   notes: {
     notes: string;

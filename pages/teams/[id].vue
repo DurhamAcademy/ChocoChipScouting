@@ -4,9 +4,9 @@ import MatchVisualization from '~/components/25-reefscape/MatchVisualization.vue
 import IdMeta = PouchDB.Core.IdMeta;
 import { eventOptions } from '~/utils/eventOptions';
 import { useWindowSize } from '@vueuse/core';
-import AmpVisualization from '~/components/24-crescendo/AmpVisualization.vue';
 import SpeakerVisualization from '~/components/24-crescendo/SpeakerVisualization.vue';
 import CoralVisualization from '~/components/25-reefscape/CoralVisualization.vue';
+import AlgaeVisualization from "~/components/25-reefscape/AlgaeVisualization.vue";
 let { width, height } = useWindowSize();
 
 const events = eventOptions.map(event => event.replace(/[0-9]/g, ''));
@@ -209,7 +209,7 @@ watch(width, () => {
 </script>
 
 <template>
-  <UCard class="w-full h-full">
+  <UCard class="w-full h-full rounded-none dark:bg-gray-800">
     <template #header>
       <UButton
         class="absolute left-2 top-2"
@@ -218,7 +218,7 @@ watch(width, () => {
         icon="i-heroicons-arrow-left"
         @click="goBack"
       />
-      <div class="text-center justify-center">
+      <div class="text-center justify-center dark:!text-primary">
         <UTooltip
           :text="'Avg Penalties: ' + teamData.penaltyScore.toFixed(2)"
           :popper="{ offsetDistance: -2 }"
@@ -260,13 +260,15 @@ watch(width, () => {
         </div>
       </div>
     </template>
-
     <div class="flex flex-wrap" v-if="teamData.rawData.length > 0">
       <div class=" h-1/3 w-auto">
-                        <MatchVisualization :row-data="teamData"></MatchVisualization>
+         <MatchVisualization :row-data="teamData"></MatchVisualization>
       </div>
       <div class="flex-auto h-min max-h-min flex-wrap">
-        <CoralVisualization :row-data="teamData"></CoralVisualization>
+          <CoralVisualization :row-data="teamData"></CoralVisualization>
+      </div>
+      <div :class="'flex-auto h-min max-h-min flex-wrap ' + margin">
+        <AlgaeVisualization :row-data="teamData"></AlgaeVisualization>
       </div>
     </div>
     <div
