@@ -4,6 +4,8 @@ import MatchVisualization from '~/components/25-reefscape/MatchVisualization.vue
 import IdMeta = PouchDB.Core.IdMeta;
 import { eventOptions } from '~/utils/eventOptions';
 import { useWindowSize } from '@vueuse/core';
+import SpeakerVisualization from '~/components/24-crescendo/SpeakerVisualization.vue';
+import CoralVisualization from '~/components/25-reefscape/CoralVisualization.vue';
 import AlgaeVisualization from "~/components/25-reefscape/AlgaeVisualization.vue";
 import TeamVisualization from "~/components/25-reefscape/TeamVisualization.vue";
 
@@ -260,21 +262,19 @@ watch(width, () => {
         </div>
       </div>
     </template>
-
-    <div
-      class="flex flex-wrap"
-      v-if="teamData.rawData.length > 0"
-    >
-      <div class="flex-auto h-1/3 mr-2">
-        <MatchVisualization :row-data="teamData"></MatchVisualization>
+    <div class="flex flex-wrap" v-if="teamData.rawData.length > 0">
+      <div class=" h-1/3 w-auto">
+         <MatchVisualization :row-data="teamData"></MatchVisualization>
       </div>
-      <div :class="'flex-auto h-min max-h-min flex-wrap ' + margin">
-        <AlgaeVisualization :row-data="teamData"></AlgaeVisualization>
+      <div class="flex-auto h-min max-h-min flex-wrap">
+          <CoralVisualization :row-data="teamData"></CoralVisualization>
       </div>
       <div class="flex-auto h-1/3 mr-2">
         <TeamVisualization :team-data="teamData"/>
       </div>
-    </div>
+      <div :class="'flex-auto h-min max-h-min flex-wrap ' + margin">
+        <AlgaeVisualization :row-data="teamData"></AlgaeVisualization>
+      </div>
     <div
       v-else
       class="opacity-50"
