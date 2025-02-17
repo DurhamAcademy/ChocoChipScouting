@@ -264,7 +264,7 @@ const maxScores = [50, 50, 50, 50]; //TODO remove this at some point, temporary 
       </div>
     </template>
     <div class="flex flex-wrap" v-if="teamData.rawData.length > 0">
-      <div class=" h-1/3 w-auto">
+      <div class="h-1/3 w-auto pr-5">
          <MatchVisualization :row-data="teamData"></MatchVisualization>
       </div>
       <div class="flex-auto h-min max-h-min flex-wrap">
@@ -273,7 +273,7 @@ const maxScores = [50, 50, 50, 50]; //TODO remove this at some point, temporary 
       <div class="flex-auto h-1/3 mr-2">
         <TeamVisualization :team-data="teamData" :maxScores="maxScores"/>
       </div>
-      <div :class="'flex-auto h-min max-h-min flex-wrap ' + margin">
+      <div :class="'pt-4 flex-auto h-min max-h-min flex-wrap ' + margin">
         <AlgaeVisualization :row-data="teamData"></AlgaeVisualization>
       </div>
     </div>
