@@ -21,6 +21,7 @@ if (props.max != null) {
   //this was made due to the existence of a ton of zeroes but may need to be changed
   //in the future if we make these with decimal maxes but it works for now
 }
+Chart.defaults.scales.radialLinear.ticks.stepSize = 20; //this may need to be a variable in the future
 
 //sets up the data for the spider graph
 const testData = {
@@ -37,6 +38,7 @@ const testData = {
       pointHoverBackgroundColor: '#fff',
       pointHoverBorderColor: 'rgb(255, 99, 132)',
       borderWidth: 1,
+      stepSize: 20,
     },
   ],
 };

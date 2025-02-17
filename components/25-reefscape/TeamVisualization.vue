@@ -4,7 +4,9 @@ const props = defineProps<{
   teamData: any;
 }>();
 
-let autoPoints = 0; let algaePoints = 0; let coralPoints = 0; let endgamePoints = 0;
+let autoPoints = 0; let algaePoints = 0;
+let coralPoints = 0; let endgamePoints = 0;
+let defenseNum = 0; let defenseTotal = 0;
 
 for(let i = 0; i<(props.teamData.rawData.length); i++){
   let match = props.teamData.rawData[i];
@@ -13,6 +15,10 @@ for(let i = 0; i<(props.teamData.rawData.length); i++){
   coralPoints = coralPoints + scoreCoral(match);
   algaePoints = algaePoints + scoreAlgae(match);
   endgamePoints = endgamePoints + scoreEndgame(match);
+  if(match.notes.promptedNotes[2].selected == true){
+    addDefense(match);
+  }
+
 }
 
 //four methods to calculate total of a specific match to be used above
@@ -58,6 +64,11 @@ function scoreEndgame(match: any){
   return tempEndgamePoints
 }
 
+function addDefense(match: any){
+  defenseNum = defenseNum + 1;
+  defenseTotal = defenseTotal + match.notes.promptedNotes[2].rating;
+}
+
 //TODO standardize and add defense
 //the /100 will be replaced with max score
 let spiderGraphData = ref([
@@ -65,6 +76,7 @@ let spiderGraphData = ref([
   (coralPoints/100)*100,
   (algaePoints/100)*100,
   (endgamePoints/100)*100,
+  (defenseTotal/defenseNum)*20 || 0, // THE || MAKES IT SO TEAMS WITH NO DATA DONT BREAK
 ]);
 
 const spiderGraphLabels = [
@@ -72,7 +84,7 @@ const spiderGraphLabels = [
   'Coral',
   'Algae',
   'Endgame',
-  //TODO add defense
+  'Defense',
 ];
 
 const chartTitle = "Team " + props.teamData.teamNum;
