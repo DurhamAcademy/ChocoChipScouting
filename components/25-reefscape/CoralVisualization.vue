@@ -128,7 +128,6 @@ function getCoralStats() {
   ];
 }
 
-console.log(getCoralStats());
 
 let coralStats = getCoralStats().map(value => value?.toFixed?.(2));
 let rows = [

@@ -56,7 +56,7 @@ for (let i = 0; i < match.length; i++) {
     }
   }
 }
-
+console.dir(db)
 let teamData = ref<{
   teamNum: number;
   teamName: string;
