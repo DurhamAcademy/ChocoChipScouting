@@ -69,7 +69,7 @@ function addDefense(match: any){
   defenseTotal = defenseTotal + match.notes.promptedNotes[2].rating;
 }
 
-//TODO standardize and add defense
+//TODO standardize
 //the /100 will be replaced with max score
 let spiderGraphData = ref([
   (autoPoints/100)*100,
