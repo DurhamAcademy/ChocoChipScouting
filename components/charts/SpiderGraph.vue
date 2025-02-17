@@ -5,7 +5,6 @@ import { Chart, registerables } from 'chart.js';
 const props = defineProps<{
   labels: Array<string>;
   data: Array<number>;
-  backgroundColors?: Array<any>;
   title: string;
   min: string;
   max: string;
@@ -22,9 +21,6 @@ if (props.max != null) {
   //this was made due to the existence of a ton of zeroes but may need to be changed
   //in the future if we make these with decimal maxes but it works for now
 }
-
-let pieChartColors = ['#77CEFF', '#0079AF', '#123E6B', '#97B0C4', '#A5C8ED'];
-if (props.backgroundColors) pieChartColors = props.backgroundColors;
 
 //sets up the data for the spider graph
 const testData = {
