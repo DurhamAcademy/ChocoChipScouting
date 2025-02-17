@@ -98,6 +98,7 @@ RUN ["bun", "--bun", "run", "postinstall"]
 
 FROM files AS build
 ENV NODE_ENV development
+ENV NODE_ENV=${NODE_ENV}
 
 RUN ["bun", "--bun", "run", "build"]
 
