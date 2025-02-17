@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import SpiderGraph from "~/components/charts/SpiderGraph.vue";
+import { min } from "@popperjs/core/lib/utils/math";
 const props = defineProps<{
   teamData: any;
   maxScores: any;
@@ -11,11 +12,10 @@ let defenseNum = 0; let defenseTotal = 0;
 
 for(let i = 0; i<(props.teamData.rawData.length); i++){
   let match = props.teamData.rawData[i];
-  console.dir(match)
-  autoPoints = autoPoints + scoreAuto(match);
-  coralPoints = coralPoints + scoreCoral(match);
-  algaePoints = algaePoints + scoreAlgae(match);
-  endgamePoints = endgamePoints + scoreEndgame(match);
+  autoPoints += scoreAuto(match);
+  coralPoints += scoreCoral(match);
+  algaePoints += scoreAlgae(match);
+  endgamePoints += scoreEndgame(match);
   if(match.notes.promptedNotes[2].selected == true){
     addDefense(match);
   }
@@ -23,7 +23,6 @@ for(let i = 0; i<(props.teamData.rawData.length); i++){
 }
 
 //four methods to calculate total of a specific match to be used above
-//TODO use scoreMatch.ts once that gets merged
 function scoreAuto(match: any){
   if(match.auto.mobility == true){
     return match.auto.coralL1 * 3 + match.auto.coralL2 * 4 +
@@ -66,18 +65,17 @@ function scoreEndgame(match: any){
 }
 
 function addDefense(match: any){
-  defenseNum = defenseNum + 1;
-  defenseTotal = defenseTotal + match.notes.promptedNotes[2].rating;
+  defenseNum += 1;
+  defenseTotal += match.notes.promptedNotes[2].rating;
 }
 
-//TODO standardize
-//the /100 will be replaced with max score
+
 let spiderGraphData = ref([
-  (autoPoints/props.maxScores[0])*100,
-  (coralPoints/props.maxScores[1])*100,
-  (algaePoints/props.maxScores[2])*100,
-  (endgamePoints/props.maxScores[3])*100,
-  (defenseTotal/defenseNum)*20 || 0, // THE || MAKES IT SO TEAMS WITH NO DATA DONT BREAK
+  min((autoPoints/props.maxScores[0])*100, 100),
+  min((coralPoints/props.maxScores[1])*100,100),
+  min((algaePoints/props.maxScores[2])*100, 100),
+  min((endgamePoints/props.maxScores[3])*100, 100),
+  min((defenseTotal/defenseNum)*20, 100) || 0, // THE || MAKES IT SO TEAMS WITH NO DATA DONT BREAK
 ]);
 
 const spiderGraphLabels = [

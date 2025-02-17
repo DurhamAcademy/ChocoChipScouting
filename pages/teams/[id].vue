@@ -7,6 +7,7 @@ import MatchVisualization from '~/components/25-reefscape/MatchVisualization.vue
 import CoralVisualization from '~/components/25-reefscape/CoralVisualization.vue';
 import AlgaeVisualization from "~/components/25-reefscape/AlgaeVisualization.vue";
 import TeamVisualization from "~/components/25-reefscape/TeamVisualization.vue";
+import { scoreMatchAuto, scoreMatchAlgae, scoreMatchCoral, scoreMatchEndgame } from "~/utils/scoreMatch";
 
 let { width, height } = useWindowSize();
 
@@ -56,7 +57,38 @@ for (let i = 0; i < match.length; i++) {
     }
   }
 }
-console.dir(db)
+// auto, coral, algae, endgame
+const maxScores = [1, 1, 1, 1];
+let teamMatches; let teamEvent;
+let tempAutoScore = 0; let tempCoralScore = 0; let tempAlgaeScore = 0; let tempEndgameScore = 0;
+for(let team of teamOrgMatches.keys()){
+  teamMatches = teamOrgMatches.get(team)
+  if(teamMatches){
+    for(let teamEvent of teamMatches){
+      console.dir(currentEvent)
+      if(teamEvent.event == currentEvent.value){
+        tempAutoScore += scoreMatchAuto(teamEvent);
+        tempCoralScore += scoreMatchCoral(teamEvent);
+        tempAlgaeScore += scoreMatchAlgae(teamEvent);
+        tempEndgameScore += scoreMatchEndgame(teamEvent);
+        console.dir(tempEndgameScore)
+      }
+    }
+  }
+  if(tempAutoScore > maxScores[0]){
+    maxScores[0] = tempAutoScore;
+  }
+  if(tempCoralScore > maxScores[1]){
+    maxScores[1] = tempCoralScore;
+  }
+  if(tempAlgaeScore > maxScores[2]){
+    maxScores[2] = tempAlgaeScore;
+  }
+  if(tempEndgameScore > maxScores[3]){
+    maxScores[3] = tempEndgameScore;
+  }
+}
+console.dir(maxScores)
 let teamData = ref<{
   teamNum: number;
   teamName: string;
@@ -208,7 +240,6 @@ watch(width, () => {
   margin.value = width.value > 800 ? 'ml-2' : 'mt-4';
 });
 
-const maxScores = [50, 50, 50, 50]; //TODO remove this at some point, temporary fix
 </script>
 
 <template>
@@ -264,11 +295,11 @@ const maxScores = [50, 50, 50, 50]; //TODO remove this at some point, temporary 
       </div>
     </template>
     <div class="flex flex-wrap" v-if="teamData.rawData.length > 0">
-      <div class="h-1/3 w-auto pr-5">
-         <MatchVisualization :row-data="teamData"></MatchVisualization>
+      <div class="h-1/3 w-auto pr-5 pt-2">
+        <MatchVisualization :row-data="teamData"></MatchVisualization>
       </div>
-      <div class="flex-auto h-min max-h-min flex-wrap">
-          <CoralVisualization :row-data="teamData"></CoralVisualization>
+      <div class="flex-auto h-min max-h-min flex-wrap pt-2">
+        <CoralVisualization :row-data="teamData"></CoralVisualization>
       </div>
       <div class="flex-auto h-1/3 mr-2">
         <TeamVisualization :team-data="teamData" :maxScores="maxScores"/>
