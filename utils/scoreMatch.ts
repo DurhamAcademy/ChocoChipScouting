@@ -40,8 +40,8 @@ export function scoreMatchAlgae(match: any){
 
 export function scoreMatchEndgame(match: any){
     let endgameScores = 0
-    if(match.endgame.endgame.includes("Parked")) endgameScores += 2
-    else if(match.endgame.endgame.includes("Shallow")) endgameScores += 6
-    else if(match.endgame.endgame.includes("Deep")) endgameScores += 12
+    if(match.endgame.endgame.includes("Shallow Successful")) endgameScores += 12
+    else if(match.endgame.endgame.includes("Deep Successful")) endgameScores += 6
+    else if(match.endgame.endgame.includes("Parked")) endgameScores += 2
     return endgameScores
 }
