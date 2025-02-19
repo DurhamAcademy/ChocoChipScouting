@@ -24,7 +24,6 @@ WORKDIR /usr/src/nuxt3-app
 COPY package.json package.json
 #COPY .npmrc .
 ARG NODE_ENV=development
-ENV NODE_ENV=${NODE_ENV}
 #COPY package-lock.json .
 #RUN echo "{\"name\": \"scouting-app\",\"lockfileVersion\": 3,\"requires\": true,\"packages\": {}}" > package-lock.json
 #RUN ["npm", "install", "--package-lock-only", "--ignore-scripts"]
@@ -92,12 +91,14 @@ COPY ./utils ./utils
 COPY ./plugins ./plugins
 COPY ./service-worker ./service-worker
 COPY ./composables ./composables
+COPY ./stores ./stores
 
 #ENTRYPOINT ["bash"]
 RUN ["bun", "--bun", "run", "postinstall"]
 
 FROM files AS build
 ENV NODE_ENV development
+ENV NODE_ENV=${NODE_ENV}
 
 RUN ["bun", "--bun", "run", "build"]
 

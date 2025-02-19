@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import PouchDB from 'pouchdb';
-import databases, { type TeamInfo } from '~/utils/databases';
 import OuterComponents from '~/components/website-utils/OuterComponents.vue';
 let syncDisable = ref(false);
 
@@ -16,7 +15,6 @@ async function sync() {
     databases.locals.attachments,
     databases.remotes.attachments,
   );
-  await PouchDB.sync(databases.locals.teamInfo, databases.remotes.teamInfo);
   syncDisable.value = false;
 }
 
@@ -192,56 +190,6 @@ function addDays(date: Date, days: number) {
   date.setDate(date.getDate() + days);
   return date;
 }
-
-//TODO find more perm fix
-//updateTeamData()
-
-async function updateTeamData() {
-  try {
-    let previouslySavedTeamNums: number[] = [];
-    let { teamInfo: db } = databases.locals;
-    //gets all the teamsData docs from the database and adds them to one array
-    let dbTeams = (await db.allDocs()).rows.map(
-      async (doc): Promise<TeamInfo> => {
-        return db.get(doc.id);
-      },
-    );
-    Promise.all(dbTeams)
-      .then((teams: Array<TeamInfo>) => {
-        previouslySavedTeamNums = teams.map(value => {
-          return value.teamNum;
-        });
-      })
-      .then(async () => {
-        //goes through each event and checks if they have any teams that aren't in the db already
-        let newTeams: Array<TeamInfo> = [];
-        for (let event of eventOptions) {
-          const { data: tbaEventData } = await useFetch<Array<any>>(
-            '/api/eventTeams/' + event,
-          );
-          if (tbaEventData.value != null) {
-            if (tbaEventData.value.hasOwnProperty('Error')) continue;
-            for (let team of tbaEventData.value) {
-              let teamDataObj: TeamInfo = {
-                teamNum: parseInt(team.key.replace('frc', '')),
-                teamName: team.nickname,
-              };
-              if (previouslySavedTeamNums.includes(teamDataObj.teamNum))
-                continue;
-              newTeams.push(teamDataObj);
-            }
-          } else {
-            console.error('Ruh roh! There seems to have been an issue');
-          }
-        }
-        if (newTeams.length > 0) {
-          await db.bulkDocs(newTeams);
-        }
-      });
-  } catch {
-    console.error('An error occurred');
-  }
-}
 </script>
 
 <template>
@@ -268,7 +216,10 @@ async function updateTeamData() {
           <p class="">{{ currentRankings[0][1] }}</p>
           <p class="dark:text-white">Team 6502 Stats</p>
         </div>
-        <div class="flex justify-center my-1" v-if="currentTeamRanking">
+        <div
+          class="flex justify-center my-1"
+          v-if="currentTeamRanking"
+        >
           <UButton
             class="rounded-2xl mx-0.5"
             color="gray"
