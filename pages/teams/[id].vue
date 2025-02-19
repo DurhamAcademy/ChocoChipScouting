@@ -7,8 +7,8 @@ import { useWindowSize } from '@vueuse/core';
 import { useTeamStore } from '~/stores/useTeamStore';
 import { useEventKey } from '~/composables/useEventKey';
 import SpeakerVisualization from '~/components/24-crescendo/SpeakerVisualization.vue';
+import CoralVisualization from '~/components/25-reefscape/CoralVisualization.vue';
 import AlgaeVisualization from "~/components/25-reefscape/AlgaeVisualization.vue";
-
 
 let { width, height } = useWindowSize();
 
@@ -266,14 +266,15 @@ watch(width, () => {
         </div>
       </div>
     </template>
-
-        <div class="flex flex-wrap" v-if="teamData.rawData.length > 0">
-            <div class="flex-auto h-1/3 mr-2">
-<!--                <MatchVisualization :row-data="teamData"></MatchVisualization>-->
-            </div>
-            <div :class="'flex-auto h-min max-h-min flex-wrap ' + margin">
-                <AlgaeVisualization :row-data="teamData"></AlgaeVisualization>
-
+    <div class="flex flex-wrap" v-if="teamData.rawData.length > 0">
+      <div class=" h-1/3 w-auto">
+         <MatchVisualization :row-data="teamData"></MatchVisualization>
+      </div>
+      <div class="flex-auto h-min max-h-min flex-wrap">
+          <CoralVisualization :row-data="teamData"></CoralVisualization>
+      </div>
+      <div :class="'flex-auto h-min max-h-min flex-wrap ' + margin">
+        <AlgaeVisualization :row-data="teamData"></AlgaeVisualization>
       </div>
     </div>
     <div
