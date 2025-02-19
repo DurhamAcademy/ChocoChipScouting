@@ -8,6 +8,8 @@ const props = defineProps<{
   title: string;
   min: string;
   max: string;
+  height?: string;
+  width?: string;
 }>();
 
 Chart.register(...registerables);
@@ -44,5 +46,8 @@ const testData = {
 };
 </script>
 <template>
-  <RadarChart :chartData="testData" />
+  <RadarChart
+    :chartData="testData"
+    :class="height + ' relative ' + width"
+  />
 </template>

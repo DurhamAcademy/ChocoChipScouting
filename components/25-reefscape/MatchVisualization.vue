@@ -106,17 +106,15 @@ let promptedNotesDetailedOptions = promptedNoteOptions.map(
 <template>
   <UCard>
     <div class="flex flex-wrap">
-      <div>
-        <BarChart
-          class="mb-1"
-          :labels="chartLabels"
-          :data="chartData"
-          :chart-title="chartTitle"
-          height="h-80"
-          width="w-80"
-        ></BarChart>
-      </div>
-      <div class="flex-auto whitespace-normal max-h-72 w-72 max-w-72">
+      <BarChart
+        class="mb-1 w-1/3 max-w-1/3"
+        :labels="chartLabels"
+        :data="chartData"
+        :chart-title="chartTitle"
+        height="h-80"
+        width="w-80"
+      ></BarChart>
+      <div class="flex-auto whitespace-normal max-h-72 max-w-1/2 w-1/2 ml-4">
         <div
           v-if="rowData.rawData[selectedMatch - 1].auto.position != undefined"
         >
@@ -127,14 +125,16 @@ let promptedNotesDetailedOptions = promptedNoteOptions.map(
             {{ rowData.rawData[selectedMatch - 1].auto.position }}
           </p>
         </div>
-        <p class="font-extrabold text-sm dark:!text-primary">Auto & Endgame:</p>
+        <p class="font-extrabold text-sm dark:!text-primary mt-1">
+          Auto & Endgame:
+        </p>
         <div class="pb-1">
           <UBadge
             color="sky"
             variant="subtle"
             v-if="rowData.rawData[selectedMatch - 1].auto.mobility"
             class="mr-1.5 mt-2"
-          >Mobility</UBadge
+            >Mobility</UBadge
           >
           <UBadge
             color="indigo"
@@ -146,7 +146,9 @@ let promptedNotesDetailedOptions = promptedNoteOptions.map(
             {{ endgame }}
           </UBadge>
         </div>
-        <div class="text-wrap max-w-72 h-2/3 max-h-2/3 overflow-y-scroll">
+        <div
+          class="text-wrap max-w-full w-full h-2/3 max-h-2/3 overflow-y-scroll overflow-x-hidden mt-1"
+        >
           <div
             v-for="(item, index) in rowData.rawData[selectedMatch - 1].notes
               .promptedNotes"
@@ -182,29 +184,31 @@ let promptedNotesDetailedOptions = promptedNoteOptions.map(
               </div>
             </div>
           </div>
-          <span class="font-extrabold text-sm dark:!text-primary"
-            >Other notes:
-          </span>
-          <UBadge
-            :color="
-              sentimentScore > 1
-                ? 'green'
-                : sentimentScore < -1
-                  ? 'red'
-                  : 'gray'
-            "
-            :variant="
-              sentimentScore < 1 && sentimentScore > -1 ? 'soft' : 'subtle'
-            "
-            >{{ sentimentScore }}</UBadge
-          >
-          <p class="pb-2 text-xs dark:!text-primary">
-            {{
-              rowData.rawData[selectedMatch - 1].notes.notes == ''
-                ? 'None'
-                : rowData.rawData[selectedMatch - 1].notes.notes
-            }}
-          </p>
+          <div v-if="rowData.rawData[selectedMatch - 1].notes.notes != ''">
+            <span class="font-extrabold text-sm dark:!text-primary"
+              >Other notes:
+            </span>
+            <UBadge
+              :color="
+                sentimentScore > 1
+                  ? 'green'
+                  : sentimentScore < -1
+                    ? 'red'
+                    : 'gray'
+              "
+              :variant="
+                sentimentScore < 1 && sentimentScore > -1 ? 'soft' : 'subtle'
+              "
+              >{{ sentimentScore }}</UBadge
+            >
+            <p class="pb-2 text-xs dark:!text-primary">
+              {{
+                rowData.rawData[selectedMatch - 1].notes.notes == ''
+                  ? 'None'
+                  : rowData.rawData[selectedMatch - 1].notes.notes
+              }}
+            </p>
+          </div>
         </div>
       </div>
     </div>

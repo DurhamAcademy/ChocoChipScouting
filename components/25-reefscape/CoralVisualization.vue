@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import LineChart from '~/components/charts/LineChart.vue'
-import {useMouse, useWindowScroll } from '@vueuse/core';
+import LineChart from '~/components/charts/LineChart.vue';
+import { useMouse, useWindowScroll } from '@vueuse/core';
 
 const props = defineProps<{
   rowData: any;
@@ -60,7 +60,7 @@ let columns = [
   {
     key: 'l2',
     label: 'L2',
-    id: 'row'
+    id: 'row',
   },
   {
     key: 'l3',
@@ -76,162 +76,198 @@ let columns = [
 
 function getCoralStats() {
   const numLevels = 4;
-  const totalAuto = Array(numLevels).fill(0);
-  const totalTeleop = Array(numLevels).fill(0);
-  const minAuto = Array(numLevels).fill(null);
-  const maxAuto = Array(numLevels).fill(null);
-  const minTeleop = Array(numLevels).fill(null);
-  const maxTeleop = Array(numLevels).fill(null);
-  const minL = Array(numLevels).fill(null);
-  const maxL = Array(numLevels).fill(null);
 
+  // Initialize placeholders for min, max, and total values
+  const stats = {
+    auto: {
+      min: Array(numLevels).fill(null),
+      max: Array(numLevels).fill(null),
+      total: Array(numLevels).fill(0), // Accumulate values to calculate average later
+    },
+    teleop: {
+      min: Array(numLevels).fill(null),
+      max: Array(numLevels).fill(null),
+      total: Array(numLevels).fill(0),
+    },
+    combined: {
+      min: Array(numLevels).fill(null), // Combined auto + teleop
+      max: Array(numLevels).fill(null),
+      total: Array(numLevels).fill(0),
+    },
+  };
+
+  // Loop through matches and update the stats
   for (let match of props.rowData.rawData) {
     for (let i = 0; i < numLevels; i++) {
       const autoVal = match.auto[`coralL${i + 1}`];
       const teleopVal = match.teleop[`coralL${i + 1}`];
+      const totalVal = autoVal + teleopVal;
 
       // Update totals
-      totalAuto[i] += autoVal;
-      totalTeleop[i] += teleopVal;
+      stats.auto.total[i] += autoVal;
+      stats.teleop.total[i] += teleopVal;
+      stats.combined.total[i] += totalVal;
 
       // Update min/max for auto
-      //minAuto[i] = minAuto[i] === null ? autoVal : Math.min(minAuto[i], autoVal);
-      //maxAuto[i] = maxAuto[i] === null ? autoVal : Math.max(maxAuto[i], autoVal);
+      stats.auto.min[i] =
+        stats.auto.min[i] === null
+          ? autoVal
+          : Math.min(stats.auto.min[i], autoVal);
+      stats.auto.max[i] =
+        stats.auto.max[i] === null
+          ? autoVal
+          : Math.max(stats.auto.max[i], autoVal);
 
       // Update min/max for teleop
-      //minTeleop[i] = minTeleop[i] === null ? teleopVal : Math.min(minTeleop[i], teleopVal);
-      //maxTeleop[i] = maxTeleop[i] === null ? teleopVal : Math.max(maxTeleop[i], teleopVal);
+      stats.teleop.min[i] =
+        stats.teleop.min[i] === null
+          ? teleopVal
+          : Math.min(stats.teleop.min[i], teleopVal);
+      stats.teleop.max[i] =
+        stats.teleop.max[i] === null
+          ? teleopVal
+          : Math.max(stats.teleop.max[i], teleopVal);
 
-      // Update min/max for total levels
-      const totalMin = autoVal + teleopVal;
-      const totalMax = autoVal + teleopVal;
-      if (totalMax > maxL[i] || maxL == null) maxAuto[i] = autoVal, maxTeleop[i] = teleopVal;
-      if(totalMin < minL[i]|| minL == null) minAuto[i] = autoVal, minTeleop[i] = teleopVal;
-      minL[i] = minL[i] === null ? totalMin : Math.min(minL[i], totalMin);
-      maxL[i] = maxL[i] === null ? totalMax : Math.max(maxL[i], totalMax);
+      // Update min/max for combined (auto + teleop)
+      stats.combined.min[i] =
+        stats.combined.min[i] === null
+          ? totalVal
+          : Math.min(stats.combined.min[i], totalVal);
+      stats.combined.max[i] =
+        stats.combined.max[i] === null
+          ? totalVal
+          : Math.max(stats.combined.max[i], totalVal);
     }
   }
 
+  // Calculate averages based on the number of matches
   const numMatches = props.rowData.rawData.length;
-  const totalL = totalAuto.map((val, i) => totalTeleop[i] + val);
+  const averages = {
+    auto: stats.auto.total.map(total => total / numMatches),
+    teleop: stats.teleop.total.map(total => total / numMatches),
+    combined: stats.combined.total.map(total => total / numMatches),
+  };
 
-  return [
-    ...minAuto, // 0-3
-    ...maxAuto, // 4-7
-    ...totalAuto.map(val => val / numMatches), // 8-11
-    ...minTeleop, // 12-15
-    ...maxTeleop, // 16-19
-    ...totalTeleop.map(val => val / numMatches), // 20-23
-    ...totalL.map(val => val / numMatches / 2), // 24-27
-    ...minL, // 28-31
-    ...maxL // 32-35
-  ];
+  return {
+    min: {
+      auto: stats.auto.min.map(val => val.toFixed(2)),
+      teleop: stats.teleop.min.map(val => val.toFixed(2)),
+      combined: stats.combined.min.map(val => val.toFixed(2)),
+    },
+    max: {
+      auto: stats.auto.max.map(val => val.toFixed(2)),
+      teleop: stats.teleop.max.map(val => val.toFixed(2)),
+      combined: stats.combined.max.map(val => val.toFixed(2)),
+    },
+    average: {
+      auto: averages.auto.map(val => val.toFixed(2)),
+      teleop: averages.teleop.map(val => val.toFixed(2)),
+      combined: averages.combined.map(val => val.toFixed(2)),
+    },
+  };
 }
 
-
-let coralStats = getCoralStats().map(value => value?.toFixed?.(2));
+let coralStats = getCoralStats();
 let rows = [
   {
     period: 'Min',
-    l1: coralStats[28],
-    l1popup:[coralStats[0], coralStats[12]],
-    l2: coralStats[29],
-    l2popup:[coralStats[1], coralStats[13]],
-    l3: coralStats[30],
-    l3popup:[coralStats[2], coralStats[14]],
-    l4: coralStats[31],
-    l4popup:[coralStats[3], coralStats[15]],
-    row:"0",
+    l1: coralStats.min.combined[0],
+    l1popup: [coralStats.min.auto[0], coralStats.min.teleop[0]],
+    l2: coralStats.min.combined[1],
+    l2popup: [coralStats.min.auto[1], coralStats.min.teleop[1]],
+    l3: coralStats.min.combined[2],
+    l3popup: [coralStats.min.auto[2], coralStats.min.teleop[2]],
+    l4: coralStats.min.combined[3],
+    l4popup: [coralStats.min.auto[3], coralStats.min.teleop[3]],
+    row: '0',
   },
   {
     period: 'Max',
-    l1: coralStats[32],
-    l1popup:[coralStats[4], coralStats[16]],
-    l2: coralStats[33],
-    l2popup:[coralStats[5], coralStats[17]],
-    l3: coralStats[34],
-    l3popup:[coralStats[6], coralStats[18]],
-    l4: coralStats[35],
-    l4popup:[coralStats[7], coralStats[19]],
-    row:"1",
+    l1: coralStats.max.combined[0],
+    l1popup: [coralStats.max.auto[0], coralStats.max.teleop[0]],
+    l2: coralStats.max.combined[1],
+    l2popup: [coralStats.max.auto[1], coralStats.max.teleop[1]],
+    l3: coralStats.max.combined[2],
+    l3popup: [coralStats.max.auto[2], coralStats.max.teleop[2]],
+    l4: coralStats.max.combined[3],
+    l4popup: [coralStats.max.auto[3], coralStats.max.teleop[3]],
+    row: '1',
   },
   {
     period: 'Avg',
-    l1: coralStats[24],
-    l1popup:[coralStats[8], coralStats[20]],
-    l2: coralStats[25],
-    l2popup:[coralStats[9], coralStats[21]],
-    l3: coralStats[26],
-    l3popup:[coralStats[10], coralStats[22]],
-    l4: coralStats[27],
-    l4popup:[coralStats[11], coralStats[23]],
-    row:"2",
+    l1: coralStats.average.combined[0],
+    l1popup: [coralStats.average.auto[0], coralStats.average.teleop[0]],
+    l2: coralStats.average.combined[1],
+    l2popup: [coralStats.average.auto[1], coralStats.average.teleop[1]],
+    l3: coralStats.average.combined[2],
+    l3popup: [coralStats.average.auto[2], coralStats.average.teleop[2]],
+    l4: coralStats.average.combined[3],
+    l4popup: [coralStats.average.auto[3], coralStats.average.teleop[3]],
+    row: '2',
   },
 ];
-
 </script>
 
 <template>
-
   <UCard class="w-auto h-auto">
-
     <div class="flex-auto flex flex-wrap">
       <LineChart
-        class="m-auto my-11"
+        class="mr-5"
         :data="[coralL1, coralL2, coralL3, coralL4]"
         :labels="matchNums"
         :chart-titles="chartTitles"
         :suggested-max="20"
-        height="h-100"
-        width="w-100"
+        height="h-64"
+        width="w-64"
       ></LineChart>
       <div class="flex-auto whitespace-normal">
-        <div
-        class="font-semibold underline underline-offset-2 mb-1 w-full text-center text-lg my-11"
-      >
-        <h1>Coral</h1>
-      </div>
-        <UTable :rows="rows" :columns="columns">
-              <template #l1-data="{ row, column }">
-                <UPopover mode="hover">
-                  <p>{{row.l1}}</p>
-                  <template #panel>
-                    <div class="p-2">
-                      Auto: {{rows[row.row].l1popup[0]}}
-                      Teleop: {{rows[row.row].l1popup[1]}}
-                    </div>
-                  </template>
-                </UPopover>
-              </template>
-          <template #l2-data="{row, column}">
+        <div class="font-semibold w-full text-center text-lg">
+          <h1>Coral</h1>
+        </div>
+        <UTable
+          :rows="rows"
+          :columns="columns"
+        >
+          <template #l1-data="{ row, column }">
             <UPopover mode="hover">
-              <p>{{row.l2}}</p>
+              <p>{{ row.l1 }}</p>
               <template #panel>
                 <div class="p-2">
-                  Auto: {{rows[row.row].l2popup[0]}}
-                  Teleop: {{rows[row.row].l2popup[1]}}
+                  Auto: {{ rows[row.row].l1popup[0] }} Teleop:
+                  {{ rows[row.row].l1popup[1] }}
+                </div>
+              </template>
+            </UPopover>
+          </template>
+          <template #l2-data="{ row, column }">
+            <UPopover mode="hover">
+              <p>{{ row.l2 }}</p>
+              <template #panel>
+                <div class="p-2">
+                  Auto: {{ rows[row.row].l2popup[0] }} Teleop:
+                  {{ rows[row.row].l2popup[1] }}
                 </div>
               </template>
             </UPopover>
           </template>
           <template #l3-data="{ row, column }">
-            <UPopover mode="hover" >
-              <p>{{row.l3}}</p>
+            <UPopover mode="hover">
+              <p>{{ row.l3 }}</p>
               <template #panel>
                 <div class="p-2">
-                  Auto: {{rows[row.row].l3popup[0]}}
-                  Teleop: {{rows[row.row].l3popup[1]}}
+                  Auto: {{ rows[row.row].l3popup[0] }} Teleop:
+                  {{ rows[row.row].l3popup[1] }}
                 </div>
               </template>
             </UPopover>
           </template>
           <template #l4-data="{ row, column }">
             <UPopover mode="hover">
-              <p>{{row.l4}}</p>
+              <p>{{ row.l4 }}</p>
               <template #panel>
                 <div class="p-2">
-                Auto: {{rows[row.row].l4popup[0]}}
-                  Teleop: {{rows[row.row].l4popup[1]}}
+                  Auto: {{ rows[row.row].l4popup[0] }} Teleop:
+                  {{ rows[row.row].l4popup[1] }}
                 </div>
               </template>
             </UPopover>
