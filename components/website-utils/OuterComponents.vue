@@ -35,6 +35,16 @@ let router = useRouter();
 const events = eventOptions;
 const currentEvent = useEventKey();
 
+const colorMode = useColorMode();
+const isDark = computed({
+  get() {
+    return colorMode.value === 'dark';
+  },
+  set() {
+    colorMode.preference = colorMode.value === 'dark' ? 'light' : 'dark';
+  },
+});
+
 watch(currentEvent, value => {
   window.localStorage.setItem('currentEvent', value);
   window.dispatchEvent(new Event('event-changed'));
@@ -133,9 +143,21 @@ if (
                         v-model="currentEvent"
                         :options="events"
                       />
+                      <ClientOnly>
+                        <div class="flex justify-center mt-4">
+                          <UButton
+                            :icon="isDark ? 'i-heroicons-moon-20-solid': 'i-heroicons-sun-20-solid'"
+                            color="white"
+                            variant="solid"
+                            label="Theme"
+                            @click="isDark = !isDark"
+                            class="px-8"
+                          />
+                        </div>
+                      </ClientOnly>
                     </UFormGroup>
-                    <br />
                     <UButton
+                      class="mt-3"
                       icon="i-heroicons-arrow-right-circle"
                       trailing
                       color="black"

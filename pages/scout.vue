@@ -281,7 +281,7 @@ async function submit() {
           v-if="gameTime == GameTime.Autonomous"
           class="overflow-y-scroll max-h-80 w-full min-h-36"
         >
-          <div class="flex">
+          <div class="flex flex-wrap">
             <div class="text-center w-1/2">
               <h1 class="text-gray-700 dark:text-gray-200 font-bold">Coral</h1>
               <div class="flex justify-center">
@@ -370,15 +370,16 @@ async function submit() {
             </div>
 
             <UModal v-model="isAutoPositionOpen">
-              <div class="flex">
+              <div class="flex relative">
                 <UButton
                   class="absolute right-0 m-2"
                   icon="i-heroicons-x-circle"
                   @click="isAutoPositionOpen = false"
                 />
                 <img
-                  src="/public/referenceImage2.png"
+                  src="/public/ref-image(2025).png"
                   alt="A picture of the playfield of this year's game"
+                  class="w-full sm:w-full md:w-3/4 lg:w-full"
                 />
               </div>
             </UModal>
