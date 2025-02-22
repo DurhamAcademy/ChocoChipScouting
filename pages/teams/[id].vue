@@ -8,9 +8,11 @@ import { useTeamStore } from '~/stores/useTeamStore';
 import { useEventKey } from '~/composables/useEventKey';
 import SpeakerVisualization from '~/components/24-crescendo/SpeakerVisualization.vue';
 import CoralVisualization from '~/components/25-reefscape/CoralVisualization.vue';
-import AlgaeVisualization from "~/components/25-reefscape/AlgaeVisualization.vue";
+import AlgaeVisualization from '~/components/25-reefscape/AlgaeVisualization.vue';
 
 let { width, height } = useWindowSize();
+
+const colorMode = useColorMode();
 
 let currentEvent = useEventKey();
 watch(currentEvent, value => {
@@ -266,12 +268,15 @@ watch(width, () => {
         </div>
       </div>
     </template>
-    <div class="flex flex-wrap" v-if="teamData.rawData.length > 0">
-      <div class=" h-1/3 w-auto">
-         <MatchVisualization :row-data="teamData"></MatchVisualization>
+    <div
+      class="flex flex-wrap"
+      v-if="teamData.rawData.length > 0"
+    >
+      <div class="h-1/3 w-auto">
+        <MatchVisualization :row-data="teamData"></MatchVisualization>
       </div>
       <div class="flex-auto h-min max-h-min flex-wrap">
-          <CoralVisualization :row-data="teamData"></CoralVisualization>
+        <CoralVisualization :row-data="teamData"></CoralVisualization>
       </div>
       <div :class="'flex-auto h-min max-h-min flex-wrap ' + margin">
         <AlgaeVisualization :row-data="teamData"></AlgaeVisualization>
@@ -281,13 +286,21 @@ watch(width, () => {
       v-else
       class="opacity-50"
     >
-      <img
-        src="/public/sadcookie.png"
-        height="400"
-        width="400"
+      <NuxtImg
+        v-if="colorMode.value === 'light'"
+        src="/sadcookie.png"
         class="mx-auto"
+        width="145"
+        height="145"
       />
-      <h1 class="font-sans text-xl font-bold text-center">
+      <NuxtImg
+        v-else
+        src="/angrycookie.png"
+        class="mx-auto"
+        width="145"
+        height="145"
+      />
+      <h1 class="font-sans text-xl font-bold text-center dark:text-white">
         Looks like there is no data on team {{ teamData.teamNum }} at
         {{ currentEvent }} :(
       </h1>

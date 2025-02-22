@@ -17,6 +17,7 @@ async function sync() {
   );
   syncDisable.value = false;
 }
+const colorMode = useColorMode();
 
 let date = new Date();
 const rankings = ref<any[]>([]);
@@ -506,7 +507,15 @@ function addDays(date: Date, days: number) {
                 No Events Scheduled
               </p>
               <NuxtImg
+                v-if="colorMode.value === 'light'"
                 src="/sadcookie.png"
+                class="mx-auto"
+                width="145"
+                height="145"
+              />
+              <NuxtImg
+                v-else
+                src="/angrycookie.png"
                 class="mx-auto"
                 width="145"
                 height="145"
