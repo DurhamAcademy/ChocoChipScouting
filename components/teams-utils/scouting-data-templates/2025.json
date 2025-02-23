@@ -1,11 +1,170 @@
 {
   "auto": {
-
+    "tiered_objectives":
+      [{
+        "name": "Coral",
+        "missed": true,
+        "objectives": [
+          {
+            "name": "L1"
+          },
+          {
+            "name": "L2"
+          },
+          {
+            "name": "L3"
+          },
+          {
+            "name": "L4"
+          }
+        ]
+      }],
+    "special_objectives": [{
+      "name": "Auto Position",
+      "possible": [
+        "1",
+        "2",
+        "3",
+        "4"
+      ]
+    }],
+    "simple_objectives": [{
+      "name": "Mobility"
+    }],
+    "notes": [{
+      "desc": "Other notes..."
+    }]
   },
   "teleop": {
-
+    "tiered_objectives":
+    [{
+      "name": "Coral",
+      "missed": true,
+      "objectives": [
+        {
+          "name": "L1"
+        },
+        {
+          "name": "L2"
+        },
+        {
+          "name": "L3"
+        },
+        {
+          "name": "L4"
+        }
+      ]
+    }],
+    "objectives": [
+      {
+        "name": "Net",
+        "missed": true
+      },
+      {
+        "name": "Processor",
+        "missed": true
+      }
+    ],
+    "notes": [{
+      "desc": "Other notes..."
+    }]
   },
   "endgame": {
+    "climb": {
+      "options": [
+        {
+          "singular": true,
+          "name": "None"
+        },
+        {
+          "singular": false,
+          "name": "Parked"
+        },
+        {
+          "singular": false,
+          "name": "Shallow Attempted"
+        },
+        {
+          "singular": true,
+          "name": "Shallow Successful"
+        },
+        {
+        "singular": false,
+        "name": "Deep Attempted"
+        },
+        {
+          "singular": true,
+          "name": "Deep Successful"
+        }
+      ]
 
+    },
+    "notes": [{
+      "desc": "Other notes..."
+    }]
+  },
+  "notes": {
+    "note_sections": [
+      {
+        "name": "Offense",
+        "rating_bar_max": 5,
+        "notes": [
+          {
+            "desc": "If you were developing an offensive strategy with this team, what area of strength would you want them focused on and why?"
+          },
+          {
+            "desc": "What area(s) of weakness would you want to make sure this team avoids in the offensive strategy?"
+          },
+          {
+            "desc": "Is there anything that the quantitative data might not highlight about this team?"
+          }
+        ]
+      },
+      {
+        "name": "Defense",
+        "rating_bar_max": 5,
+        "notes": [
+          {
+            "desc": "What seemed to be this team's defensive strategy? What area, team, or other factor were they focused on?"
+          },
+          {
+            "desc": "Was their defensive strategy successful, or is there a different defensive strategy this team should employ to make more of an impact?"
+          },
+          {
+            "desc": "What other factors contributed to your rating?"
+          }
+        ]
+      },
+      {
+        "name": "Driver",
+        "rating_bar_max": 5,
+        "notes": [
+          {
+            "desc": "How was this driver's game sense? Did they evade defense and make quick choices to reroute? Did they make mistakes and second guess themselves?"
+          },
+          {
+            "desc": "How aggressive was this driver? Did they inflict a lot of penalties on their team? If so, could you tell what for?"
+          },
+          {
+            "desc": "What other factors contributed to your rating?"
+          }
+        ]
+      },
+      {
+        "name": "Robustness",
+        "rating_bar_max": 5,
+        "notes": [
+          {
+            "desc": "What happened on the field that led you to select this category? Did this team's robot break, or survive a big hit?"
+          },
+          {
+            "desc": "Do you think this will be a consistent issue/strength, or was it a one-time thing?"
+          }
+        ]
+      }
+    ],
+    "notes": [{
+      "desc": "Other notes..."
+    }]
   }
 }
