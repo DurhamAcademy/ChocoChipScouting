@@ -1,0 +1,41 @@
+DATAPOINTS THAT WILL ALWAYS BE MEASURED
+TEAM NUMBER -> frc team number (int)
+EVENT -> tba event key (string)
+MATCH NUMBER -> current match number of the scouted match (string)
+AUTHOR -> username of the scout logged in (string)
+
+TYPES OF POSSIBLE DATAPOINTS TO BE MEASURED (CAN BE DEFINED AS AUTO, TELEOP, OR ENDGAME)
+OBJECTIVE ->
+        name of objective (string),
+        points per objective (int),
+        measure type (int),
+        max (optional int),
+        missed (want to measure missed objectives) (boolean)
+TIERED OBJECTIVES ->
+        name of objective (string),
+                points per objective (int[]),
+                tiers of objective (string[]),
+                measure type (int[]),
+                max (optional int[] or int for all same max),
+                missed (want to measure missed objectives) (boolean)
+                OR
+                OBJECTIVE[]
+SIMPLE OBJECTIVE ->
+        name of objective (string),
+        points per objective (optional int),
+        scored/achieved objective (boolean)
+SPECIAL OBJECTIVE ->
+        name of objective type (string),
+        name of possible objectives (string[])
+        list of possible objective point values (int[])
+NOTES ->
+description (what is shown before entering anything into the text box) (string)
+GROUPED NOTES ->
+rating (-1 for no rating by number or a range of 1 -> anything greater than 1 (int)),
+        notes (NOTES[])
+        OR
+        description (what is shown before entering anything into the text box) (string[])
+
+
+
+position: number;
