@@ -13,6 +13,7 @@ import {
   scoreMatchCoral,
   scoreMatchEndgame,
 } from '~/utils/scoreMatch';
+import { useTeamStore } from "~/stores/useTeamStore";
 
 let { width, height } = useWindowSize();
 
