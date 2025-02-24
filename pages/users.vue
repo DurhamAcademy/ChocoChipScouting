@@ -331,7 +331,7 @@ const { pending, data: res } = await useLazyAsyncData('res', () => setup());
               ></UButton>
             </UFormGroup>
           </UForm>
-        </template><x></x>
+        </template>
         <template #default>
           <div v-if="selected.length > 0" class="mb-4 flex justify-between items-center">
             <span>Selected users: {{ selected.length }}</span>
