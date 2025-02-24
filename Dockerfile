@@ -82,6 +82,8 @@ COPY app.config.ts .
 
 FROM bun-prepare AS files
 
+ENV NODE_ENV=${NODE_ENV}
+
 COPY app.vue .
 COPY ./pages ./pages
 COPY ./public ./public
@@ -91,14 +93,12 @@ COPY ./utils ./utils
 COPY ./plugins ./plugins
 COPY ./service-worker ./service-worker
 COPY ./composables ./composables
-COPY ./stores ./stores
 
 #ENTRYPOINT ["bash"]
 RUN ["bun", "--bun", "run", "postinstall"]
 
 FROM files AS build
-ENV NODE_ENV development
-ENV NODE_ENV=${NODE_ENV}
+ENV  development
 
 RUN ["bun", "--bun", "run", "build"]
 
