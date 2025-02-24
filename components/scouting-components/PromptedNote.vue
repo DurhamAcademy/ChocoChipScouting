@@ -4,7 +4,7 @@ const emit = defineEmits(['update:modelValue']);
 
 const props = defineProps<{
   modelValue: { selected: boolean; rating: number; notes: Array<string> };
-  questions: Array<any>;
+  questions: { question: string; length: number }[];
 }>();
 
 const value = computed({
@@ -20,7 +20,10 @@ const value = computed({
 <template>
   <div class="flex select-none">
     <UTooltip :text="modelValue.selected ? 'Submitting' : 'Not Submitting'">
-      <UToggle class="flex-0 mr-3 mt-0.5" v-model="modelValue.selected" />
+      <UToggle
+        class="flex-0 mr-3 mt-0.5"
+        v-model="modelValue.selected"
+      />
     </UTooltip>
     <URange
       class="flex-auto mt-1 ml-1"
@@ -40,9 +43,9 @@ const value = computed({
     v-for="(item, index) in questions"
     v-model="modelValue.notes[index]"
     :disabled="!modelValue.selected"
-    :rows="item[1]"
+    :rows="item.length"
     autoresize
-    :placeholder="item[0]"
+    :placeholder="item.question"
   />
 </template>
 

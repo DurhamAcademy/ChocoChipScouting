@@ -27,19 +27,16 @@ class LocalRemoteDatabaseSyncHolder<Content extends {} = {}> {
     scoutingData: new LocalRemoteDatabaseSyncHolder<ScoutingData>(
       'scouting-data',
     ),
-    teamInfo: new LocalRemoteDatabaseSyncHolder<TeamInfo>('team-info'),
     basic: new LocalRemoteDatabaseSyncHolder<{}>('basic'),
   };
   static locals = {
     attachments: this.databases.attachments.local,
     scoutingData: this.databases.scoutingData.local,
-    teamInfo: this.databases.teamInfo.local,
     basic: this.databases.basic.local,
   };
   static remotes = {
     attachments: this.databases.attachments.remote,
     scoutingData: this.databases.scoutingData.remote,
-    teamInfo: this.databases.teamInfo.remote,
     basic: this.databases.basic.remote,
   };
 }
@@ -47,12 +44,29 @@ export type TeamTableData = {
   team: { data: string; color: string };
   driver: { data: number; color: string };
   defense: { data: number; color: string };
-  ampAuto: { data: number; color: string };
-  speakerAuto: { data: number; color: string };
+  netAuto: { data: number; color: string };
+  netAutoAcc: { data: number; color: string };
+  processorAuto: { data: number; color: string };
+  processorAutoAcc: { data: number; color: string };
+  coralL1Auto: { data: number; color: string };
+  coralL2Auto: { data: number; color: string };
+  coralL3Auto: { data: number; color: string };
+  coralL4Auto: { data: number; color: string };
+  reefAuto: { data: number; color: string };
+  coralL1AutoAcc: { data: number; color: string };
+  coralL2AutoAcc: { data: number; color: string };
+  coralL3AutoAcc: { data: number; color: string };
+  coralL4AutoAcc: { data: number; color: string };
+  reefAutoAcc: { data: number; color: string };
   autoAcc: { data: string; color: string };
-  teleAmp: { data: number; color: string };
-  teleSpeaker: { data: number; color: string };
+  teleNet: { data: number; color: string };
   teleAcc: { data: string; color: string };
+  teleProcessor: { data: number; color: string };
+  teleCoralL1: { data: number; color: string };
+  teleCoralL2: { data: number; color: string };
+  teleCoralL3: { data: number; color: string };
+  teleCoralL4: { data: number; color: string };
+  teleReef: { data: number; color: string };
   endgamePoints: { data: number; color: string };
   endgameChart: { data: string; color: string };
   class: string;
@@ -62,11 +76,28 @@ export type TeamTableData = {
 export type DataArrayOrSum = {
   driver: number[];
   defense: number[];
-  ampAuto: number[];
-  speakerAuto: number[];
+  netAuto: number[];
+  netAutoAcc: number[];
+  processorAuto: number[];
+  processorAutoAcc: number[];
+  coralL1Auto: number[];
+  coralL2Auto: number[];
+  coralL3Auto: number[];
+  coralL4Auto: number[];
+  reefAuto: number[];
+  coralL1AutoAcc: number[];
+  coralL2AutoAcc: number[];
+  coralL3AutoAcc: number[];
+  coralL4AutoAcc: number[];
+  reefAutoAcc: number[];
   autoAcc: number[];
-  teleAmp: number[];
-  teleSpeaker: number[];
+  teleNet: number[];
+  teleProcessor: number[];
+  teleCoralL1: number[];
+  teleCoralL2: number[];
+  teleCoralL3: number[];
+  teleCoralL4: number[];
+  teleReef: number[];
   teleAcc: number[];
   endgamePoints: number[];
 };
@@ -77,11 +108,18 @@ export type ScoutingData = {
     coralL2: number;
     coralL3: number;
     coralL4: number;
+    coralL1Miss: number;
+    coralL2Miss: number;
+    coralL3Miss: number;
+    coralL4Miss: number;
+    reef: number;
+    reefMiss: number;
     processorMiss: number;
     processor: number;
     netMiss: number;
     net: number;
     mobility: boolean;
+    position: number;
   };
   notes: {
     notes: string;
@@ -101,6 +139,12 @@ export type ScoutingData = {
     coralL2: number;
     coralL3: number;
     coralL4: number;
+    coralL1Miss: number;
+    coralL2Miss: number;
+    coralL3Miss: number;
+    coralL4Miss: number;
+    reef: number;
+    reefMiss: number;
     processorMiss: number;
     processor: number;
     netMiss: number;
@@ -111,6 +155,11 @@ export type ScoutingData = {
 export type TeamInfo = {
   teamNum: number;
   teamName: string;
+};
+
+export type EventData = {
+  eventKey: string;
+  teamInfo: TeamInfo[];
 };
 
 export type Attachments = {

@@ -2,7 +2,7 @@
 import databases from '~/utils/databases';
 import { eventOptions } from '~/utils/eventOptions';
 import OuterComponents from '~/components/website-utils/OuterComponents.vue';
-
+import { scoreMatch, scoreMatchAuto, scoreMatchTeleop, scoreMatchEndgame} from "~/utils/scoreMatch";
 /*
 The current prediction algorithm calculates average team scores, using the scoreMatch.ts file (under utils).
 Then, the algorithm pairs all three alliance members together, calculating a predicted score for both alliances
@@ -83,6 +83,12 @@ let teamsFound = ref([
 //blue and red total predicted points
 let blueTotal = ref(0);
 let redTotal = ref(0);
+let blueTotalAuto = ref(0);
+let redTotalAuto = ref(0);
+let blueTotalTeleOp = ref(0);
+let redTotalTeleOp = ref(0);
+let blueTotalEndGame = ref(0);
+let redTotalEndGame = ref(0);
 
 /**
  * Calculates the average score of a team based on their matches.
@@ -95,28 +101,80 @@ function calculateTeamAverageScore(team: number) {
   if (teamMatches) {
     let totalScore = 0;
     for (let match of teamMatches) {
-      totalScore += scoreMatch(match);
+      totalScore += scoreMatch(match)
     }
     return totalScore / teamMatches.length;
   }
   return -1;
 }
 
+function calculateTeamAverageAuto(team: number) {
+  let teamMatches = teamOrgMatches.get(team);
+  if (teamMatches) {
+    let totalAutoPoints = 0;
+    for (let match of teamMatches) {
+      totalAutoPoints += scoreMatchAuto(match);
+    }
+    return totalAutoPoints / teamMatches.length;
+  }
+  return -1;
+}
+
+function calculateTeamAverageTeleOp(team: number) {
+  let teamMatches = teamOrgMatches.get(team);
+  if (teamMatches) {
+    let totalTeleOpPoints = 0;
+    for (let match of teamMatches) {
+      totalTeleOpPoints += scoreMatchTeleop(match);
+    }
+    return totalTeleOpPoints / teamMatches.length;
+  }
+  return -1;
+}
+
+function calculateTeamAverageEndGame(team: number) {
+  let teamMatches = teamOrgMatches.get(team);
+  if (teamMatches) {
+    let totalEndGamePoints = 0;
+    for (let match of teamMatches) {
+      totalEndGamePoints += scoreMatchEndgame(match);
+    }
+    return totalEndGamePoints / teamMatches.length;
+  }
+  return -1;
+}
 /**
  * Predicts the winning team and winning percentage based on selected teams and their average scores.
  * Sets the page components to show the predicted results
+ * Finds values of the points made during each stage of the match: ie, auto, teleOp, EndGame
  *
  * @return {void} This method does not return any value.
  */
 function predict() {
+  blueTotalAuto.value = 0;
+  redTotalAuto.value = 0;
+  blueTotalTeleOp.value = 0;
+  redTotalTeleOp.value = 0;
+  blueTotalEndGame.value = 0;
+  redTotalEndGame.value = 0;
   blueTotal.value = 0;
   redTotal.value = 0;
+
   for (let team of selectedBlueTeams.value) {
     let teamNum = parseInt(team);
     let score = 0;
+    let autoPoints = 0;
+    let teleOpPoints = 0;
+    let endGamePoints = 0;
     teamsFound.value[0][selectedBlueTeams.value.indexOf(team)] = false;
-    if (!Number.isNaN(teamNum)) score += calculateTeamAverageScore(teamNum);
+    if (!Number.isNaN(teamNum)) score = calculateTeamAverageScore(teamNum);
+    if (!Number.isNaN(teamNum)) autoPoints = calculateTeamAverageAuto(teamNum);
+    if (!Number.isNaN(teamNum)) teleOpPoints = calculateTeamAverageTeleOp(teamNum);
+    if (!Number.isNaN(teamNum)) endGamePoints = calculateTeamAverageEndGame(teamNum);
     if (score > 0) blueTotal.value += score;
+    if (autoPoints > 0) blueTotalAuto.value += autoPoints;
+    if (teleOpPoints > 0) blueTotalTeleOp.value += teleOpPoints;
+    if (endGamePoints > 0) blueTotalEndGame.value += endGamePoints;
     else if (score == -1) {
       teamsFound.value[0][selectedBlueTeams.value.indexOf(team)] = true;
     }
@@ -124,9 +182,18 @@ function predict() {
   for (let team of selectedRedTeams.value) {
     let teamNum = parseInt(team);
     let score = 0;
+    let autoPoints = 0;
+    let teleOpPoints = 0;
+    let endGamePoints = 0;
     teamsFound.value[1][selectedRedTeams.value.indexOf(team)] = false;
     if (!Number.isNaN(teamNum)) score = calculateTeamAverageScore(teamNum);
+    if (!Number.isNaN(teamNum)) autoPoints = calculateTeamAverageAuto(teamNum);
+    if (!Number.isNaN(teamNum)) teleOpPoints = calculateTeamAverageTeleOp(teamNum);
+    if (!Number.isNaN(teamNum)) endGamePoints = calculateTeamAverageEndGame(teamNum);
     if (score > 0) redTotal.value += score;
+    if (autoPoints > 0) redTotalAuto.value += autoPoints;
+    if (teleOpPoints > 0) redTotalTeleOp.value += teleOpPoints;
+    if (endGamePoints > 0) redTotalEndGame.value += endGamePoints;
     else if (score == -1) {
       teamsFound.value[1][selectedRedTeams.value.indexOf(team)] = true;
     }
@@ -263,9 +330,42 @@ watch(status, () => {
       teamsFound.value = JSON.parse(tf);
       blueTotal.value = JSON.parse(blue);
       redTotal.value = JSON.parse(red);
+
+
     }
   }
 });
+// This is where the Headers for the prediction breakdown table are made
+const Headers = [{
+  key: 'Team',
+  label: 'Alliance'
+}, {
+  key: 'Auto',
+  label: 'Auto'
+}, {
+  key: 'TeleOp',
+  label: 'TeleOp'
+}, {
+  key: 'EndGame',
+  label: 'End Game'
+}, {
+  key: 'Total',
+  label: 'Total'
+}]
+//This is the data that populates the predictions table
+const scoreBreakDown = [{
+  Team: "Blue",
+  Auto: blueTotalAuto,
+  TeleOp: blueTotalTeleOp,
+  EndGame: blueTotalEndGame,
+  Total: blueTotal
+}, {
+  Team: "Red",
+  Auto: redTotalAuto,
+  TeleOp: redTotalTeleOp,
+  EndGame: redTotalEndGame,
+  Total: redTotal
+}]
 </script>
 
 <template>
@@ -298,7 +398,7 @@ watch(status, () => {
         </template>
         <UContainer
           :class="
-            'flex bg-blue-100 p-5 rounded-sm outline outline-3 ' +
+            'flex bg-blue-100 dark:bg-blue-500 dark:outline-blue-500 p-5 rounded-sm outline outline-3 ' +
             winningTeamColor[1]
           "
         >
@@ -345,25 +445,32 @@ watch(status, () => {
             </template>
           </UInput>
         </UContainer>
-        <UContainer class="mt-4 mb-4">
           <div class="text-center">
-            <p
-              v-if="winningPercentage != -1 && !isNaN(winningPercentage)"
-              class="font-semibold"
-            >
-              {{ blueTotal.toFixed(1) + ' - ' + redTotal.toFixed(1) }}
-            </p>
-            <p
-              v-else
-              class="font-semibold"
-            >
-              vs
-            </p>
+              <UTable
+                v-if="redTotal>blueTotal"
+                :class="'flex p-5 mt-4 rounded-sm outline outline-5 ' +
+                winningTeamColor[0]"
+                :columns="Headers"
+                :rows="scoreBreakDown"
+              />
+              <UTable
+                v-if="blueTotal>redTotal"
+                :class="'flex p-5 mt-4 rounded-sm outline outline-3 ' +
+                  winningTeamColor[1]"
+                :columns="Headers"
+                :rows="scoreBreakDown"
+              />
+              <UTable
+                v-if="blueTotal==redTotal && blueTotal>0"
+                :class="'flex p-5 mt-4 rounded-sm outline outline-3 ' +
+                    winningTeamColor[2]"
+                :columns="Headers"
+                :rows="scoreBreakDown"
+              />
           </div>
-        </UContainer>
         <UContainer
           :class="
-            'flex bg-red-100 p-5 mt-4 rounded-sm outline outline-3 ' +
+            'flex bg-red-100 dark:bg-red-700 dark:outline-red-700 p-5 mt-4 rounded-sm outline outline-3 ' +
             winningTeamColor[0]
           "
         >
@@ -411,7 +518,7 @@ watch(status, () => {
           </UInput>
         </UContainer>
         <template #footer>
-          <div class="text-center text-xs">
+          <div class="text-center text-xs dark:text-white">
             <p v-if="status == 'success'">
               {{
                 'Accuracy: ' +

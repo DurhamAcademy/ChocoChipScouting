@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import PouchDB from 'pouchdb';
-import databases, { type TeamInfo } from '~/utils/databases';
 import OuterComponents from '~/components/website-utils/OuterComponents.vue';
 let syncDisable = ref(false);
-//
+
 async function sync() {
   syncDisable.value = true;
   await PouchDB.sync(
@@ -16,7 +15,6 @@ async function sync() {
     databases.locals.attachments,
     databases.remotes.attachments,
   );
-  await PouchDB.sync(databases.locals.teamInfo, databases.remotes.teamInfo);
   syncDisable.value = false;
 }
 
@@ -192,56 +190,6 @@ function addDays(date: Date, days: number) {
   date.setDate(date.getDate() + days);
   return date;
 }
-
-//TODO find more perm fix
-//updateTeamData()
-
-async function updateTeamData() {
-  try {
-    let previouslySavedTeamNums: number[] = [];
-    let { teamInfo: db } = databases.locals;
-    //gets all the teamsData docs from the database and adds them to one array
-    let dbTeams = (await db.allDocs()).rows.map(
-      async (doc): Promise<TeamInfo> => {
-        return db.get(doc.id);
-      },
-    );
-    Promise.all(dbTeams)
-      .then((teams: Array<TeamInfo>) => {
-        previouslySavedTeamNums = teams.map(value => {
-          return value.teamNum;
-        });
-      })
-      .then(async () => {
-        //goes through each event and checks if they have any teams that aren't in the db already
-        let newTeams: Array<TeamInfo> = [];
-        for (let event of eventOptions) {
-          const { data: tbaEventData } = await useFetch<Array<any>>(
-            '/api/eventTeams/' + event,
-          );
-          if (tbaEventData.value != null) {
-            if (tbaEventData.value.hasOwnProperty('Error')) continue;
-            for (let team of tbaEventData.value) {
-              let teamDataObj: TeamInfo = {
-                teamNum: parseInt(team.key.replace('frc', '')),
-                teamName: team.nickname,
-              };
-              if (previouslySavedTeamNums.includes(teamDataObj.teamNum))
-                continue;
-              newTeams.push(teamDataObj);
-            }
-          } else {
-            console.error('Ruh roh! There seems to have been an issue');
-          }
-        }
-        if (newTeams.length > 0) {
-          await db.bulkDocs(newTeams);
-        }
-      });
-  } catch {
-    console.error('An error occurred');
-  }
-}
 </script>
 
 <template>
@@ -258,7 +206,7 @@ async function updateTeamData() {
       <div
         class="w-full my-8 text-center font-sans font-bold !text-primary text-5xl"
       >
-        ChocoChips Scouting 🍪<! -- title! -->
+        ChocoChips Scouting
       </div>
       <UCard
         class="mb-8 px-4 pb-4"
@@ -266,9 +214,12 @@ async function updateTeamData() {
       >
         <div class="font-bold text-center text-lg justify-center">
           <p class="">{{ currentRankings[0][1] }}</p>
-          <p class="!text-primary">Team 6502 Stats</p>
+          <p class="dark:text-white">Team 6502 Stats</p>
         </div>
-        <div class="flex justify-center my-1">
+        <div
+          class="flex justify-center my-1"
+          v-if="currentTeamRanking"
+        >
           <UButton
             class="rounded-2xl mx-0.5"
             color="gray"
@@ -353,10 +304,10 @@ async function updateTeamData() {
             <div class="h-40 overflow-y-auto px-4 rounded-md">
               <div
                 v-for="(event, index) in pastEvents"
-                class="bg-gray-100 rounded-md"
+                class="bg-gray-100 rounded-md dark:bg-gray-800"
               >
                 <div class="my-2 p-2">
-                  <p class="font-medium">{{ event.name }}</p>
+                  <p class="font-medium dark:text-white">{{ event.name }}</p>
                   <UButton
                     class="rounded-full my-0.5"
                     icon="i-heroicons-map-pin-solid"
@@ -373,19 +324,19 @@ async function updateTeamData() {
                   />
                   <div class="flex my-0.5">
                     <UButton
-                      class="rounded-full mx-0.5"
+                      class="rounded-full mx-0.5 dark:hover:bg-primary-950"
                       icon="i-heroicons-calendar-days-solid"
                       variant="outline"
-                      color="gray"
+                      color="primary"
                     />
                     <UButton
                       v-if="typeof event.week === 'number'"
-                      class="rounded-full mx-0.5 mr-1"
+                      class="rounded-full mx-0.5 mr-1 dark:hover:bg-primary-950"
                       :label="'Week ' + (parseInt(event.week) + 1)"
-                      color="gray"
+                      color="primary"
                       variant="outline"
                     />
-                    <p class="my-auto mx-0.5">
+                    <p class="my-auto mx-0.5 dark:text-white">
                       {{
                         months.at(event.start_date.split('-')[1] - 1) +
                         ' ' +
@@ -416,7 +367,7 @@ async function updateTeamData() {
                         class="rounded-full mx-0.5 mr-1"
                         color="primary"
                       />
-                      <p class="my-auto mx-0.5 font-sans">
+                      <p class="my-auto mx-0.5 font-sans dark:text-white">
                         {{ placeify(teamEventData[index].rank) }} Place with a
                         Record of
                         {{
@@ -551,10 +502,15 @@ async function updateTeamData() {
               </div>
             </div>
             <div v-else>
-              <p class="font-medium text-xl text-center">No Events Scheduled</p>
-              <div class="flex-auto">
-                <img src="/public/sadcookie.png" height="140" width="140" class="mx-auto"/>
-              </div>
+              <p class="font-medium text-xl text-center dark:text-white">
+                No Events Scheduled
+              </p>
+              <img
+                src="/sadcookie.png"
+                class="mx-auto"
+                width="145"
+                height="145"
+               alt="No results found"/>
             </div>
           </template>
         </UTabs>
@@ -589,6 +545,7 @@ async function updateTeamData() {
           />
         </UCarousel>
       </UCard>
+      <div v-else></div>
     </div>
   </OuterComponents>
 </template>

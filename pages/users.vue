@@ -361,6 +361,7 @@ const { pending, data: res } = await useLazyAsyncData('res', () => setup());
               <UButton
                 color="gray"
                 variant="soft"
+                class="dark:bg-gray-700"
                 icon="i-heroicons-trash"
                 @click="deleteUser(row[0])"
               />

@@ -60,7 +60,15 @@ let options = {
     scales: {
         y: {
             suggestedMax: props.suggestedMax || 10,
+          grid: {
+            color: 'rgba(193,193,193,0.5)',
+          }
         },
+      x: {
+          grid: {
+            color: 'rgba(193,193,193,0.5)',
+          }
+      }
     },
     responsive: true,
 }

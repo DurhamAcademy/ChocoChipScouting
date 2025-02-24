@@ -116,7 +116,7 @@ let rows = [
       ></LineChart>
       <div class="flex-auto whitespace-normal">
         <div
-          class="font-semibold underline underline-offset-2 mb-1 w-full text-center"
+          class="font-semibold underline underline-offset-2 mb-1 w-full text-center dark:!text-primary"
         >
           <h1>Amp</h1>
         </div>

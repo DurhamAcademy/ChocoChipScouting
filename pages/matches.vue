@@ -49,7 +49,6 @@ const headers = [
       { title: 'Coral L2', align: 'end', value: 'auto.coralL2' },
       { title: 'Coral L3', align: 'end', value: 'auto.coralL3' },
       { title: 'Coral L4', align: 'end', value: 'auto.coralL4' },
-      { title: 'Algae in Processor', align: 'end', value: 'auto.processor' },
     ],
   },
   {
@@ -60,7 +59,8 @@ const headers = [
       { title: 'Coral L2', align: 'end', value: 'teleop.coralL2' },
       { title: 'Coral L3', align: 'end', value: 'teleop.coralL3' },
       { title: 'Coral L4', align: 'end', value: 'teleop.coralL4' },
-      { title: 'Algae in Processor', align: 'end', value: 'teleop.processor' },
+      { title: 'Processor', align: 'end', value: 'teleop.processor' },
+      { title: 'Net', align: 'end', value: 'teleop.net' },
     ],
   },
   {
@@ -73,7 +73,9 @@ const headers = [
 ];
 
 //sets up the data for the table
-let items;
+let items: Array<ScoutingData & IdMeta> = [];
+
+let promptedNoteTitles = ["Coral", "Algae", "Driver"]
 
 async function setup() {
   //gets all documents from the database asynchronously
@@ -96,12 +98,13 @@ async function setup() {
   console.log(matches);
   items = matches;
 }
+
 </script>
 <template>
   <OuterComponents>
     <VDataTable
       :loading="pending"
-      class="max-h-dvh overflow-auto"
+      class="max-h-dvh pl-12 overflow-y-auto overflow-x-scroll dark:bg-gray-800 dark:text-white"
       :headers="headers"
       :items="items"
       item-key="name"
@@ -112,19 +115,27 @@ async function setup() {
       <template v-slot:item.notes="row">
         <UPopover :popper="{ offsetDistance: 15 }">
           <UButton
-            class="mt-2 mb-2"
-            color="yellow"
+            class="mt-2 mb-2 dark:bg-slate-700"
+            color="coral"
             label="Notes"
             variant="soft"
+
           />
           <template #panel>
             <UContainer
-              class="m-auto max-w-lg min-w-[15rem] overflow-y-auto"
+              class="m-auto max-w-md min-w-[15rem] overflow-y-auto border-2 dark:border-primary rounded-lg"
               style="max-height: 20rem; min-height: 10rem"
             >
-              <br />
-              <div class="whitespace-normal break-all">
-                Notes: {{ row.value.notes }}
+              <br/>
+                <div v-for="(promptedNote, index) in row.value.promptedNotes">
+                  <p v-if="promptedNote.notes.length > 0"> <b>{{promptedNoteTitles[index]}}:</b> {{promptedNote.rating}}/5 </p>
+                  <p v-else><del> </del></p>
+                  <p class="overflow-auto" v-for="note in promptedNote.notes">{{note}}</p> <br>
+                </div>
+              <div>
+                <p v-if="row.value.notes.length > 0"> <b>Other</b><br>{{row.value.notes}}</p>
+                <p v-else><del> </del></p>
+                <br>
               </div>
             </UContainer>
           </template>
@@ -149,6 +160,6 @@ async function setup() {
   font-weight: 600 !important;
 }
 .v-data-table :deep(td) {
-  color: gray;
+  color: rgb(128, 128, 128);
 }
 </style>

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import Sentiment from 'sentiment';
 import BarChart from '../charts/BarChart.vue';
+import { promptedNoteOptions } from '~/utils/promptedNoteOptions';
 
 let sentiment = new Sentiment();
 let options = {
@@ -24,7 +25,7 @@ const selectedMatch = ref(1);
 props.rowData.rawData.sort(compareMatchNumbers);
 
 function compareMatchNumbers(a: any, b: any) {
-  //TODO i hate this work around rly need to fix this
+  //TODO this is a bad solution to a typing problem
   let matchA =
     typeof a.matchNumber == 'string' ? parseInt(a.matchNumber) : a.matchNumber;
   let matchB =
@@ -39,30 +40,36 @@ function compareMatchNumbers(a: any, b: any) {
 }
 
 const chartLabels = [
-  'Auto Amp',
-  'Auto Amp Miss',
-  'Auto Speaker',
-  'Auto Speaker Miss',
-  'Amp',
-  'Amp Miss',
-  'Speaker',
-  'Speaker Miss',
-  'Trap',
+  'Auto Coral L1',
+  'Auto Coral L2',
+  'Auto Coral L3',
+  'Auto Coral L4',
+  'Coral L1',
+  'Coral L2',
+  'Coral L3',
+  'Coral L4',
+  'Net',
+  'Net Miss',
+  'Processor',
+  'Processor Miss',
 ];
 let currData: any = ref(props.rowData.rawData[selectedMatch.value - 1]);
 
 watch(selectedMatch, () => {
   currData.value = props.rowData.rawData[selectedMatch.value - 1];
   chartData.value = [
-    currData.value.auto.amp,
-    currData.value.auto.missedAmp || 0,
-    currData.value.auto.speakerNA,
-    currData.value.auto.missedSpeaker || 0,
-    currData.value.teleop.amp,
-    currData.value.teleop.missedAmp || 0,
-    currData.value.teleop.speakerNA,
-    currData.value.teleop.missedSpeaker || 0,
-    currData.value.endgame.trap,
+    currData.value.auto.coralL1,
+    currData.value.auto.coralL2,
+    currData.value.auto.coralL3,
+    currData.value.auto.coralL4,
+    currData.value.teleop.coralL1,
+    currData.value.teleop.coralL2,
+    currData.value.teleop.coralL3,
+    currData.value.teleop.coralL4,
+    currData.value.teleop.net,
+    currData.value.teleop.netMiss,
+    currData.value.teleop.processor,
+    currData.value.teleop.processorMiss,
   ];
   chartTitle.value = 'Match ' + currData.value.matchNumber;
   sentimentScore = sentiment.analyze(
@@ -74,61 +81,53 @@ let sentimentScore = sentiment.analyze(
   props.rowData.rawData[selectedMatch.value - 1].notes.notes,
 ).score;
 
-//TODO eventually get rid of the || 0s because they are just backwards compatability
-
 let chartData = ref([
-  currData.value.auto.amp,
-  currData.value.auto.missedAmp || 0,
-  currData.value.auto.speakerNA,
-  currData.value.auto.missedSpeaker || 0,
-  currData.value.teleop.amp,
-  currData.value.teleop.missedAmp || 0,
-  currData.value.teleop.speakerNA,
-  currData.value.teleop.missedSpeaker || 0,
-  currData.value.endgame.trap,
+  currData.value.auto.coralL1,
+  currData.value.auto.coralL2,
+  currData.value.auto.coralL3,
+  currData.value.auto.coralL4,
+  currData.value.teleop.coralL1,
+  currData.value.teleop.coralL2,
+  currData.value.teleop.coralL3,
+  currData.value.teleop.coralL4,
+  currData.value.teleop.net,
+  currData.value.teleop.netMiss,
+  currData.value.teleop.processor,
+  currData.value.teleop.processorMiss,
 ]);
 let chartTitle = ref('Match ' + currData.value.matchNumber);
 
-let promptedNotesOptions = ['Defense', 'Offense', 'Driver'];
-let promptedNotesDetailedOptions = [
-  ['Defense location', 'Risk of fouls', 'Other'],
-  [
-    'Shooing location(s)',
-    'Ability to avoid defense',
-    'Weakness of cycles',
-    'Other',
-  ],
-  ['Strengths', 'Weaknesses', 'Other'],
-];
-
-console.log(props.rowData.rawData);
+let promptedNotesOptions = promptedNoteOptions.map(option => option.name);
+let promptedNotesDetailedOptions = promptedNoteOptions.map(
+  option => option.summaries,
+);
 </script>
 
 <template>
   <UCard>
     <div class="flex flex-wrap">
-      <div class="flex-auto">
-        <BarChart
-          class="mb-1"
-          :labels="chartLabels"
-          :data="chartData"
-          :chart-title="chartTitle"
-          height="h-64"
-          width="w-64"
-        ></BarChart>
-      </div>
-      <div class="flex-auto whitespace-normal max-h-72 w-72 max-w-72">
+      <BarChart
+        class="mb-1 w-1/3 max-w-1/3"
+        :labels="chartLabels"
+        :data="chartData"
+        :chart-title="chartTitle"
+        height="h-80"
+        width="w-80"
+      ></BarChart>
+      <div class="flex-auto whitespace-normal max-h-72 max-w-1/2 w-1/2 ml-4">
         <div
           v-if="rowData.rawData[selectedMatch - 1].auto.position != undefined"
         >
-          <p class="font-extrabold text-sm inline-block dark:text-gray-400">
+          <p class="font-extrabold text-sm inline-block dark:!text-primary">
             Auto Position: &nbsp;
           </p>
-          <p class="text-sm inline-block">
+          <p class="text-sm inline-block dark:!text-primary">
             {{ rowData.rawData[selectedMatch - 1].auto.position }}
           </p>
         </div>
-        <p class="font-extrabold text-sm dark:text-gray-400">Auto & Endgame:</p>
+        <p class="font-extrabold text-sm dark:!text-primary mt-1">
+          Auto & Endgame:
+        </p>
         <div class="pb-1">
           <UBadge
             color="sky"
@@ -147,7 +146,9 @@ console.log(props.rowData.rawData);
             {{ endgame }}
           </UBadge>
         </div>
-        <div class="text-wrap max-w-72 h-2/3 max-h-2/3 overflow-y-scroll">
+        <div
+          class="text-wrap max-w-full w-full h-2/3 max-h-2/3 overflow-y-scroll overflow-x-hidden mt-1"
+        >
           <div
             v-for="(item, index) in rowData.rawData[selectedMatch - 1].notes
               .promptedNotes"
@@ -174,31 +175,40 @@ console.log(props.rowData.rawData);
                 >
                   {{ promptedNotesDetailedOptions[index][i] + ':' }}
                 </p>
-                <p v-if="text != ''" class="pb-2.5 text-xs">{{ text }}</p>
+                <p
+                  v-if="text != ''"
+                  class="pb-2.5 text-xs"
+                >
+                  {{ text }}
+                </p>
               </div>
             </div>
           </div>
-          <span class="font-extrabold text-sm dark:text-gray-400">Other notes: </span>
-          <UBadge
-            :color="
-              sentimentScore > 1
-                ? 'green'
-                : sentimentScore < -1
-                ? 'red'
-                : 'gray'
-            "
-            :variant="
-              sentimentScore < 1 && sentimentScore > -1 ? 'soft' : 'subtle'
-            "
-            >{{ sentimentScore }}</UBadge
-          >
-          <p class="pb-2 text-xs dark:text-gray-400">
-            {{
-              rowData.rawData[selectedMatch - 1].notes.notes == ''
-                ? 'None'
-                : rowData.rawData[selectedMatch - 1].notes.notes
-            }}
-          </p>
+          <div v-if="rowData.rawData[selectedMatch - 1].notes.notes != ''">
+            <span class="font-extrabold text-sm dark:!text-primary"
+              >Other notes:
+            </span>
+            <UBadge
+              :color="
+                sentimentScore > 1
+                  ? 'green'
+                  : sentimentScore < -1
+                    ? 'red'
+                    : 'gray'
+              "
+              :variant="
+                sentimentScore < 1 && sentimentScore > -1 ? 'soft' : 'subtle'
+              "
+              >{{ sentimentScore }}</UBadge
+            >
+            <p class="pb-2 text-xs dark:!text-primary">
+              {{
+                rowData.rawData[selectedMatch - 1].notes.notes == ''
+                  ? 'None'
+                  : rowData.rawData[selectedMatch - 1].notes.notes
+              }}
+            </p>
+          </div>
         </div>
       </div>
     </div>
