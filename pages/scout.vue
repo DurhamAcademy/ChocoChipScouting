@@ -29,7 +29,11 @@ const endgameOptions = [
   'Shallow Attempted',
   'Shallow Successful',
   'Deep Attempted',
-  'Deep Successful',
+  'Deep Successful'
+];
+const allianceWinLoss = [
+  'Blue Win',
+  'Red Win'
 ];
 
 /*
