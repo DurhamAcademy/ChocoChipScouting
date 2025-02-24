@@ -296,7 +296,7 @@ const { pending, data: res } = await useLazyAsyncData('res', () => setup());
 
 <template>
   <OuterComponents>
-    <div class="flex justify-center overflow-y-scroll">
+    <div class="flex justify-center overflow-y-scroll pt-2 pb-2">
       <UCard class="max-w-xl flex-grow overflow-visible">
         <template #header>
           <UForm class="flex">
