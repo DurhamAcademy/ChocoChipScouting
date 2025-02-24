@@ -80,9 +80,9 @@ COPY tsconfig.json .
 COPY nuxt.config.ts .
 COPY app.config.ts .
 
-FROM bun-prepare AS files
-
 ENV NODE_ENV=${NODE_ENV}
+
+FROM bun-prepare AS files
 
 COPY app.vue .
 COPY ./pages ./pages
@@ -98,7 +98,7 @@ COPY ./composables ./composables
 RUN ["bun", "--bun", "run", "postinstall"]
 
 FROM files AS build
-ENV  development
+ENV NODE_ENV development
 
 RUN ["bun", "--bun", "run", "build"]
 
