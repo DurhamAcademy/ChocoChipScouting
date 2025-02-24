@@ -160,7 +160,9 @@ export default defineNuxtConfig({
     },
   },
 
-  plugins: ['~/plugins/vuetify.ts'],
+  plugins: [
+      '~/plugins/vuetify.ts'
+  ],
 
   devtools: {
     enabled: true,
@@ -180,9 +182,9 @@ export default defineNuxtConfig({
     },
   },
 
-  logLevel: 'verbose',
+  logLevel: "verbose",
 
-  runtimeConfig: {
+  runtimeConfig:{
     tbaKey: process.env.NUXT_TBA_KEY,
     couchDB: {
       hostname:
@@ -205,8 +207,9 @@ export default defineNuxtConfig({
     preference: 'light', // default value of $colorMode.preference
   },
 
-  tailwindcss: {
-    config: {
+  
+  tailwindcss:{
+    config:{
       theme: {
         extend: {
           width: {
