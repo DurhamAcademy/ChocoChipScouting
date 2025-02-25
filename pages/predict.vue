@@ -2,7 +2,13 @@
 import databases from '~/utils/databases';
 import { eventOptions } from '~/utils/eventOptions';
 import OuterComponents from '~/components/website-utils/OuterComponents.vue';
-import { scoreMatch, scoreMatchAuto, scoreMatchTeleop, scoreMatchEndgame} from "~/utils/scoreMatch";
+import {
+  scoreMatch,
+  scoreMatchAuto,
+  scoreMatchTeleop,
+  scoreMatchEndgame,
+} from '~/utils/scoreMatch';
+import 'remixicon/fonts/remixicon.css';
 /*
 The current prediction algorithm calculates average team scores, using the scoreMatch.ts file (under utils).
 Then, the algorithm pairs all three alliance members together, calculating a predicted score for both alliances
@@ -101,7 +107,7 @@ function calculateTeamAverageScore(team: number) {
   if (teamMatches) {
     let totalScore = 0;
     for (let match of teamMatches) {
-      totalScore += scoreMatch(match)
+      totalScore += scoreMatch(match);
     }
     return totalScore / teamMatches.length;
   }
@@ -169,8 +175,10 @@ function predict() {
     teamsFound.value[0][selectedBlueTeams.value.indexOf(team)] = false;
     if (!Number.isNaN(teamNum)) score = calculateTeamAverageScore(teamNum);
     if (!Number.isNaN(teamNum)) autoPoints = calculateTeamAverageAuto(teamNum);
-    if (!Number.isNaN(teamNum)) teleOpPoints = calculateTeamAverageTeleOp(teamNum);
-    if (!Number.isNaN(teamNum)) endGamePoints = calculateTeamAverageEndGame(teamNum);
+    if (!Number.isNaN(teamNum))
+      teleOpPoints = calculateTeamAverageTeleOp(teamNum);
+    if (!Number.isNaN(teamNum))
+      endGamePoints = calculateTeamAverageEndGame(teamNum);
     if (score > 0) blueTotal.value += score;
     if (autoPoints > 0) blueTotalAuto.value += autoPoints;
     if (teleOpPoints > 0) blueTotalTeleOp.value += teleOpPoints;
@@ -188,8 +196,10 @@ function predict() {
     teamsFound.value[1][selectedRedTeams.value.indexOf(team)] = false;
     if (!Number.isNaN(teamNum)) score = calculateTeamAverageScore(teamNum);
     if (!Number.isNaN(teamNum)) autoPoints = calculateTeamAverageAuto(teamNum);
-    if (!Number.isNaN(teamNum)) teleOpPoints = calculateTeamAverageTeleOp(teamNum);
-    if (!Number.isNaN(teamNum)) endGamePoints = calculateTeamAverageEndGame(teamNum);
+    if (!Number.isNaN(teamNum))
+      teleOpPoints = calculateTeamAverageTeleOp(teamNum);
+    if (!Number.isNaN(teamNum))
+      endGamePoints = calculateTeamAverageEndGame(teamNum);
     if (score > 0) redTotal.value += score;
     if (autoPoints > 0) redTotalAuto.value += autoPoints;
     if (teleOpPoints > 0) redTotalTeleOp.value += teleOpPoints;
@@ -330,42 +340,49 @@ watch(status, () => {
       teamsFound.value = JSON.parse(tf);
       blueTotal.value = JSON.parse(blue);
       redTotal.value = JSON.parse(red);
-
-
     }
   }
 });
 // This is where the Headers for the prediction breakdown table are made
-const Headers = [{
-  key: 'Team',
-  label: 'Alliance'
-}, {
-  key: 'Auto',
-  label: 'Auto'
-}, {
-  key: 'TeleOp',
-  label: 'TeleOp'
-}, {
-  key: 'EndGame',
-  label: 'End Game'
-}, {
-  key: 'Total',
-  label: 'Total'
-}]
+const Headers = [
+  {
+    key: 'Team',
+    label: 'Alliance',
+  },
+  {
+    key: 'Auto',
+    label: 'Auto',
+  },
+  {
+    key: 'TeleOp',
+    label: 'TeleOp',
+  },
+  {
+    key: 'EndGame',
+    label: 'End Game',
+  },
+  {
+    key: 'Total',
+    label: 'Total',
+  },
+];
 //This is the data that populates the predictions table
-const scoreBreakDown = [{
-  Team: "Blue",
-  Auto: blueTotalAuto,
-  TeleOp: blueTotalTeleOp,
-  EndGame: blueTotalEndGame,
-  Total: blueTotal
-}, {
-  Team: "Red",
-  Auto: redTotalAuto,
-  TeleOp: redTotalTeleOp,
-  EndGame: redTotalEndGame,
-  Total: redTotal
-}]
+const scoreBreakDown = [
+  {
+    Team: 'Blue',
+    Auto: blueTotalAuto,
+    TeleOp: blueTotalTeleOp,
+    EndGame: blueTotalEndGame,
+    Total: blueTotal,
+  },
+  {
+    Team: 'Red',
+    Auto: redTotalAuto,
+    TeleOp: redTotalTeleOp,
+    EndGame: redTotalEndGame,
+    Total: redTotal,
+  },
+];
 </script>
 
 <template>
@@ -445,29 +462,65 @@ const scoreBreakDown = [{
             </template>
           </UInput>
         </UContainer>
-          <div class="text-center">
-              <UTable
-                v-if="redTotal>blueTotal"
-                :class="'flex p-5 mt-4 rounded-sm outline outline-5 ' +
-                winningTeamColor[0]"
-                :columns="Headers"
-                :rows="scoreBreakDown"
+        <div class="text-center">
+          <div>
+            <div
+              :class="
+                'flex p-5 mt-4 rounded-sm outline outline-5' +
+                winningTeamColor[0]
+              "
+            >
+              <UBadge
+                icon="ri-cpu-line"
+                square
+                size="lg"
+                color="white"
+                variant="soft"
               />
-              <UTable
-                v-if="blueTotal>redTotal"
-                :class="'flex p-5 mt-4 rounded-sm outline outline-3 ' +
-                  winningTeamColor[1]"
-                :columns="Headers"
-                :rows="scoreBreakDown"
+              <UBadge
+                icon="ri-gamepad-line"
+                square
+                size="lg"
+                color="white"
+                variant="soft"
               />
-              <UTable
-                v-if="blueTotal==redTotal && blueTotal>0"
-                :class="'flex p-5 mt-4 rounded-sm outline outline-3 ' +
-                    winningTeamColor[2]"
-                :columns="Headers"
-                :rows="scoreBreakDown"
+              <UBadge
+                icon="ri-alarm-warning-line"
+                square
+                size="lg"
+                color="white"
+                variant="soft"
               />
+            </div>
           </div>
+          <UTable
+            v-if="redTotal > blueTotal"
+            :class="
+              'flex p-5 mt-4 rounded-sm outline outline-5 ' +
+              winningTeamColor[0]
+            "
+            :columns="Headers"
+            :rows="scoreBreakDown"
+          />
+          <UTable
+            v-if="blueTotal > redTotal"
+            :class="
+              'flex p-5 mt-4 rounded-sm outline outline-3 ' +
+              winningTeamColor[1]
+            "
+            :columns="Headers"
+            :rows="scoreBreakDown"
+          />
+          <UTable
+            v-if="blueTotal == redTotal && blueTotal > 0"
+            :class="
+              'flex p-5 mt-4 rounded-sm outline outline-3 ' +
+              winningTeamColor[2]
+            "
+            :columns="Headers"
+            :rows="scoreBreakDown"
+          />
+        </div>
         <UContainer
           :class="
             'flex bg-red-100 dark:bg-red-700 dark:outline-red-700 p-5 mt-4 rounded-sm outline outline-3 ' +
