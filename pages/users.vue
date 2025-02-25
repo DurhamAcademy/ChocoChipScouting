@@ -28,6 +28,9 @@ let updatingRoles = false;
 //array of all users and their data
 let userArr = ref([['']]);
 
+// Selected rows for bulk deletion
+const selected = ref([]);
+
 /*
 setup function
 loads all the important data for the webpage asynchronously
@@ -126,7 +129,6 @@ uses username and password from input fields
  */
 async function changePassword() {
   //gets users current roles and ensures they are an admin
-
   let sessionRoles = await usersDB.getSession();
   if (
     !(
@@ -238,8 +240,43 @@ async function deleteUser(username: string) {
   });
 }
 
+// Function to delete selected users
+async function deleteSelectedUsers() {
+  let sessionRoles = await usersDB.getSession();
+  if (
+    !(
+      sessionRoles.userCtx.roles &&
+      (sessionRoles.userCtx.roles.includes('_admin') ||
+        sessionRoles.userCtx.roles.includes('admin'))
+    )
+  )
+    return;
+
+  for (const user of selected.value) {
+    usersDB.deleteUser(user[0], function (err, result) {
+      if (err) {
+        console.log(err.name);
+      }
+      if (result) {
+        for (let i = 0; i < userArr.value.length; i++) {
+          if (userArr.value[i].includes(user[0])) {
+            userArr.value.splice(i, 1);
+            roles.value.splice(i, 1);
+            break;
+          }
+        }
+      }
+    });
+  }
+  selected.value = [];
+}
+
 //defines the columns of the table shown on screen
 const columns = [
+  {
+    key: 'select',
+    label: '',
+  },
   {
     key: 'user',
     label: 'Username',
@@ -259,8 +296,8 @@ const { pending, data: res } = await useLazyAsyncData('res', () => setup());
 
 <template>
   <OuterComponents>
-    <div class="flex justify-center overflow-y-scroll">
-      <UCard class="max-w-xl flex-grow m-5 overflow-visible">
+    <div class="flex justify-center overflow-y-scroll pt-2 pb-2">
+      <UCard class="max-w-xl flex-grow overflow-visible">
         <template #header>
           <UForm class="flex">
             <UFormGroup class="flex-auto basis-1/4">
@@ -296,6 +333,16 @@ const { pending, data: res } = await useLazyAsyncData('res', () => setup());
           </UForm>
         </template>
         <template #default>
+          <div v-if="selected.length > 0" class="mb-4 flex justify-between items-center">
+            <span>Selected users: {{ selected.length }}</span>
+            <UButton
+              color="red"
+              variant="soft"
+              icon="i-heroicons-trash"
+              :label="'Delete Selected'"
+              @click="deleteSelectedUsers"
+            />
+          </div>
           <UTable
             :rows="userArr"
             :columns="columns"
@@ -304,6 +351,8 @@ const { pending, data: res } = await useLazyAsyncData('res', () => setup());
               icon: 'i-heroicons-arrow-path-20-solid',
               label: 'Loading...',
             }"
+            v-model="selected"
+            selectable
           >
             <template #user-data="{ row }">
               <p>{{ row[0] }}</p>
