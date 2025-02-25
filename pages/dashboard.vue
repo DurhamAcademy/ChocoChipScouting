@@ -85,7 +85,7 @@ watch(eventsPending, async () => {
       (b, a) => new Date(a.end_date).getTime() - new Date(b.end_date).getTime(),
     );
     upcomingEvents.value = eventsData.value.filter(event => {
-      new Date(event.end_date) > date;
+      return new Date(event.end_date) > date;
     });
     pastEvents.value = eventsData.value.filter(event => {
       return new Date(event.end_date) < date;
@@ -520,7 +520,7 @@ function addDays(date: Date, days: number) {
                 width="145"
                 height="145"
               />
-               alt="No results found"/>
+              alt="No results found"/>
             </div>
           </template>
         </UTabs>
