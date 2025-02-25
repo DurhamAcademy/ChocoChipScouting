@@ -5,6 +5,7 @@ import PouchDB from 'pouchdb';
 import { eventOptions } from '~/utils/eventOptions';
 import { useEventKey } from '~/composables/useEventKey';
 import { VerticalNavigationLink } from '#ui/types';
+import { UnwrapRef } from 'vue';
 const {
   usernameState,
   sessionState,
@@ -22,6 +23,16 @@ const {
 
 const events = eventOptions;
 const currentEvent = useEventKey();
+
+const colorMode = useColorMode();
+const isDark = computed({
+  get() {
+    return colorMode.value === 'dark';
+  },
+  set() {
+    colorMode.preference = colorMode.value === 'dark' ? 'light' : 'dark';
+  },
+});
 
 watch(currentEvent, value => {
   window.localStorage.setItem('currentEvent', value);
@@ -99,8 +110,12 @@ if (sessionState?.value?.userCtx?.roles?.indexOf('_admin') != -1)
           <template #panel>
             <UCard class="p-2">
               <template #header>
-                <div class="usernameLabel max-w-32 text-zinc-900">
-                  {{ usernameState }}
+                <div class="text-center">
+                        <span
+                          class="overflow-hidden dark:text-white flex-auto max-w-32"
+                        >
+                          {{ usernameState }}
+                        </span>
                 </div>
               </template>
               <UFormGroup
@@ -112,7 +127,28 @@ if (sessionState?.value?.userCtx?.roles?.indexOf('_admin') != -1)
                   v-model="currentEvent"
                   :options="events"
                 />
+                <ClientOnly>
+                  <div class="flex justify-center mt-4">
+                    <UButton
+                      :icon="isDark ? 'i-heroicons-moon-20-solid': 'i-heroicons-sun-20-solid'"
+                      color="white"
+                      variant="solid"
+                      label="Theme"
+                      @click="isDark = !isDark"
+                      class="px-8"
+                    />
+                  </div>
+                </ClientOnly>
               </UFormGroup>
+              <UButton
+                class="mt-3"
+                icon="i-heroicons-arrow-right-circle"
+                trailing
+                color="black"
+                variant="link"
+                label="More Settings"
+                @click="navigateTo('/settings')"
+              />
               <template #footer>
                 <UButton
                   block

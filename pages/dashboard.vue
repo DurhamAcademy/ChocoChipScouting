@@ -17,6 +17,7 @@ async function sync() {
   );
   syncDisable.value = false;
 }
+const colorMode = useColorMode();
 
 let date = new Date();
 const rankings = ref<any[]>([]);
@@ -84,7 +85,7 @@ watch(eventsPending, async () => {
       (b, a) => new Date(a.end_date).getTime() - new Date(b.end_date).getTime(),
     );
     upcomingEvents.value = eventsData.value.filter(event => {
-      new Date(event.end_date) > date;
+      return new Date(event.end_date) > date;
     });
     pastEvents.value = eventsData.value.filter(event => {
       return new Date(event.end_date) < date;
@@ -506,11 +507,20 @@ function addDays(date: Date, days: number) {
                 No Events Scheduled
               </p>
               <img
+                v-if="colorMode.value === 'light'"
                 src="/sadcookie.png"
                 class="mx-auto"
                 width="145"
                 height="145"
-               alt="No results found"/>
+              />
+              <NuxtImg
+                v-else
+                src="/angrycookie.png"
+                class="mx-auto"
+                width="145"
+                height="145"
+              />
+              alt="No results found"/>
             </div>
           </template>
         </UTabs>

@@ -17,6 +17,8 @@ import { useTeamStore } from "~/stores/useTeamStore";
 
 let { width, height } = useWindowSize();
 
+const colorMode = useColorMode();
+
 let currentEvent = useEventKey();
 watch(currentEvent, value => {
   setup();
@@ -333,13 +335,21 @@ watch(width, () => {
       class="opacity-50"
     >
       <img
-        src="/public/sadcookie.png"
-        height="400"
-        width="400"
+        v-if="colorMode.value === 'light'"
+        src="/sadcookie.png"
         class="mx-auto"
+        width="145"
+        height="145"
+      />
+      <img
+        v-else
+        src="/angrycookie.png"
+        class="mx-auto"
+        width="145"
+        height="145"
         alt="No results found"
       />
-      <h1 class="font-sans text-xl font-bold text-center">
+      <h1 class="font-sans text-xl font-bold text-center dark:text-white">
         Looks like there is no data on team {{ teamData.teamNum }} at
         {{ currentEvent }} :(
       </h1>
