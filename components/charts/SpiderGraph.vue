@@ -10,6 +10,7 @@ const props = defineProps<{
   max: string;
   height?: string;
   width?: string;
+  missing: boolean;
 }>();
 
 Chart.register(...registerables);
@@ -46,8 +47,11 @@ const testData = {
 };
 </script>
 <template>
-  <RadarChart
-    :chartData="testData"
-    :class="height + ' relative ' + width"
-  />
+  <div class="max-h-96">
+    <RadarChart
+      :chartData="testData"
+      :class="height + ' relative ' + width"
+    />
+    <p class="dark:text-coral-400" v-if="props.missing">*There may be missing data</p>
+  </div>
 </template>

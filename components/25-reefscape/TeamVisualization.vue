@@ -92,10 +92,16 @@ let spiderGraphData = ref([
 
 const spiderGraphLabels = ['Auto', 'Coral', 'Algae', 'Endgame', 'Defense'];
 
+let possibleMissingData = false;
+if(spiderGraphData.value[0] < 1 || spiderGraphData.value[1] < 1 || spiderGraphData.value[2] < 1 || spiderGraphData.value[3] < 1 || spiderGraphData.value[4] < 1){
+  possibleMissingData = true;
+}
+
 const chartTitle = 'Team ' + props.teamData.teamNum;
 </script>
 <template>
   <UCard class="pt-1">
+    <div class="pb-1">
     <SpiderGraph
       :labels="spiderGraphLabels"
       :data="spiderGraphData"
@@ -103,6 +109,8 @@ const chartTitle = 'Team ' + props.teamData.teamNum;
       max="100"
       min="0"
       height="h-96"
+      :missing="possibleMissingData"
     />
+    </div>
   </UCard>
 </template>
