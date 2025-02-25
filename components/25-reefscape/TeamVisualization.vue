@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import SpiderGraph from '~/components/charts/SpiderGraph.vue';
 import { min } from '@popperjs/core/lib/utils/math';
-import BarChart from '~/components/charts/BarChart.vue';
+import BarChart from '~/components/charts/BarChart.vue'; //PLEASE DONT DELETE THIS IT SAYS IT ISNT USED BUT IT BREAKS WITHOUT IT
 const props = defineProps<{
   teamData: any;
   maxScores: any;

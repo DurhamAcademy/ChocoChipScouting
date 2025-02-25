@@ -51,6 +51,7 @@ const testData = {
     <RadarChart
       :chartData="testData"
       :class="height + ' relative ' + width"
+      class="dark:!text-primary"
     />
     <p class="dark:text-coral-400" v-if="props.missing">*There may be missing data</p>
   </div>

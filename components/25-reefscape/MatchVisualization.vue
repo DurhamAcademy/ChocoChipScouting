@@ -155,7 +155,7 @@ let promptedNotesDetailedOptions = promptedNoteOptions.map(
           >
             <div v-if="item.selected">
               <div class="pb-1">
-                <span class="font-extrabold mr-2 text-sm">{{
+                <span class="font-extrabold mr-2 text-sm dark:!text-primary">{{
                   promptedNotesOptions[index] + ':'
                 }}</span>
                 <UBadge
@@ -171,13 +171,13 @@ let promptedNotesDetailedOptions = promptedNoteOptions.map(
               <div v-for="(text, i) in item.notes">
                 <p
                   v-if="text != ''"
-                  class="text-xs pb-0 font-semibold underline-offset-2"
+                  class="text-xs pb-0 font-semibold underline-offset-2 dark:!text-primary"
                 >
                   {{ promptedNotesDetailedOptions[index][i] + ':' }}
                 </p>
                 <p
                   v-if="text != ''"
-                  class="pb-2.5 text-xs"
+                  class="pb-2.5 text-xs dark:!text-primary"
                 >
                   {{ text }}
                 </p>
