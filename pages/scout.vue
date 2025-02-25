@@ -30,12 +30,9 @@ const endgameOptions = [
   'Shallow Attempted',
   'Shallow Successful',
   'Deep Attempted',
-  'Deep Successful'
+  'Deep Successful',
 ];
-const allianceWinLoss = [
-  'Blue Win',
-  'Red Win'
-];
+const allianceWinLoss = ['Blue Win', 'Red Win'];
 
 const isAutoPositionOpen = ref(false);
 
@@ -287,11 +284,11 @@ async function submit() {
             class="overflow-y-scroll max-h-80 w-full min-h-36"
           >
             <div class="flex flex-wrap">
-              <div class="text-center w-1/2">
+              <div class="text-center lg:w-1/2 w-full">
                 <h1 class="text-gray-700 dark:text-gray-200 font-bold">
                   Coral
                 </h1>
-                <div class="flex justify-center">
+                <div class="flex flex-wrap justify-center">
                   <div class="flex">
                     <div class="text-center mr-2">
                       <h1 class="text-coral-400 font-light text-sm mt-1">
@@ -352,7 +349,7 @@ async function submit() {
                 />
               </div>
 
-              <div class="text-center w-1/2">
+              <div class="text-center lg:w-1/2 w-full">
                 <h1 class="text-gray-700 dark:text-gray-200 font-bold">Auto</h1>
                 <h1 class="text-coral-400 font-light text-sm">Position</h1>
                 <div class="flex justify-center">
@@ -398,8 +395,8 @@ async function submit() {
             v-if="gameTime == GameTime.Teleoperated"
             class="overflow-y-scroll max-h-80 min-h-36"
           >
-            <div class="flex">
-              <div class="text-center w-1/2">
+            <div class="flex flex-wrap">
+              <div class="text-center lg:w-1/2 w-full">
                 <h1 class="text-gray-700 dark:text-gray-200 font-bold">
                   Coral
                 </h1>
@@ -464,7 +461,7 @@ async function submit() {
                 />
               </div>
 
-              <div class="flex justify-center w-1/2">
+              <div class="flex justify-center lg:w-1/2 w-full">
                 <div class="text-center">
                   <h1 class="text-gray-700 dark:text-gray-200 font-bold">
                     Net
