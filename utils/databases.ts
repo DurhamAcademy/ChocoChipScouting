@@ -178,3 +178,56 @@ export default {
   locals: LocalRemoteDatabaseSyncHolder.locals,
   remotes: LocalRemoteDatabaseSyncHolder.remotes,
 };
+
+// NEW SCOUTING DATA FORMATTING
+export type ScoutingDataTest = {
+  teamNumber: string;
+  eventKey: string;
+  matchNumber: number;
+  author: string;
+  auto: {
+    tiered_objectives: TieredObjectiveData[]; // 1x coral
+    special_objectives: SpecialObjectiveData[]; // 1x auto starting position
+    simple_objectives: SimpleObjectiveData[]; // 1x mobility
+    notes: NoteData[]; // 1x note
+  };
+  teleop: {
+    tiered_objectives: TieredObjectiveData[]; // 1x coral, 1x algae
+    notes: NoteData[];
+  };
+  endgame: {
+    climb: ClimbOptionData[];
+    notes: NoteData[];
+  };
+  notes: {
+    grouped_notes: GroupNoteData[];
+  }
+};
+
+export type ObjectiveData = {
+  countMade: number;
+  countMissed: number;
+}
+
+export type TieredObjectiveData = {
+  objectives: ObjectiveData[];
+}
+
+export type SpecialObjectiveData = {
+  objective: string;
+}
+
+export type SimpleObjectiveData = {
+  objective: boolean;
+}
+
+export type NoteData = {
+  notes: string;
+}
+
+export type GroupNoteData = {
+  rating: number;
+  notes: NoteData[];
+}
+
+

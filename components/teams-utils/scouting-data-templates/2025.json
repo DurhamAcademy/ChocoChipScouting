@@ -6,16 +6,20 @@
         "missed": true,
         "objectives": [
           {
-            "name": "L1"
+            "name": "L1",
+            "points": 3
           },
           {
-            "name": "L2"
+            "name": "L2",
+            "points": 4
           },
           {
-            "name": "L3"
+            "name": "L3",
+            "points": 6
           },
           {
-            "name": "L4"
+            "name": "L4",
+            "points": 7
           }
         ]
       }],
@@ -29,7 +33,8 @@
       ]
     }],
     "simple_objectives": [{
-      "name": "Mobility"
+      "name": "Mobility",
+      "points": 3
     }],
     "notes": [{
       "desc": "Other notes..."
@@ -42,29 +47,36 @@
       "missed": true,
       "objectives": [
         {
-          "name": "L1"
+          "name": "L1",
+          "points": 2
         },
         {
-          "name": "L2"
+          "name": "L2",
+          "points": 3
         },
         {
-          "name": "L3"
+          "name": "L3",
+          "points": 4
         },
         {
-          "name": "L4"
+          "name": "L4",
+          "points": 5
+        }
+      ]
+    }, {
+      "name": "Algae",
+      "missed": true,
+      "objectives": [
+        {
+          "name": "Net",
+          "points": 4
+        },
+        {
+          "name": "Processor",
+          "points": 4
         }
       ]
     }],
-    "objectives": [
-      {
-        "name": "Net",
-        "missed": true
-      },
-      {
-        "name": "Processor",
-        "missed": true
-      }
-    ],
     "notes": [{
       "desc": "Other notes..."
     }]
@@ -74,27 +86,33 @@
       "options": [
         {
           "singular": true,
-          "name": "None"
+          "name": "None",
+          "points": 0
         },
         {
           "singular": false,
-          "name": "Parked"
+          "name": "Parked",
+          "points": 2
         },
         {
           "singular": false,
-          "name": "Shallow Attempted"
+          "name": "Shallow Attempted",
+          "points": 0
         },
         {
           "singular": true,
-          "name": "Shallow Successful"
+          "name": "Shallow Successful",
+          "points": 6
         },
         {
         "singular": false,
-        "name": "Deep Attempted"
+        "name": "Deep Attempted",
+          "points": 0
         },
         {
           "singular": true,
-          "name": "Deep Successful"
+          "name": "Deep Successful",
+          "points": 12
         }
       ]
 

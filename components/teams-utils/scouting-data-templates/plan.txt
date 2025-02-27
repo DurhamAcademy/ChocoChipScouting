@@ -35,7 +35,3 @@ rating (-1 for no rating by number or a range of 1 -> anything greater than 1 (i
         notes (NOTES[])
         OR
         description (what is shown before entering anything into the text box) (string[])
-
-
-
-position: number;
