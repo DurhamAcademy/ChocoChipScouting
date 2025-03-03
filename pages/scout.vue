@@ -206,7 +206,7 @@ async function submit() {
 </script>
 
 <template>
-  <div class="overflow-y-hidden">
+  <div class="overflow-y-hidden h-screen">
     <Navbar scout-mode></Navbar>
     <UCard class="h-full w-screen overflow-y-auto rounded-none">
       <div class="flex justify-center">
