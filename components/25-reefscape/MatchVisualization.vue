@@ -147,7 +147,7 @@ let promptedNotesDetailedOptions = promptedNoteOptions.map(
           </UBadge>
         </div>
         <div
-          class="text-wrap max-w-full w-full h-2/3 max-h-2/3 overflow-y-scroll overflow-x-hidden mt-1"
+          class="text-wrap max-w-full w-full h-2/3 max-h-2/3 overflow-y-scroll dark:text-primary overflow-x-hidden mt-1"
         >
           <div
             v-for="(item, index) in rowData.rawData[selectedMatch - 1].notes
