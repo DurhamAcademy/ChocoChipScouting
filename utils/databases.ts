@@ -44,10 +44,6 @@ export type TeamTableData = {
   team: { data: string; color: string };
   driver: { data: number; color: string };
   defense: { data: number; color: string };
-  netAuto: { data: number; color: string };
-  netAutoAcc: { data: number; color: string };
-  processorAuto: { data: number; color: string };
-  processorAutoAcc: { data: number; color: string };
   coralL1Auto: { data: number; color: string };
   coralL2Auto: { data: number; color: string };
   coralL3Auto: { data: number; color: string };
@@ -76,10 +72,6 @@ export type TeamTableData = {
 export type DataArrayOrSum = {
   driver: number[];
   defense: number[];
-  netAuto: number[];
-  netAutoAcc: number[];
-  processorAuto: number[];
-  processorAutoAcc: number[];
   coralL1Auto: number[];
   coralL2Auto: number[];
   coralL3Auto: number[];
@@ -114,10 +106,6 @@ export type ScoutingData = {
     coralL4Miss: number;
     reef: number;
     reefMiss: number;
-    processorMiss: number;
-    processor: number;
-    netMiss: number;
-    net: number;
     mobility: boolean;
     position: number;
   };

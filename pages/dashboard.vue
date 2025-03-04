@@ -222,7 +222,7 @@ function addDays(date: Date, days: number) {
           v-if="currentTeamRanking"
         >
           <UButton
-            class="rounded-2xl mx-0.5"
+            class="rounded-2xl mx-0.5 dark:!text-primary"
             color="gray"
             variant="outline"
             :label="placeify(currentTeamRanking.rank) + ' Place'"
@@ -275,7 +275,7 @@ function addDays(date: Date, days: number) {
                 </td>
                 <td
                   v-else
-                  class="whitespace-nowrap px-6 py-4 font-medium"
+                  class="whitespace-nowrap px-6 py-4 font-medium dark:!text-primary"
                 >
                   {{ rank.rank }}
                 </td>
@@ -379,7 +379,7 @@ function addDays(date: Date, days: number) {
                     <template #panel>
                       <div class="overflow-y-auto h-80 pb-4">
                         <table class="rounded-md">
-                          <thead class="bg-gray-200 sticky top-0">
+                          <thead class="bg-gray-200 sticky top-0 dark:bg-gray-700 dark:text-white">
                             <tr class="p-2">
                               <th class="px-6 py-4">Rank</th>
                               <th class="px-6 py-4">Team #</th>
@@ -390,11 +390,11 @@ function addDays(date: Date, days: number) {
                           <tbody>
                             <tr
                               v-for="rank of rankings[index][0].rankings"
-                              class="text-center even:bg-gray-100"
+                              class="text-center even:bg-gray-100 odd:bg-gray-50 dark:odd:bg-gray-800 dark:even:bg-gray-700"
                             >
                               <td
                                 v-if="rank.rank == 1"
-                                class="text-yellow-600 font-medium whitespace-nowrap px-6 py-4"
+                                class="text-yellow-600 dark:text-amber-200 font-medium whitespace-nowrap px-6 py-4"
                               >
                                 {{ rank.rank }}
                               </td>
@@ -406,30 +406,30 @@ function addDays(date: Date, days: number) {
                               </td>
                               <td
                                 v-else-if="rank.rank == 3"
-                                class="text-amber-900 font-medium whitespace-nowrap px-6 py-4"
+                                class="text-amber-900 dark:text-amber-700 font-medium whitespace-nowrap px-6 py-4"
                               >
                                 {{ rank.rank }}
                               </td>
                               <td
                                 v-else
-                                class="whitespace-nowrap px-6 py-4 font-medium"
+                                class="whitespace-nowrap px-6 py-4 font-medium dark:!text-primary"
                               >
                                 {{ rank.rank }}
                               </td>
                               <td
-                                class="whitespace-nowrap px-6 py-4 font-medium"
+                                class="whitespace-nowrap px-6 py-4 font-medium dark:!text-primary"
                               >
                                 {{ rank.team_key.replace('frc', '') }}
                               </td>
                               <td
-                                class="whitespace-nowrap px-6 py-4 font-medium"
+                                class="whitespace-nowrap px-6 py-4 font-medium dark:!text-primary"
                               >
                                 {{
                                   `${rank.record.wins}-${rank.record.losses}-${rank.record.ties}`
                                 }}
                               </td>
                               <td
-                                class="whitespace-nowrap px-6 py-4 font-medium"
+                                class="whitespace-nowrap px-6 py-4 font-medium dark:!text-primary"
                               >
                                 {{ rank.matches_played }}
                               </td>
@@ -450,10 +450,10 @@ function addDays(date: Date, days: number) {
             >
               <div
                 v-for="event in upcomingEvents"
-                class="bg-gray-100 rounded-md"
+                class="bg-gray-100 rounded-md dark:bg-gray-800"
               >
                 <div class="my-2 p-2">
-                  <p class="font-medium">{{ event.name }}</p>
+                  <p class="font-medium dark:text-white">{{ event.name }}</p>
                   <UButton
                     class="rounded-full my-0.5"
                     icon="i-heroicons-map-pin-solid"
@@ -481,7 +481,7 @@ function addDays(date: Date, days: number) {
                       color="gray"
                       variant="outline"
                     />
-                    <p class="my-auto mx-0.5 mr-1">
+                    <p class="my-auto mx-0.5 mr-1 dark:text-white">
                       {{
                         months.at(event.start_date.split('-')[1] - 1) +
                         ' ' +
