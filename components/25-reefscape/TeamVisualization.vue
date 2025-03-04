@@ -93,8 +93,11 @@ let spiderGraphData = ref([
 const spiderGraphLabels = ['Auto', 'Coral', 'Algae', 'Endgame', 'Defense'];
 
 let possibleMissingData = false;
-if(spiderGraphData.value[0] < 1 || spiderGraphData.value[1] < 1 || spiderGraphData.value[2] < 1 || spiderGraphData.value[3] < 1 || spiderGraphData.value[4] < 1){
-  possibleMissingData = true;
+for(let nubmer in spiderGraphData.value){
+  if (spiderGraphData.value[nubmer] < 1){
+    possibleMissingData=true;
+    break;
+  }
 }
 
 const chartTitle = 'Team ' + props.teamData.teamNum;
