@@ -118,14 +118,14 @@ let promptedNotesDetailedOptions = promptedNoteOptions.map(
         <div
           v-if="rowData.rawData[selectedMatch - 1].auto.position != undefined"
         >
-          <p class="font-extrabold text-sm inline-block dark:!text-primary">
+          <p class="font-extrabold text-sm inline-block dark:text-white">
             Auto Position: &nbsp;
           </p>
-          <p class="text-sm inline-block dark:!text-primary">
+          <p class="text-sm inline-block dark:text-white">
             {{ rowData.rawData[selectedMatch - 1].auto.position }}
           </p>
         </div>
-        <p class="font-extrabold text-sm dark:!text-primary mt-1">
+        <p class="font-extrabold text-sm dark:text-white mt-1">
           Auto & Endgame:
         </p>
         <div class="pb-1">
@@ -155,7 +155,7 @@ let promptedNotesDetailedOptions = promptedNoteOptions.map(
           >
             <div v-if="item.selected">
               <div class="pb-1">
-                <span class="font-extrabold mr-2 text-sm dark:!text-primary">{{
+                <span class="font-extrabold mr-2 text-sm dark:text-white">{{
                   promptedNotesOptions[index] + ':'
                 }}</span>
                 <UBadge
@@ -171,13 +171,13 @@ let promptedNotesDetailedOptions = promptedNoteOptions.map(
               <div v-for="(text, i) in item.notes">
                 <p
                   v-if="text != ''"
-                  class="text-xs pb-0 font-semibold underline-offset-2 dark:!text-primary"
+                  class="text-xs pb-0 font-semibold underline-offset-2 dark:text-white"
                 >
                   {{ promptedNotesDetailedOptions[index][i] + ':' }}
                 </p>
                 <p
                   v-if="text != ''"
-                  class="pb-2.5 text-xs dark:!text-primary"
+                  class="pb-2.5 text-xs dark:text-white"
                 >
                   {{ text }}
                 </p>
@@ -185,7 +185,7 @@ let promptedNotesDetailedOptions = promptedNoteOptions.map(
             </div>
           </div>
           <div v-if="rowData.rawData[selectedMatch - 1].notes.notes != ''">
-            <span class="font-extrabold text-sm dark:!text-primary"
+            <span class="font-extrabold text-sm dark:text-white"
               >Other notes:
             </span>
             <UBadge
@@ -201,7 +201,7 @@ let promptedNotesDetailedOptions = promptedNoteOptions.map(
               "
               >{{ sentimentScore }}</UBadge
             >
-            <p class="pb-2 text-xs dark:!text-primary">
+            <p class="pb-2 text-xs dark:text-white">
               {{
                 rowData.rawData[selectedMatch - 1].notes.notes == ''
                   ? 'None'

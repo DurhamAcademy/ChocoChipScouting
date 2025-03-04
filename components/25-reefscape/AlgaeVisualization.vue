@@ -128,7 +128,7 @@ let rows = [
         width="w-64"
       ></LineChart>
       <div class="flex-auto whitespace-normal">
-        <div class="font-semibold w-full text-center dark:!text-primary">
+        <div class="font-semibold w-full text-center dark:text-white">
           <h1>Algae</h1>
         </div>
         <UTable

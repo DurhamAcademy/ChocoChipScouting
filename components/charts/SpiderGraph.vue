@@ -55,6 +55,6 @@ const testData = {
       :chartData="testData"
       :class="height + ' relative ' + width"
     />
-    <p class="dark:text-coral-400" v-if="props.missing">*There may be missing data</p>
+    <p class="dark:text-white" v-if="props.missing">*There may be missing data</p>
   </div>
 </template>
