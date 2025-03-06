@@ -1,19 +1,22 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
-import vuetify, { transformAssetUrls } from 'vite-plugin-vuetify'
-
+import vuetify, { transformAssetUrls } from 'vite-plugin-vuetify';
+import path from 'node:path';
 var sw = true;
+
 export default defineNuxtConfig({
   modules: [
     '@nuxt/image',
     '@vite-pwa/nuxt',
     '@nuxt/ui',
+    '@nuxtjs/color-mode',
     (_options, nuxt) => {
-      nuxt.hooks.hook('vite:extendConfig', (config) => {
+      nuxt.hooks.hook('vite:extendConfig', config => {
         // @ts-expect-error
-        config.plugins.push(vuetify({autoImport: true}))
-      })
+        config.plugins.push(vuetify({ autoImport: true }));
+      });
     },
   ],
+
   webpack: {
     aggressiveCodeRemoval: true,
     optimization: {
@@ -24,32 +27,34 @@ export default defineNuxtConfig({
           vendor: {
             name: 'node_vendors',
             test: /[\\/]node_modules[\\/]/,
-          }
-        }
-      }
+          },
+        },
+      },
     },
   },
+
   nitro: {
     preset: 'bun',
     compressPublicAssets: {
       brotli: false,
-      gzip: true
+      gzip: true,
     },
-
   },
+
   app: {
     head: {
       script: [
         {
-          textContent: "window.global = window;"
-        }
-      ]
-    }
+          textContent: 'window.global = window;',
+        },
+      ],
+    },
   },
+
   build: {
     transpile: ['vuetify'],
-
   },
+
   // speedkit: {
   //
   //   detection: {
@@ -91,7 +96,7 @@ export default defineNuxtConfig({
       lg: 1200,
       xl: 1367,
       xxl: 1600,
-      '4k': 1921
+      '4k': 1921,
     },
 
     domains: ['img.youtube.com', 'i.vimeocdn.com'],
@@ -99,8 +104,9 @@ export default defineNuxtConfig({
     alias: {
       youtube: 'https://img.youtube.com',
       vimeo: 'https://i.vimeocdn.com',
-    }
+    },
   },
+
   // buildModules: [
   //     'nuxt-speedkit',
   //     '@nuxtjs/pwa'
@@ -135,7 +141,6 @@ export default defineNuxtConfig({
     },
     workbox: {
       globPatterns: ['**/*.{js,css,html,png,svg,ico}'],
-
     },
     injectManifest: {
       globPatterns: ['**/*.{js,css,html,png,svg,ico}'],
@@ -154,42 +159,55 @@ export default defineNuxtConfig({
       type: 'module',
     },
   },
+
   plugins: [
       '~/plugins/vuetify.ts'
   ],
+
   devtools: {
     enabled: true,
 
     timeline: {
-      enabled: true
-    }
+      enabled: true,
+    },
   },
+
   ssr: false,
+
   vite: {
     vue: {
       template: {
         transformAssetUrls,
-      }
-    }
+      },
+    },
   },
+
   logLevel: "verbose",
+
   runtimeConfig:{
     tbaKey: process.env.NUXT_TBA_KEY,
     couchDB: {
-      hostname: (process.env.NUXT_COUCH_DB_HOSTNAME === undefined) ? process.env.NUXT_COUCH_DB_HOSTNAME:"localhost",
+      hostname:
+        process.env.NUXT_COUCH_DB_HOSTNAME === undefined
+          ? process.env.NUXT_COUCH_DB_HOSTNAME
+          : 'localhost',
       serverAdminUser: {
         username: process.env.NUXT_COUCH_DB_SERVER_ADMIN_USER_USERNAME,
-        password: process.env.NUXT_COUCH_DB_SERVER_ADMIN_USER_PASSWORD
-      }
-    }
+        password: process.env.NUXT_COUCH_DB_SERVER_ADMIN_USER_PASSWORD,
+      },
+    },
   },
+
   sourcemap: {
     server: true,
-    client: true
+    client: true,
   },
+
   colorMode: {
-    preference: 'light' //eventually we will add color mode preference
+    preference: 'light', // default value of $colorMode.preference
   },
+
+  
   tailwindcss:{
     config:{
       theme: {
@@ -210,10 +228,12 @@ export default defineNuxtConfig({
               '800': '#99251b',
               '900': '#7f251d',
               '950': '#450f0a',
-            }
-          }
-        }
-      }
-    }
-  }
-})
+            },
+          },
+        },
+      },
+    },
+  },
+
+  compatibilityDate: '2025-01-14',
+});
