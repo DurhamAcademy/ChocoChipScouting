@@ -150,7 +150,7 @@ function isValidNum() {
     scoutData.value.matchNumber != null &&
     scoutData.value.teamNumber > 0 &&
     scoutData.value.matchNumber > 0 &&
-    scoutData.value.teamNumber < 10000
+    scoutData.value.teamNumber < 15000
   );
 }
 
