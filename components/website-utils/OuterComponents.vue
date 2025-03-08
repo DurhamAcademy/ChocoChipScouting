@@ -35,6 +35,16 @@ let router = useRouter();
 const events = eventOptions;
 const currentEvent = useEventKey();
 
+const colorMode = useColorMode();
+const isDark = computed({
+  get() {
+    return colorMode.value === 'dark';
+  },
+  set() {
+    colorMode.preference = colorMode.value === 'dark' ? 'light' : 'dark';
+  },
+});
+
 watch(currentEvent, value => {
   window.localStorage.setItem('currentEvent', value);
   window.dispatchEvent(new Event('event-changed'));
@@ -55,7 +65,9 @@ if (
 </script>
 
 <template>
-  <div class="flex min-h-screen w-screen flex-col">
+  <div
+    class="min-h-screen w-screen flex-col dark:bg-gray-800 overflow-auto max-h-dvh"
+  >
     <Navbar
       class="flex-grow basis-auto"
       :disable-sidebar="width > 800"
@@ -69,7 +81,7 @@ if (
           class="vis min-h-screen h-screen max-w-full"
         >
           <UCard
-            class="h-full"
+            class="h-full fixed w-[16em]"
             :ui="{ rounded: 'rounded-none' }"
           >
             <UVerticalNavigation :links="links" />
@@ -116,7 +128,7 @@ if (
                     <template #header>
                       <div class="text-center">
                         <span
-                          class="overflow-hidden flex-auto text-zinc-900 max-w-32"
+                          class="overflow-hidden dark:text-white flex-auto max-w-32"
                         >
                           {{ usernameState }}
                         </span>
@@ -131,9 +143,21 @@ if (
                         v-model="currentEvent"
                         :options="events"
                       />
+                      <ClientOnly>
+                        <div class="flex justify-center mt-4">
+                          <UButton
+                            :icon="isDark ? 'i-heroicons-moon-20-solid': 'i-heroicons-sun-20-solid'"
+                            color="white"
+                            variant="solid"
+                            label="Theme"
+                            @click="isDark = !isDark"
+                            class="px-8"
+                          />
+                        </div>
+                      </ClientOnly>
                     </UFormGroup>
-                    <br />
                     <UButton
+                      class="mt-3"
                       icon="i-heroicons-arrow-right-circle"
                       trailing
                       color="black"
@@ -157,7 +181,7 @@ if (
         </div>
       </Transition>
       <div
-        class="flex-col min-w-0 min-h-full max-h-none max-w-full overflow-x-auto flex-grow"
+        class="flex-col min-w-0 min-h-full max-h-none max-w-full overflow-x-hidden flex-grow"
       >
         <slot />
       </div>
@@ -168,7 +192,7 @@ if (
 
 <style scoped>
 .vis {
-  width: 20em;
+  width: 16em;
   left: 0;
   position: relative;
 }

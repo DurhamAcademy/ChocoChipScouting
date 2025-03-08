@@ -1,22 +1,22 @@
 export default defineAppConfig({
-    ui: {
-        primary: 'coral',
-        gray: 'cool'
+  ui: {
+    primary: 'coral',
+    gray: 'cool',
+  },
+  buildModules: ['@nuxtjs/pwa'],
+  pwa: {
+    manifest: {
+      name: 'DARC SIDE ChocoChip Scouting',
+      short_name: 'ChocoChip Scouting',
+      lang: 'en',
+      display: 'standalone',
     },
-    buildModules: ['@nuxtjs/pwa'],
-    pwa: {
-        manifest: {
-            name: 'Fire hydrant surveyor',
-            short_name: 'Hydrant Surveyor',
-            lang: 'en',
-            display: 'standalone',
-        },
-        workbox: {
-            enabled: true
-        }
+    workbox: {
+      enabled: true,
     },
-    notifications: {
-        // Show toasts at the top right of the screen
-        position: 'top-0 right-0'
-    }
-})
+  },
+  notifications: {
+    // Show toasts at the top right of the screen
+    position: 'top-0 right-0',
+  },
+});

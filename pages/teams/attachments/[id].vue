@@ -110,46 +110,46 @@ async function goBack() {
 </script>
 
 <template>
-  <UCard>
+  <UCard class="rounded-none w-screen h-screen">
     <template #header>
       <UButton class="absolute left-2 top-2" variant="ghost" size="xl" icon="i-heroicons-arrow-left" @click="goBack"/>
-      <h1 class="font-extrabold text-4xl text-center">Team {{ route.params.id }} Attachments</h1>
-      <div class="flex mt-2 justify-center">
-        <UButton class="font-sans font-medium mr-2" variant="ghost" color="primary" icon="i-heroicons-adjustments-horizontal" label="Filters: "></UButton>
-        <UInput icon="i-heroicons-magnifying-glass" color="primary" class="w-32" v-model="filterInput"/> <!-- wip -->
-        <UPopover class="px-2">
-          <UButton label="Tags" variant="ghost"/>
-          <template #panel>
-            <div class="p-2 flex-wrap justify-center">
-              <p class="font-sans font-bold text-opacity-60">Choose Tags To Filter</p>
-              <div class="flex justify-center">
-                <UButton v-for="(tag, index) in possibleTags" :label="tag" class="justify center" style="margin:5px" :variant="tagStyles[index]" :ui="{ rounded: 'rounded-full' }" @click="toggleTag(index)"/>
-              </div>
-            </div>
-          </template>
-        </UPopover>
-        <UPopover class="px-2">
-          <UButton label="Events" variant="ghost"/>
-          <template #panel>
-            <div class="flex-wrap justify-center p-2">
-              <p class="font-sans font-bold text-opacity-60">Choose Events To Filter</p>
-              <div class="flex justify-center">
-                <UButton v-for="(tag, index) in possibleEvents" :label="tag" class="justify center" style="margin:5px" :variant="eventStyles[index]" :ui="{ rounded: 'rounded-full' }" @click="toggleEvent(index)"/>
-              </div>
-            </div>
-          </template>
-        </UPopover>
-      </div>
+      <h1 class="font-extrabold text-4xl text-center dark:!text-primary">Team {{ route.params.id }} Attachments</h1>
+<!--      <div class="flex mt-2 justify-center"> NONE OF THIS WORKS ILL FIX IT LATER-->
+<!--        <UButton class="font-sans font-medium mr-2" variant="ghost" color="primary" icon="i-heroicons-adjustments-horizontal" label="Filters: "></UButton>-->
+<!--        <UInput icon="i-heroicons-magnifying-glass" color="primary" class="w-32" v-model="filterInput"/> &lt;!&ndash; wip &ndash;&gt;-->
+<!--        <UPopover class="px-2">-->
+<!--          <UButton label="Tags" variant="ghost"/>-->
+<!--          <template #panel>-->
+<!--            <div class="p-2 flex-wrap justify-center">-->
+<!--              <p class="font-sans font-bold text-opacity-60">Choose Tags To Filter</p>-->
+<!--              <div class="flex justify-center">-->
+<!--                <UButton v-for="(tag, index) in possibleTags" :label="tag" class="justify center" style="margin:5px" :variant[]="tagStyles[index]" :ui="{ rounded: 'rounded-full' }" @click="toggleTag(index)"/>-->
+<!--              </div>-->
+<!--            </div>-->
+<!--          </template>-->
+<!--        </UPopover>-->
+<!--        <UPopover class="px-2">-->
+<!--          <UButton label="Events" variant="ghost"/>-->
+<!--          <template #panel>-->
+<!--            <div class="flex-wrap justify-center p-2">-->
+<!--              <p class="font-sans font-bold text-opacity-60">Choose Events To Filter</p>-->
+<!--              <div class="flex justify-center">-->
+<!--                <UButton v-for="(tag, index) in possibleEvents" :label="tag" class="justify center" style="margin:5px" :variant[]="eventStyles[index]" :ui="{ rounded: 'rounded-full' }" @click="toggleEvent(index)"/>-->
+<!--              </div>-->
+<!--            </div>-->
+<!--          </template>-->
+<!--        </UPopover>-->
+<!--      </div>-->
     </template>
     <template class="flex flex-wrap justify-center">
-      <UModal v-model="openCarousel" fullscreen >
+      <UModal v-model="openCarousel" fullscreen>
         <UButton icon="i-heroicons-x-mark" size="xl" class="absolute right-2 top-2" variant="ghost" @click="openCarousel=false "/>
         <UCarousel
             v-slot="{ item, index }"
             :items="displayURLs"
             :ui="{
         item: 'basis-full justify-center',
-        container: 'rounded-lg bg-gray-100'
+        container: 'rounded-lg bg-gray-100 dark:bg-gray-800'
 
       }"
             :prev-button="{
@@ -222,9 +222,9 @@ async function goBack() {
           </UCard>
         </UContainer>
       </UContainer>
-      <div v-else class="opacity-50">
+      <div v-else class="opacity-50t">
         <img src="/public/sadcookie.png" height="400" width="400" class="mx-auto"/>
-        <h1 class="font-sans text-xl font-bold text-center">No Images</h1>
+        <h1 class="font-sans text-xl font-bold text-center dark:!text-primary">No Images</h1>
       </div>
     </template>
   </UCard>
