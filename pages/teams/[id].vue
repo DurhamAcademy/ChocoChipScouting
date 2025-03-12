@@ -76,7 +76,6 @@ for (let i = 0; i < match.length; i++) {
 // auto, coral, algae, endgame
 const maxScores = [1, 1, 1, 1];
 let teamMatches;
-let teamEvent;
 let tempAutoScore = 0;
 let tempCoralScore = 0;
 let tempAlgaeScore = 0;
@@ -84,14 +83,12 @@ let tempEndgameScore = 0;
 for (let team of teamOrgMatches.keys()) {
   teamMatches = teamOrgMatches.get(team);
   if (teamMatches) {
-    for (let teamEvent of teamMatches) {
-      console.dir(currentEvent);
-      if (teamEvent.event == currentEvent.value) {
-        tempAutoScore += scoreMatchAuto(teamEvent);
-        tempCoralScore += scoreMatchCoral(teamEvent);
-        tempAlgaeScore += scoreMatchAlgae(teamEvent);
-        tempEndgameScore += scoreMatchEndgame(teamEvent);
-        console.dir(tempEndgameScore);
+    for (let teamMatch of teamMatches) {
+      if (teamMatch.event == currentEvent.value) {
+        tempAutoScore += scoreMatchAuto(teamMatch);
+        tempCoralScore += scoreMatchCoral(teamMatch);
+        tempAlgaeScore += scoreMatchAlgae(teamMatch);
+        tempEndgameScore += scoreMatchEndgame(teamMatch);
       }
     }
   }
@@ -340,6 +337,7 @@ watch(width, () => {
         class="mx-auto"
         width="145"
         height="145"
+        alt="No results found"
       />
       <img
         v-else
