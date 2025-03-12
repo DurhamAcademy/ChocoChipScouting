@@ -14,6 +14,7 @@ const props = defineProps<{
 }>();
 
 Chart.register(...registerables);
+const colorMode = useColorMode();
 
 //sets max and min (if specified)
 if (props.min != null) {
@@ -25,7 +26,14 @@ if (props.max != null) {
   //in the future if we make these with decimal maxes but it works for now
 }
 Chart.defaults.scales.radialLinear.ticks.stepSize = 20; //this may need to be a variable in the future
-Chart.defaults.scales.radialLinear.ticks.color = 'rgb(128, 128, 128)';
+if(colorMode.value == "dark"){
+  Chart.defaults.scales.radialLinear.ticks.color = 'rgb(255, 255, 255)';
+  Chart.defaults.scales.radialLinear.pointLabels.color = 'rgb(255, 255, 255)';
+}
+else{
+  Chart.defaults.scales.radialLinear.ticks.color = 'rgb(0, 0, 0)';
+  Chart.defaults.scales.radialLinear.pointLabels.color = 'rgb(0, 0, 0)';
+}
 Chart.defaults.scales.radialLinear.ticks.showLabelBackdrop = false;
 
 
