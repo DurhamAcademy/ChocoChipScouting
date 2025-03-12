@@ -512,13 +512,15 @@ function addDays(date: Date, days: number) {
                 class="mx-auto"
                 width="145"
                 height="145"
+                alt="No results found"
               />
-              <NuxtImg
+              <img
                 v-else
                 src="/angrycookie.png"
                 class="mx-auto"
                 width="145"
                 height="145"
+                alt="No results found"
               />
               alt="No results found"/>
             </div>
