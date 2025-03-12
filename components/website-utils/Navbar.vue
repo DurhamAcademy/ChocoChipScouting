@@ -60,7 +60,7 @@ let links: VerticalNavigationLink[] = [
   { label: 'Teams', to: '/teams' },
   { label: 'Predict', to: '/predict' },
 ];
-console.log(sessionState?.value?.userCtx?.roles);
+
 if (sessionState?.value?.userCtx?.roles?.indexOf('_admin') != -1)
   links.push({ label: 'Users', to: '/users' });
 </script>
