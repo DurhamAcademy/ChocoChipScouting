@@ -25,7 +25,7 @@ if (props.max != null) {
   //in the future if we make these with decimal maxes but it works for now
 }
 Chart.defaults.scales.radialLinear.ticks.stepSize = 20; //this may need to be a variable in the future
-Chart.defaults.scales.radialLinear.ticks.color = 'rgb(255, 99, 132)';
+Chart.defaults.scales.radialLinear.ticks.color = 'rgb(128, 128, 128)';
 Chart.defaults.scales.radialLinear.ticks.showLabelBackdrop = false;
 
 

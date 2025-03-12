@@ -83,10 +83,10 @@ function addDefense(match: any) {
 }
 
 let spiderGraphData = ref([
-  min((autoPoints / props.maxScores[0]) * 100, 100),
-  min((coralPoints / props.maxScores[1]) * 100, 100),
-  min((algaePoints / props.maxScores[2]) * 100, 100),
-  min((endgamePoints / props.maxScores[3]) * 100, 100),
+  min((autoPoints / props.maxScores[0]) * 100, 100) || 0,
+  min((coralPoints / props.maxScores[1]) * 100, 100) || 0,
+  min((algaePoints / props.maxScores[2]) * 100, 100) || 0,
+  min((endgamePoints / props.maxScores[3]) * 100, 100) || 0,
   min((defenseTotal / defenseNum) * 20, 100) || 0, // THE || MAKES IT SO TEAMS WITH NO DATA DONT BREAK
 ]);
 
