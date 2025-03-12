@@ -115,16 +115,6 @@ let promptedNotesDetailedOptions = promptedNoteOptions.map(
         width="w-80"
       ></BarChart>
       <div class="flex-auto whitespace-normal max-h-72 max-w-1/2 w-1/2 ml-4">
-        <div
-          v-if="rowData.rawData[selectedMatch - 1].auto.position != undefined"
-        >
-          <p class="font-extrabold text-sm inline-block dark:text-white">
-            Auto Position: &nbsp;
-          </p>
-          <p class="text-sm inline-block dark:text-white">
-            {{ rowData.rawData[selectedMatch - 1].auto.position }}
-          </p>
-        </div>
         <p class="font-extrabold text-sm dark:text-white mt-1">
           Auto & Endgame:
         </p>

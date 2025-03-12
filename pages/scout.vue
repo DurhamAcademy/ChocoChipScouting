@@ -34,7 +34,6 @@ const endgameOptions = [
 ];
 const allianceWinLoss = ['Blue Win', 'Red Win'];
 
-const isAutoPositionOpen = ref(false);
 
 /*
 Used to configure coral buttons
@@ -81,7 +80,6 @@ let scoutData = ref<ScoutingData>({
     reef: 0,
     reefMiss: 0,
     mobility: false,
-    position: 0,
   },
   teleop: {
     coralL1: 0,
@@ -178,7 +176,7 @@ function isValidNum() {
     scoutData.value.matchNumber != null &&
     scoutData.value.teamNumber > 0 &&
     scoutData.value.matchNumber > 0 &&
-    scoutData.value.teamNumber < 10000
+    scoutData.value.teamNumber < 15000
   );
 }
 
@@ -343,46 +341,15 @@ async function submit() {
                   :options="['L1', 'L2', 'L3', 'L4']"
                   class="ml-0.5"
                 />
-              </div>
-
-              <div class="text-center lg:w-1/2 w-full">
-                <h1 class="text-gray-700 dark:text-gray-200 font-bold">Auto</h1>
-                <h1 class="text-coral-400 font-light text-sm">Position</h1>
-                <div class="flex justify-center">
-                  <SingleSelect
-                    v-model="scoutData.auto.position"
-                    :options="['1', '2', '3', '4']"
-                  />
-                  <UButton
-                    class="m-1"
-                    icon="i-heroicons-photo"
-                    color="primary"
-                    variant="solid"
-                    @click="isAutoPositionOpen = !isAutoPositionOpen"
-                  />
-                </div>
-                <BooleanButton
+                <div>
+                  <BooleanButton
                   :model-value="scoutData.auto.mobility"
                   default-value="Mobility"
                   other-value="Mobility"
                   class="mt-0.5"
                 />
-              </div>
-
-              <UModal v-model="isAutoPositionOpen">
-                <div class="flex relative">
-                  <UButton
-                    class="absolute right-0 m-2"
-                    icon="i-heroicons-x-circle"
-                    @click="isAutoPositionOpen = false"
-                  />
-                  <img
-                    src="/public/ref-image(2025).png"
-                    alt="A picture of the playfield of this year's game"
-                    class="w-full sm:w-full md:w-3/4 lg:w-full"
-                  />
                 </div>
-              </UModal>
+              </div>
             </div>
           </div>
 
