@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import databases, { ScoutingData } from '~/utils/databases';
+import databases, { ScoutingDataTest, TieredObjectiveData, SpecialObjectiveData, SimpleObjectiveData, NoteData } from '~/utils/databases';
 import IncrementalButton from '~/components/scouting-components/IncrementalButton.vue';
 import BooleanButton from '~/components/scouting-components/BooleanButton.vue';
 import PromptedNote from '~/components/scouting-components/PromptedNote.vue';
@@ -12,6 +12,11 @@ import { useEventKey } from '~/composables/useEventKey';
 import SingleSelect from '~/components/scouting-components/SingleSelect.vue';
 import { promptedNoteOptions } from '~/utils/promptedNoteOptions';
 import MultiSelect from "~/components/scouting-components/MultiSelect.vue";
+import jsonData from "~/components/teams-utils/scouting-data-templates/2025.json";
+import TieredObjective from "~/components/scouting-components/data-template-components/TieredObjective.vue";
+import SpecialObjective from "~/components/scouting-components/data-template-components/SpecialObjective.vue";
+import SimpleObjective from "~/components/scouting-components/data-template-components/SimpleObjective.vue";
+import Note from "~/components/scouting-components/data-template-components/Note.vue";
 
 /*
 START SEASONAL UPDATE AREA
@@ -23,26 +28,8 @@ Each is labeled with which component in the HTML below it corresponds with
 Feel free to delete these when you update this page,
 just make sure you understand how they are used in case you wish to use the same custom components we used
  */
-//Endgame Multi-Select Component Options
-const endgameOptions = [
-  'None',
-  'Parked',
-  'Shallow Attempted',
-  'Shallow Successful',
-  'Deep Attempted',
-  'Deep Successful',
-];
 
-const isAutoPositionOpen = ref(false);
-
-/*
-Used to configure coral buttons
- */
-const coralLevel = ref(0);
-
-/*
-Configuration variables done
- */
+climbOptions = jsonData.endgame.climb.options;
 
 /**
  * updateEndgameOptions updates the scoutData variable to match the currently selected option in the endgame multiselect
@@ -55,80 +42,36 @@ function updateEndgameOptions(value: Array<number>) {
       arr.push(endgameOptions[i]);
     }
   }
-  scoutData.value.endgame.endgame = arr;
-  if (scoutData.value.endgame.endgame.length < 1) {
-    scoutData.value.endgame.endgame = [endgameOptions[0]];
+  scoutData.value.endgame.climb = arr;
+  if (scoutData.value.endgame.climb.length < 1) {
+    scoutData.value.endgame.endgame = [climbOptions[0]];
   }
 }
 
 // all the data collected on the scout page in the form of a ScoutingData object,
 // you can edit this in the utils/databases.ts file
-let scoutData = ref<ScoutingData>({
-  event: '',
+let scoutData = ref<ScoutingDataTest>({
   teamNumber: '',
+  event: '',
   matchNumber: '',
   author: '',
   auto: {
-    coralL1: 0,
-    coralL2: 0,
-    coralL3: 0,
-    coralL4: 0,
-    coralL1Miss: 0,
-    coralL2Miss: 0,
-    coralL3Miss: 0,
-    coralL4Miss: 0,
-    reef: 0,
-    reefMiss: 0,
-    processorMiss: 0,
-    processor: 0,
-    netMiss: 0,
-    net: 0,
-    mobility: false,
-    position: 0,
+    tieredObjectives: [],
+    specialObjectives: [],
+    simpleObjectives: [],
+    notes: [],
   },
   teleop: {
-    coralL1: 0,
-    coralL2: 0,
-    coralL3: 0,
-    coralL4: 0,
-    coralL1Miss: 0,
-    coralL2Miss: 0,
-    coralL3Miss: 0,
-    coralL4Miss: 0,
-    reef: 0,
-    reefMiss: 0,
-    processorMiss: 0,
-    processor: 0,
-    netMiss: 0,
-    net: 0,
+    tieredObjectives: [],
+    notes: []
   },
   endgame: {
-    endgame: [endgameOptions[0]],
+    climb: [],
+    notes: []
   },
   notes: {
-    notes: '',
-    promptedNotes: [
-      {
-        selected: false,
-        rating: 1,
-        notes: [],
-      },
-      {
-        selected: false,
-        rating: 1,
-        notes: [],
-      },
-      {
-        selected: false,
-        rating: 1,
-        notes: [],
-      },
-      {
-        selected: false,
-        rating: 1,
-        notes: [],
-      },
-    ],
+    grouped_notes: [],
+    notes: []
   },
 });
 
@@ -262,6 +205,7 @@ async function submit() {
             </UFormGroup>
           </div>
           <br />
+          <!-- TODO: change this to UTabs -->
           <!-- the tabs for each game period (auto, teleop, endgame, notes) -->
           <UButtonGroup class="flex">
             <UButton
@@ -278,77 +222,12 @@ async function submit() {
         </template>
         <!-- In this section put all the elements you want to be shown under the autonomous tab -->
         <div v-if="gameTime == GameTime.Autonomous">
+          <TieredObjective v-for="(tieredObjective, index) of jsonData.auto.tiered_objectives" :template="tieredObjective" :data="scoutData.auto.tieredObjectives[index]" />
+          <SpecialObjective v-for="(specialObjective, index) of jsonData.auto.special_objectives" :template="specialObjective" :data="scoutData.auto.specialObjectives[index]" />
+          <SimpleObjective v-for="(simpleObjective, index) of jsonData.auto.simple_objectives" :template="simpleObjective" :data="scoutData.auto.simpleObjectives[index]" />
+          <Note v-for="(prompt, index) of jsonData.auto.notes" :prompt="prompt" :data="scoutData.auto.notes[index]" />
           <div class="flex">
             <div class="max-w-30 w-30">
-              <div class="w-fit text-center ml-4">
-                <h1
-                    class="text-gray-700 dark:text-gray-200 font-sans font-bold"
-                >
-                  Coral
-                </h1>
-                <div class="flex flex-auto justify-center max-w-44">
-                  <div class="flex-auto text-center mr-2">
-                    <h1
-                        class="text-coral-400 font-sans mt-1 font-light text-sm"
-                    >
-                      Missed
-                    </h1>
-                    <IncrementalButton
-                        class="my-1"
-                        v-model="scoutData.auto.coralL1Miss"
-                        v-if="coralLevel == 0"
-                    ></IncrementalButton>
-                    <IncrementalButton
-                        class="my-1"
-                        v-model="scoutData.auto.coralL2Miss"
-                        v-else-if="coralLevel == 1"
-                    ></IncrementalButton>
-                    <IncrementalButton
-                        class="my-1"
-                        v-model="scoutData.auto.coralL3Miss"
-                        v-else-if="coralLevel == 2"
-                    ></IncrementalButton>
-                    <IncrementalButton
-                        class="my-1"
-                        v-model="scoutData.auto.coralL4Miss"
-                        v-else
-                    ></IncrementalButton>
-                  </div>
-                  <div class="flex-auto text-center">
-                    <h1
-                        class="text-coral-400 font-sans mt-1 font-light text-sm"
-                    >
-                      Scored
-                    </h1>
-                    <IncrementalButton
-                        class="my-1"
-                        v-model="scoutData.auto.coralL1"
-                        v-if="coralLevel == 0"
-                    ></IncrementalButton>
-                    <IncrementalButton
-                        class="my-1"
-                        v-model="scoutData.auto.coralL2"
-                        v-else-if="coralLevel == 1"
-                    ></IncrementalButton>
-                    <IncrementalButton
-                        class="my-1"
-                        v-model="scoutData.auto.coralL3"
-                        v-else-if="coralLevel == 2"
-                    ></IncrementalButton>
-                    <IncrementalButton
-                        class="my-1"
-                        v-model="scoutData.auto.coralL4"
-                        v-else
-                    ></IncrementalButton>
-                  </div>
-                </div>
-                <div class="ml-0.5">
-                  <SingleSelect
-                      v-model="coralLevel"
-                      :options="['L1', 'L2', 'L3', 'L4']"
-                  />
-                </div>
-              </div>
               <div class="flex flex-auto justify-center"></div>
               <br />
               <div class="flex text-center">

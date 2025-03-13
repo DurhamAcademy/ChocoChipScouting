@@ -181,7 +181,7 @@ export default {
 
 // NEW SCOUTING DATA FORMATTING
 export type ScoutingDataTest = {
-  teamNumber: string;
+  teamNumber: number;
   eventKey: string;
   matchNumber: number;
   author: string;
@@ -201,6 +201,7 @@ export type ScoutingDataTest = {
   };
   notes: {
     grouped_notes: GroupNoteData[];
+    notes: NoteData[];
   }
 };
 
@@ -228,6 +229,10 @@ export type NoteData = {
 export type GroupNoteData = {
   rating: number;
   notes: NoteData[];
+}
+
+export type ClimbOptionData = {
+  options: string[];
 }
 
 
