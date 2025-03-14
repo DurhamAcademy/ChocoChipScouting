@@ -23,15 +23,6 @@
           }
         ]
       }],
-    "special_objectives": [{
-      "name": "Auto Position",
-      "possible": [
-        "1",
-        "2",
-        "3",
-        "4"
-      ]
-    }],
     "simple_objectives": [{
       "name": "Mobility",
       "points": 3
@@ -82,41 +73,43 @@
     }]
   },
   "endgame": {
-    "climb": {
+    "special_objectives": [
+      {
+      "name": "Climb",
       "options": [
         {
-          "singular": true,
+          "connected_options": 1,
           "name": "None",
           "points": 0
         },
         {
-          "singular": false,
+          "connected_options": 2,
           "name": "Parked",
           "points": 2
         },
         {
-          "singular": false,
+          "connected_options": 2,
           "name": "Shallow Attempted",
           "points": 0
         },
         {
-          "singular": true,
+          "connected_options": 3,
           "name": "Shallow Successful",
           "points": 6
         },
         {
-        "singular": false,
+        "connected_options": 2,
         "name": "Deep Attempted",
           "points": 0
         },
         {
-          "singular": true,
+          "connected_options": 4,
           "name": "Deep Successful",
           "points": 12
         }
       ]
 
-    },
+    }],
     "notes": [{
       "desc": "Other notes..."
     }]

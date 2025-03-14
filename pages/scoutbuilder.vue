@@ -1,72 +1,35 @@
 <script lang="ts" setup>
 import databases, { ScoutingDataTest, TieredObjectiveData, SpecialObjectiveData, SimpleObjectiveData, NoteData } from '~/utils/databases';
-import IncrementalButton from '~/components/scouting-components/IncrementalButton.vue';
-import BooleanButton from '~/components/scouting-components/BooleanButton.vue';
-import PromptedNote from '~/components/scouting-components/PromptedNote.vue';
 import Navbar from '~/components/website-utils/Navbar.vue';
 import { eventOptions } from '~/utils/eventOptions';
 import type { Ref } from '@vue/reactivity';
 import type { UnwrapRef } from 'vue';
 import { loginStateKey } from '~/utils/keys';
 import { useEventKey } from '~/composables/useEventKey';
-import SingleSelect from '~/components/scouting-components/SingleSelect.vue';
-import { promptedNoteOptions } from '~/utils/promptedNoteOptions';
-import MultiSelect from "~/components/scouting-components/MultiSelect.vue";
 import jsonData from "~/components/teams-utils/scouting-data-templates/2025.json";
 import TieredObjective from "~/components/scouting-components/data-template-components/TieredObjective.vue";
 import SpecialObjective from "~/components/scouting-components/data-template-components/SpecialObjective.vue";
 import SimpleObjective from "~/components/scouting-components/data-template-components/SimpleObjective.vue";
 import Note from "~/components/scouting-components/data-template-components/Note.vue";
+import NoteSections from "~/components/scouting-components/data-template-components/NoteSections.vue";
 
-/*
-START SEASONAL UPDATE AREA
- */
 
-/*
-The following are a bunch of configuration variables used for the 2024 season
-Each is labeled with which component in the HTML below it corresponds with
-Feel free to delete these when you update this page,
-just make sure you understand how they are used in case you wish to use the same custom components we used
- */
-
-climbOptions = jsonData.endgame.climb.options;
-
-/**
- * updateEndgameOptions updates the scoutData variable to match the currently selected option in the endgame multiselect
- * @param value the currently selected option
- */
-function updateEndgameOptions(value: Array<number>) {
-  let arr = [];
-  for (let i = 0; i < value.length; i++) {
-    if (value[i] == 1) {
-      arr.push(endgameOptions[i]);
-    }
-  }
-  scoutData.value.endgame.climb = arr;
-  if (scoutData.value.endgame.climb.length < 1) {
-    scoutData.value.endgame.endgame = [climbOptions[0]];
-  }
-}
-
-// all the data collected on the scout page in the form of a ScoutingData object,
-// you can edit this in the utils/databases.ts file
 let scoutData = ref<ScoutingDataTest>({
   teamNumber: '',
   event: '',
   matchNumber: '',
   author: '',
   auto: {
-    tieredObjectives: [],
-    specialObjectives: [],
-    simpleObjectives: [],
+    tiered_objectives: [],
+    simple_objectives: [],
     notes: [],
   },
   teleop: {
-    tieredObjectives: [],
+    tiered_objectives: [],
     notes: []
   },
   endgame: {
-    climb: [],
+    special_objectives: [],
     notes: []
   },
   notes: {
@@ -75,11 +38,7 @@ let scoutData = ref<ScoutingDataTest>({
   },
 });
 
-/*
-END SEASON UPDATE AREA
-NOTE: you must also update the HTML at the bottom of this page that defines how users will scout matches
-to make your work easier we have implemented custom components in the /components directory that you can use just like other HTML objects
- */
+console.log(JSON.stringify(scoutData, null, 2))
 
 //gets username and scouting database
 const {
@@ -89,16 +48,25 @@ const {
 } = inject(loginStateKey)!;
 const { scoutingData: db } = databases.locals;
 
-//An enum of tabs on the scout page
-enum GameTime {
-  Autonomous = 'Auto',
-  Teleoperated = 'Teleop',
-  Endgame = 'Endgame',
-  Notes = 'Notes',
-}
 
-//The active tab used
-let gameTime = ref(GameTime.Autonomous);
+const gameTimes = [
+  {
+    label: 'Auto',
+    slot: 'auto'
+  },
+  {
+    label: 'Teleop',
+    slot: 'teleop'
+  },
+  {
+    label: 'Endgame',
+    slot: 'endgame'
+  },
+  {
+    label: 'Notes',
+    slot: 'notes'
+  }
+]
 
 //gets current event key
 const currentEvent = useEventKey();
@@ -120,11 +88,11 @@ let validTeamNums = ref<Array<number>>();
 //a quick function to check if the team and match numbers a user enters are valid
 function isValidNum() {
   return (
-      scoutData.value.teamNumber != null &&
-      scoutData.value.matchNumber != null &&
-      scoutData.value.teamNumber > 0 &&
-      scoutData.value.matchNumber > 0 &&
-      scoutData.value.teamNumber < 10000
+      scoutData.value.team_number != null &&
+      scoutData.value.match_number != null &&
+      scoutData.value.team_number > 0 &&
+      scoutData.value.match_number > 0 &&
+      scoutData.value.team_number < 10000
   );
 }
 
@@ -133,14 +101,14 @@ function isValidNum() {
  also redirects the webpage to the /matches page (notice navigateTo)
  */
 async function submit() {
-  scoutData.value.teamNumber = parseInt(scoutData.value.teamNumber);
-  scoutData.value.matchNumber = parseInt(scoutData.value.matchNumber);
+  scoutData.value.team_number = parseInt(scoutData.value.team_number);
+  scoutData.value.match_number = parseInt(scoutData.value.match_number);
   if (
-      !Number.isNaN(scoutData.value.teamNumber) &&
-      !Number.isNaN(scoutData.value.matchNumber)
+      !Number.isNaN(scoutData.value.team_number) &&
+      !Number.isNaN(scoutData.value.match_number)
   ) {
     scoutData.value.author = usernameState.value;
-    scoutData.value.event = currentEvent.value || eventOptions[0];
+    scoutData.value.event_key = currentEvent.value || eventOptions[0];
     await db.post(scoutData.value);
     await navigateTo('/teams');
   }
@@ -157,7 +125,7 @@ async function submit() {
             <div class="flex-0 pr-2">
               <!-- The input for teamNumber shown in the heading of the page. visit NUXT UI documentaiton to understand UInput and other NUXT elements -->
               <UInput
-                  v-model="scoutData.teamNumber"
+                  v-model="scoutData.team_number"
                   placeholder="Team #"
               >
                 <!-- shows the red 'not found' text if the team number inputted isnt in the valid teams array -->
@@ -167,10 +135,9 @@ async function submit() {
                       v-if="
                       validTeamNums &&
                       validTeamNums.length > 0 &&
-                      !validTeamNums.includes(parseInt(scoutData.teamNumber))
+                      !validTeamNums.includes(parseInt(scoutData.team_number))
                     "
-                  >!!</span
-                  >
+                  >!!</span>
                   <span v-else></span>
                 </template>
               </UInput>
@@ -178,7 +145,7 @@ async function submit() {
             <div class="flex-0 pr-2">
               <!-- the input for the match number -->
               <UInput
-                  v-model="scoutData.matchNumber"
+                  v-model="scoutData.match_number"
                   placeholder="Match #"
               >
                 <!-- same thing as above, shows an error text if the number is invalid -->
@@ -186,9 +153,9 @@ async function submit() {
                   <span
                       class="text-red-400 dark:text-red-600 text-xs"
                       v-if="
-                      isNaN(parseInt(scoutData.matchNumber)) &&
-                      scoutData.matchNumber != null &&
-                      scoutData.matchNumber != ''
+                      isNaN(parseInt(scoutData.match_number)) &&
+                      scoutData.match_number != null &&
+                      scoutData.match_number != ''
                     "
                   >error</span
                   >
@@ -205,280 +172,27 @@ async function submit() {
             </UFormGroup>
           </div>
           <br />
-          <!-- TODO: change this to UTabs -->
-          <!-- the tabs for each game period (auto, teleop, endgame, notes) -->
-          <UButtonGroup class="flex">
-            <UButton
-                v-for="gamePeriod of GameTime"
-                :variant="gameTime == gamePeriod ? 'solid' : 'soft'"
-                :label="gamePeriod"
-                block
-                class="w-auto"
-                enabled
-                style="flex: 1"
-                @click="gameTime = gamePeriod"
-            />
-          </UButtonGroup>
+          <UTabs :items="gameTimes">
+            <template #auto="{ item }">
+              <TieredObjective v-for="(tieredObjective, index) of jsonData.auto.tiered_objectives" :template="tieredObjective" :data="scoutData.auto.tiered_objectives[index] ?? {}" />
+              <SimpleObjective v-for="(simpleObjective, index) of jsonData.auto.simple_objectives" :template="simpleObjective" :data="scoutData.auto.simple_objectives[index] ?? {}" />
+              <Note v-for="(prompt, index) of jsonData.auto.notes" :template="prompt" :data="scoutData.auto.notes[index] ?? {}" />
+            </template>
+            <template #teleop="{ item }">
+              <TieredObjective v-for="(tieredObjective, index) of jsonData.teleop.tiered_objectives" :template="tieredObjective" :data="scoutData.auto.tiered_objectives[index] ?? {}" />
+              <Note v-for="(prompt, index) of jsonData.teleop.notes" :template="prompt" :data="scoutData.teleop.notes[index] ?? {}" />
+            </template>
+            <template #endgame="{ item }">
+              <SpecialObjective v-for="(specialObjective, index) of jsonData.endgame.special_objectives" :template="specialObjective" :data="scoutData.endgame.special_objectives[index] ?? {}" />
+              <Note v-for="(prompt, index) of jsonData.endgame.notes" :template="prompt" :data="scoutData.endgame.notes[index] ?? {}" />
+            </template>
+            <template #notes="{ item }">
+              <NoteSections :template="jsonData.notes.note_sections" :data="scoutData.notes.grouped_notes ?? {}" />
+              <Note v-for="(prompt, index) of jsonData.notes.notes" :template="prompt" :data="scoutData.notes.notes[index] ?? {}" />
+            </template>
+          </UTabs>
         </template>
-        <!-- In this section put all the elements you want to be shown under the autonomous tab -->
-        <div v-if="gameTime == GameTime.Autonomous">
-          <TieredObjective v-for="(tieredObjective, index) of jsonData.auto.tiered_objectives" :template="tieredObjective" :data="scoutData.auto.tieredObjectives[index]" />
-          <SpecialObjective v-for="(specialObjective, index) of jsonData.auto.special_objectives" :template="specialObjective" :data="scoutData.auto.specialObjectives[index]" />
-          <SimpleObjective v-for="(simpleObjective, index) of jsonData.auto.simple_objectives" :template="simpleObjective" :data="scoutData.auto.simpleObjectives[index]" />
-          <Note v-for="(prompt, index) of jsonData.auto.notes" :prompt="prompt" :data="scoutData.auto.notes[index]" />
-          <div class="flex">
-            <div class="max-w-30 w-30">
-              <div class="flex flex-auto justify-center"></div>
-              <br />
-              <div class="flex text-center">
-                <div>
-                  <div class="ml-5">
-                    <br />
-                    <h1
-                        class="text-gray-700 dark:text-gray-200 font-sans font-bold underline"
-                    >
-                      Auto Position
-                    </h1>
-                    <SingleSelect
-                        v-model="scoutData.auto.position"
-                        :options="['1', '2', '3', '4']"
-                    />
-                    <!-- a true/false button (custom component) -->
-                    <BooleanButton
-                        class="mt-1"
-                        v-model="scoutData.auto.mobility"
-                        :default-value="'Mobility'"
-                        :other-value="'Mobility'"
-                    />
-                  </div>
-                </div>
-              </div>
-              <UButton
-                  class="flex auto-center, md:mt-5"
-                  @click="isAutoPositionOpen = true"
-                  label="Reference"
-              />
-              <!-- the popup for the reference image -->
-              <UModal v-model="isAutoPositionOpen">
-                <div class="flex flex-auto">
-                  <UButton
-                      class="mr-2 mt-2 right-0 absolute"
-                      @click="isAutoPositionOpen = false"
-                      icon="i-heroicons-x-circle"
-                  />
-                  <img src="/public/referenceImage2.png" alt="A picture of the playfield of this year's game"/>
-                  <!-- main focus: fixing auto tab, specifically shifting auto position buttons up
-                also, figuring out why "coral level", "score", "missed" all shift with the buttons-->
-                </div>
-              </UModal>
-            </div>
-          </div>
-        </div>
-
-        <!-- In this section put all the elements you want to be shown under the teleop tab -->
-        <div v-if="gameTime == GameTime.Teleoperated">
-          <div class="flex text-center">
-            <div class="max-w-30 w-30">
-              <div class="w-fit text-center ml-4">
-                <h1
-                    class="text-gray-700 dark:text-gray-200 font-sans font-bold"
-                >
-                  Coral
-                </h1>
-                <div class="flex flex-auto justify-center max-w-44">
-                  <div class="flex-auto text-center mr-2">
-                    <h1
-                        class="text-coral-400 font-sans mt-1 font-light text-sm"
-                    >
-                      Missed
-                    </h1>
-                    <IncrementalButton
-                        class="my-1"
-                        v-model="scoutData.teleop.coralL1Miss"
-                        v-if="coralLevel == 0"
-                    ></IncrementalButton>
-                    <IncrementalButton
-                        class="my-1"
-                        v-model="scoutData.teleop.coralL2Miss"
-                        v-else-if="coralLevel == 1"
-                    ></IncrementalButton>
-                    <IncrementalButton
-                        class="my-1"
-                        v-model="scoutData.teleop.coralL3Miss"
-                        v-else-if="coralLevel == 2"
-                    ></IncrementalButton>
-                    <IncrementalButton
-                        class="my-1"
-                        v-model="scoutData.teleop.coralL4Miss"
-                        v-else
-                    ></IncrementalButton>
-                  </div>
-                  <div class="flex-auto text-center">
-                    <h1
-                        class="text-coral-400 font-sans mt-1 font-light text-sm"
-                    >
-                      Scored
-                    </h1>
-                    <IncrementalButton
-                        class="my-1"
-                        v-model="scoutData.teleop.coralL1"
-                        v-if="coralLevel == 0"
-                    ></IncrementalButton>
-                    <IncrementalButton
-                        class="my-1"
-                        v-model="scoutData.teleop.coralL2"
-                        v-else-if="coralLevel == 1"
-                    ></IncrementalButton>
-                    <IncrementalButton
-                        class="my-1"
-                        v-model="scoutData.teleop.coralL3"
-                        v-else-if="coralLevel == 2"
-                    ></IncrementalButton>
-                    <IncrementalButton
-                        class="my-1"
-                        v-model="scoutData.teleop.coralL4"
-                        v-else
-                    ></IncrementalButton>
-                  </div>
-                </div>
-                <div class="ml-0.5">
-                  <SingleSelect
-                      v-model="coralLevel"
-                      :options="['L1', 'L2', 'L3', 'L4']"
-                  />
-                </div>
-              </div>
-              <br />
-              <div class="flex text-center">
-                <div class="max-w-24 w-24">
-                  <h1
-                      class="text-gray-700 dark:text-gray-200 font-sans mr-3 mb-1 font-bold underline"
-                  >
-                    Net
-                  </h1>
-                  <h1
-                      class="text-coral-400 font-sans mr-3 mt-1 font-light text-sm"
-                  >
-                    Scored
-                  </h1>
-                  <IncrementalButton
-                      class="mb-1 mr-3 mt-1"
-                      v-model="scoutData.teleop.net"
-                  ></IncrementalButton>
-                  <br />
-                  <h1
-                      class="text-coral-400 font-sans mr-3 mt-1 font-light text-sm"
-                  >
-                    Missed
-                  </h1>
-                  <!-- we decided it was easiest to separate scoring and missing this year
-                so this does the same thing as the above incremental button but for missed shots -->
-                  <IncrementalButton
-                      class="mb-0 mr-3 mt-1"
-                      v-model="scoutData.teleop.netMiss"
-                  ></IncrementalButton>
-                </div>
-                <div class="max-w-24 w-24">
-                  <h1
-                      class="text-gray-700 dark:text-gray-200 font-sans mr-3 mb-1 font-bold underline"
-                  >
-                    Processor
-                  </h1>
-                  <h1
-                      class="text-coral-400 font-sans mr-3 mt-1 font-light text-sm"
-                  >
-                    Scored
-                  </h1>
-                  <!-- input method for auto and the scoring method 'processor' for 24' season -->
-                  <IncrementalButton
-                      class="mb-1 mr-3 mt-1"
-                      v-model="scoutData.teleop.processor"
-                  ></IncrementalButton>
-                  <br />
-                  <h1
-                      class="text-coral-400 font-sans mr-3 mt-1 font-light text-sm"
-                  >
-                    Missed
-                  </h1>
-                  <!-- missed points for processor -->
-                  <IncrementalButton
-                      class="mb-0 mr-3 mt-1"
-                      v-model="scoutData.teleop.processorMiss"
-                  ></IncrementalButton>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <!-- In this section put all the elements you want for the endgame tab -->
-        <div v-if="gameTime == GameTime.Endgame">
-          <!-- a multi select custom component. this acts like the single select but allows you to select multiple buttons at a time.
-        the connection options optional param allows you to configure which options are allowed to be selected with each other
-        notice the @update: which runs the updateEndgameOptions() function upon each update of the custom component-->
-          <MultiSelect
-              :model-value="[1, 0, 0, 0, 0, 0]"
-              :options="endgameOptions"
-              @update:model-value="
-            value => {
-              updateEndgameOptions(value);
-            }
-          "
-              :connected-options="[1, 2, 2, 3, 2, 4]"
-          />
-        </div>
-        <!-- In this section put all the elements you want in the notes tab -->
-        <div v-if="gameTime == GameTime.Notes">
-          <!-- A UAccordion is a grouping of different dropdowns
-        in this case, it is used to allow for different categories-->
-          <UAccordion
-              open-icon="i-heroicons-plus"
-              close-icon="i-heroicons-minus"
-              :items="[
-              { label: 'Offense', slot: 'offense', defaultOpen: true },
-              { label: 'Defense', slot: 'defense' },
-              { label: 'Driver', slot: 'driver' },
-              { label: 'Robustness', slot: 'robustness' },
-            ]"
-          >
-            <!-- templates fill the UAccordion's sections -->
-            <template #offense>
-              <!-- the PromptedNote custom component takes in an array of questions and how many lines should be expected as output for that question
-            for example: 'Where did this team play defense?' is the question while '1' is the number of lines expected for that response
-            it then returns an array of answers to the questions which is updated to the scoutData variable
-             These are stored in an object under /utils/promptedNoteOptions and used below -->
-              <PromptedNote
-                  v-model="scoutData.notes.promptedNotes[0]"
-                  :questions="promptedNoteOptions[0].questions"
-              />
-            </template>
-            <template #defense>
-              <PromptedNote
-                  v-model="scoutData.notes.promptedNotes[1]"
-                  :questions="promptedNoteOptions[1].questions"
-              />
-            </template>
-            <template #driver>
-              <PromptedNote
-                  v-model="scoutData.notes.promptedNotes[2]"
-                  :questions="promptedNoteOptions[2].questions"
-              />
-            </template>
-            <template #robustness>
-              <PromptedNote
-                  v-model="scoutData.notes.promptedNotes[3]"
-                  :questions="promptedNoteOptions[3].questions"
-              />
-            </template>
-          </UAccordion>
-        </div>
         <template #footer>
-          <!-- A general notes area using the NUXT UI UTextarea-->
-          <UTextarea
-              v-model="scoutData.notes.notes"
-              color="red"
-              placeholder="Other notes..."
-          />
-          <br />
           <div class="flex justify-between">
             <div>
               <!-- a button to cancel -->

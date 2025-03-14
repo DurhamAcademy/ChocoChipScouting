@@ -181,13 +181,12 @@ export default {
 
 // NEW SCOUTING DATA FORMATTING
 export type ScoutingDataTest = {
-  teamNumber: number;
-  eventKey: string;
-  matchNumber: number;
+  team_number: number;
+  event_key: string;
+  match_number: number;
   author: string;
   auto: {
     tiered_objectives: TieredObjectiveData[]; // 1x coral
-    special_objectives: SpecialObjectiveData[]; // 1x auto starting position
     simple_objectives: SimpleObjectiveData[]; // 1x mobility
     notes: NoteData[]; // 1x note
   };
@@ -196,7 +195,7 @@ export type ScoutingDataTest = {
     notes: NoteData[];
   };
   endgame: {
-    climb: ClimbOptionData[];
+    special_objectives: SpecialObjectiveData[];
     notes: NoteData[];
   };
   notes: {
@@ -206,8 +205,8 @@ export type ScoutingDataTest = {
 };
 
 export type ObjectiveData = {
-  countMade: number;
-  countMissed: number;
+  count_made: number;
+  count_missed: number;
 }
 
 export type TieredObjectiveData = {
@@ -215,7 +214,11 @@ export type TieredObjectiveData = {
 }
 
 export type SpecialObjectiveData = {
-  objective: string;
+  options: SpecialObjectiveOptionData[];
+}
+
+export type SpecialObjectiveOptionData = {
+  selected: boolean;
 }
 
 export type SimpleObjectiveData = {
@@ -231,8 +234,47 @@ export type GroupNoteData = {
   notes: NoteData[];
 }
 
-export type ClimbOptionData = {
-  options: string[];
+export type TieredObjectiveTemplate = {
+  name: string;
+  missed: boolean;
+  objectives: ObjectiveTemplate[];
+}
+
+export type ObjectiveTemplate = {
+  name: string;
+  points: number;
+}
+
+export type SimpleObjectiveTemplate = {
+  name: string;
+  points: number;
+}
+
+export type NoteTemplate = {
+  prompt: string;
+}
+
+export type NoteSectionData = {
+  selected: boolean;
+  rating: number;
+  notes: NoteData[];
+}
+
+export type NoteSectionTemplate = {
+  name: string;
+  rating_bar_max: number;
+  notes: NoteTemplate[];
+}
+
+export type SpecialObjectiveTemplate = {
+  name: string;
+  options: SpecialObjectiveOptionTemplate[];
+}
+
+export type SpecialObjectiveOptionTemplate = {
+  name: string;
+  connected_options: number;
+  points: number;
 }
 
 
