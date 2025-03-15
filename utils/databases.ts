@@ -24,7 +24,7 @@ class LocalRemoteDatabaseSyncHolder<Content extends {} = {}> {
 
   static databases = {
     attachments: new LocalRemoteDatabaseSyncHolder<Attachments>('attachments'),
-    scoutingData: new LocalRemoteDatabaseSyncHolder<ScoutingData>(
+    scoutingData: new LocalRemoteDatabaseSyncHolder<ScoutingDataTest>(
       'scouting-data',
     ),
     basic: new LocalRemoteDatabaseSyncHolder<{}>('basic'),
@@ -186,20 +186,25 @@ export type ScoutingDataTest = {
   match_number: number;
   author: string;
   auto: {
-    tiered_objectives: TieredObjectiveData[]; // 1x coral
-    simple_objectives: SimpleObjectiveData[]; // 1x mobility
-    notes: NoteData[]; // 1x note
+    tiered_objectives: TieredObjectiveData[];
+    simple_objectives: SimpleObjectiveData[];
+    special_objectives: SpecialObjectiveData[];
+    notes: NoteData[];
   };
   teleop: {
-    tiered_objectives: TieredObjectiveData[]; // 1x coral, 1x algae
+    tiered_objectives: TieredObjectiveData[];
+    simple_objectives: SimpleObjectiveData[];
+    special_objectives: SpecialObjectiveData[];
     notes: NoteData[];
   };
   endgame: {
+    tiered_objectives: TieredObjectiveData[];
+    simple_objectives: SimpleObjectiveData[];
     special_objectives: SpecialObjectiveData[];
     notes: NoteData[];
   };
   notes: {
-    grouped_notes: GroupNoteData[];
+    note_sections: NoteSectionData[];
     notes: NoteData[];
   }
 };

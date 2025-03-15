@@ -15,9 +15,9 @@ import NoteSections from "~/components/scouting-components/data-template-compone
 
 
 let scoutData = ref<ScoutingDataTest>({
-  team_number: '',
+  team_number: null,
   event_key: '',
-  match_number: '',
+  match_number: null,
   author: '',
   auto: {
     tiered_objectives: [],
@@ -105,17 +105,17 @@ function isValidNum() {
  */
 async function submit() {
   console.log(scoutData.value)
-  // scoutData.value.team_number = parseInt(scoutData.value.team_number);
-  // scoutData.value.match_number = parseInt(scoutData.value.match_number);
-  // if (
-  //     !Number.isNaN(scoutData.value.team_number) &&
-  //     !Number.isNaN(scoutData.value.match_number)
-  // ) {
-  //   scoutData.value.author = usernameState.value;
-  //   scoutData.value.event_key = currentEvent.value || eventOptions[0];
-  //   await db.post(scoutData.value);
-  //   await navigateTo('/teams');
-  // }
+  scoutData.value.team_number = parseInt(scoutData.value.team_number);
+  scoutData.value.match_number = parseInt(scoutData.value.match_number);
+  if (
+      !Number.isNaN(scoutData.value.team_number) &&
+      !Number.isNaN(scoutData.value.match_number)
+  ) {
+    scoutData.value.author = usernameState.value;
+    scoutData.value.event_key = currentEvent.value || eventOptions[0];
+    await db.post(scoutData.value);
+    await navigateTo('/teams');
+  }
 }
 </script>
 

@@ -86,7 +86,7 @@ async function setup() {
     },
   );
   let matches = await Promise.all(promiseMatches);
-  console.log(matches);
+
   //filters data to ensure all data is usable and of the current event
   matches = matches.filter(function (match) {
     return !(
@@ -95,7 +95,6 @@ async function setup() {
       match.event != currentEvent.value
     );
   });
-  console.log(matches);
   items = matches;
 }
 

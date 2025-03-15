@@ -1,6 +1,6 @@
 import { couchDBBaseURL } from '~/utils/URIs';
 import PouchDB from 'pouchdb';
-import { Attachments, ScoutingData } from '~/utils/databases';
+import { Attachments, ScoutingData, ScoutingDataTest } from '~/utils/databases';
 
 class LocalRemoteServerSideDatabaseSyncHolder<Content extends {} = {}> {
   name: string;
@@ -44,7 +44,7 @@ class LocalRemoteServerSideDatabaseSyncHolder<Content extends {} = {}> {
       ['drive team', 'scout', 'pit', 'other', '_admin'],
       ['_admin', 'admin'],
     ),
-    scoutingData: new LocalRemoteServerSideDatabaseSyncHolder<ScoutingData>(
+    scoutingData: new LocalRemoteServerSideDatabaseSyncHolder<ScoutingDataTest>(
       'scouting-data',
       false,
       ['drive team', 'scout', 'pit', 'other', '_admin'],
