@@ -115,17 +115,7 @@ let promptedNotesDetailedOptions = promptedNoteOptions.map(
         width="w-80"
       ></BarChart>
       <div class="flex-auto whitespace-normal max-h-72 max-w-1/2 w-1/2 ml-4">
-        <div
-          v-if="rowData.rawData[selectedMatch - 1].auto.position != undefined"
-        >
-          <p class="font-extrabold text-sm inline-block dark:!text-primary">
-            Auto Position: &nbsp;
-          </p>
-          <p class="text-sm inline-block dark:!text-primary">
-            {{ rowData.rawData[selectedMatch - 1].auto.position }}
-          </p>
-        </div>
-        <p class="font-extrabold text-sm dark:!text-primary mt-1">
+        <p class="font-extrabold text-sm dark:text-white mt-1">
           Auto & Endgame:
         </p>
         <div class="pb-1">
@@ -147,7 +137,7 @@ let promptedNotesDetailedOptions = promptedNoteOptions.map(
           </UBadge>
         </div>
         <div
-          class="text-wrap max-w-full w-full h-2/3 max-h-2/3 overflow-y-scroll overflow-x-hidden mt-1"
+          class="text-wrap max-w-full w-full h-2/3 max-h-2/3 overflow-y-scroll dark:text-primary overflow-x-hidden mt-1"
         >
           <div
             v-for="(item, index) in rowData.rawData[selectedMatch - 1].notes
@@ -155,7 +145,7 @@ let promptedNotesDetailedOptions = promptedNoteOptions.map(
           >
             <div v-if="item.selected">
               <div class="pb-1">
-                <span class="font-extrabold mr-2 text-sm">{{
+                <span class="font-extrabold mr-2 text-sm dark:text-white">{{
                   promptedNotesOptions[index] + ':'
                 }}</span>
                 <UBadge
@@ -171,13 +161,13 @@ let promptedNotesDetailedOptions = promptedNoteOptions.map(
               <div v-for="(text, i) in item.notes">
                 <p
                   v-if="text != ''"
-                  class="text-xs pb-0 font-semibold underline-offset-2"
+                  class="text-xs pb-0 font-semibold underline-offset-2 dark:text-white"
                 >
                   {{ promptedNotesDetailedOptions[index][i] + ':' }}
                 </p>
                 <p
                   v-if="text != ''"
-                  class="pb-2.5 text-xs"
+                  class="pb-2.5 text-xs dark:text-white"
                 >
                   {{ text }}
                 </p>
@@ -185,7 +175,7 @@ let promptedNotesDetailedOptions = promptedNoteOptions.map(
             </div>
           </div>
           <div v-if="rowData.rawData[selectedMatch - 1].notes.notes != ''">
-            <span class="font-extrabold text-sm dark:!text-primary"
+            <span class="font-extrabold text-sm dark:text-white"
               >Other notes:
             </span>
             <UBadge
@@ -201,7 +191,7 @@ let promptedNotesDetailedOptions = promptedNoteOptions.map(
               "
               >{{ sentimentScore }}</UBadge
             >
-            <p class="pb-2 text-xs dark:!text-primary">
+            <p class="pb-2 text-xs dark:text-white">
               {{
                 rowData.rawData[selectedMatch - 1].notes.notes == ''
                   ? 'None'

@@ -23,7 +23,7 @@ const props = defineProps({
                     <UAvatar :alt="author ? author : ''" />
                     <template #panel>
                         <UCard>
-                            <div class="flex flex-col items-center">
+                            <div class="flex flex-col items-center dark:bg-gray-800">
                                 <UAvatar :alt="author ? author : ''" size="xl" class="m-3" />
                                 <H1 class="m-3">{{ author }}</H1>
                             </div>

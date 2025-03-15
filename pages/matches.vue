@@ -99,18 +99,20 @@ async function setup() {
   items = matches;
 }
 
+//TODO: fix the footer post-comp
 </script>
 <template>
   <OuterComponents>
     <VDataTable
       :loading="pending"
-      class="max-h-dvh pl-12 overflow-y-auto overflow-x-scroll dark:bg-gray-800 dark:text-white"
+      class="max-h-dvh md:pl-12 overflow-y-auto overflow-x-scroll dark:bg-gray-800 dark:text-white"
       :headers="headers"
       :items="items"
       item-key="name"
       density="compact"
       :items-per-page="-1"
       v-model:sort-by="sortBy"
+      hide-default-footer
     >
       <template v-slot:item.notes="row">
         <UPopover :popper="{ offsetDistance: 15 }">

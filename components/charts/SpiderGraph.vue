@@ -10,6 +10,7 @@ const props = defineProps<{
   max: string;
   height?: string;
   width?: string;
+  missing: boolean;
 }>();
 
 Chart.register(...registerables);
@@ -24,6 +25,9 @@ if (props.max != null) {
   //in the future if we make these with decimal maxes but it works for now
 }
 Chart.defaults.scales.radialLinear.ticks.stepSize = 20; //this may need to be a variable in the future
+Chart.defaults.scales.radialLinear.ticks.color = 'rgb(255, 99, 132)';
+Chart.defaults.scales.radialLinear.ticks.showLabelBackdrop = false;
+
 
 //sets up the data for the spider graph
 const testData = {
@@ -46,8 +50,11 @@ const testData = {
 };
 </script>
 <template>
-  <RadarChart
-    :chartData="testData"
-    :class="height + ' relative ' + width"
-  />
+  <div class="max-h-96">
+    <RadarChart
+      :chartData="testData"
+      :class="height + ' relative ' + width"
+    />
+    <p class="dark:text-white" v-if="props.missing">*There may be missing data</p>
+  </div>
 </template>

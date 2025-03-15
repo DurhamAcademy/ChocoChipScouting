@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import SpiderGraph from '~/components/charts/SpiderGraph.vue';
 import { min } from '@popperjs/core/lib/utils/math';
-import BarChart from '~/components/charts/BarChart.vue';
+import BarChart from '~/components/charts/BarChart.vue'; //PLEASE DONT DELETE THIS IT SAYS IT ISNT USED BUT IT BREAKS WITHOUT IT
 const props = defineProps<{
   teamData: any;
   maxScores: any;
@@ -92,10 +92,19 @@ let spiderGraphData = ref([
 
 const spiderGraphLabels = ['Auto', 'Coral', 'Algae', 'Endgame', 'Defense'];
 
+let possibleMissingData = false;
+for(let nubmer in spiderGraphData.value){
+  if (spiderGraphData.value[nubmer] < 1){
+    possibleMissingData=true;
+    break;
+  }
+}
+
 const chartTitle = 'Team ' + props.teamData.teamNum;
 </script>
 <template>
   <UCard class="pt-1">
+    <div class="pb-1">
     <SpiderGraph
       :labels="spiderGraphLabels"
       :data="spiderGraphData"
@@ -103,6 +112,8 @@ const chartTitle = 'Team ' + props.teamData.teamNum;
       max="100"
       min="0"
       height="h-96"
+      :missing="possibleMissingData"
     />
+    </div>
   </UCard>
 </template>

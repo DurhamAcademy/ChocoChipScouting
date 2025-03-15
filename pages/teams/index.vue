@@ -441,20 +441,22 @@ async function tableSetup() {
   for (let team of teamsData.value) {
     if (team.driver.data != 0) data.driver.push(Number(team.driver.data));
     else if (!data.driver.includes(0)) data.driver.push(0);
-
     if (team.defense.data != 0) data.defense.push(Number(team.defense.data));
     else if (!data.defense.includes(0)) data.defense.push(0);
     data.netAuto.push(Number(team.netAuto.data));
     data.netAutoAcc.push(Number(team.netAutoAcc.data.replace('%', '')));
+    if(Number.isNaN(team.netAuto.data)) team.netAuto.data = 0;
     data.processorAuto.push(Number(team.processorAuto.data));
     data.processorAutoAcc.push(
       Number(team.processorAutoAcc.data.replace('%', '')),
     );
+    if(Number.isNaN(team.processorAuto.data)) team.processorAuto.data = 0;
     data.coralL1Auto.push(Number(team.coralL1Auto.data));
     data.coralL2Auto.push(Number(team.coralL2Auto.data));
     data.coralL3Auto.push(Number(team.coralL3Auto.data));
     data.coralL4Auto.push(Number(team.coralL4Auto.data));
     data.reefAuto.push(Number(team.reefAuto.data));
+    if(Number.isNaN(team.reefAuto.data)) team.reefAuto.data = 0;
     data.coralL1AutoAcc.push(Number(team.coralL1AutoAcc.data.replace('%', '')));
     data.coralL2AutoAcc.push(Number(team.coralL2AutoAcc.data.replace('%', '')));
     data.coralL3AutoAcc.push(Number(team.coralL3AutoAcc.data.replace('%', '')));
@@ -462,11 +464,14 @@ async function tableSetup() {
     data.autoAcc.push(Number(team.autoAcc.data.replace('%', '')));
     data.teleProcessor.push(Number(team.teleProcessor.data));
     data.teleNet.push(Number(team.teleNet.data));
+    if(Number.isNaN(team.teleProcessor.data)) team.teleProcessor.data = 0;
+    if(Number.isNaN(team.teleNet.data)) team.teleNet.data = 0;
     data.teleCoralL1.push(Number(team.teleCoralL1.data));
     data.teleCoralL2.push(Number(team.teleCoralL2.data));
     data.teleCoralL3.push(Number(team.teleCoralL3.data));
     data.teleCoralL4.push(Number(team.teleCoralL4.data));
     data.teleReef.push(Number(team.teleReef.data));
+    if(Number.isNaN(team.teleReef.data)) team.teleReef.data = 0;
     data.teleAcc.push(Number(team.teleAcc.data.replace('%', '')));
     data.endgamePoints.push(Number(team.endgamePoints.data));
   }
@@ -1744,25 +1749,25 @@ await tableSetup();
                 </td>
                 <td class="text-center">
                   <UBadge
-                    :label="team.netAuto.data"
+                    :label="team.netAuto.data.toString()"
                     variant="soft"
                     :color="team.netAuto.color"
                   />
                 </td>
                 <td class="text-center">
                   <UBadge
-                    :label="team.processorAuto.data"
+                    :label="team.processorAuto.data.toString()"
                     variant="soft"
                     :color="team.processorAuto.color"
                   />
                 </td>
-                <td class="text-center">
+                <td class="text-center dark:text-white">
                   <UPopover
-                    v-if="team.reefAuto"
+                    v-if="team.reefAuto.toString()"
                     mode="hover"
                   >
                     <UButton
-                      :label="team.reefAuto.data"
+                      :label="team.reefAuto.data.toString()"
                       variant="soft"
                       :color="team.reefAuto.color"
                       size="xs"
@@ -1777,7 +1782,7 @@ await tableSetup();
                             color="gray"
                           />
                           <UBadge
-                            :label="team.coralL1Auto.data"
+                            :label="team.coralL1Auto.data.toString()"
                             variant="soft"
                             color="white"
                           />
@@ -1789,7 +1794,7 @@ await tableSetup();
                             color="gray"
                           />
                           <UBadge
-                            :label="team.coralL2Auto.data"
+                            :label="team.coralL2Auto.data.toString()"
                             variant="soft"
                             color="white"
                           />
@@ -1801,7 +1806,7 @@ await tableSetup();
                             color="gray"
                           />
                           <UBadge
-                            :label="team.coralL3Auto.data"
+                            :label="team.coralL3Auto.data.toString()"
                             variant="soft"
                             color="white"
                           />
@@ -1813,7 +1818,7 @@ await tableSetup();
                             color="gray"
                           />
                           <UBadge
-                            :label="team.coralL4Auto.data"
+                            :label="team.coralL4Auto.data.toString()"
                             variant="soft"
                             color="white"
                           />
@@ -1828,7 +1833,7 @@ await tableSetup();
                     :color="team.reefAuto.color"
                   />
                 </td>
-                <td class="text-center">
+                <td class="text-center dark:text-white">
                   <UPopover
                     v-if="team.autoAccData[0]"
                     mode="hover"
@@ -1905,26 +1910,26 @@ await tableSetup();
                 </td>
                 <td class="text-center">
                   <UBadge
-                    :label="team.teleNet.data"
+                    :label="team.teleNet.data.toString()"
                     variant="soft"
                     :color="team.teleNet.color"
                   />
                 </td>
                 <td class="text-center">
                   <UBadge
-                    :label="team.teleProcessor.data"
+                    :label="team.teleProcessor.data.toString()"
                     variant="soft"
                     :color="team.teleProcessor.color"
                   />
                 </td>
 
-                <td class="text-center">
+                <td class="text-center dark:text-white">
                   <UPopover
-                    v-if="team.teleReef"
+                    v-if="team.teleReef.toString()"
                     mode="hover"
                   >
                     <UButton
-                      :label="team.teleReef.data"
+                      :label="team.teleReef.data.toString()"
                       variant="soft"
                       :color="team.teleReef.color"
                       size="xs"
@@ -1939,7 +1944,7 @@ await tableSetup();
                             color="gray"
                           />
                           <UBadge
-                            :label="team.teleCoralL1.data"
+                            :label="team.teleCoralL1.data.toString()"
                             variant="soft"
                             color="white"
                           />
@@ -1951,7 +1956,7 @@ await tableSetup();
                             color="gray"
                           />
                           <UBadge
-                            :label="team.teleCoralL2.data"
+                            :label="team.teleCoralL2.data.toString()"
                             variant="soft"
                             color="white"
                           />
@@ -1963,7 +1968,7 @@ await tableSetup();
                             color="gray"
                           />
                           <UBadge
-                            :label="team.teleCoralL3.data"
+                            :label="team.teleCoralL3.data.toString()"
                             variant="soft"
                             color="white"
                           />
@@ -1975,7 +1980,7 @@ await tableSetup();
                             color="gray"
                           />
                           <UBadge
-                            :label="team.teleCoralL4.data"
+                            :label="team.teleCoralL4.data.toString()"
                             variant="soft"
                             color="white"
                           />
@@ -2018,7 +2023,7 @@ await tableSetup();
                     :color="team.teleCoralL4.color"
                   />
                 </td>-->
-                <td class="text-center">
+                <td class="text-center dark:text-white">
                   <UPopover
                     v-if="team.teleAccData[0]"
                     mode="hover"
