@@ -126,16 +126,17 @@ async function setup() {
               class="m-auto max-w-md min-w-[15rem] overflow-y-auto border-2 dark:border-primary rounded-lg"
               style="max-height: 20rem; min-height: 10rem"
             >
-              <br/>
                 <div v-for="(promptedNote, index) in row.value.promptedNotes">
+                  <br v-if="promptedNote.notes.length > 0"/>
                   <p v-if="promptedNote.notes.length > 0"> <b>{{promptedNoteTitles[index]}}:</b> {{promptedNote.rating}}/5 </p>
                   <p v-else><del> </del></p>
-                  <p class="overflow-auto" v-for="note in promptedNote.notes">{{note}}</p> <br>
+                  <p class="overflow-auto" v-for="note in promptedNote.notes">{{note}}</p>
                 </div>
               <div>
+                <br v-if="row.value.notes.length > 0"/>
                 <p v-if="row.value.notes.length > 0"> <b>Other</b><br>{{row.value.notes}}</p>
                 <p v-else><del> </del></p>
-                <br>
+                <br/>
               </div>
             </UContainer>
           </template>
