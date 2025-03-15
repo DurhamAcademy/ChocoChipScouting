@@ -71,6 +71,7 @@
     }],
     "simple_objectives": [],
     "special_objectives": [],
+    "objectives": [],
     "notes": [{
       "prompt": "Other notes..."
     }]
@@ -115,6 +116,7 @@
       ]
 
     }],
+    "objectives": [],
     "notes": [{
       "prompt": "Other notes..."
     }]

@@ -40,6 +40,32 @@ class LocalRemoteDatabaseSyncHolder<Content extends {} = {}> {
     basic: this.databases.basic.remote,
   };
 }
+export type TeamTableDataTest = {
+  team_number: number;
+  auto: {
+    tiered_objectives: TieredObjectiveTableData[];
+    simple_objectives: SimpleObjectiveTableData[];
+    special_objectives: SpecialObjectiveTableData[];
+    notes: NoteTableData[];
+  };
+  teleop: {
+    tiered_objectives: TieredObjectiveTableData[];
+    simple_objectives: SimpleObjectiveTableData[];
+    special_objectives: SpecialObjectiveTableData[];
+    notes: NoteTableData[];
+  };
+  endgame: {
+    tiered_objectives: TieredObjectiveTableData[];
+    simple_objectives: SimpleObjectiveTableData[];
+    special_objectives: SpecialObjectiveTableData[];
+    notes: NoteTableData[];
+  };
+  notes: {
+    note_sections: NoteSectionTableData[];
+    notes: NoteTableData[];
+  }
+}
+
 export type TeamTableData = {
   team: { data: string; color: string };
   driver: { data: number; color: string };
@@ -189,18 +215,21 @@ export type ScoutingDataTest = {
     tiered_objectives: TieredObjectiveData[];
     simple_objectives: SimpleObjectiveData[];
     special_objectives: SpecialObjectiveData[];
+    objectives: ObjectiveData[];
     notes: NoteData[];
   };
   teleop: {
     tiered_objectives: TieredObjectiveData[];
     simple_objectives: SimpleObjectiveData[];
     special_objectives: SpecialObjectiveData[];
+    objectives: ObjectiveData[];
     notes: NoteData[];
   };
   endgame: {
     tiered_objectives: TieredObjectiveData[];
     simple_objectives: SimpleObjectiveData[];
     special_objectives: SpecialObjectiveData[];
+    objectives: ObjectiveData[];
     notes: NoteData[];
   };
   notes: {
@@ -214,24 +243,24 @@ export type ObjectiveData = {
   count_missed: number;
 }
 
+export type ObjectiveTableData = {
+  count_made: number;
+  count_missed: number;
+  accuracy: number;
+}
+
+export type ObjectiveTemplate = {
+  name: string;
+  points: number;
+  missed?: boolean | undefined;
+}
+
 export type TieredObjectiveData = {
   objectives: ObjectiveData[];
 }
 
-export type SpecialObjectiveData = {
-  options: SpecialObjectiveOptionData[];
-}
-
-export type SpecialObjectiveOptionData = {
-  selected: boolean;
-}
-
-export type SimpleObjectiveData = {
-  objective: boolean;
-}
-
-export type NoteData = {
-  notes: string;
+export type TieredObjectiveTableData = {
+  objectives: ObjectiveTableData[];
 }
 
 export type TieredObjectiveTemplate = {
@@ -240,14 +269,52 @@ export type TieredObjectiveTemplate = {
   objectives: ObjectiveTemplate[];
 }
 
-export type ObjectiveTemplate = {
+export type SpecialObjectiveData = {
+  options: SpecialObjectiveOptionData[];
+}
+
+export type SpecialObjectiveTableData = {
+  options: SpecialObjectiveOptionTableData[];
+}
+
+export type SpecialObjectiveTemplate = {
   name: string;
+  options: SpecialObjectiveOptionTemplate[];
+}
+
+export type SpecialObjectiveOptionData = {
+  selected: boolean;
+}
+
+export type SpecialObjectiveOptionTableData = {
+  selected: boolean;
+}
+
+export type SpecialObjectiveOptionTemplate = {
+  name: string;
+  connected_options: number;
   points: number;
+}
+
+export type SimpleObjectiveData = {
+  objective: boolean;
+}
+
+export type SimpleObjectiveTableData = {
+  objective: boolean;
 }
 
 export type SimpleObjectiveTemplate = {
   name: string;
   points: number;
+}
+
+export type NoteData = {
+  notes: string;
+}
+
+export type NoteTableData = {
+  notes: string;
 }
 
 export type NoteTemplate = {
@@ -260,21 +327,15 @@ export type NoteSectionData = {
   notes: NoteData[];
 }
 
+export type NoteSectionTableData = {
+  selected: boolean;
+  rating: number;
+  notes: NoteTableData[];
+}
+
 export type NoteSectionTemplate = {
   name: string;
   rating_bar_max: number;
   notes: NoteTemplate[];
 }
-
-export type SpecialObjectiveTemplate = {
-  name: string;
-  options: SpecialObjectiveOptionTemplate[];
-}
-
-export type SpecialObjectiveOptionTemplate = {
-  name: string;
-  connected_options: number;
-  points: number;
-}
-
 

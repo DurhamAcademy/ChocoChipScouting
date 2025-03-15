@@ -1,7 +1,7 @@
 <script setup lang="ts">
 
 import MultiSelect from "~/components/scouting-components/MultiSelect.vue";
-import Objective from "~/components/scouting-components/data-template-components/Objective.vue";
+import ObjectiveFormat from "~/components/scouting-components/data-template-components/ObjectiveFormat.vue";
 
 const props = defineProps<{
   template: SpecialObjectiveTemplate;
@@ -35,7 +35,7 @@ value.value = {
 
 
 <template>
-  <Objective :name="template.name">
+  <ObjectiveFormat :name="template.name">
     <!-- a multi select custom component. this acts like the single select but allows you to select multiple buttons at a time.
         the connection options optional param allows you to configure which options are allowed to be selected with each other -->
     <MultiSelect
@@ -44,7 +44,7 @@ value.value = {
         :options="template.options.map(option => option.name)"
         :connected-options="template.options.map(option => option.connected_options)"
     />
-  </Objective>
+  </ObjectiveFormat>
 </template>
 
 <style scoped>

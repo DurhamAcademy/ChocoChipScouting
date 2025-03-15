@@ -7,6 +7,13 @@ import databases, {
 import IdMeta = PouchDB.Core.IdMeta;
 import PieChart from '~/components/charts/PieChart.vue';
 import OuterComponents from '~/components/website-utils/OuterComponents.vue';
+import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
+import { AgGridVue } from "ag-grid-vue3"; // Vue Data Grid Component
+
+// Register all Community features
+ModuleRegistry.registerModules([AllCommunityModule]);
+
+
 
 let currentEvent = useEventKey();
 watch(currentEvent, () => {
@@ -40,11 +47,11 @@ watch(
 const { scoutingData: db } = databases.locals;
 
 const matches = (await db.allDocs()).rows;
-let match = matches.map(async (doc): Promise<ScoutingData & IdMeta> => {
+let match = matches.map(async (doc): Promise<ScoutingDataTest & IdMeta> => {
   return await db.get(doc.id);
 });
 
-let teamOrgMatches = new Map<number, Array<ScoutingData & IdMeta>>();
+let teamOrgMatches = new Map<number, Array<ScoutingDataTest & IdMeta>>();
 let extraNotes = new Map<number, Array<string>>();
 
 for (let i = 0; i < match.length; i++) {
@@ -1619,8 +1626,14 @@ await tableSetup();
           />
         </div>
       </template>
-      <template #default>
-        <div class="overflow-y-clip overflow-x-scroll">
+        <AgGridVue
+            :columnDefs="columnDefs"
+            :rowData="teamsData"
+            :defaultColDef="defaultColDef"
+            :frameworkComponents="frameworkComponents"
+            @grid-ready="onGridReady"
+        />
+      <div class="overflow-y-clip overflow-x-scroll">
           <table
             id="teamTable"
             class="table-auto border-x-4 border-t-8 border-gray-50 dark:border-gray-700 mt-2 ml-2 mr-2"
@@ -2127,7 +2140,6 @@ await tableSetup();
             </tbody>
           </table>
         </div>
-      </template>
     </UCard>
   </OuterComponents>
 </template>

@@ -2,7 +2,7 @@
 
 import BooleanButton from "~/components/scouting-components/BooleanButton.vue";
 import {computed} from "vue";
-import Objective from "~/components/scouting-components/data-template-components/Objective.vue";
+import ObjectiveFormat from "~/components/scouting-components/data-template-components/ObjectiveFormat.vue";
 
 const props = defineProps<{
   template: SimpleObjectiveTemplate;
@@ -28,7 +28,7 @@ value.value = {
 </script>
 
 <template>
-  <Objective :name="template.name">
+  <ObjectiveFormat :name="template.name">
     <BooleanButton
         class="mt-1"
         v-if="value"
@@ -36,7 +36,7 @@ value.value = {
         :default-value="template.name"
         :other-value="template.name"
     />
-  </Objective>
+  </ObjectiveFormat>
 </template>
 
 <style scoped>

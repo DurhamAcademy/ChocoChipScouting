@@ -3,7 +3,7 @@
 import SingleSelect from "~/components/scouting-components/SingleSelect.vue";
 import IncrementalButton from "~/components/scouting-components/IncrementalButton.vue";
 import {computed} from "vue";
-import Objective from "~/components/scouting-components/data-template-components/Objective.vue";
+import ObjectiveFormat from "~/components/scouting-components/data-template-components/ObjectiveFormat.vue";
 
 const props = defineProps<{
   template: TieredObjectiveTemplate;
@@ -40,38 +40,36 @@ const objectiveType = ref(tieredObjectiveOptions[0]);
 </script>
 
 <template>
-  <Objective :name="template.name">
+  <ObjectiveFormat :name="template.name">
     <div class="flex flex-auto justify-center">
-      <div class="flex-auto text-center mx-1">
-        <h1 class="text-coral-400 font-sans mt-1 font-light text-sm">
-          Scored
-        </h1>
-        <template v-for="(objective, index) of template.objectives">
+      <template v-for="(objective, index) of template.objectives" class="flex-auto text-center">
+        <div v-if="value && objective && objectiveType === objective.name">
+          <h1 class="text-coral-400 font-sans mt-1 font-light text-sm">
+            Scored
+          </h1>
           <IncrementalButton
-              class="my-1"
-              v-if="value && objectiveType === objective.name"
+              class="m-1"
               v-model="value.objectives[index].count_made"
           />
-        </template>
-      </div>
-      <div class="flex-auto text-center mx-1">
-        <h1 v-if="template.missed" class="text-coral-400 font-sans mt-1 font-light text-sm">
-          Missed
-        </h1>
-        <template v-for="(objective, index) of template.objectives">
+        </div>
+      </template>
+      <template v-for="(objective, index) of template.objectives" class="flex-auto text-center">
+        <div v-if="value && objective && objectiveType === objective.name && ('missed' in objective && objective.missed != undefined ? objective.missed : template.missed)">
+          <h1 class="text-coral-400 font-sans mt-1 font-light text-sm">
+            Missed
+          </h1>
           <IncrementalButton
-              class="my-1"
-              v-if="value && objectiveType === objective.name"
+              class="m-1"
               v-model="value.objectives[index].count_missed"
           />
-        </template>
-      </div>
+        </div>
+      </template>
     </div>
     <SingleSelect
         v-model="objectiveType"
         :options="tieredObjectiveOptions"
     />
-  </Objective>
+  </ObjectiveFormat>
 </template>
 
 <style scoped>

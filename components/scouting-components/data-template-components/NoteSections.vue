@@ -4,7 +4,7 @@ import {promptedNoteOptions} from "~/utils/promptedNoteOptions";
 import {NoteTemplate} from "~/utils/databases";
 import PromptedNote from "~/components/scouting-components/PromptedNote.vue";
 import jsonData from "~/components/teams-utils/scouting-data-templates/2025.json";
-import Objective from "~/components/scouting-components/data-template-components/Objective.vue";
+import Objective from "~/components/scouting-components/data-template-components/ObjectiveFormat.vue";
 
 const props = defineProps<{
   template: NoteSectionTemplate[];

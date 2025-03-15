@@ -34,6 +34,7 @@
     "@userfront/vue": "0.1.20",
     "@vite-pwa/nuxt": "0.10.6",
     "@vueuse/core": "11.2.0",
+    "ag-grid-vue3": "^33.1.1",
     "chart.js": "^3.9.1",
     "compressorjs": "1.2.1",
     "heic2any": "0.0.4",
