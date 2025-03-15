@@ -15,20 +15,25 @@ import NoteSections from "~/components/scouting-components/data-template-compone
 
 
 let scoutData = ref<ScoutingDataTest>({
-  teamNumber: '',
-  event: '',
-  matchNumber: '',
+  team_number: '',
+  event_key: '',
+  match_number: '',
   author: '',
   auto: {
     tiered_objectives: [],
     simple_objectives: [],
+    special_objectives: [],
     notes: [],
   },
   teleop: {
     tiered_objectives: [],
+    simple_objectives: [],
+    special_objectives: [],
     notes: []
   },
   endgame: {
+    tiered_objectives: [],
+    simple_objectives: [],
     special_objectives: [],
     notes: []
   },
@@ -37,8 +42,6 @@ let scoutData = ref<ScoutingDataTest>({
     notes: []
   },
 });
-
-console.log(JSON.stringify(scoutData, null, 2))
 
 //gets username and scouting database
 const {
@@ -101,17 +104,18 @@ function isValidNum() {
  also redirects the webpage to the /matches page (notice navigateTo)
  */
 async function submit() {
-  scoutData.value.team_number = parseInt(scoutData.value.team_number);
-  scoutData.value.match_number = parseInt(scoutData.value.match_number);
-  if (
-      !Number.isNaN(scoutData.value.team_number) &&
-      !Number.isNaN(scoutData.value.match_number)
-  ) {
-    scoutData.value.author = usernameState.value;
-    scoutData.value.event_key = currentEvent.value || eventOptions[0];
-    await db.post(scoutData.value);
-    await navigateTo('/teams');
-  }
+  console.log(scoutData.value)
+  // scoutData.value.team_number = parseInt(scoutData.value.team_number);
+  // scoutData.value.match_number = parseInt(scoutData.value.match_number);
+  // if (
+  //     !Number.isNaN(scoutData.value.team_number) &&
+  //     !Number.isNaN(scoutData.value.match_number)
+  // ) {
+  //   scoutData.value.author = usernameState.value;
+  //   scoutData.value.event_key = currentEvent.value || eventOptions[0];
+  //   await db.post(scoutData.value);
+  //   await navigateTo('/teams');
+  // }
 }
 </script>
 
@@ -123,7 +127,7 @@ async function submit() {
         <template #header>
           <div style="display: flex">
             <div class="flex-0 pr-2">
-              <!-- The input for teamNumber shown in the heading of the page. visit NUXT UI documentaiton to understand UInput and other NUXT elements -->
+              <!-- The input for team_number shown in the heading of the page. visit NUXT UI documentaiton to understand UInput and other NUXT elements -->
               <UInput
                   v-model="scoutData.team_number"
                   placeholder="Team #"
@@ -174,21 +178,34 @@ async function submit() {
           <br />
           <UTabs :items="gameTimes">
             <template #auto="{ item }">
-              <TieredObjective v-for="(tieredObjective, index) of jsonData.auto.tiered_objectives" :template="tieredObjective" :data="scoutData.auto.tiered_objectives[index] ?? {}" />
-              <SimpleObjective v-for="(simpleObjective, index) of jsonData.auto.simple_objectives" :template="simpleObjective" :data="scoutData.auto.simple_objectives[index] ?? {}" />
-              <Note v-for="(prompt, index) of jsonData.auto.notes" :template="prompt" :data="scoutData.auto.notes[index] ?? {}" />
+              <div class="flex">
+                <TieredObjective v-for="(tieredObjective, index) of jsonData.auto.tiered_objectives" :template="tieredObjective" v-model="scoutData.auto.tiered_objectives[index]"/>
+                <SimpleObjective v-for="(simpleObjective, index) of jsonData.auto.simple_objectives" :template="simpleObjective" v-model="scoutData.auto.simple_objectives[index]" />
+                <SpecialObjective v-for="(specialObjective, index) of jsonData.auto.special_objectives" :template="specialObjective" v-model="scoutData.auto.special_objectives[index]" />
+              </div>
+              <Note v-for="(note, index) of jsonData.auto.notes" :template="note" v-model="scoutData.auto.notes[index]" />
             </template>
             <template #teleop="{ item }">
-              <TieredObjective v-for="(tieredObjective, index) of jsonData.teleop.tiered_objectives" :template="tieredObjective" :data="scoutData.auto.tiered_objectives[index] ?? {}" />
-              <Note v-for="(prompt, index) of jsonData.teleop.notes" :template="prompt" :data="scoutData.teleop.notes[index] ?? {}" />
+              <div class="flex">
+                <TieredObjective v-for="(tieredObjective, index) of jsonData.teleop.tiered_objectives" :template="tieredObjective" v-model="scoutData.teleop.tiered_objectives[index]"/>
+                <SimpleObjective v-for="(simpleObjective, index) of jsonData.teleop.simple_objectives" :template="simpleObjective" v-model="scoutData.teleop.simple_objectives[index]" />
+                <SpecialObjective v-for="(specialObjective, index) of jsonData.teleop.special_objectives" :template="specialObjective" v-model="scoutData.teleop.special_objectives[index]" />
+              </div>
+              <Note v-for="(note, index) of jsonData.teleop.notes" :template="note" v-model="scoutData.teleop.notes[index]" />
             </template>
             <template #endgame="{ item }">
-              <SpecialObjective v-for="(specialObjective, index) of jsonData.endgame.special_objectives" :template="specialObjective" :data="scoutData.endgame.special_objectives[index] ?? {}" />
-              <Note v-for="(prompt, index) of jsonData.endgame.notes" :template="prompt" :data="scoutData.endgame.notes[index] ?? {}" />
+              <div class="flex">
+                <TieredObjective v-for="(tieredObjective, index) of jsonData.endgame.tiered_objectives" :template="tieredObjective" v-model="scoutData.endgame.tiered_objectives[index]" />
+                <SimpleObjective v-for="(simpleObjective, index) of jsonData.endgame.simple_objectives" :template="simpleObjective" v-model="scoutData.endgame.simple_objectives[index]" />
+                <SpecialObjective v-for="(specialObjective, index) of jsonData.endgame.special_objectives" :template="specialObjective" v-model="scoutData.endgame.special_objectives[index]" />
+              </div>
+              <Note v-for="(note, index) of jsonData.endgame.notes" :template="note" v-model="scoutData.endgame.notes[index]" />
             </template>
             <template #notes="{ item }">
-              <NoteSections :template="jsonData.notes.note_sections" :data="scoutData.notes.grouped_notes ?? {}" />
-              <Note v-for="(prompt, index) of jsonData.notes.notes" :template="prompt" :data="scoutData.notes.notes[index] ?? {}" />
+              <div class="flex">
+                <NoteSections :template="jsonData.notes.note_sections" v-model="scoutData.notes.grouped_notes" />
+              </div>
+              <Note v-for="(note, index) of jsonData.notes.notes" :template="note" v-model="scoutData.notes.notes[index]" />
             </template>
           </UTabs>
         </template>

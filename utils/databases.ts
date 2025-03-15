@@ -229,11 +229,6 @@ export type NoteData = {
   notes: string;
 }
 
-export type GroupNoteData = {
-  rating: number;
-  notes: NoteData[];
-}
-
 export type TieredObjectiveTemplate = {
   name: string;
   missed: boolean;

@@ -1,16 +1,17 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+
 const emit = defineEmits(['update:modelValue'])
 /*
-Model Value: Array of numbers => 1 is selected, 0 is not selected
-Options: Array of strings => the labels for the buttons
-Connected Options: Array of numbers => matches the amount of buttons,
+Model Value: Array of bools => true is selected, false is not selected
+Options: Array of strings => the button labels/options to be picked
+Connected Options: Array of numbers => length matches the amount of buttons,
  if two buttons have the same number in this array they can be selected at the same time
  */
 const props = defineProps<{
-    modelValue: Array<number>
-    options: Array<String>
-    connectedOptions?: Array<number>
+    modelValue: SpecialObjectiveOptionData[]
+    options: string[]
+    connectedOptions?: number[]
 }>()
 
 const value = computed({
@@ -22,27 +23,30 @@ const value = computed({
     },
 })
 
+let variantArray = ref(value.value.map(option => option.selected ? 'solid' : 'outline'))
+
+// setting first option as true
+value.value[0].selected = true
+variantArray.value[0] = 'solid'
+
+
 function selected(index: number) {
     let currentVariant = variantArray.value[index]
     variantArray.value.forEach((element, listIndex) => {
-        if (props.connectedOptions != undefined && props.connectedOptions[index] != props.connectedOptions[listIndex]) {
+        if (props.connectedOptions && props.connectedOptions[index] != props.connectedOptions[listIndex]) {
             variantArray.value[listIndex] = 'outline'
-            let uv = value.value
-            uv[listIndex] = 0
-            value.value = uv
+            value.value[listIndex].selected = false;
         }
     })
     variantArray.value[index] = currentVariant == 'solid' ? 'outline' : 'solid'
-    let updatedValue = value.value
-    updatedValue[index] = value.value[index] == 0 ? 1 : 0
-    value.value = updatedValue
-}
+    value.value[index].selected = !value.value[index].selected
 
-let variantArray = ref(
-    Array(props.options.length)
-        .fill('')
-        .map((_, index) => (props.modelValue[index] == 1 ? 'solid' : 'outline'))
-)
+    // if none of the buttons are selected, then the first option (assumed to be default) is selected
+    if (!value.value.map(option => option.selected).some(element => element)) {
+      value.value[0].selected = true
+      variantArray.value[0] = 'solid'
+    }
+}
 </script>
 
 <template>
@@ -52,7 +56,7 @@ let variantArray = ref(
         :label="item"
         :variant="variantArray[index]"
         @click="selected(index)"
-    ></UButton>
+    />
 </template>
 
 <style scoped></style>

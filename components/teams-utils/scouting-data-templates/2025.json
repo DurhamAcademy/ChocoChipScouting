@@ -27,8 +27,9 @@
       "name": "Mobility",
       "points": 3
     }],
+    "special_objectives": [],
     "notes": [{
-      "desc": "Other notes..."
+      "prompt": "Other notes..."
     }]
   },
   "teleop": {
@@ -68,11 +69,15 @@
         }
       ]
     }],
+    "simple_objectives": [],
+    "special_objectives": [],
     "notes": [{
-      "desc": "Other notes..."
+      "prompt": "Other notes..."
     }]
   },
   "endgame": {
+    "tiered_objectives": [],
+    "simple_objectives": [],
     "special_objectives": [
       {
       "name": "Climb",
@@ -111,7 +116,7 @@
 
     }],
     "notes": [{
-      "desc": "Other notes..."
+      "prompt": "Other notes..."
     }]
   },
   "notes": {
@@ -121,13 +126,13 @@
         "rating_bar_max": 5,
         "notes": [
           {
-            "desc": "If you were developing an offensive strategy with this team, what area of strength would you want them focused on and why?"
+            "prompt": "If you were developing an offensive strategy with this team, what area of strength would you want them focused on and why?"
           },
           {
-            "desc": "What area(s) of weakness would you want to make sure this team avoids in the offensive strategy?"
+            "prompt": "What area(s) of weakness would you want to make sure this team avoids in the offensive strategy?"
           },
           {
-            "desc": "Is there anything that the quantitative data might not highlight about this team?"
+            "prompt": "Is there anything that the quantitative data might not highlight about this team?"
           }
         ]
       },
@@ -136,13 +141,13 @@
         "rating_bar_max": 5,
         "notes": [
           {
-            "desc": "What seemed to be this team's defensive strategy? What area, team, or other factor were they focused on?"
+            "prompt": "What seemed to be this team's defensive strategy? What area, team, or other factor were they focused on?"
           },
           {
-            "desc": "Was their defensive strategy successful, or is there a different defensive strategy this team should employ to make more of an impact?"
+            "prompt": "Was their defensive strategy successful, or is there a different defensive strategy this team should employ to make more of an impact?"
           },
           {
-            "desc": "What other factors contributed to your rating?"
+            "prompt": "What other factors contributed to your rating?"
           }
         ]
       },
@@ -151,13 +156,13 @@
         "rating_bar_max": 5,
         "notes": [
           {
-            "desc": "How was this driver's game sense? Did they evade defense and make quick choices to reroute? Did they make mistakes and second guess themselves?"
+            "prompt": "How was this driver's game sense? Did they evade defense and make quick choices to reroute? Did they make mistakes and second guess themselves?"
           },
           {
-            "desc": "How aggressive was this driver? Did they inflict a lot of penalties on their team? If so, could you tell what for?"
+            "prompt": "How aggressive was this driver? Did they inflict a lot of penalties on their team? If so, could you tell what for?"
           },
           {
-            "desc": "What other factors contributed to your rating?"
+            "prompt": "What other factors contributed to your rating?"
           }
         ]
       },
@@ -166,16 +171,16 @@
         "rating_bar_max": 5,
         "notes": [
           {
-            "desc": "What happened on the field that led you to select this category? Did this team's robot break, or survive a big hit?"
+            "prompt": "What happened on the field that led you to select this category? Did this team's robot break, or survive a big hit?"
           },
           {
-            "desc": "Do you think this will be a consistent issue/strength, or was it a one-time thing?"
+            "prompt": "Do you think this will be a consistent issue/strength, or was it a one-time thing?"
           }
         ]
       }
     ],
     "notes": [{
-      "desc": "Other notes..."
+      "prompt": "Other notes..."
     }]
   }
 }

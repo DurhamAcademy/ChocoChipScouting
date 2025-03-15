@@ -4,14 +4,31 @@ import {NoteTemplate} from "~/utils/databases";
 
 const props = defineProps<{
   template: NoteTemplate;
-  data: NoteData;
+  modelValue: NoteData;
 }>();
+
+// emits for updating the inputted ref prop
+const emit = defineEmits(['update:modelValue']);
+const value = computed({
+  get() {
+    return props.modelValue;
+  },
+  set(value) {
+    emit('update:modelValue', value);
+  },
+});
+
+value.value = {
+  notes: ""
+}
 
 </script>
 
 <template>
   <UTextarea
-      v-model="data.notes"
+      class="mt-5"
+      v-if="value"
+      v-model="value.notes"
       color="red"
       :placeholder="template.prompt"
   />
