@@ -7,12 +7,12 @@ import type { UnwrapRef } from 'vue';
 import { loginStateKey } from '~/utils/keys';
 import { useEventKey } from '~/composables/useEventKey';
 import jsonData from "~/components/teams-utils/scouting-data-templates/2025.json";
-import TieredObjective from "~/components/scouting-components/data-template-components/TieredObjective.vue";
-import SpecialObjective from "~/components/scouting-components/data-template-components/SpecialObjective.vue";
-import SimpleObjective from "~/components/scouting-components/data-template-components/SimpleObjective.vue";
-import Note from "~/components/scouting-components/data-template-components/Note.vue";
-import NoteSections from "~/components/scouting-components/data-template-components/NoteSections.vue";
-import Objective from "~/components/scouting-components/data-template-components/Objective.vue";
+import TieredObjective from "~/components/scouting-components/TieredObjective.vue";
+import SpecialObjective from "~/components/scouting-components/SpecialObjective.vue";
+import SimpleObjective from "~/components/scouting-components/SimpleObjective.vue";
+import Note from "~/components/scouting-components/Note.vue";
+import NoteSections from "~/components/scouting-components/NoteSections.vue";
+import Objective from "~/components/scouting-components/Objective.vue";
 
 
 let scoutData = ref<ScoutingDataTest>({
@@ -208,9 +208,7 @@ async function submit() {
               <Note v-for="(note, index) of jsonData.endgame.notes" :template="note" v-model="scoutData.endgame.notes[index]" />
             </template>
             <template #notes="{ item }">
-              <div>
-                <NoteSections :template="jsonData.notes.note_sections" v-model="scoutData.notes.grouped_notes" />
-              </div>
+              <NoteSections :template="jsonData.notes.note_sections" v-model="scoutData.notes.grouped_notes" />
               <Note v-for="(note, index) of jsonData.notes.notes" :template="note" v-model="scoutData.notes.notes[index]" />
             </template>
           </UTabs>

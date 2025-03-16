@@ -1,9 +1,9 @@
 <script setup lang="ts">
 
-import SingleSelect from "~/components/scouting-components/SingleSelect.vue";
-import IncrementalButton from "~/components/scouting-components/IncrementalButton.vue";
+import SingleSelect from "~/components/scouting-components/scouting-component-utils/SingleSelect.vue";
+import IncrementalButton from "~/components/scouting-components/scouting-component-utils/IncrementalButton.vue";
 import {computed} from "vue";
-import ObjectiveFormat from "~/components/scouting-components/data-template-components/ObjectiveFormat.vue";
+import ObjectiveFormat from "~/components/scouting-components/ObjectiveFormat.vue";
 
 const props = defineProps<{
   template: TieredObjectiveTemplate;
@@ -22,16 +22,17 @@ const value = computed({
 });
 
 // function to declare an empty ObjectiveData obj
-function createObjectiveData(): ObjectiveData {
+function createObjectiveData(index: number): ObjectiveData {
   return {
     count_made: 0,
-    count_missed: 0
+    // instantiating count_missed as -1 if missed objectives arent being measured
+    count_missed: props.template.missed || ('missed' in props.template.objectives[index] && props.template.objectives[index].missed) ? 0 : -1
   };
 }
 
 // instantiating the data object with empty objects
 value.value = {
-  objectives: props.template.objectives.map(() => createObjectiveData())
+  objectives: props.template.objectives.map((_, index) => createObjectiveData(index))
 };
 
 const tieredObjectiveOptions = props.template.objectives.map(objective => objective.name);

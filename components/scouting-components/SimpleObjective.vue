@@ -1,8 +1,8 @@
 <script setup lang="ts">
 
-import BooleanButton from "~/components/scouting-components/BooleanButton.vue";
+import BooleanButton from "~/components/scouting-components/scouting-component-utils/BooleanButton.vue";
 import {computed} from "vue";
-import ObjectiveFormat from "~/components/scouting-components/data-template-components/ObjectiveFormat.vue";
+import ObjectiveFormat from "~/components/scouting-components/ObjectiveFormat.vue";
 
 const props = defineProps<{
   template: SimpleObjectiveTemplate;
@@ -22,7 +22,7 @@ const value = computed({
 
 // instantiating the data object with empty objects
 value.value = {
-  objective: false
+  selected: false
 }
 
 </script>
@@ -32,7 +32,7 @@ value.value = {
     <BooleanButton
         class="mt-1"
         v-if="value"
-        v-model="value.objective"
+        v-model="value.selected"
         :default-value="template.name"
         :other-value="template.name"
     />

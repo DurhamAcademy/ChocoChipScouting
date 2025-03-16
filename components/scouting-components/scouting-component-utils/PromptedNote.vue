@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import Note from "~/components/scouting-components/data-template-components/Note.vue";
+import Note from "~/components/scouting-components/Note.vue";
 
 const props = defineProps<{
   template: NoteSectionTemplate;

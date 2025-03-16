@@ -1,7 +1,7 @@
 <script setup lang="ts">
 
-import MultiSelect from "~/components/scouting-components/MultiSelect.vue";
-import ObjectiveFormat from "~/components/scouting-components/data-template-components/ObjectiveFormat.vue";
+import MultiSelect from "~/components/scouting-components/scouting-component-utils/MultiSelect.vue";
+import ObjectiveFormat from "~/components/scouting-components/ObjectiveFormat.vue";
 
 const props = defineProps<{
   template: SpecialObjectiveTemplate;

@@ -11,18 +11,18 @@ const router = useRouter();
 
 const teamNumber = String(props.teamNumber);
 
-const navigateToTeam = () => {
-  router.push('/teams/' + teamNumber);
+const navigateToTeamAttachments = () => {
+  router.push('/teams/attachments' + teamNumber);
 };
 </script>
 
 <template>
   <UButton
-      :label="teamNumber"
-      variant="soft"
       size="xs"
-      @click="navigateToTeam"
-      trailing-icon="i-heroicons-chart-bar-square"
+      icon="i-heroicons-photo"
+      variant="soft"
+      @click="navigateToTeamAttachments"
+      class="dark:bg-gray-700"
   />
 </template>
 

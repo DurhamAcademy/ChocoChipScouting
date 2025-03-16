@@ -244,9 +244,8 @@ export type ObjectiveData = {
 }
 
 export type ObjectiveTableData = {
-  count_made: number;
-  count_missed: number;
-  accuracy: number;
+  average_count_made: number;
+  average_count_missed: number;
 }
 
 export type ObjectiveTemplate = {
@@ -287,7 +286,7 @@ export type SpecialObjectiveOptionData = {
 }
 
 export type SpecialObjectiveOptionTableData = {
-  selected: boolean;
+  count_selected: number;
 }
 
 export type SpecialObjectiveOptionTemplate = {
@@ -297,11 +296,12 @@ export type SpecialObjectiveOptionTemplate = {
 }
 
 export type SimpleObjectiveData = {
-  objective: boolean;
+  selected: boolean;
 }
 
 export type SimpleObjectiveTableData = {
-  objective: boolean;
+  count_selected: number;
+  count_not_selected: number;
 }
 
 export type SimpleObjectiveTemplate = {
@@ -310,10 +310,6 @@ export type SimpleObjectiveTemplate = {
 }
 
 export type NoteData = {
-  notes: string;
-}
-
-export type NoteTableData = {
   notes: string;
 }
 
@@ -328,9 +324,7 @@ export type NoteSectionData = {
 }
 
 export type NoteSectionTableData = {
-  selected: boolean;
-  rating: number;
-  notes: NoteTableData[];
+  average_rating: number;
 }
 
 export type NoteSectionTemplate = {

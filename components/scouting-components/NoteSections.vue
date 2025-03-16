@@ -1,10 +1,6 @@
 <script setup lang="ts">
 
-import {promptedNoteOptions} from "~/utils/promptedNoteOptions";
-import {NoteTemplate} from "~/utils/databases";
-import PromptedNote from "~/components/scouting-components/PromptedNote.vue";
-import jsonData from "~/components/teams-utils/scouting-data-templates/2025.json";
-import Objective from "~/components/scouting-components/data-template-components/ObjectiveFormat.vue";
+import PromptedNote from "~/components/scouting-components/scouting-component-utils/PromptedNote.vue";
 
 const props = defineProps<{
   template: NoteSectionTemplate[];
@@ -23,7 +19,7 @@ const value = computed({
 });
 
 // function to declare an empty NoteSectionData obj
-function createNoteSectionData(noteSectionTemplate: NoteSectionTemplate): GroupNoteData {
+function createNoteSectionData(noteSectionTemplate: NoteSectionTemplate): NoteSectionData {
   return {
     selected: false,
     rating: 1,

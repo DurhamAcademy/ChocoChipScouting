@@ -7,8 +7,8 @@ import { DoughnutChart } from 'vue-chart-3'
 import { Chart, registerables } from 'chart.js'
 
 const props = defineProps<{
-    labels: Array<string>
-    data: Array<number>
+    labels: string[]
+    data: number[]
     backgroundColors?: Array<any>
 }>()
 

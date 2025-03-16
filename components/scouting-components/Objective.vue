@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import IncrementalButton from "~/components/scouting-components/IncrementalButton.vue";
+import IncrementalButton from "~/components/scouting-components/scouting-component-utils/IncrementalButton.vue";
 import {computed} from "vue";
-import ObjectiveFormat from "~/components/scouting-components/data-template-components/ObjectiveFormat.vue";
+import ObjectiveFormat from "~/components/scouting-components/ObjectiveFormat.vue";
 
 const props = defineProps<{
   template: ObjectiveTemplate;
@@ -22,7 +22,8 @@ const value = computed({
 // instantiating the data object with empty Objective obj
 value.value = {
   count_made: 0,
-  count_missed: 0
+  // instantiating count_missed as -1 if missed objectives arent being measured
+  count_missed: 'missed' in props.template && props.template.missed ? 0 : -1
 };
 
 </script>
