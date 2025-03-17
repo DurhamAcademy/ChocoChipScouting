@@ -178,28 +178,6 @@ async function tableSetup() {
           data: Math.round(averageDefensiveScore(data) * 100) / 100,
           color: '',
         },
-        netAuto: {
-          data: Math.round(averageNetAuto(data) * 100) / 100,
-          color: '',
-        },
-        netAutoAccData: netAutoAccuracy(data),
-        netAutoAcc: {
-          data: !isNaN(+netAutoAccuracy(data)[1])
-            ? Math.round(+netAutoAccuracy(data)[1] * 1000) / 10 + '%'
-            : '0%',
-          color: '',
-        },
-        processorAuto: {
-          data: Math.round(averageProcessorAuto(data) * 100) / 100,
-          color: '',
-        },
-        processorAutoAccData: processorAutoAccuracy(data),
-        processorAutoAcc: {
-          data: !isNaN(+processorAutoAccuracy(data)[1])
-            ? Math.round(+processorAutoAccuracy(data)[1] * 1000) / 10 + '%'
-            : '0%',
-          color: '',
-        },
         reefAutoAccData: reefAutoAccuracy(data),
         reefAutoAcc: {
           data: !isNaN(+reefAutoAccuracy(data)[1])
@@ -319,14 +297,9 @@ async function tableSetup() {
     }
     teamsData.value = sortedData;
   }
-  /*// averages if i ever need
   let averages = {
     driver: 0,
     defense: 0,
-    netAuto: 0,
-    netAutoAcc: 0,
-    processorAuto: 0,
-    processorAutoAcc: 0,
     coralL1Auto: 0,
     coralL2Auto: 0,
     coralL3Auto: 0,
@@ -347,8 +320,6 @@ async function tableSetup() {
     let totalMatches = team.rawData.length
     averages.driver += team.driver.data * totalMatches
     averages.defense += team.defense.data * totalMatches
-    averages.netAuto += team.netAuto.data * totalMatches
-    averages.processorAuto += team.processorAuto.data * totalMatches
     averages.coralL1Auto += team.coralL1Auto.data * totalMatches
     averages.coralL2Auto += team.coralL2Auto.data * totalMatches
     averages.coralL3Auto += team.coralL3Auto.data * totalMatches
@@ -366,8 +337,6 @@ async function tableSetup() {
   }
   averages.driver /= weight
   averages.defense /= weight
-  averages.netAuto /= weight
-  averages.processorAuto /= weight
   averages.coralL1Auto /= weight
   averages.coralL2Auto /= weight
   averages.coralL3Auto /= weight
@@ -381,15 +350,11 @@ async function tableSetup() {
   averages.teleCoralL4 /= weight
   averages.teleAcc /= weight
   averages.endgamePoints /= weight
-*/
+
 
   let data: {
     driver: number[];
     defense: number[];
-    netAuto: number[];
-    netAutoAcc: number[];
-    processorAuto: number[];
-    processorAutoAcc: number[];
     coralL1Auto: number[];
     coralL2Auto: number[];
     coralL3Auto: number[];
@@ -413,10 +378,6 @@ async function tableSetup() {
   } = {
     driver: [],
     defense: [],
-    netAuto: [],
-    netAutoAcc: [],
-    processorAuto: [],
-    processorAutoAcc: [],
     coralL1Auto: [],
     coralL2Auto: [],
     coralL3Auto: [],
@@ -443,14 +404,6 @@ async function tableSetup() {
     else if (!data.driver.includes(0)) data.driver.push(0);
     if (team.defense.data != 0) data.defense.push(Number(team.defense.data));
     else if (!data.defense.includes(0)) data.defense.push(0);
-    data.netAuto.push(Number(team.netAuto.data));
-    data.netAutoAcc.push(Number(team.netAutoAcc.data.replace('%', '')));
-    if(Number.isNaN(team.netAuto.data)) team.netAuto.data = 0;
-    data.processorAuto.push(Number(team.processorAuto.data));
-    data.processorAutoAcc.push(
-      Number(team.processorAutoAcc.data.replace('%', '')),
-    );
-    if(Number.isNaN(team.processorAuto.data)) team.processorAuto.data = 0;
     data.coralL1Auto.push(Number(team.coralL1Auto.data));
     data.coralL2Auto.push(Number(team.coralL2Auto.data));
     data.coralL3Auto.push(Number(team.coralL3Auto.data));
@@ -499,20 +452,6 @@ async function tableSetup() {
         teamsData.value[i].defense.data,
         Math.min(...data.defense),
         Math.max(...data.defense),
-      ),
-    );
-    teamsData.value[i].netAuto.color = colorify(
-      calculatePercent(
-        teamsData.value[i].netAuto.data,
-        Math.min(...data.netAuto),
-        Math.max(...data.netAuto),
-      ),
-    );
-    teamsData.value[i].processorAuto.color = colorify(
-      calculatePercent(
-        teamsData.value[i].processorAuto.data,
-        Math.min(...data.processorAuto),
-        Math.max(...data.processorAuto),
       ),
     );
     teamsData.value[i].coralL1Auto.color = colorify(
@@ -657,16 +596,6 @@ function colorifyTeam(teamData: TeamTableData, data: DataArrayOrSum) {
     );
   }
   totalPercent += calculatePercent(
-    teamData.netAuto.data,
-    Math.min(...data.netAuto),
-    Math.max(...data.netAuto),
-  );
-  totalPercent += calculatePercent(
-    teamData.processorAuto.data,
-    Math.min(...data.processorAuto),
-    Math.max(...data.processorAuto),
-  );
-  totalPercent += calculatePercent(
     teamData.coralL1Auto.data,
     Math.min(...data.coralL1Auto),
     Math.max(...data.coralL1Auto),
@@ -778,22 +707,6 @@ function averageDriverScore(teamArrays: Array<ScoutingData>) {
   return totalMatches != 0 ? total / totalMatches : 0;
 }
 
-function averageNetAuto(teamArrays: Array<ScoutingData>) {
-  let nonAveragedValue = 0;
-  for (let i = 0; i < teamArrays.length; i++) {
-    nonAveragedValue += teamArrays[i].auto.net;
-  }
-  return nonAveragedValue / teamArrays.length;
-}
-
-function averageProcessorAuto(teamArrays: Array<ScoutingData>) {
-  let nonAveragedValue = 0;
-  for (let i = 0; i < teamArrays.length; i++) {
-    nonAveragedValue += teamArrays[i].auto.processor;
-  }
-  return nonAveragedValue / teamArrays.length;
-}
-
 function averageCoralL1Auto(teamArrays: Array<ScoutingData>) {
   let nonAveragedValue = 0;
   for (let i = 0; i < teamArrays.length; i++) {
@@ -903,46 +816,6 @@ function averageAuto(teamArrays: Array<ScoutingData>): number {
     successfulMobilityCount += match.auto.mobility ? 1 : 0;
   }
   return successfulMobilityCount / teamArrays.length;
-}
-
-function netAutoAccuracy(teamArrays: Array<ScoutingData>) {
-  let successfulNetCount = 0;
-  let missedNetCount = 0;
-  let newData = false;
-  for (let match of teamArrays) {
-    successfulNetCount += match.auto.net;
-    if (match.auto.netMiss != undefined) {
-      missedNetCount += match.auto.netMiss;
-      newData = true;
-    } else {
-      missedNetCount += match.auto.netMiss;
-    }
-  }
-  if (newData)
-    return [true, successfulNetCount / (missedNetCount + successfulNetCount)];
-  else return [false, successfulNetCount / successfulNetCount];
-}
-
-function processorAutoAccuracy(teamArrays: Array<ScoutingData>) {
-  let successfulProcessorCount = 0;
-  let missedProcessorCount = 0;
-  let newData = false;
-  for (let match of teamArrays) {
-    successfulProcessorCount += match.auto.processor;
-    if (match.auto.processorMiss != undefined) {
-      missedProcessorCount += match.auto.processorMiss;
-      newData = true;
-    } else {
-      missedProcessorCount += match.auto.processorMiss;
-    }
-  }
-  if (newData)
-    return [
-      true,
-      successfulProcessorCount /
-        (missedProcessorCount + successfulProcessorCount),
-    ];
-  else return [false, successfulProcessorCount / successfulProcessorCount];
 }
 
 function coralL1AutoAccuracy(teamArrays: Array<ScoutingData>) {
@@ -1085,8 +958,6 @@ function autoAccuracy(teamArrays: Array<ScoutingData>) {
   let missedReefCount = 0;
   let newData = false;
   for (let match of teamArrays) {
-    successfulNetCount += match.auto.net;
-    successfulProcessorCount += match.auto.processor;
     successfulCoralL1Count += match.auto.coralL1;
     successfulCoralL2Count += match.auto.coralL2;
     successfulCoralL3Count += match.auto.coralL3;
@@ -1096,9 +967,6 @@ function autoAccuracy(teamArrays: Array<ScoutingData>) {
       match.auto.coralL2 +
       match.auto.coralL3 +
       match.auto.coralL4;
-    if (match.auto.netMiss != undefined) {
-      missedNetCount += match.auto.netMiss;
-      missedProcessorCount += match.auto.processorMiss;
       missedCoralL1Count += match.auto.coralL1Miss;
       missedCoralL2Count += match.auto.coralL2Miss;
       missedCoralL3Count += match.auto.coralL3Miss;
@@ -1109,10 +977,6 @@ function autoAccuracy(teamArrays: Array<ScoutingData>) {
         match.auto.coralL3Miss +
         match.auto.coralL4Miss;
       //TODO: talk about adding coral misses to scouting and then put them here
-      newData = true;
-    } else {
-      missedNetCount += match.auto.netMiss;
-    }
   }
   //TODO: reef accuracy here
   if (newData)
@@ -1745,20 +1609,6 @@ await tableSetup();
                     :color="
                       team.defense.data != 0 ? team.defense.color : 'gray'
                     "
-                  />
-                </td>
-                <td class="text-center">
-                  <UBadge
-                    :label="team.netAuto.data.toString()"
-                    variant="soft"
-                    :color="team.netAuto.color"
-                  />
-                </td>
-                <td class="text-center">
-                  <UBadge
-                    :label="team.processorAuto.data.toString()"
-                    variant="soft"
-                    :color="team.processorAuto.color"
                   />
                 </td>
                 <td class="text-center dark:text-white">
