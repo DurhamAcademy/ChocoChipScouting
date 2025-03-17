@@ -91,40 +91,45 @@ let averages = {
   endgamePoints: 0,
 
 }
+let alreadyRan = false;
 function getMaxScores() {
 // auto, coral, algae, endgame
-  const maxScores = [1, 1, 1, 1];
-  let tempAutoScore = 0;
-  let tempCoralScore = 0;
-  let tempAlgaeScore = 0;
-  let tempEndgameScore = 0;
-  for (let team of teamOrgMatches.keys()) {
-    let teamMatches = teamOrgMatches.get(team);
-    if (teamMatches) {
-      for (let teamMatch of teamMatches) {
-        if (teamMatch.event == currentEvent.value) {
-          tempAutoScore += scoreMatchAuto(teamMatch);
-          tempCoralScore += scoreMatchCoral(teamMatch);
-          tempAlgaeScore += scoreMatchAlgae(teamMatch);
-          tempEndgameScore += scoreMatchEndgame(teamMatch);
+  if(!alreadyRan) {
+    const maxScores = [1, 1, 1, 1];
+    let tempAutoScore = 0;
+    let tempCoralScore = 0;
+    let tempAlgaeScore = 0;
+    let tempEndgameScore = 0;
+    for (let team of teamOrgMatches.keys()) {
+      let teamMatches = teamOrgMatches.get(team);
+      if (teamMatches) {
+        for (let teamMatch of teamMatches) {
+          if (teamMatch.event == currentEvent.value) {
+            tempAutoScore += scoreMatchAuto(teamMatch);
+            tempCoralScore += scoreMatchCoral(teamMatch);
+            tempAlgaeScore += scoreMatchAlgae(teamMatch);
+            tempEndgameScore += scoreMatchEndgame(teamMatch);
+          }
         }
       }
+      if (tempAutoScore > maxScores[0]) {
+        maxScores[0] = tempAutoScore;
+      }
+      if (tempCoralScore > maxScores[1]) {
+        maxScores[1] = tempCoralScore;
+      }
+      if (tempAlgaeScore > maxScores[2]) {
+        maxScores[2] = tempAlgaeScore;
+      }
+      if (tempEndgameScore > maxScores[3]) {
+        maxScores[3] = tempEndgameScore;
+      }
     }
-    if (tempAutoScore > maxScores[0]) {
-      maxScores[0] = tempAutoScore;
-    }
-    if (tempCoralScore > maxScores[1]) {
-      maxScores[1] = tempCoralScore;
-    }
-    if (tempAlgaeScore > maxScores[2]) {
-      maxScores[2] = tempAlgaeScore;
-    }
-    if (tempEndgameScore > maxScores[3]) {
-      maxScores[3] = tempEndgameScore;
-    }
+    console.dir(maxScores);
+    alreadyRan = true;
+    return maxScores
   }
-  console.dir(maxScores);
-  return maxScores
+  return [1,1,1,1]
 }
 let teamData = ref<{
   teamNum: number;
