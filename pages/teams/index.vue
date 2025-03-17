@@ -297,60 +297,6 @@ async function tableSetup() {
     }
     teamsData.value = sortedData;
   }
-  let averages = {
-    driver: 0,
-    defense: 0,
-    coralL1Auto: 0,
-    coralL2Auto: 0,
-    coralL3Auto: 0,
-    coralL4Auto: 0,
-    autoAcc: 0,
-    teleProcessor: 0,
-    teleNet: 0,
-    teleCoralL1: 0,
-    teleCoralL2: 0,
-    teleCoralL3: 0,
-    teleCoralL4: 0,
-    teleAcc: 0,
-    endgamePoints: 0,
-
-  }
-  let weight = 0
-  for (let team of teamsData.value) {
-    let totalMatches = team.rawData.length
-    averages.driver += team.driver.data * totalMatches
-    averages.defense += team.defense.data * totalMatches
-    averages.coralL1Auto += team.coralL1Auto.data * totalMatches
-    averages.coralL2Auto += team.coralL2Auto.data * totalMatches
-    averages.coralL3Auto += team.coralL3Auto.data * totalMatches
-    averages.coralL4Auto += team.coralL4Auto.data * totalMatches
-    averages.autoAcc += Number(team.autoAcc.data.replace('%', '')) * totalMatches
-    averages.teleProcessor += team.teleProcessor.data * totalMatches
-    averages.teleNet += team.teleNet.data * totalMatches
-    averages.teleCoralL1 += team.teleCoralL1 * totalMatches
-    averages.teleCoralL2 += team.teleCoralL2 * totalMatches
-    averages.teleCoralL3 += team.teleCoralL3 * totalMatches
-    averages.teleCoralL4 += team.teleCoralL4 * totalMatches
-    averages.teleAcc += Number(team.teleAcc.data.replace('%', '')) * totalMatches
-    averages.endgamePoints += team.endgamePoints.data * totalMatches
-    weight += totalMatches
-  }
-  averages.driver /= weight
-  averages.defense /= weight
-  averages.coralL1Auto /= weight
-  averages.coralL2Auto /= weight
-  averages.coralL3Auto /= weight
-  averages.coralL4Auto /= weight
-  averages.autoAcc /= weight
-  averages.teleProcessor /= weight
-  averages.teleNet /= weight
-  averages.teleCoralL1 /= weight
-  averages.teleCoralL2 /= weight
-  averages.teleCoralL3 /= weight
-  averages.teleCoralL4 /= weight
-  averages.teleAcc /= weight
-  averages.endgamePoints /= weight
-
 
   let data: {
     driver: number[];
