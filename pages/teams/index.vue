@@ -1143,18 +1143,6 @@ let columns = ref([
     icon: 'i-heroicons-arrows-up-down',
   },
   {
-    label: 'Net',
-    sort: 'none',
-    sortable: true,
-    icon: 'i-heroicons-arrows-up-down',
-  },
-  {
-    label: 'Processor',
-    sort: 'none',
-    sortable: true,
-    icon: 'i-heroicons-arrows-up-down',
-  },
-  {
     label: 'Reef',
     sort: 'none',
     sortable: true,
@@ -1503,7 +1491,7 @@ await tableSetup();
               class="border-2 odd:bg-gray-50 dark:bg-gray-800 dark:border-gray-400"
             />
             <colgroup
-              span="4"
+              span="2"
               class="border-2 odd:bg-gray-50 dark:bg-gray-700 dark:border-gray-400"
             />
             <colgroup
@@ -1522,11 +1510,11 @@ await tableSetup();
                   <p class="dark:text-white">Ratings</p>
                 </th>
                 <th
-                  colspan="4"
+                  colspan="2"
                   scope="colgroup"
                 >
                   <p class="text-xs font-light dark:text-white">Average</p>
-                  <p class="dark:text-white">Cycles</p>
+                  <p class="dark:text-white">Auto Cycles</p>
                 </th>
                 <th
                   colspan="4"
