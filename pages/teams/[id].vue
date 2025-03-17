@@ -91,41 +91,41 @@ let averages = {
   endgamePoints: 0,
 
 }
-
+function getMaxScores() {
 // auto, coral, algae, endgame
-const maxScores = [1, 1, 1, 1];
-let teamMatches;
-let tempAutoScore = 0;
-let tempCoralScore = 0;
-let tempAlgaeScore = 0;
-let tempEndgameScore = 0;
-for (let team of teamOrgMatches.keys()) {
-  teamMatches = teamOrgMatches.get(team);
-  console.dir(teamMatches)
-  if (teamMatches) {
-    for (let teamMatch of teamMatches) {
-      if (teamMatch.event == currentEvent.value) {
-        tempAutoScore += scoreMatchAuto(teamMatch);
-        tempCoralScore += scoreMatchCoral(teamMatch);
-        tempAlgaeScore += scoreMatchAlgae(teamMatch);
-        tempEndgameScore += scoreMatchEndgame(teamMatch);
+  const maxScores = [1, 1, 1, 1];
+  let tempAutoScore = 0;
+  let tempCoralScore = 0;
+  let tempAlgaeScore = 0;
+  let tempEndgameScore = 0;
+  for (let team of teamOrgMatches.keys()) {
+    let teamMatches = teamOrgMatches.get(team);
+    if (teamMatches) {
+      for (let teamMatch of teamMatches) {
+        if (teamMatch.event == currentEvent.value) {
+          tempAutoScore += scoreMatchAuto(teamMatch);
+          tempCoralScore += scoreMatchCoral(teamMatch);
+          tempAlgaeScore += scoreMatchAlgae(teamMatch);
+          tempEndgameScore += scoreMatchEndgame(teamMatch);
+        }
       }
     }
+    if (tempAutoScore > maxScores[0]) {
+      maxScores[0] = tempAutoScore;
+    }
+    if (tempCoralScore > maxScores[1]) {
+      maxScores[1] = tempCoralScore;
+    }
+    if (tempAlgaeScore > maxScores[2]) {
+      maxScores[2] = tempAlgaeScore;
+    }
+    if (tempEndgameScore > maxScores[3]) {
+      maxScores[3] = tempEndgameScore;
+    }
   }
-  if (tempAutoScore > maxScores[0]) {
-    maxScores[0] = tempAutoScore;
-  }
-  if (tempCoralScore > maxScores[1]) {
-    maxScores[1] = tempCoralScore;
-  }
-  if (tempAlgaeScore > maxScores[2]) {
-    maxScores[2] = tempAlgaeScore;
-  }
-  if (tempEndgameScore > maxScores[3]) {
-    maxScores[3] = tempEndgameScore;
-  }
+  console.dir(maxScores);
+  return maxScores
 }
-console.dir(maxScores);
 let teamData = ref<{
   teamNum: number;
   teamName: string;
@@ -335,7 +335,7 @@ watch(width, () => {
       <div class="flex-auto w-full lg:w-1/4 h-1/3 mt-4 lg:mt-0 lg:ml-4">
         <TeamVisualization
           :team-data="teamData"
-          :maxScores="maxScores"
+          :maxScores="getMaxScores()"
         />
       </div>
       <div class="flex-auto w-full lg:w-1/3 h-min max-h-min flex-wrap pt-4">
