@@ -73,6 +73,25 @@ for (let i = 0; i < match.length; i++) {
     }
   }
 }
+let averages = {
+  driver: 0,
+  defense: 0,
+  coralL1Auto: 0,
+  coralL2Auto: 0,
+  coralL3Auto: 0,
+  coralL4Auto: 0,
+  autoAcc: 0,
+  teleProcessor: 0,
+  teleNet: 0,
+  teleCoralL1: 0,
+  teleCoralL2: 0,
+  teleCoralL3: 0,
+  teleCoralL4: 0,
+  teleAcc: 0,
+  endgamePoints: 0,
+
+}
+
 // auto, coral, algae, endgame
 const maxScores = [1, 1, 1, 1];
 let teamMatches;
@@ -82,6 +101,7 @@ let tempAlgaeScore = 0;
 let tempEndgameScore = 0;
 for (let team of teamOrgMatches.keys()) {
   teamMatches = teamOrgMatches.get(team);
+  console.dir(teamMatches)
   if (teamMatches) {
     for (let teamMatch of teamMatches) {
       if (teamMatch.event == currentEvent.value) {
