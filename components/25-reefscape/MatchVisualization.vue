@@ -121,7 +121,7 @@ let promptedNotesDetailedOptions = promptedNoteOptions.map(
             color="red"
             variant="subtle"
             v-if="props.rowData.penaltyScore > 0"
-            class="mr-1.5 mt-2">
+            class="mr-3 mt-2">
             {{props.rowData.penaltyScore.toFixed(2)}}
           </UBadge>
         </div>
