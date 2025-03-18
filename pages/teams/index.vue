@@ -1435,7 +1435,7 @@ await tableSetup();
             />
             <colgroup
               span="2"
-              class="border-2 odd:bg-gray-50 dark:bg-gray-800 dark:border-gray-400"
+              class="border-2 odd:bg-gray-50 dark:bg-gray-700 dark:border-gray-400"
             />
             <colgroup
               span="2"
@@ -1443,7 +1443,7 @@ await tableSetup();
             />
             <colgroup
               span="4"
-              class="border-2 odd:bg-gray-50 dark:bg-gray-800 dark:border-gray-400"
+              class="border-2 odd:bg-gray-50 dark:bg-gray-700 dark:border-gray-400"
             />
             <colgroup
               span="2"
@@ -1811,12 +1811,11 @@ await tableSetup();
                     v-if="team.teleAccData[0]"
                     mode="hover"
                   >
-                    <UButton
+                    <UBadge
                       :label="team.teleAcc.data"
                       variant="soft"
                       :color="team.teleAcc.color"
-                      size="xs"
-                      class="mx-auto dark:bg-gray-800"
+                      class="mx-auto"
                     />
                     <template #panel>
                       <div class="flex">
