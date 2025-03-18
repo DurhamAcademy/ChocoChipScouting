@@ -1517,7 +1517,7 @@ await tableSetup();
                     size="xs"
                     @click="navigateTo('/teams/' + team.team.data)"
                     trailing-icon="i-heroicons-chart-bar-square"
-                    class=""
+                    class="dark:bg-gray-600"
                   />
                 </td>
                 <td class="text-center">
