@@ -100,6 +100,7 @@ function getMaxScores() {
     let tempCoralScore = 0;
     let tempAlgaeScore = 0;
     let tempEndgameScore = 0;
+    console.dir(teamOrgMatches.keys())
     for (let team of teamOrgMatches.keys()) {
       let teamMatches = teamOrgMatches.get(team);
       if (teamMatches) {
