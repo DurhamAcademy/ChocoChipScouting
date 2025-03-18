@@ -1517,7 +1517,7 @@ await tableSetup();
                     size="xs"
                     @click="navigateTo('/teams/' + team.team.data)"
                     trailing-icon="i-heroicons-chart-bar-square"
-                    class="dark:border-gray-700"
+                    class=""
                   />
                 </td>
                 <td class="text-center">
@@ -1816,7 +1816,7 @@ await tableSetup();
                       variant="soft"
                       :color="team.teleAcc.color"
                       class="mx-auto"
-                    />
+                    />f
                     <template #panel>
                       <div class="flex">
                         <div>
