@@ -17,6 +17,7 @@ let filterOptions = ['Team #', 'Match #', '-Author'];
 let activeFilterOption = ref(filterOptions[0]);
 let filterInput = ref('');
 let activeFilters = ref<Array<string>>([]);
+let colorMode = useColorMode();
 
 function addFilter() {
   if (filterInput.value != '') {
@@ -1550,11 +1551,10 @@ await tableSetup();
                     v-if="team.reefAuto.toString()"
                     mode="hover"
                   >
-                    <UButton
+                    <UBadge
                       :label="team.reefAuto.data.toString()"
                       variant="soft"
                       :color="team.reefAuto.color"
-                      size="xs"
                       class="mx-auto"
                     />
                     <template #panel>
@@ -1563,7 +1563,7 @@ await tableSetup();
                           <UBadge
                             label="L1"
                             variant="soft"
-                            color="gray"
+                            :color="team.coralL1Auto.color"
                           />
                           <UBadge
                             :label="team.coralL1Auto.data.toString()"
@@ -1575,7 +1575,7 @@ await tableSetup();
                           <UBadge
                             label="L2"
                             variant="soft"
-                            color="gray"
+                            :color="team.coralL2Auto.color"
                           />
                           <UBadge
                             :label="team.coralL2Auto.data.toString()"
@@ -1587,7 +1587,7 @@ await tableSetup();
                           <UBadge
                             label="L3"
                             variant="soft"
-                            color="gray"
+                            :color="team.coralL3Auto.color"
                           />
                           <UBadge
                             :label="team.coralL3Auto.data.toString()"
@@ -1599,7 +1599,7 @@ await tableSetup();
                           <UBadge
                             label="L4"
                             variant="soft"
-                            color="gray"
+                            :color="team.coralL4Auto.color"
                           />
                           <UBadge
                             :label="team.coralL4Auto.data.toString()"
@@ -1622,7 +1622,7 @@ await tableSetup();
                     v-if="team.autoAccData[0]"
                     mode="hover"
                   >
-                    <UButton
+                    <UBadge
                       :label="team.autoAcc.data"
                       variant="soft"
                       :color="team.autoAcc.color"
@@ -1712,11 +1712,10 @@ await tableSetup();
                     v-if="team.teleReef.toString()"
                     mode="hover"
                   >
-                    <UButton
+                    <UBadge
                       :label="team.teleReef.data.toString()"
                       variant="soft"
                       :color="team.teleReef.color"
-                      size="xs"
                       class="mx-auto"
                     />
                     <template #panel>
@@ -1725,7 +1724,7 @@ await tableSetup();
                           <UBadge
                             label="L1"
                             variant="soft"
-                            color="gray"
+                            :color="team.teleCoralL1.color"
                           />
                           <UBadge
                             :label="team.teleCoralL1.data.toString()"
@@ -1737,7 +1736,7 @@ await tableSetup();
                           <UBadge
                             label="L2"
                             variant="soft"
-                            color="gray"
+                            :color="team.teleCoralL2.color"
                           />
                           <UBadge
                             :label="team.teleCoralL2.data.toString()"
@@ -1749,7 +1748,7 @@ await tableSetup();
                           <UBadge
                             label="L3"
                             variant="soft"
-                            color="gray"
+                            :color="team.teleCoralL3.color"
                           />
                           <UBadge
                             :label="team.teleCoralL3.data.toString()"
@@ -1761,7 +1760,7 @@ await tableSetup();
                           <UBadge
                             label="L4"
                             variant="soft"
-                            color="gray"
+                            :color="team.teleCoralL4.color"
                           />
                           <UBadge
                             :label="team.teleCoralL4.data.toString()"
