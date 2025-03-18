@@ -116,7 +116,7 @@ let promptedNotesDetailedOptions = promptedNoteOptions.map(
       ></BarChart>
       <div class="flex-auto whitespace-normal max-h-72 max-w-1/2 w-1/2 ml-4">
         <p class="font-extrabold text-sm dark:text-white mt-1" v-if="props.rowData.penaltyScore > 0">
-          Average Penalties: {{props.rowData.penaltyScore}}
+          Average Penalties: {{props.rowData.penaltyScore.toFixed(2)}}
         </p>
         <p class="font-extrabold text-sm dark:text-white mt-1">
           Auto & Endgame:
