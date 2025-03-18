@@ -102,7 +102,6 @@ function getMaxScores() {
     let tempEndgameScore = 0;
     for (let team of teamOrgMatches.keys()) {
       let teamMatches = teamOrgMatches.get(team);
-      console.dir(teamOrgMatches.get(team))
       if (teamMatches) {
         for (let teamMatch of teamMatches) {
           if (teamMatch.event == currentEvent.value) {
@@ -130,7 +129,6 @@ function getMaxScores() {
       tempAlgaeScore = 0;
       tempEndgameScore = 0;
     }
-    console.dir(maxScores);
     alreadyRan = true;
     return maxScores
   }
