@@ -112,19 +112,23 @@ function getMaxScores() {
             tempEndgameScore += scoreMatchEndgame(teamMatch);
           }
         }
+        if (tempAutoScore > maxScores[0]) {
+          maxScores[0] = tempAutoScore;
+        }
+        if (tempCoralScore > maxScores[1]) {
+          maxScores[1] = tempCoralScore;
+        }
+        if (tempAlgaeScore > maxScores[2]) {
+          maxScores[2] = tempAlgaeScore;
+        }
+        if (tempEndgameScore > maxScores[3]) {
+          maxScores[3] = tempEndgameScore;
+        }
       }
-      if (tempAutoScore > maxScores[0]) {
-        maxScores[0] = tempAutoScore;
-      }
-      if (tempCoralScore > maxScores[1]) {
-        maxScores[1] = tempCoralScore;
-      }
-      if (tempAlgaeScore > maxScores[2]) {
-        maxScores[2] = tempAlgaeScore;
-      }
-      if (tempEndgameScore > maxScores[3]) {
-        maxScores[3] = tempEndgameScore;
-      }
+      tempAutoScore = 0;
+      tempCoralScore = 0;
+      tempAlgaeScore = 0;
+      tempEndgameScore = 0;
     }
     console.dir(maxScores);
     alreadyRan = true;
