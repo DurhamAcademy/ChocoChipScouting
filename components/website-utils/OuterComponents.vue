@@ -81,7 +81,7 @@ if (
           class="vis min-h-screen h-screen max-w-full"
         >
           <UCard
-            class="h-full fixed w-[16em]"
+            class="h-full"
             :ui="{ rounded: 'rounded-none' }"
           >
             <UVerticalNavigation :links="links" />
