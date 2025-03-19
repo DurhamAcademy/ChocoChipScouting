@@ -120,7 +120,7 @@ async function setup() {
           <UBadge
             class="mt-2 mb-2 dark:bg-slate-100"
             color="coral"
-            label="chat"
+            label="0test"
             variant="soft"
           />
           <template #panel>
@@ -132,7 +132,8 @@ async function setup() {
                 color="coral"
               />
               <UBadge
-                label="test"
+                class="dark:text-white"
+                label="0test"
                 variant="soft"
                 color="white"
               />
@@ -143,7 +144,8 @@ async function setup() {
                 color="coral"
               />
               <UBadge
-                label="net"
+                class="dark:text-white"
+                label="0test"
                 variant="soft"
                 color="white"
               />
