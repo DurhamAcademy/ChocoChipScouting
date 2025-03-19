@@ -128,7 +128,6 @@ function getMaxScores() {
       tempAlgaeScore = 0;
       tempEndgameScore = 0;
     }
-    alreadyRan = true;
     return maxScores
 }
 let teamData = ref<{
