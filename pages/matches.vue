@@ -69,7 +69,7 @@ const headers = [
     title: 'Endgame',
     align: 'center',
     children: [
-      { title: 'Climb', align: 'end', value: 'endgame.endgame' },
+      { title: 'Climb', align: 'end', value: 'endgame.endgame', width: '16%', },
     ],
   },
 ];
@@ -118,9 +118,10 @@ async function setup() {
           mode="hover"
         >
           <UBadge
+            class="mt-2 mb-2 dark:bg-slate-100"
+            color="coral"
             label="chat"
             variant="soft"
-            class="mx-auto"
           />
           <template #panel>
             <div class="flex">
