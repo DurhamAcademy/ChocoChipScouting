@@ -38,7 +38,6 @@ const headers = [
       { title: 'Team', align: 'start', value: 'teamNumber' },
       { title: 'Match', align: 'start', value: 'matchNumber' },
       { title: 'Notes', value: 'notes' },
-      { title: 'Author', value: 'author' },
     ],
   },
   {
