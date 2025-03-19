@@ -1816,7 +1816,7 @@ await tableSetup();
                       variant="soft"
                       :color="team.teleAcc.color"
                       class="mx-auto"
-                    />f
+                    />
                     <template #panel>
                       <div class="flex">
                         <div>
