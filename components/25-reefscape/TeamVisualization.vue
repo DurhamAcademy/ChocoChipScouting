@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import SpiderGraph from '~/components/charts/SpiderGraph.vue';
 import { min } from '@popperjs/core/lib/utils/math';
-import BarChart from '~/components/charts/BarChart.vue'; //PLEASE DONT DELETE THIS IT SAYS IT ISNT USED BUT IT BREAKS WITHOUT IT
 const props = defineProps<{
   teamData: any;
   maxScores: any;
@@ -14,8 +13,8 @@ let endgamePoints = 0;
 let defenseNum = 0;
 let defenseTotal = 0;
 
-for (let i = 0; i < props.teamData.rawData.length; i++) {
-  let match = props.teamData.rawData[i];
+for (let j in props.teamData.rawData) {
+  let match = props.teamData.rawData[j];
   autoPoints += scoreAuto(match);
   coralPoints += scoreCoral(match);
   algaePoints += scoreAlgae(match);
@@ -83,18 +82,18 @@ function addDefense(match: any) {
 }
 
 let spiderGraphData = ref([
-  min((autoPoints / props.maxScores[0]) * 100, 100),
-  min((coralPoints / props.maxScores[1]) * 100, 100),
-  min((algaePoints / props.maxScores[2]) * 100, 100),
-  min((endgamePoints / props.maxScores[3]) * 100, 100),
+  min((autoPoints / props.maxScores[0]) * 100, 100) || 0,
+  min((coralPoints / props.maxScores[1]) * 100, 100) || 0,
+  min((algaePoints / props.maxScores[2]) * 100, 100) || 0,
+  min((endgamePoints / props.maxScores[3]) * 100, 100) || 0,
   min((defenseTotal / defenseNum) * 20, 100) || 0, // THE || MAKES IT SO TEAMS WITH NO DATA DONT BREAK
 ]);
 
 const spiderGraphLabels = ['Auto', 'Coral', 'Algae', 'Endgame', 'Defense'];
 
 let possibleMissingData = false;
-for(let nubmer in spiderGraphData.value){
-  if (spiderGraphData.value[nubmer] < 1){
+for(let i in spiderGraphData.value){
+  if (spiderGraphData.value[i] < 1){
     possibleMissingData=true;
     break;
   }
