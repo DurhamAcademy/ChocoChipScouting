@@ -91,11 +91,10 @@ let averages = {
   endgamePoints: 0,
 
 }
-let alreadyRan = false;
+
 function getMaxScores() {
 // auto, coral, algae, endgame
-  if(!alreadyRan) {
-    const maxScores = [1, 1, 1, 1];
+    let maxScores = [1, 1, 1, 1];
     let tempAutoScore = 0;
     let tempCoralScore = 0;
     let tempAlgaeScore = 0;
@@ -131,8 +130,6 @@ function getMaxScores() {
     }
     alreadyRan = true;
     return maxScores
-  }
-  return [1,1,1,1]
 }
 let teamData = ref<{
   teamNum: number;
