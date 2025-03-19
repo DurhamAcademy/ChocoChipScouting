@@ -24,6 +24,10 @@ const sortBy = ref([
   { key: 'matchNumber', order: 'asc' },
 ]);
 
+function printRow(row: any){
+  console.dir(row)
+}
+
 /*
   TODO update seasonally
   Sets the fields to be displayed
@@ -58,8 +62,7 @@ const headers = [
       { title: 'Coral L2', align: 'end', value: 'teleop.coralL2' },
       { title: 'Coral L3', align: 'end', value: 'teleop.coralL3' },
       { title: 'Coral L4', align: 'end', value: 'teleop.coralL4' },
-      { title: 'Processor', align: 'end', value: 'teleop.processor' },
-      { title: 'Net', align: 'end', value: 'teleop.net' },
+      { title: 'Algae', align: 'end', value: 'algae' },
     ],
   },
   {
@@ -85,7 +88,6 @@ async function setup() {
     },
   );
   let matches = await Promise.all(promiseMatches);
-  console.log(matches);
   //filters data to ensure all data is usable and of the current event
   matches = matches.filter(function (match) {
     return !(
@@ -94,10 +96,8 @@ async function setup() {
       match.event != currentEvent.value
     );
   });
-  console.log(matches);
   items = matches;
 }
-
 //TODO: fix the footer post-comp
 </script>
 <template>
@@ -113,6 +113,43 @@ async function setup() {
       v-model:sort-by="sortBy"
       hide-default-footer
     >
+      <template v-slot:item.algae="row">
+        <UPopover
+          mode="hover"
+        >
+          <UBadge
+            label="chat"
+            variant="soft"
+            class="mx-auto"
+          />
+          <template #panel>
+            <div class="flex">
+              <UBadge
+                class="rounded-none"
+                label="Processor"
+                variant="soft"
+                color="coral"
+              />
+              <UBadge
+                label="test"
+                variant="soft"
+                color="white"
+              />
+              <UBadge
+                class="rounded-none pl-2"
+                label="Net"
+                variant="soft"
+                color="coral"
+              />
+              <UBadge
+                label="net"
+                variant="soft"
+                color="white"
+              />
+            </div>
+          </template>
+        </UPopover>
+      </template>
       <template v-slot:item.notes="row">
         <UPopover :popper="{ offsetDistance: 15 }">
           <UButton
@@ -120,7 +157,6 @@ async function setup() {
             color="coral"
             label="Notes"
             variant="soft"
-
           />
           <template #panel>
             <UContainer
