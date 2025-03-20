@@ -366,7 +366,6 @@ const scoreBreakDown = [{
   EndGame: redTotalEndGame,
   Total: redTotal
 }]
-console.dir(blueTotalTeleOp.value)
 </script>
 
 <template>
