@@ -46,23 +46,22 @@ export type TeamTableDataTest = {
     tiered_objectives: TieredObjectiveTableData[];
     simple_objectives: SimpleObjectiveTableData[];
     special_objectives: SpecialObjectiveTableData[];
-    notes: NoteTableData[];
+    objectives: ObjectiveTableData[];
   };
   teleop: {
     tiered_objectives: TieredObjectiveTableData[];
     simple_objectives: SimpleObjectiveTableData[];
     special_objectives: SpecialObjectiveTableData[];
-    notes: NoteTableData[];
+    objectives: ObjectiveTableData[];
   };
   endgame: {
     tiered_objectives: TieredObjectiveTableData[];
     simple_objectives: SimpleObjectiveTableData[];
     special_objectives: SpecialObjectiveTableData[];
-    notes: NoteTableData[];
+    objectives: ObjectiveTableData[];
   };
   notes: {
     note_sections: NoteSectionTableData[];
-    notes: NoteTableData[];
   }
 }
 
@@ -207,9 +206,9 @@ export default {
 
 // NEW SCOUTING DATA FORMATTING
 export type ScoutingDataTest = {
-  team_number: number;
+  team_number: string;
   event_key: string;
-  match_number: number;
+  match_number: string;
   author: string;
   auto: {
     tiered_objectives: TieredObjectiveData[];
@@ -332,4 +331,6 @@ export type NoteSectionTemplate = {
   rating_bar_max: number;
   notes: NoteTemplate[];
 }
+
+export type GamePhase = 'auto' | 'teleop' | 'endgame'
 

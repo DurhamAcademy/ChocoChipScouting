@@ -16,9 +16,9 @@ import Objective from "~/components/scouting-components/Objective.vue";
 
 
 let scoutData = ref<ScoutingDataTest>({
-  team_number: null,
+  team_number: '',
   event_key: '',
-  match_number: null,
+  match_number: '',
   author: '',
   auto: {
     tiered_objectives: [],
@@ -42,7 +42,7 @@ let scoutData = ref<ScoutingDataTest>({
     notes: []
   },
   notes: {
-    grouped_notes: [],
+    note_sections: [],
     notes: []
   },
 });
@@ -93,13 +93,19 @@ watch(tbaPending, () => {
 let validTeamNums = ref<Array<number>>();
 
 //a quick function to check if the team and match numbers a user enters are valid
-function isValidNum() {
+function isTeamNumberValid() {
   return (
-      scoutData.value.team_number != null &&
-      scoutData.value.match_number != null &&
-      scoutData.value.team_number > 0 &&
-      scoutData.value.match_number > 0 &&
-      scoutData.value.team_number < 10000
+      !Number.isNaN(parseInt(scoutData.value.team_number)) &&
+      scoutData.value.team_number != '' &&
+      parseInt(scoutData.value.team_number) > 0
+  );
+}
+
+function isMatchNumberValid() {
+  return (
+      !Number.isNaN(parseInt(scoutData.value.match_number)) &&
+      scoutData.value.match_number != '' &&
+      parseInt(scoutData.value.match_number) > 0
   );
 }
 
@@ -108,13 +114,8 @@ function isValidNum() {
  also redirects the webpage to the /matches page (notice navigateTo)
  */
 async function submit() {
-  console.log(scoutData.value)
-  scoutData.value.team_number = parseInt(scoutData.value.team_number);
-  scoutData.value.match_number = parseInt(scoutData.value.match_number);
-  if (
-      !Number.isNaN(scoutData.value.team_number) &&
-      !Number.isNaN(scoutData.value.match_number)
-  ) {
+  if (!isTeamNumberValid() || !isMatchNumberValid()) {
+    console.log(scoutData.value)
     scoutData.value.author = usernameState.value;
     scoutData.value.event_key = currentEvent.value || eventOptions[0];
     await db.post(scoutData.value);
@@ -140,11 +141,7 @@ async function submit() {
                 <template #trailing>
                   <span
                       class="text-red-400 dark:text-red-600 text-xs"
-                      v-if="
-                      validTeamNums &&
-                      validTeamNums.length > 0 &&
-                      !validTeamNums.includes(parseInt(scoutData.team_number))
-                    "
+                      v-if="!isMatchNumberValid()"
                   >!!</span>
                   <span v-else></span>
                 </template>
@@ -160,10 +157,7 @@ async function submit() {
                 <template #trailing>
                   <span
                       class="text-red-400 dark:text-red-600 text-xs"
-                      v-if="
-                      isNaN(parseInt(scoutData.match_number)) &&
-                      scoutData.match_number != null &&
-                      scoutData.match_number != ''
+                      v-if="!isMatchNumberValid()
                     "
                   >error</span
                   >
@@ -231,7 +225,7 @@ async function submit() {
                   label="Submit"
                   type="submit"
                   variant="solid"
-                  :disabled="!isValidNum()"
+                  :disabled="!isTeamNumberValid() || !isMatchNumberValid()"
                   @click="submit"
               />
             </div>
