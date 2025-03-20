@@ -73,24 +73,6 @@ for (let i = 0; i < match.length; i++) {
     }
   }
 }
-let averages = {
-  driver: 0,
-  defense: 0,
-  coralL1Auto: 0,
-  coralL2Auto: 0,
-  coralL3Auto: 0,
-  coralL4Auto: 0,
-  autoAcc: 0,
-  teleProcessor: 0,
-  teleNet: 0,
-  teleCoralL1: 0,
-  teleCoralL2: 0,
-  teleCoralL3: 0,
-  teleCoralL4: 0,
-  teleAcc: 0,
-  endgamePoints: 0,
-
-}
 
 function getMaxScores() {
 // auto, coral, algae, endgame
