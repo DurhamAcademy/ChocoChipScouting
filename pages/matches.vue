@@ -114,7 +114,7 @@ async function setup() {
       v-model:sort-by="sortBy"
       hide-default-footer
     >
-<!--      THIS CODE CURRENTLY DOES THING AND IT WILL BE WORKED ON AFTER COMPETITION-->
+<!--      THIS CODE CURRENTLY DOES NOTHING AND IT WILL BE WORKED ON AFTER COMPETITION-->
       <template v-slot:item.algae="row">
         <UPopover
           mode="hover"
