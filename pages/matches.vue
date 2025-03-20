@@ -62,7 +62,8 @@ const headers = [
       { title: 'Coral L2', align: 'end', value: 'teleop.coralL2' },
       { title: 'Coral L3', align: 'end', value: 'teleop.coralL3' },
       { title: 'Coral L4', align: 'end', value: 'teleop.coralL4' },
-      { title: 'Algae', align: 'end', value: 'algae' },
+      { title: 'Processor', align: 'end', value: 'teleop.processor' },
+      { title: 'Net', align: 'end', value: 'teleop.net' },
     ],
   },
   {
@@ -113,6 +114,7 @@ async function setup() {
       v-model:sort-by="sortBy"
       hide-default-footer
     >
+<!--      THIS CODE CURRENTLY DOES THING AND IT WILL BE WORKED ON AFTER COMPETITION-->
       <template v-slot:item.algae="row">
         <UPopover
           mode="hover"
@@ -120,7 +122,7 @@ async function setup() {
           <UBadge
             class="mt-2 mb-2 dark:bg-slate-100"
             color="coral"
-            label="0test"
+            label="hover"
             variant="soft"
           />
           <template #panel>
