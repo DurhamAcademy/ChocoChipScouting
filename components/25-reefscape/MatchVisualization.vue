@@ -116,16 +116,13 @@ let promptedNotesDetailedOptions = promptedNoteOptions.map(
       ></BarChart>
       <div class="flex-auto whitespace-normal max-h-72 max-w-1/2 w-1/2 ml-4">
         <div>
-          <span class="font-extrabold text-sm dark:text-white"
-            >Average Penalties:
-          </span>
-          <UBadge
+        <span class="font-extrabold text-sm dark:text-white">Average Penalties: </span>
+           <UBadge
             color="red"
             variant="subtle"
             v-if="props.rowData.penaltyScore > 0"
-            class="mr-3 mt-2"
-          >
-            {{ props.rowData.penaltyScore.toFixed(2) }}
+            class="mr-3 mt-2">
+            {{props.rowData.penaltyScore.toFixed(2)}}
           </UBadge>
         </div>
         <p class="font-extrabold text-sm dark:text-white mt-1">
