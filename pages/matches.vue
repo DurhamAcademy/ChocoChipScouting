@@ -114,47 +114,6 @@ async function setup() {
       v-model:sort-by="sortBy"
       hide-default-footer
     >
-<!--      THIS CODE CURRENTLY DOES NOTHING AND IT WILL BE WORKED ON AFTER COMPETITION-->
-      <template v-slot:item.algae="row">
-        <UPopover
-          mode="hover"
-        >
-          <UBadge
-            class="mt-2 mb-2 dark:bg-slate-100"
-            color="coral"
-            label="hover"
-            variant="soft"
-          />
-          <template #panel>
-            <div class="flex">
-              <UBadge
-                class="rounded-none"
-                label="Processor"
-                variant="soft"
-                color="coral"
-              />
-              <UBadge
-                class="dark:text-white"
-                label="0test"
-                variant="soft"
-                color="white"
-              />
-              <UBadge
-                class="rounded-none pl-2"
-                label="Net"
-                variant="soft"
-                color="coral"
-              />
-              <UBadge
-                class="dark:text-white"
-                label="0test"
-                variant="soft"
-                color="white"
-              />
-            </div>
-          </template>
-        </UPopover>
-      </template>
       <template v-slot:item.notes="row">
         <UPopover :popper="{ offsetDistance: 15 }">
           <UButton
