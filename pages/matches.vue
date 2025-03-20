@@ -24,10 +24,6 @@ const sortBy = ref([
   { key: 'matchNumber', order: 'asc' },
 ]);
 
-function printRow(row: any){
-  console.dir(row)
-}
-
 /*
   TODO update seasonally
   Sets the fields to be displayed
