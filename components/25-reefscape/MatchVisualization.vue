@@ -209,6 +209,9 @@ let promptedNotesDetailedOptions = promptedNoteOptions.map(
               }}
             </p>
           </div>
+          <p class="pb-2 font-extrabold text-sm dark:text-white">
+            Author: {{ rowData.rawData[selectedMatch - 1].author }}
+          </p>
         </div>
       </div>
     </div>
