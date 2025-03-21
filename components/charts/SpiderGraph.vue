@@ -29,6 +29,7 @@ Chart.defaults.scales.radialLinear.ticks.stepSize = 20; //this may need to be a 
 if(colorMode.value == "dark"){
   Chart.defaults.scales.radialLinear.ticks.color = 'rgb(255, 255, 255)';
   Chart.defaults.scales.radialLinear.pointLabels.color = 'rgb(255, 255, 255)';
+  Chart.defaults.borderColor = 'rgb(192,192,192)';
 }
 else{
   Chart.defaults.scales.radialLinear.ticks.color = 'rgb(0, 0, 0)';
