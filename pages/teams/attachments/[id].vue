@@ -41,7 +41,7 @@ allDocs.rows.forEach(async (row) => {
           possibleEvents.value.push(doc.event)
           eventStyles.value.push("outline")
         }
-        for (let tag of attachmentsData.value[attachmentsData.value.length-1].tagList) {
+        for (let tag of doc.tags) {
           if(!possibleTags.value.includes(tag)) {
             possibleTags.value.push(tag)
             tagStyles.value.push("outline")
@@ -63,9 +63,7 @@ filteredAttachmentsData = computed(() => {
   }).filter(attachment => {
     return filterTags.value.every(tag => attachment.tagList.includes(tag))
   }).filter(attachment => {
-    if (filterEvent.value == "")
-      return true
-    return filterEvent.value == attachment.event
+    return (filterEvent.value == "" || filterEvent.value == attachment.event)
   })
 })
 
@@ -75,14 +73,13 @@ function toggleTag(index: number) {
     filterTags.value.push(possibleTags.value[index])
     tagStyles.value[index] = "solid"
   } else if (tagStyles.value[index] == "solid"){
-    filterTags.value.splice(filterTags.value.indexOf(possibleTags.value[index]))
+    filterTags.value.splice(filterTags.value.indexOf(possibleTags.value[index]), 1)
     tagStyles.value[index] = "outline"
   }
 }
 
 function toggleEvent(index: number) {
   if (eventStyles.value[index] == "outline") {
-    console.log(possibleEvents.value)
     filterEvent.value = possibleEvents.value[index]
     eventStyles.value = eventStyles.value.map(() => "outline")
     eventStyles.value[index] = "solid"
@@ -114,32 +111,32 @@ async function goBack() {
     <template #header>
       <UButton class="absolute left-2 top-2" variant="ghost" size="xl" icon="i-heroicons-arrow-left" @click="goBack"/>
       <h1 class="font-extrabold text-4xl text-center dark:!text-primary">Team {{ route.params.id }} Attachments</h1>
-<!--      <div class="flex mt-2 justify-center"> NONE OF THIS WORKS ILL FIX IT LATER-->
-<!--        <UButton class="font-sans font-medium mr-2" variant="ghost" color="primary" icon="i-heroicons-adjustments-horizontal" label="Filters: "></UButton>-->
-<!--        <UInput icon="i-heroicons-magnifying-glass" color="primary" class="w-32" v-model="filterInput"/> &lt;!&ndash; wip &ndash;&gt;-->
-<!--        <UPopover class="px-2">-->
-<!--          <UButton label="Tags" variant="ghost"/>-->
-<!--          <template #panel>-->
-<!--            <div class="p-2 flex-wrap justify-center">-->
-<!--              <p class="font-sans font-bold text-opacity-60">Choose Tags To Filter</p>-->
-<!--              <div class="flex justify-center">-->
-<!--                <UButton v-for="(tag, index) in possibleTags" :label="tag" class="justify center" style="margin:5px" :variant[]="tagStyles[index]" :ui="{ rounded: 'rounded-full' }" @click="toggleTag(index)"/>-->
-<!--              </div>-->
-<!--            </div>-->
-<!--          </template>-->
-<!--        </UPopover>-->
-<!--        <UPopover class="px-2">-->
-<!--          <UButton label="Events" variant="ghost"/>-->
-<!--          <template #panel>-->
-<!--            <div class="flex-wrap justify-center p-2">-->
-<!--              <p class="font-sans font-bold text-opacity-60">Choose Events To Filter</p>-->
-<!--              <div class="flex justify-center">-->
-<!--                <UButton v-for="(tag, index) in possibleEvents" :label="tag" class="justify center" style="margin:5px" :variant[]="eventStyles[index]" :ui="{ rounded: 'rounded-full' }" @click="toggleEvent(index)"/>-->
-<!--              </div>-->
-<!--            </div>-->
-<!--          </template>-->
-<!--        </UPopover>-->
-<!--      </div>-->
+      <div class="flex mt-2 justify-center">
+        <UButton class="font-sans font-medium mr-2" variant="ghost" color="primary" icon="i-heroicons-adjustments-horizontal" label="Filters: "></UButton>
+        <UInput icon="i-heroicons-magnifying-glass" color="primary" class="w-32" v-model="filterInput"/>
+        <UPopover class="px-2">
+          <UButton label="Tags" variant="ghost"/>
+          <template #panel>
+            <div class="p-2 flex-wrap justify-center">
+              <p class="font-sans font-bold text-opacity-60 !text-primary text-center">Choose Tags To Filter</p>
+              <div class="flex justify-center">
+                <UButton v-for="(tag, index) in possibleTags" :label="tag" class="justify center" style="margin:5px" :variant="tagStyles[index]" :ui="{ rounded: 'rounded-full' }" @click="toggleTag(index)"/>
+              </div>
+            </div>
+          </template>
+        </UPopover>
+        <UPopover class="px-2">
+          <UButton label="Events" variant="ghost"/>
+          <template #panel>
+            <div class="flex-wrap justify-center p-2">
+              <p class="font-sans font-bold text-opacity-60 !text-primary text-center">Choose Events To Filter</p>
+              <div class="flex justify-center">
+                <UButton v-for="(tag, index) in possibleEvents" :label="tag" class="justify center" style="margin:5px" :variant="eventStyles[index]" :ui="{ rounded: 'rounded-full' }" @click="toggleEvent(index)"/>
+              </div>
+            </div>
+          </template>
+        </UPopover>
+      </div>
     </template>
     <template class="flex flex-wrap justify-center">
       <UModal v-model="openCarousel" fullscreen>

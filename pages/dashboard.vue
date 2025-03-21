@@ -242,7 +242,7 @@ function addDays(date: Date, days: number) {
         </div>
         <div class="overflow-y-auto h-60 rounded-md mt-2">
           <table class="rounded-md w-full">
-            <thead class="bg-gray-200 sticky top-0">
+            <thead class="bg-gray-200 sticky top-0 dark:bg-gray-700 dark:text-white">
               <tr class="">
                 <th class="px-7 py-4">Rank</th>
                 <th class="px-7 py-4">Team #</th>
@@ -252,43 +252,43 @@ function addDays(date: Date, days: number) {
             </thead>
             <tbody>
               <tr
-                class="text-center even:bg-gray-100"
+                class="text-center even:bg-gray-100 dark:odd:bg-gray-800 dark:even:bg-gray-700"
                 v-for="rank of currentRankings[0][0].rankings"
               >
                 <td
                   v-if="rank.rank == 1"
-                  class="text-yellow-600 font-medium whitespace-nowrap px-6 py-4"
+                  class="text-yellow-600 dark:text-amber-200 font-medium whitespace-nowrap px-6 py-4"
                 >
                   {{ rank.rank }}
                 </td>
                 <td
                   v-else-if="rank.rank == 2"
-                  class="text-gray-500 font-medium whitespace-nowrap px-6 py-4"
+                  class="text-gray-500 font-medium whitespace-nowrap px-6 py-4 dark:text-gray-400"
                 >
                   {{ rank.rank }}
                 </td>
                 <td
                   v-else-if="rank.rank == 3"
-                  class="text-amber-900 font-medium whitespace-nowrap px-6 py-4"
+                  class="text-amber-900 dark:text-amber-700 font-medium whitespace-nowrap px-6 py-4"
                 >
                   {{ rank.rank }}
                 </td>
                 <td
                   v-else
-                  class="whitespace-nowrap px-6 py-4 font-medium dark:!text-primary"
+                  class="whitespace-nowrap px-6 py-4 font-medium dark:text-white"
                 >
                   {{ rank.rank }}
                 </td>
-                <td class="whitespace-nowrap px-6 py-4 font-medium">
+                <td class="whitespace-nowrap px-6 py-4 font-medium dark:text-white">
                   {{ rank.team_key.replace('frc', '')
                   }}<!--<UButton @click="navigateTo({ path: `/teams/${rank.team_key.replace('frc', '')}`})" variant="ghost" color="gray" icon="i-heroicons-document-chart-bar" class="align-middle ml-1" />-->
                 </td>
-                <td class="whitespace-nowrap px-6 py-4 font-medium">
+                <td class="whitespace-nowrap px-6 py-4 font-medium dark:text-white">
                   {{
                     `${rank.record.wins}-${rank.record.losses}-${rank.record.ties}`
                   }}
                 </td>
-                <td class="whitespace-nowrap px-6 py-4 font-medium">
+                <td class="whitespace-nowrap px-6 py-4 font-medium dark:text-white">
                   {{ rank.matches_played }}
                 </td>
               </tr>
@@ -400,7 +400,7 @@ function addDays(date: Date, days: number) {
                               </td>
                               <td
                                 v-else-if="rank.rank == 2"
-                                class="text-gray-500 font-medium whitespace-nowrap px-6 py-4"
+                                class="text-gray-500 font-medium whitespace-nowrap px-6 py-4 dark:text-gray-400"
                               >
                                 {{ rank.rank }}
                               </td>
@@ -412,24 +412,24 @@ function addDays(date: Date, days: number) {
                               </td>
                               <td
                                 v-else
-                                class="whitespace-nowrap px-6 py-4 font-medium dark:!text-primary"
+                                class="whitespace-nowrap px-6 py-4 font-medium dark:!text-white"
                               >
                                 {{ rank.rank }}
                               </td>
                               <td
-                                class="whitespace-nowrap px-6 py-4 font-medium dark:!text-primary"
+                                class="whitespace-nowrap px-6 py-4 font-medium dark:!text-white"
                               >
                                 {{ rank.team_key.replace('frc', '') }}
                               </td>
                               <td
-                                class="whitespace-nowrap px-6 py-4 font-medium dark:!text-primary"
+                                class="whitespace-nowrap px-6 py-4 font-medium dark:!text-white"
                               >
                                 {{
                                   `${rank.record.wins}-${rank.record.losses}-${rank.record.ties}`
                                 }}
                               </td>
                               <td
-                                class="whitespace-nowrap px-6 py-4 font-medium dark:!text-primary"
+                                class="whitespace-nowrap px-6 py-4 font-medium dark:!text-white"
                               >
                                 {{ rank.matches_played }}
                               </td>
@@ -512,13 +512,15 @@ function addDays(date: Date, days: number) {
                 class="mx-auto"
                 width="145"
                 height="145"
+                alt="No results found"
               />
-              <NuxtImg
+              <img
                 v-else
                 src="/angrycookie.png"
                 class="mx-auto"
                 width="145"
                 height="145"
+                alt="No results found"
               />
               alt="No results found"/>
             </div>

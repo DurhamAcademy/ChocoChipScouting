@@ -107,7 +107,6 @@ export type ScoutingData = {
     reef: number;
     reefMiss: number;
     mobility: boolean;
-    position: number;
   };
   notes: {
     notes: string;

@@ -171,10 +171,10 @@ function predict() {
     if (!Number.isNaN(teamNum)) autoPoints = calculateTeamAverageAuto(teamNum);
     if (!Number.isNaN(teamNum)) teleOpPoints = calculateTeamAverageTeleOp(teamNum);
     if (!Number.isNaN(teamNum)) endGamePoints = calculateTeamAverageEndGame(teamNum);
-    if (score > 0) blueTotal.value += score;
-    if (autoPoints > 0) blueTotalAuto.value += autoPoints;
-    if (teleOpPoints > 0) blueTotalTeleOp.value += teleOpPoints;
-    if (endGamePoints > 0) blueTotalEndGame.value += endGamePoints;
+    if (score > 0) blueTotal.value += Math.round(score);
+    if (autoPoints > 0) blueTotalAuto.value += Math.round(autoPoints);
+    if (teleOpPoints > 0) blueTotalTeleOp.value += Math.round(teleOpPoints);
+    if (endGamePoints > 0) blueTotalEndGame.value += Math.round(endGamePoints);
     else if (score == -1) {
       teamsFound.value[0][selectedBlueTeams.value.indexOf(team)] = true;
     }

@@ -102,9 +102,9 @@ let algaeStats = getAlgaeStats().map(value => value?.toFixed?.(2));
 let rows = [
   {
     period: 'Processor',
-    min: algaeStats[0],
+    min: algaeStats[0] || 0,
     max: algaeStats[1],
-    avg: algaeStats[2],
+    avg: algaeStats[2] || 0,
   },
   {
     period: 'Net',
@@ -128,7 +128,7 @@ let rows = [
         width="w-64"
       ></LineChart>
       <div class="flex-auto whitespace-normal">
-        <div class="font-semibold w-full text-center dark:text-primary">
+        <div class="font-semibold w-full text-center dark:text-white">
           <h1>Algae</h1>
         </div>
         <UTable

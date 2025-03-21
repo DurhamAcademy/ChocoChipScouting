@@ -17,6 +17,7 @@ let filterOptions = ['Team #', 'Match #', '-Author'];
 let activeFilterOption = ref(filterOptions[0]);
 let filterInput = ref('');
 let activeFilters = ref<Array<string>>([]);
+let colorMode = useColorMode();
 
 function addFilter() {
   if (filterInput.value != '') {
@@ -178,28 +179,6 @@ async function tableSetup() {
           data: Math.round(averageDefensiveScore(data) * 100) / 100,
           color: '',
         },
-        netAuto: {
-          data: Math.round(averageNetAuto(data) * 100) / 100,
-          color: '',
-        },
-        netAutoAccData: netAutoAccuracy(data),
-        netAutoAcc: {
-          data: !isNaN(+netAutoAccuracy(data)[1])
-            ? Math.round(+netAutoAccuracy(data)[1] * 1000) / 10 + '%'
-            : '0%',
-          color: '',
-        },
-        processorAuto: {
-          data: Math.round(averageProcessorAuto(data) * 100) / 100,
-          color: '',
-        },
-        processorAutoAccData: processorAutoAccuracy(data),
-        processorAutoAcc: {
-          data: !isNaN(+processorAutoAccuracy(data)[1])
-            ? Math.round(+processorAutoAccuracy(data)[1] * 1000) / 10 + '%'
-            : '0%',
-          color: '',
-        },
         reefAutoAccData: reefAutoAccuracy(data),
         reefAutoAcc: {
           data: !isNaN(+reefAutoAccuracy(data)[1])
@@ -319,77 +298,10 @@ async function tableSetup() {
     }
     teamsData.value = sortedData;
   }
-  /*// averages if i ever need
-  let averages = {
-    driver: 0,
-    defense: 0,
-    netAuto: 0,
-    netAutoAcc: 0,
-    processorAuto: 0,
-    processorAutoAcc: 0,
-    coralL1Auto: 0,
-    coralL2Auto: 0,
-    coralL3Auto: 0,
-    coralL4Auto: 0,
-    autoAcc: 0,
-    teleProcessor: 0,
-    teleNet: 0,
-    teleCoralL1: 0,
-    teleCoralL2: 0,
-    teleCoralL3: 0,
-    teleCoralL4: 0,
-    teleAcc: 0,
-    endgamePoints: 0,
-
-  }
-  let weight = 0
-  for (let team of teamsData.value) {
-    let totalMatches = team.rawData.length
-    averages.driver += team.driver.data * totalMatches
-    averages.defense += team.defense.data * totalMatches
-    averages.netAuto += team.netAuto.data * totalMatches
-    averages.processorAuto += team.processorAuto.data * totalMatches
-    averages.coralL1Auto += team.coralL1Auto.data * totalMatches
-    averages.coralL2Auto += team.coralL2Auto.data * totalMatches
-    averages.coralL3Auto += team.coralL3Auto.data * totalMatches
-    averages.coralL4Auto += team.coralL4Auto.data * totalMatches
-    averages.autoAcc += Number(team.autoAcc.data.replace('%', '')) * totalMatches
-    averages.teleProcessor += team.teleProcessor.data * totalMatches
-    averages.teleNet += team.teleNet.data * totalMatches
-    averages.teleCoralL1 += team.teleCoralL1 * totalMatches
-    averages.teleCoralL2 += team.teleCoralL2 * totalMatches
-    averages.teleCoralL3 += team.teleCoralL3 * totalMatches
-    averages.teleCoralL4 += team.teleCoralL4 * totalMatches
-    averages.teleAcc += Number(team.teleAcc.data.replace('%', '')) * totalMatches
-    averages.endgamePoints += team.endgamePoints.data * totalMatches
-    weight += totalMatches
-  }
-  averages.driver /= weight
-  averages.defense /= weight
-  averages.netAuto /= weight
-  averages.processorAuto /= weight
-  averages.coralL1Auto /= weight
-  averages.coralL2Auto /= weight
-  averages.coralL3Auto /= weight
-  averages.coralL4Auto /= weight
-  averages.autoAcc /= weight
-  averages.teleProcessor /= weight
-  averages.teleNet /= weight
-  averages.teleCoralL1 /= weight
-  averages.teleCoralL2 /= weight
-  averages.teleCoralL3 /= weight
-  averages.teleCoralL4 /= weight
-  averages.teleAcc /= weight
-  averages.endgamePoints /= weight
-*/
 
   let data: {
     driver: number[];
     defense: number[];
-    netAuto: number[];
-    netAutoAcc: number[];
-    processorAuto: number[];
-    processorAutoAcc: number[];
     coralL1Auto: number[];
     coralL2Auto: number[];
     coralL3Auto: number[];
@@ -413,10 +325,6 @@ async function tableSetup() {
   } = {
     driver: [],
     defense: [],
-    netAuto: [],
-    netAutoAcc: [],
-    processorAuto: [],
-    processorAutoAcc: [],
     coralL1Auto: [],
     coralL2Auto: [],
     coralL3Auto: [],
@@ -443,14 +351,6 @@ async function tableSetup() {
     else if (!data.driver.includes(0)) data.driver.push(0);
     if (team.defense.data != 0) data.defense.push(Number(team.defense.data));
     else if (!data.defense.includes(0)) data.defense.push(0);
-    data.netAuto.push(Number(team.netAuto.data));
-    data.netAutoAcc.push(Number(team.netAutoAcc.data.replace('%', '')));
-    if(Number.isNaN(team.netAuto.data)) team.netAuto.data = 0;
-    data.processorAuto.push(Number(team.processorAuto.data));
-    data.processorAutoAcc.push(
-      Number(team.processorAutoAcc.data.replace('%', '')),
-    );
-    if(Number.isNaN(team.processorAuto.data)) team.processorAuto.data = 0;
     data.coralL1Auto.push(Number(team.coralL1Auto.data));
     data.coralL2Auto.push(Number(team.coralL2Auto.data));
     data.coralL3Auto.push(Number(team.coralL3Auto.data));
@@ -499,20 +399,6 @@ async function tableSetup() {
         teamsData.value[i].defense.data,
         Math.min(...data.defense),
         Math.max(...data.defense),
-      ),
-    );
-    teamsData.value[i].netAuto.color = colorify(
-      calculatePercent(
-        teamsData.value[i].netAuto.data,
-        Math.min(...data.netAuto),
-        Math.max(...data.netAuto),
-      ),
-    );
-    teamsData.value[i].processorAuto.color = colorify(
-      calculatePercent(
-        teamsData.value[i].processorAuto.data,
-        Math.min(...data.processorAuto),
-        Math.max(...data.processorAuto),
       ),
     );
     teamsData.value[i].coralL1Auto.color = colorify(
@@ -657,16 +543,6 @@ function colorifyTeam(teamData: TeamTableData, data: DataArrayOrSum) {
     );
   }
   totalPercent += calculatePercent(
-    teamData.netAuto.data,
-    Math.min(...data.netAuto),
-    Math.max(...data.netAuto),
-  );
-  totalPercent += calculatePercent(
-    teamData.processorAuto.data,
-    Math.min(...data.processorAuto),
-    Math.max(...data.processorAuto),
-  );
-  totalPercent += calculatePercent(
     teamData.coralL1Auto.data,
     Math.min(...data.coralL1Auto),
     Math.max(...data.coralL1Auto),
@@ -778,22 +654,6 @@ function averageDriverScore(teamArrays: Array<ScoutingData>) {
   return totalMatches != 0 ? total / totalMatches : 0;
 }
 
-function averageNetAuto(teamArrays: Array<ScoutingData>) {
-  let nonAveragedValue = 0;
-  for (let i = 0; i < teamArrays.length; i++) {
-    nonAveragedValue += teamArrays[i].auto.net;
-  }
-  return nonAveragedValue / teamArrays.length;
-}
-
-function averageProcessorAuto(teamArrays: Array<ScoutingData>) {
-  let nonAveragedValue = 0;
-  for (let i = 0; i < teamArrays.length; i++) {
-    nonAveragedValue += teamArrays[i].auto.processor;
-  }
-  return nonAveragedValue / teamArrays.length;
-}
-
 function averageCoralL1Auto(teamArrays: Array<ScoutingData>) {
   let nonAveragedValue = 0;
   for (let i = 0; i < teamArrays.length; i++) {
@@ -903,46 +763,6 @@ function averageAuto(teamArrays: Array<ScoutingData>): number {
     successfulMobilityCount += match.auto.mobility ? 1 : 0;
   }
   return successfulMobilityCount / teamArrays.length;
-}
-
-function netAutoAccuracy(teamArrays: Array<ScoutingData>) {
-  let successfulNetCount = 0;
-  let missedNetCount = 0;
-  let newData = false;
-  for (let match of teamArrays) {
-    successfulNetCount += match.auto.net;
-    if (match.auto.netMiss != undefined) {
-      missedNetCount += match.auto.netMiss;
-      newData = true;
-    } else {
-      missedNetCount += match.auto.netMiss;
-    }
-  }
-  if (newData)
-    return [true, successfulNetCount / (missedNetCount + successfulNetCount)];
-  else return [false, successfulNetCount / successfulNetCount];
-}
-
-function processorAutoAccuracy(teamArrays: Array<ScoutingData>) {
-  let successfulProcessorCount = 0;
-  let missedProcessorCount = 0;
-  let newData = false;
-  for (let match of teamArrays) {
-    successfulProcessorCount += match.auto.processor;
-    if (match.auto.processorMiss != undefined) {
-      missedProcessorCount += match.auto.processorMiss;
-      newData = true;
-    } else {
-      missedProcessorCount += match.auto.processorMiss;
-    }
-  }
-  if (newData)
-    return [
-      true,
-      successfulProcessorCount /
-        (missedProcessorCount + successfulProcessorCount),
-    ];
-  else return [false, successfulProcessorCount / successfulProcessorCount];
 }
 
 function coralL1AutoAccuracy(teamArrays: Array<ScoutingData>) {
@@ -1085,8 +905,6 @@ function autoAccuracy(teamArrays: Array<ScoutingData>) {
   let missedReefCount = 0;
   let newData = false;
   for (let match of teamArrays) {
-    successfulNetCount += match.auto.net;
-    successfulProcessorCount += match.auto.processor;
     successfulCoralL1Count += match.auto.coralL1;
     successfulCoralL2Count += match.auto.coralL2;
     successfulCoralL3Count += match.auto.coralL3;
@@ -1096,9 +914,6 @@ function autoAccuracy(teamArrays: Array<ScoutingData>) {
       match.auto.coralL2 +
       match.auto.coralL3 +
       match.auto.coralL4;
-    if (match.auto.netMiss != undefined) {
-      missedNetCount += match.auto.netMiss;
-      missedProcessorCount += match.auto.processorMiss;
       missedCoralL1Count += match.auto.coralL1Miss;
       missedCoralL2Count += match.auto.coralL2Miss;
       missedCoralL3Count += match.auto.coralL3Miss;
@@ -1109,10 +924,6 @@ function autoAccuracy(teamArrays: Array<ScoutingData>) {
         match.auto.coralL3Miss +
         match.auto.coralL4Miss;
       //TODO: talk about adding coral misses to scouting and then put them here
-      newData = true;
-    } else {
-      missedNetCount += match.auto.netMiss;
-    }
   }
   //TODO: reef accuracy here
   if (newData)
@@ -1274,18 +1085,6 @@ let columns = ref([
   },
   {
     label: 'Defense',
-    sort: 'none',
-    sortable: true,
-    icon: 'i-heroicons-arrows-up-down',
-  },
-  {
-    label: 'Net',
-    sort: 'none',
-    sortable: true,
-    icon: 'i-heroicons-arrows-up-down',
-  },
-  {
-    label: 'Processor',
     sort: 'none',
     sortable: true,
     icon: 'i-heroicons-arrows-up-down',
@@ -1636,15 +1435,15 @@ await tableSetup();
             />
             <colgroup
               span="2"
-              class="border-2 odd:bg-gray-50 dark:bg-gray-800 dark:border-gray-400"
+              class="border-2 odd:bg-gray-50 dark:bg-gray-700 dark:border-gray-400"
             />
             <colgroup
-              span="4"
+              span="2"
               class="border-2 odd:bg-gray-50 dark:bg-gray-700 dark:border-gray-400"
             />
             <colgroup
               span="4"
-              class="border-2 odd:bg-gray-50 dark:bg-gray-800 dark:border-gray-400"
+              class="border-2 odd:bg-gray-50 dark:bg-gray-700 dark:border-gray-400"
             />
             <colgroup
               span="2"
@@ -1658,11 +1457,11 @@ await tableSetup();
                   <p class="dark:text-white">Ratings</p>
                 </th>
                 <th
-                  colspan="4"
+                  colspan="2"
                   scope="colgroup"
                 >
                   <p class="text-xs font-light dark:text-white">Average</p>
-                  <p class="dark:text-white">Cycles</p>
+                  <p class="dark:text-white">Auto Cycles</p>
                 </th>
                 <th
                   colspan="4"
@@ -1718,7 +1517,7 @@ await tableSetup();
                     size="xs"
                     @click="navigateTo('/teams/' + team.team.data)"
                     trailing-icon="i-heroicons-chart-bar-square"
-                    class="dark:border-gray-700"
+                    class="dark:bg-gray-600"
                   />
                 </td>
                 <td class="text-center">
@@ -1747,30 +1546,15 @@ await tableSetup();
                     "
                   />
                 </td>
-                <td class="text-center">
-                  <UBadge
-                    :label="team.netAuto.data.toString()"
-                    variant="soft"
-                    :color="team.netAuto.color"
-                  />
-                </td>
-                <td class="text-center">
-                  <UBadge
-                    :label="team.processorAuto.data.toString()"
-                    variant="soft"
-                    :color="team.processorAuto.color"
-                  />
-                </td>
                 <td class="text-center dark:text-white">
                   <UPopover
                     v-if="team.reefAuto.toString()"
                     mode="hover"
                   >
-                    <UButton
+                    <UBadge
                       :label="team.reefAuto.data.toString()"
                       variant="soft"
                       :color="team.reefAuto.color"
-                      size="xs"
                       class="mx-auto"
                     />
                     <template #panel>
@@ -1779,7 +1563,7 @@ await tableSetup();
                           <UBadge
                             label="L1"
                             variant="soft"
-                            color="gray"
+                            :color="team.coralL1Auto.color"
                           />
                           <UBadge
                             :label="team.coralL1Auto.data.toString()"
@@ -1791,7 +1575,7 @@ await tableSetup();
                           <UBadge
                             label="L2"
                             variant="soft"
-                            color="gray"
+                            :color="team.coralL2Auto.color"
                           />
                           <UBadge
                             :label="team.coralL2Auto.data.toString()"
@@ -1803,7 +1587,7 @@ await tableSetup();
                           <UBadge
                             label="L3"
                             variant="soft"
-                            color="gray"
+                            :color="team.coralL3Auto.color"
                           />
                           <UBadge
                             :label="team.coralL3Auto.data.toString()"
@@ -1815,7 +1599,7 @@ await tableSetup();
                           <UBadge
                             label="L4"
                             variant="soft"
-                            color="gray"
+                            :color="team.coralL4Auto.color"
                           />
                           <UBadge
                             :label="team.coralL4Auto.data.toString()"
@@ -1838,7 +1622,7 @@ await tableSetup();
                     v-if="team.autoAccData[0]"
                     mode="hover"
                   >
-                    <UButton
+                    <UBadge
                       :label="team.autoAcc.data"
                       variant="soft"
                       :color="team.autoAcc.color"
@@ -1928,11 +1712,10 @@ await tableSetup();
                     v-if="team.teleReef.toString()"
                     mode="hover"
                   >
-                    <UButton
+                    <UBadge
                       :label="team.teleReef.data.toString()"
                       variant="soft"
                       :color="team.teleReef.color"
-                      size="xs"
                       class="mx-auto"
                     />
                     <template #panel>
@@ -1941,7 +1724,7 @@ await tableSetup();
                           <UBadge
                             label="L1"
                             variant="soft"
-                            color="gray"
+                            :color="team.teleCoralL1.color"
                           />
                           <UBadge
                             :label="team.teleCoralL1.data.toString()"
@@ -1953,7 +1736,7 @@ await tableSetup();
                           <UBadge
                             label="L2"
                             variant="soft"
-                            color="gray"
+                            :color="team.teleCoralL2.color"
                           />
                           <UBadge
                             :label="team.teleCoralL2.data.toString()"
@@ -1965,7 +1748,7 @@ await tableSetup();
                           <UBadge
                             label="L3"
                             variant="soft"
-                            color="gray"
+                            :color="team.teleCoralL3.color"
                           />
                           <UBadge
                             :label="team.teleCoralL3.data.toString()"
@@ -1977,7 +1760,7 @@ await tableSetup();
                           <UBadge
                             label="L4"
                             variant="soft"
-                            color="gray"
+                            :color="team.teleCoralL4.color"
                           />
                           <UBadge
                             :label="team.teleCoralL4.data.toString()"
@@ -2028,12 +1811,11 @@ await tableSetup();
                     v-if="team.teleAccData[0]"
                     mode="hover"
                   >
-                    <UButton
+                    <UBadge
                       :label="team.teleAcc.data"
                       variant="soft"
                       :color="team.teleAcc.color"
-                      size="xs"
-                      class="mx-auto dark:bg-gray-800"
+                      class="mx-auto"
                     />
                     <template #panel>
                       <div class="flex">
