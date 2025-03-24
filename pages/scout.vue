@@ -180,21 +180,25 @@ function isValidNum() {
   );
 }
 
+let alreadySubmitted = false;
 /***
  The function that submits the data a user inputs to the couchdb database (notice db.post)
  also redirects the webpage to the /matches page (notice navigateTo)
    */
 async function submit() {
-  scoutData.value.teamNumber = parseInt(scoutData.value.teamNumber);
-  scoutData.value.matchNumber = parseInt(scoutData.value.matchNumber);
-  if (
-    !Number.isNaN(scoutData.value.teamNumber) &&
-    !Number.isNaN(scoutData.value.matchNumber)
-  ) {
-    scoutData.value.author = usernameState.value;
-    scoutData.value.event = currentEvent.value || eventOptions[0];
-    await db.post(scoutData.value);
-    await navigateTo('/teams');
+  if(!alreadySubmitted) {
+    scoutData.value.teamNumber = parseInt(scoutData.value.teamNumber);
+    scoutData.value.matchNumber = parseInt(scoutData.value.matchNumber);
+    if (
+      !Number.isNaN(scoutData.value.teamNumber) &&
+      !Number.isNaN(scoutData.value.matchNumber)
+    ) {
+      scoutData.value.author = usernameState.value;
+      scoutData.value.event = currentEvent.value || eventOptions[0];
+      await db.post(scoutData.value);
+      await navigateTo('/teams');
+    }
+    alreadySubmitted = true;
   }
 }
 </script>
