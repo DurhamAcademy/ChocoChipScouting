@@ -32,7 +32,6 @@ const endgameOptions = [
   'Deep Attempted',
   'Deep Successful',
 ];
-const allianceWinLoss = ['Blue Win', 'Red Win'];
 
 
 /*
@@ -176,15 +175,16 @@ function isValidNum() {
     scoutData.value.matchNumber != null &&
     scoutData.value.teamNumber > 0 &&
     scoutData.value.matchNumber > 0 &&
-    scoutData.value.teamNumber < 15000
+    scoutData.value.teamNumber < 15000 //TODO: UPDATE IN FUTURE YEARS
   );
 }
 
-let alreadySubmitted = false;
+
 /***
  The function that submits the data a user inputs to the couchdb database (notice db.post)
  also redirects the webpage to the /matches page (notice navigateTo)
    */
+let alreadySubmitted = false; //when lagging you can submit the sme thing multiple times
 async function submit() {
   if(!alreadySubmitted) {
     scoutData.value.teamNumber = parseInt(scoutData.value.teamNumber);
