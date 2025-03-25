@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import databases, { ScoutingData } from '~/utils/databases';
 import IncrementalButton from '~/components/scouting-components/IncrementalButton.vue';
-import BooleanButton from '~/components/scouting-components/BooleanButton.vue';
 import PromptedNote from '~/components/scouting-components/PromptedNote.vue';
 import Navbar from '~/components/website-utils/Navbar.vue';
 import { eventOptions } from '~/utils/eventOptions';
@@ -59,7 +58,7 @@ function updateEndgameOptions(value: Array<number>) {
     scoutData.value.endgame.endgame = [endgameOptions[0]];
   }
 }
-let endgameSelect = [1,0,0,0,0,0]; //This is here to prevent deselection when changing pages
+
 
 // all the data collected on the scout page in the form of a ScoutingData object,
 // you can edit this in the utils/databases.ts file
@@ -126,6 +125,14 @@ let scoutData = ref<ScoutingData>({
     ],
   },
 });
+
+let endgameSelect = [1,0,0,0,0,0]; //This is here to prevent deselection when changing pages
+let variantReference = ref(scoutData.value.auto.mobility ? 'solid' : 'outline');
+//THIS IS VERY SIMILAR TO THE BOOLEAN BUTTON EXCEPT BOOLEAN BUTTON RESETS THE VALUE
+function onMobility(){
+  variantReference.value = scoutData.value.auto.mobility ? 'solid' : 'outline';
+}
+
 
 /*
 END SEASON UPDATE AREA
@@ -347,12 +354,12 @@ async function submit() {
                   class="ml-0.5"
                 />
                 <div>
-                  <BooleanButton
-                  :model-value="scoutData.auto.mobility"
-                  default-value="Mobility"
-                  other-value="Mobility"
-                  class="mt-0.5"
-                />
+
+                  <UButton
+                    @click="scoutData.auto.mobility = !scoutData.auto.mobility; console.dir(scoutData.auto.mobility); onMobility()"
+                    label="Mobility"
+                    :variant="variantReference"
+                  />
                 </div>
               </div>
             </div>
