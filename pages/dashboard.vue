@@ -214,7 +214,7 @@ function addDays(date: Date, days: number) {
         v-if="displayRankings"
       >
         <div class="font-bold text-center text-lg justify-center">
-          <p class="">{{ currentRankings[0][1] }}</p>
+          <p class="dark:text-white">{{ currentRankings[0][1] }}</p>
           <p class="dark:text-white">Team 6502 Stats</p>
         </div>
         <div
