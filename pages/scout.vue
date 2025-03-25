@@ -59,6 +59,7 @@ function updateEndgameOptions(value: Array<number>) {
     scoutData.value.endgame.endgame = [endgameOptions[0]];
   }
 }
+let endgameSelect = [1,0,0,0,0,0]; //This is here to prevent deselection when changing pages
 
 // all the data collected on the scout page in the form of a ScoutingData object,
 // you can edit this in the utils/databases.ts file
@@ -465,7 +466,7 @@ async function submit() {
         the connection options optional param allows you to configure which options are allowed to be selected with each other
         notice the @update: which runs the updateEndgameOptions() function upon each update of the custom component-->
             <MultiSelect
-              :model-value="[1, 0, 0, 0, 0, 0]"
+              :model-value="endgameSelect"
               :options="endgameOptions"
               @update:model-value="
                 value => {
