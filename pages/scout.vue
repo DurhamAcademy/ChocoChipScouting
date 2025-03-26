@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import databases, { ScoutingData } from '~/utils/databases';
 import IncrementalButton from '~/components/scouting-components/IncrementalButton.vue';
-import BooleanButton from '~/components/scouting-components/BooleanButton.vue';
 import PromptedNote from '~/components/scouting-components/PromptedNote.vue';
 import Navbar from '~/components/website-utils/Navbar.vue';
 import { eventOptions } from '~/utils/eventOptions';
@@ -32,7 +31,6 @@ const endgameOptions = [
   'Deep Attempted',
   'Deep Successful',
 ];
-const allianceWinLoss = ['Blue Win', 'Red Win'];
 
 
 /*
@@ -60,6 +58,7 @@ function updateEndgameOptions(value: Array<number>) {
     scoutData.value.endgame.endgame = [endgameOptions[0]];
   }
 }
+
 
 // all the data collected on the scout page in the form of a ScoutingData object,
 // you can edit this in the utils/databases.ts file
@@ -127,6 +126,14 @@ let scoutData = ref<ScoutingData>({
   },
 });
 
+let endgameSelect = [1,0,0,0,0,0]; //This is here to prevent deselection when changing pages
+let variantReference = ref(scoutData.value.auto.mobility ? 'solid' : 'outline');
+//THIS IS VERY SIMILAR TO THE BOOLEAN BUTTON EXCEPT BOOLEAN BUTTON RESETS THE VALUE
+function onMobility(){
+  variantReference.value = scoutData.value.auto.mobility ? 'solid' : 'outline';
+}
+
+
 /*
 END SEASON UPDATE AREA
 NOTE: you must also update the HTML at the bottom of this page that defines how users will scout matches
@@ -176,25 +183,30 @@ function isValidNum() {
     scoutData.value.matchNumber != null &&
     scoutData.value.teamNumber > 0 &&
     scoutData.value.matchNumber > 0 &&
-    scoutData.value.teamNumber < 15000
+    scoutData.value.teamNumber < 15000 //TODO: UPDATE IN FUTURE YEARS
   );
 }
+
 
 /***
  The function that submits the data a user inputs to the couchdb database (notice db.post)
  also redirects the webpage to the /matches page (notice navigateTo)
    */
+let alreadySubmitted = false; //when lagging you can submit the sme thing multiple times
 async function submit() {
-  scoutData.value.teamNumber = parseInt(scoutData.value.teamNumber);
-  scoutData.value.matchNumber = parseInt(scoutData.value.matchNumber);
-  if (
-    !Number.isNaN(scoutData.value.teamNumber) &&
-    !Number.isNaN(scoutData.value.matchNumber)
-  ) {
-    scoutData.value.author = usernameState.value;
-    scoutData.value.event = currentEvent.value || eventOptions[0];
-    await db.post(scoutData.value);
-    await navigateTo('/teams');
+  if(!alreadySubmitted) {
+    scoutData.value.teamNumber = parseInt(scoutData.value.teamNumber);
+    scoutData.value.matchNumber = parseInt(scoutData.value.matchNumber);
+    if (
+      !Number.isNaN(scoutData.value.teamNumber) &&
+      !Number.isNaN(scoutData.value.matchNumber)
+    ) {
+      scoutData.value.author = usernameState.value;
+      scoutData.value.event = currentEvent.value || eventOptions[0];
+      await db.post(scoutData.value);
+      await navigateTo('/teams');
+    }
+    alreadySubmitted = true;
   }
 }
 </script>
@@ -342,12 +354,12 @@ async function submit() {
                   class="ml-0.5"
                 />
                 <div>
-                  <BooleanButton
-                  :model-value="scoutData.auto.mobility"
-                  default-value="Mobility"
-                  other-value="Mobility"
-                  class="mt-0.5"
-                />
+
+                  <UButton
+                    @click="scoutData.auto.mobility = !scoutData.auto.mobility; console.dir(scoutData.auto.mobility); onMobility()"
+                    label="Mobility"
+                    :variant="variantReference"
+                  />
                 </div>
               </div>
             </div>
@@ -461,7 +473,7 @@ async function submit() {
         the connection options optional param allows you to configure which options are allowed to be selected with each other
         notice the @update: which runs the updateEndgameOptions() function upon each update of the custom component-->
             <MultiSelect
-              :model-value="[1, 0, 0, 0, 0, 0]"
+              :model-value="endgameSelect"
               :options="endgameOptions"
               @update:model-value="
                 value => {
