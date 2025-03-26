@@ -1882,7 +1882,14 @@ await tableSetup();
                 </td>
                 <td class="text-center">
                   <UBadge
+                    v-if="team.endgamePoints.data"
                     :label="team.endgamePoints.data"
+                    variant="soft"
+                    :color="team.endgamePoints.color"
+                  />
+                  <UBadge
+                    v-else
+                    label="0"
                     variant="soft"
                     :color="team.endgamePoints.color"
                   />
