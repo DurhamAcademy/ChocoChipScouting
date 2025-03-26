@@ -89,12 +89,12 @@ function getAlgaeStats() {
     totalTeleop += match.teleop.processor + match.teleop.net;
   }
   return [
-    minAuto,
-    maxAuto,
-    totalAuto / props.rowData.rawData.length,
-    minTeleop,
-    maxTeleop,
-    totalTeleop / props.rowData.rawData.length,
+    minAuto || 0,
+    maxAuto || 0,
+    (totalAuto / props.rowData.rawData.length) || 0,
+    minTeleop || 0,
+    maxTeleop || 0,
+    (totalTeleop / props.rowData.rawData.length) || 0,
   ];
 }
 let algaeStats = getAlgaeStats().map(value => value?.toFixed?.(2));
@@ -103,14 +103,14 @@ let rows = [
   {
     period: 'Processor',
     min: algaeStats[0] || 0,
-    max: algaeStats[1],
+    max: algaeStats[1] || 0,
     avg: algaeStats[2] || 0,
   },
   {
     period: 'Net',
-    min: algaeStats[3],
-    max: algaeStats[4],
-    avg: algaeStats[5],
+    min: algaeStats[3] || 0,
+    max: algaeStats[4] || 0,
+    avg: algaeStats[5] || 0,
   },
 ];
 </script>
