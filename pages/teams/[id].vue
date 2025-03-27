@@ -21,6 +21,7 @@ const colorMode = useColorMode();
 
 let currentEvent = useEventKey();
 watch(currentEvent, value => {
+  setup();
   try {
     localStorage.setItem('currentEvent', value);
   } catch {}
