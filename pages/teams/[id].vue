@@ -20,12 +20,14 @@ let { width, height } = useWindowSize();
 const colorMode = useColorMode();
 
 let currentEvent = useEventKey();
+let componentKey = ref(0)
 watch(currentEvent, value => {
   setup();
   try {
     localStorage.setItem('currentEvent', value);
   } catch {}
   setup();
+  componentKey.value += 1;
 });
 
 const { scoutingData } = databases.locals;
@@ -325,15 +327,22 @@ watch(width, () => {
         <TeamVisualization
           :team-data="teamData"
           :maxScores="getMaxScores()"
+          :key="componentKey"
         />
       </div>
       <div class="flex-auto w-full lg:w-1/3 h-min max-h-min flex-wrap pt-4">
-        <CoralVisualization :row-data="teamData"></CoralVisualization>
+        <CoralVisualization
+          :row-data="teamData"
+          :key="componentKey"
+        />
       </div>
       <div
         class="pt-4 flex-auto w-full lg:w-1/3 h-min max-h-min flex-wrap lg:ml-4"
       >
-        <AlgaeVisualization :row-data="teamData"></AlgaeVisualization>
+        <AlgaeVisualization
+          :row-data="teamData"
+          :key="componentKey"
+        />
       </div>
     </div>
     <div
