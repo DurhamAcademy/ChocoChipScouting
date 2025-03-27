@@ -16,7 +16,6 @@ export const useEventKey = () => {
   }
 
   onMounted(() => {
-    updateEvent();
     window.addEventListener('event-changed', onEventListener);
   });
 

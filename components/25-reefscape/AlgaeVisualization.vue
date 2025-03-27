@@ -47,7 +47,7 @@ const chartTitles = ['Net', 'Processor', 'Total'];
 let columns = [
   {
     key: 'period',
-    label: 'Game Period',
+    label: 'Type',
   },
   {
     key: 'min',

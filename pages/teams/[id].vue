@@ -21,10 +21,10 @@ const colorMode = useColorMode();
 
 let currentEvent = useEventKey();
 watch(currentEvent, value => {
-  setup();
   try {
     localStorage.setItem('currentEvent', value);
   } catch {}
+  setup();
 });
 
 const { scoutingData } = databases.locals;
@@ -132,7 +132,8 @@ function setup() {
     if (typeof key == 'string') key = parseInt(key);
     let filteredValue: (ScoutingData & IdMeta)[] = [];
     for (let match of value) {
-      if (match.event == currentEvent.value) {
+      console.dir(localStorage.getItem('currentEvent'))
+      if (match.event === localStorage.getItem('currentEvent')) {
         if (!teamOptions.value.includes(key.toString())) {
           teamOptions.value.push(key.toString());
         }
@@ -151,6 +152,7 @@ function setup() {
   //TODO, given changes to teamOptions array, this may now need a sort function that uses parseInt to sort
   teamOptions.value.sort();
   findTeamName();
+  console.dir(teamData)
 }
 setup();
 
