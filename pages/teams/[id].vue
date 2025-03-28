@@ -135,7 +135,6 @@ function setup() {
     if (typeof key == 'string') key = parseInt(key);
     let filteredValue: (ScoutingData & IdMeta)[] = [];
     for (let match of value) {
-      console.dir(localStorage.getItem('currentEvent'))
       if (match.event === localStorage.getItem('currentEvent')) {
         if (!teamOptions.value.includes(key.toString())) {
           teamOptions.value.push(key.toString());
@@ -155,7 +154,6 @@ function setup() {
   //TODO, given changes to teamOptions array, this may now need a sort function that uses parseInt to sort
   teamOptions.value.sort();
   findTeamName();
-  console.dir(teamData)
 }
 setup();
 
