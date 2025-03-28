@@ -5,9 +5,7 @@ const props = defineProps<{
   rowData: any;
 }>();
 
-console.dir(props.rowData.rawData)
 props.rowData.rawData.sort(compareMatchNumbers);
-console.dir(props.rowData.rawData)
 
 function compareMatchNumbers(a: any, b: any) {
   //TODO i hate this work around rly need to fix this
