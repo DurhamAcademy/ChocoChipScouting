@@ -20,7 +20,7 @@ let { width, height } = useWindowSize();
 const colorMode = useColorMode();
 
 let currentEvent = useEventKey();
-let componentKey = ref(0)
+let componentKey = ref(0) //this is a force updater
 watch(currentEvent, value => {
   setup();
   try {
