@@ -135,7 +135,7 @@ function setup() {
     if (typeof key == 'string') key = parseInt(key);
     let filteredValue: (ScoutingData & IdMeta)[] = [];
     for (let match of value) {
-      if (match.event === useEventKey().value) {
+      if (match.event === localStorage.getItem('currentEvent')) {
         if (!teamOptions.value.includes(key.toString())) {
           teamOptions.value.push(key.toString());
         }
