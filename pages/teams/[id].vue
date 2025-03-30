@@ -128,6 +128,13 @@ let teamData = ref<{
 });
 let teamOptions = ref<Array<string>>([]);
 let filterTeam = ref(route.params.id);
+let thisEvent: any
+if(localStorage.getItem('currentEvent')) {
+  thisEvent = localStorage.getItem('currentEvent')
+}
+else{
+  thisEvent = eventOptions[0]
+}
 
 function setup() {
   teamOptions.value = [];
@@ -135,7 +142,7 @@ function setup() {
     if (typeof key == 'string') key = parseInt(key);
     let filteredValue: (ScoutingData & IdMeta)[] = [];
     for (let match of value) {
-      if (match.event === useEventKey().value) {
+      if (match.event === thisEvent) {
         if (!teamOptions.value.includes(key.toString())) {
           teamOptions.value.push(key.toString());
         }
