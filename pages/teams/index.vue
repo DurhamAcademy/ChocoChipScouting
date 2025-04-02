@@ -1095,30 +1095,6 @@ let columns = ref([
     sortable: true,
     icon: 'i-heroicons-arrows-up-down',
   },
-  /*{
-    label: 'Coral L1',
-    sort: 'none',
-    sortable: true,
-    icon: 'i-heroicons-arrows-up-down',
-  },
-  {
-    label: 'Coral L2',
-    sort: 'none',
-    sortable: true,
-    icon: 'i-heroicons-arrows-up-down',
-  },
-  {
-    label: 'Coral L3',
-    sort: 'none',
-    sortable: true,
-    icon: 'i-heroicons-arrows-up-down',
-  },
-  {
-    label: 'Coral L4',
-    sort: 'none',
-    sortable: true,
-    icon: 'i-heroicons-arrows-up-down',
-  },*/
   {
     label: 'Accuracy',
     sort: 'none',
@@ -1173,6 +1149,7 @@ function sortTable(n: number, sort: string, col: string) {
   if (sort == 'none') sort = 'desc';
   else if (sort == 'desc') sort = 'asc';
   else if (sort == 'asc') sort = 'none';
+  console.log(sort);
   /* Make a loop that will continue until
   no switching has been done: */
   while (switching) {
@@ -1235,7 +1212,7 @@ function sortTable(n: number, sort: string, col: string) {
           let xInnerHTML = x.innerHTML;
           let yInnerHTML = y.innerHTML;
           let xInnerText, yInnerText;
-          if (col != 'Accuracy') {
+          if (col != 'Reef') {
             xInnerText = xInnerHTML.substring(
               xInnerHTML.indexOf('>') + 1,
               xInnerHTML.lastIndexOf('<'),
@@ -1252,6 +1229,7 @@ function sortTable(n: number, sort: string, col: string) {
             const yMatch = yInnerHTML.match(regex);
             xInnerText = xMatch ? xMatch[1] : '';
             yInnerText = yMatch ? yMatch[1] : '';
+            console.log(xInnerText, yInnerText);
           }
           if (makeSortable(xInnerText) < makeSortable(yInnerText)) {
             // If so, mark as a switch and break the loop:
@@ -1273,7 +1251,7 @@ function sortTable(n: number, sort: string, col: string) {
             );
             if (xInnerText == 'N/A') xInnerText = '0';
             if (yInnerText == 'N/A') yInnerText = '0';
-          } else {
+          } else { //this should be accuracy//
             const regex = /<span[^>]*>(.*?)<\/span>/;
             const xMatch = xInnerHTML.match(regex);
             const yMatch = yInnerHTML.match(regex);
@@ -1313,6 +1291,7 @@ function sortTable(n: number, sort: string, col: string) {
     columns.value[n].sort = 'none';
     columns.value[n].icon = 'i-heroicons-arrows-up-down';
   }
+  console.log(sort);
 }
 
 function makeSortable(thing: string) {
