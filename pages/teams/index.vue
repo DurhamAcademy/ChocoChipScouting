@@ -1098,7 +1098,7 @@ let columns = ref([
   {
     label: 'Accuracy',
     sort: 'none',
-    sortable: true,
+    sortable: false,
     icon: 'i-heroicons-arrows-up-down',
   },
   {
@@ -1122,7 +1122,7 @@ let columns = ref([
   {
     label: 'Accuracy',
     sort: 'none',
-    sortable: true,
+    sortable: false,
     icon: 'i-heroicons-arrows-up-down',
   },
   {
@@ -1145,11 +1145,10 @@ function sortTable(n: number, sort: string, col: string) {
   // returning if nothing in the table
   if (!table) return;
   switching = true;
-  // Set the sorting direction to ascending:
+  // Set the sorting direction to the next one:
   if (sort == 'none') sort = 'desc';
   else if (sort == 'desc') sort = 'asc';
   else if (sort == 'asc') sort = 'none';
-  console.log(sort);
   /* Make a loop that will continue until
   no switching has been done: */
   while (switching) {
@@ -1291,7 +1290,6 @@ function sortTable(n: number, sort: string, col: string) {
     columns.value[n].sort = 'none';
     columns.value[n].icon = 'i-heroicons-arrows-up-down';
   }
-  console.log(sort);
 }
 
 function makeSortable(thing: string) {
