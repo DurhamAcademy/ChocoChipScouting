@@ -1095,34 +1095,10 @@ let columns = ref([
     sortable: true,
     icon: 'i-heroicons-arrows-up-down',
   },
-  /*{
-    label: 'Coral L1',
-    sort: 'none',
-    sortable: true,
-    icon: 'i-heroicons-arrows-up-down',
-  },
-  {
-    label: 'Coral L2',
-    sort: 'none',
-    sortable: true,
-    icon: 'i-heroicons-arrows-up-down',
-  },
-  {
-    label: 'Coral L3',
-    sort: 'none',
-    sortable: true,
-    icon: 'i-heroicons-arrows-up-down',
-  },
-  {
-    label: 'Coral L4',
-    sort: 'none',
-    sortable: true,
-    icon: 'i-heroicons-arrows-up-down',
-  },*/
   {
     label: 'Accuracy',
     sort: 'none',
-    sortable: true,
+    sortable: false,
     icon: 'i-heroicons-arrows-up-down',
   },
   {
@@ -1146,7 +1122,7 @@ let columns = ref([
   {
     label: 'Accuracy',
     sort: 'none',
-    sortable: true,
+    sortable: false,
     icon: 'i-heroicons-arrows-up-down',
   },
   {
@@ -1169,7 +1145,7 @@ function sortTable(n: number, sort: string, col: string) {
   // returning if nothing in the table
   if (!table) return;
   switching = true;
-  // Set the sorting direction to ascending:
+  // Set the sorting direction to the next one:
   if (sort == 'none') sort = 'desc';
   else if (sort == 'desc') sort = 'asc';
   else if (sort == 'asc') sort = 'none';
@@ -1235,7 +1211,7 @@ function sortTable(n: number, sort: string, col: string) {
           let xInnerHTML = x.innerHTML;
           let yInnerHTML = y.innerHTML;
           let xInnerText, yInnerText;
-          if (col != 'Accuracy') {
+          if (col != 'Reef') {
             xInnerText = xInnerHTML.substring(
               xInnerHTML.indexOf('>') + 1,
               xInnerHTML.lastIndexOf('<'),
@@ -1262,24 +1238,24 @@ function sortTable(n: number, sort: string, col: string) {
           let xInnerHTML = x.innerHTML;
           let yInnerHTML = y.innerHTML;
           let xInnerText, yInnerText;
-          if (col != 'Reef') {
-            xInnerText = xInnerHTML.substring(
-              xInnerHTML.indexOf('>') + 1,
-              xInnerHTML.lastIndexOf('<'),
-            );
-            yInnerText = yInnerHTML.substring(
-              yInnerHTML.indexOf('>') + 1,
-              yInnerHTML.lastIndexOf('<'),
-            );
-            if (xInnerText == 'N/A') xInnerText = '0';
-            if (yInnerText == 'N/A') yInnerText = '0';
-          } else {
+            if(col != "Reef")
+            {
+              xInnerText = xInnerHTML.substring(
+                xInnerHTML.indexOf('>') + 1,
+                xInnerHTML.lastIndexOf('<'),
+              );
+              yInnerText = yInnerHTML.substring(
+                yInnerHTML.indexOf('>') + 1,
+                yInnerHTML.lastIndexOf('<'),
+              );
+              if (xInnerText == 'N/A') xInnerText = '0';
+              if (yInnerText == 'N/A') yInnerText = '0';
+            }
             const regex = /<span[^>]*>(.*?)<\/span>/;
             const xMatch = xInnerHTML.match(regex);
             const yMatch = yInnerHTML.match(regex);
             xInnerText = xMatch ? xMatch[1] : '';
             yInnerText = yMatch ? yMatch[1] : '';
-          }
           if (makeSortable(xInnerText) > makeSortable(yInnerText)) {
             // If so, mark as a switch and break the loop:
             shouldSwitch = true;
@@ -1316,6 +1292,18 @@ function sortTable(n: number, sort: string, col: string) {
 }
 
 function makeSortable(thing: string) {
+  if(thing.length == 18){
+    thing = thing + ".00"
+  }
+  if(thing.length == 20){
+    thing = thing + "0"
+  }
+  if(thing.length == 36){
+    thing = thing.substring(0, 18) + ".00" + thing.substring(18, thing.length)
+  }
+  if(thing.length == 38){
+    thing = thing.substring(0, 20) + ".00" + thing.substring(20, thing.length)
+  }
   if (thing.endsWith('%')) {
     thing = thing.replace('%', '');
     return Number(thing);
