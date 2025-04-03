@@ -1228,7 +1228,6 @@ function sortTable(n: number, sort: string, col: string) {
             const yMatch = yInnerHTML.match(regex);
             xInnerText = xMatch ? xMatch[1] : '';
             yInnerText = yMatch ? yMatch[1] : '';
-            console.log(xInnerText, yInnerText);
           }
           if (makeSortable(xInnerText) < makeSortable(yInnerText)) {
             // If so, mark as a switch and break the loop:
@@ -1239,24 +1238,24 @@ function sortTable(n: number, sort: string, col: string) {
           let xInnerHTML = x.innerHTML;
           let yInnerHTML = y.innerHTML;
           let xInnerText, yInnerText;
-          if (col != 'Reef') {
-            xInnerText = xInnerHTML.substring(
-              xInnerHTML.indexOf('>') + 1,
-              xInnerHTML.lastIndexOf('<'),
-            );
-            yInnerText = yInnerHTML.substring(
-              yInnerHTML.indexOf('>') + 1,
-              yInnerHTML.lastIndexOf('<'),
-            );
-            if (xInnerText == 'N/A') xInnerText = '0';
-            if (yInnerText == 'N/A') yInnerText = '0';
-          } else { //this should be accuracy//
+            if(col != "Reef")
+            {
+              xInnerText = xInnerHTML.substring(
+                xInnerHTML.indexOf('>') + 1,
+                xInnerHTML.lastIndexOf('<'),
+              );
+              yInnerText = yInnerHTML.substring(
+                yInnerHTML.indexOf('>') + 1,
+                yInnerHTML.lastIndexOf('<'),
+              );
+              if (xInnerText == 'N/A') xInnerText = '0';
+              if (yInnerText == 'N/A') yInnerText = '0';
+            }
             const regex = /<span[^>]*>(.*?)<\/span>/;
             const xMatch = xInnerHTML.match(regex);
             const yMatch = yInnerHTML.match(regex);
             xInnerText = xMatch ? xMatch[1] : '';
             yInnerText = yMatch ? yMatch[1] : '';
-          }
           if (makeSortable(xInnerText) > makeSortable(yInnerText)) {
             // If so, mark as a switch and break the loop:
             shouldSwitch = true;
@@ -1293,6 +1292,18 @@ function sortTable(n: number, sort: string, col: string) {
 }
 
 function makeSortable(thing: string) {
+  if(thing.length == 18){
+    thing = thing + ".00"
+  }
+  if(thing.length == 20){
+    thing = thing + "0"
+  }
+  if(thing.length == 36){
+    thing = thing.substring(0, 18) + ".00" + thing.substring(18, thing.length)
+  }
+  if(thing.length == 38){
+    thing = thing.substring(0, 20) + ".00" + thing.substring(20, thing.length)
+  }
   if (thing.endsWith('%')) {
     thing = thing.replace('%', '');
     return Number(thing);
