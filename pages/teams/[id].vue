@@ -20,11 +20,14 @@ let { width, height } = useWindowSize();
 const colorMode = useColorMode();
 
 let currentEvent = useEventKey();
+let componentKey = ref(0) //this is a force updater
 watch(currentEvent, value => {
   setup();
   try {
     localStorage.setItem('currentEvent', value);
   } catch {}
+  setup();
+  componentKey.value += 1;
 });
 
 const { scoutingData } = databases.locals;
@@ -125,6 +128,13 @@ let teamData = ref<{
 });
 let teamOptions = ref<Array<string>>([]);
 let filterTeam = ref(route.params.id);
+let thisEvent: any
+if(localStorage.getItem('currentEvent')) {
+  thisEvent = localStorage.getItem('currentEvent')
+}
+else{
+  thisEvent = eventOptions[0]
+}
 
 function setup() {
   teamOptions.value = [];
@@ -132,7 +142,7 @@ function setup() {
     if (typeof key == 'string') key = parseInt(key);
     let filteredValue: (ScoutingData & IdMeta)[] = [];
     for (let match of value) {
-      if (match.event == currentEvent.value) {
+      if (match.event === thisEvent) {
         if (!teamOptions.value.includes(key.toString())) {
           teamOptions.value.push(key.toString());
         }
@@ -322,15 +332,22 @@ watch(width, () => {
         <TeamVisualization
           :team-data="teamData"
           :maxScores="getMaxScores()"
+          :key="componentKey"
         />
       </div>
       <div class="flex-auto w-full lg:w-1/3 h-min max-h-min flex-wrap pt-4">
-        <CoralVisualization :row-data="teamData"></CoralVisualization>
+        <CoralVisualization
+          :row-data="teamData"
+          :key="componentKey"
+        />
       </div>
       <div
         class="pt-4 flex-auto w-full lg:w-1/3 h-min max-h-min flex-wrap lg:ml-4"
       >
-        <AlgaeVisualization :row-data="teamData"></AlgaeVisualization>
+        <AlgaeVisualization
+          :row-data="teamData"
+          :key="componentKey"
+        />
       </div>
     </div>
     <div

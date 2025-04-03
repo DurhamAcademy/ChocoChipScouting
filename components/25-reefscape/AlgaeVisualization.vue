@@ -30,15 +30,11 @@ let netScores = ref<Array<number>>([]);
 for (let match of props.rowData.rawData) {
   matchNums.value.push(match.matchNumber);
   //TODO backwards compatability
-  netScores.value.push(match.auto.net + match.teleop.net || 0);
-  processorScores.value.push(
-    match.auto.processor + match.teleop.processor || 0,
-  );
+  netScores.value.push(match.teleop.net || 0);
+  processorScores.value.push(match.teleop.processor || 0,);
   matchScores.value.push(
-    match.teleop.net +
-      match.auto.net +
-      match.auto.processor +
-      match.teleop.processor || 0,
+    (match.teleop.net +
+      match.teleop.processor) || 0,
   );
 }
 
@@ -47,7 +43,7 @@ const chartTitles = ['Net', 'Processor', 'Total'];
 let columns = [
   {
     key: 'period',
-    label: 'Game Period',
+    label: 'Type',
   },
   {
     key: 'min',
@@ -64,37 +60,34 @@ let columns = [
 ];
 
 function getAlgaeStats() {
-  let maxAuto = 0;
-  let minAuto = null;
-  let totalAuto = 0;
+  let maxProcessor = 0;
+  let minProcessor = null;
+  let totalProcessor = 0;
 
-  let maxTeleop = 0;
-  let minTeleop = null;
-  let totalTeleop = 0;
+  let maxNet = 0;
+  let minNet = null;
+  let totalNet = 0;
   for (let match of props.rowData.rawData) {
-    if (match.auto.processor + match.auto.net > maxAuto)
-      maxAuto = match.auto.processor + match.auto.net;
-    if (match.teleop.processor + match.auto.net > maxTeleop)
-      maxTeleop = match.teleop.processor + match.teleop.net;
+    if (match.teleop.processor > maxProcessor)
+      maxProcessor = match.teleop.processor;
+    if (match.teleop.net > maxNet)
+      maxNet = match.teleop.net;
 
-    if (minAuto == null || minAuto > match.auto.processor + match.auto.net)
-      minAuto = match.auto.processor + match.auto.net;
-    if (
-      minTeleop == null ||
-      minTeleop > match.teleop.processor + match.teleop.net
-    )
-      minTeleop = match.teleop.processor + match.teleop.net;
+    if (minProcessor == null || minProcessor > match.auto.processor)
+      minProcessor = match.auto.processor;
+    if (minNet == null || minNet > match.teleop.processor + match.teleop.net)
+      minNet = match.teleop.net;
 
-    totalAuto += match.auto.processor + match.auto.net;
-    totalTeleop += match.teleop.processor + match.teleop.net;
+    totalProcessor += match.teleop.processor;
+    totalNet += match.teleop.net;
   }
   return [
-    minAuto,
-    maxAuto,
-    totalAuto / props.rowData.rawData.length,
-    minTeleop,
-    maxTeleop,
-    totalTeleop / props.rowData.rawData.length,
+    minProcessor || 0,
+    maxProcessor || 0,
+    (totalProcessor / props.rowData.rawData.length) || 0,
+    minNet || 0,
+    maxNet || 0,
+    (totalNet / props.rowData.rawData.length) || 0,
   ];
 }
 let algaeStats = getAlgaeStats().map(value => value?.toFixed?.(2));
@@ -103,14 +96,14 @@ let rows = [
   {
     period: 'Processor',
     min: algaeStats[0] || 0,
-    max: algaeStats[1],
+    max: algaeStats[1] || 0,
     avg: algaeStats[2] || 0,
   },
   {
     period: 'Net',
-    min: algaeStats[3],
-    max: algaeStats[4],
-    avg: algaeStats[5],
+    min: algaeStats[3] || 0,
+    max: algaeStats[4] || 0,
+    avg: algaeStats[5] || 0,
   },
 ];
 </script>
