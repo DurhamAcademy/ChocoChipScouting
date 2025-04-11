@@ -95,7 +95,7 @@ async function setup() {
   });
   items = matches;
 }
-//TODO: fix the footer post-comp
+//TODO: fix the footer
 </script>
 <template>
   <OuterComponents>

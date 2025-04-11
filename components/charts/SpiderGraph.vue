@@ -14,7 +14,7 @@ const props = defineProps<{
 }>();
 
 Chart.register(...registerables);
-const colorMode = useColorMode();
+const colorMode = useColorMode(); //tells dark mode/not dark mode
 
 //sets max and min (if specified)
 if (props.min != null) {
@@ -23,9 +23,11 @@ if (props.min != null) {
 if (props.max != null) {
   Chart.defaults.scales.radialLinear.max = Math.round(parseInt(props.max));
   //this was made due to the existence of a ton of zeroes but may need to be changed
-  //in the future if we make these with decimal maxes but it works for now
+  //in the future if we make these with decimal maxes it might need to be changed but it works for now
 }
 Chart.defaults.scales.radialLinear.ticks.stepSize = 20; //this may need to be a variable in the future
+
+//adjusts colors based on light/dark theme
 if(colorMode.value == "dark"){
   Chart.defaults.scales.radialLinear.ticks.color = 'rgb(255, 255, 255)';
   Chart.defaults.scales.radialLinear.pointLabels.color = 'rgb(255, 255, 255)';
@@ -38,7 +40,7 @@ else{
 Chart.defaults.scales.radialLinear.ticks.showLabelBackdrop = false;
 
 
-//sets up the data for the spider graph
+//sets up the data for the spider graph and extra color stuff
 const testData = {
   labels: props.labels,
   datasets: [

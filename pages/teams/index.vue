@@ -1292,18 +1292,6 @@ function sortTable(n: number, sort: string, col: string) {
 }
 
 function makeSortable(thing: string) {
-  if(thing.length == 18){
-    thing = thing + ".00"
-  }
-  if(thing.length == 20){
-    thing = thing + "0"
-  }
-  if(thing.length == 36){
-    thing = thing.substring(0, 18) + ".00" + thing.substring(18, thing.length)
-  }
-  if(thing.length == 38){
-    thing = thing.substring(0, 20) + ".00" + thing.substring(20, thing.length)
-  }
   if (thing.endsWith('%')) {
     thing = thing.replace('%', '');
     return Number(thing);
