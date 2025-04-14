@@ -6,6 +6,7 @@ const props = defineProps<{
   maxScores: any;
 }>();
 
+//a method to add up the total points of one team at a given event
 let autoPoints = 0;
 let algaePoints = 0;
 let coralPoints = 0;
@@ -81,6 +82,9 @@ function addDefense(match: any) {
   defenseTotal += match.notes.promptedNotes[2].rating;
 }
 
+
+//standardizes all values to be a % out of 100, where 100
+//is the highest score by any team at the event
 let spiderGraphData = ref([
   min((autoPoints / props.maxScores[0]) * 100, 100) || 0,
   min((coralPoints / props.maxScores[1]) * 100, 100) || 0,
@@ -91,6 +95,8 @@ let spiderGraphData = ref([
 
 const spiderGraphLabels = ['Auto', 'Coral', 'Algae', 'Endgame', 'Defense'];
 
+//determines whether or not to show the missing data text
+//decided by whether or not a number is 0
 let possibleMissingData = false;
 for(let i in spiderGraphData.value){
   if (spiderGraphData.value[i] < 1){

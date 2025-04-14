@@ -20,7 +20,8 @@ let { width, height } = useWindowSize();
 const colorMode = useColorMode();
 
 let currentEvent = useEventKey();
-let componentKey = ref(0) //this is a force updater
+let componentKey = ref(0) //this is a force updater, every time it changes all the components its
+//linked to also update
 watch(currentEvent, value => {
   setup();
   try {
@@ -77,6 +78,9 @@ for (let i = 0; i < match.length; i++) {
   }
 }
 
+//a method that adds up the total score of one team at an event
+//to determine the highest possible score to be used as the 100 in
+//the spider graph
 function getMaxScores() {
 // auto, coral, algae, endgame
     let maxScores = [1, 1, 1, 1];
