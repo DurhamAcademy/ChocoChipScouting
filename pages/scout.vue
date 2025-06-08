@@ -114,13 +114,11 @@ function isMatchNumberValid() {
  also redirects the webpage to the /matches page (notice navigateTo)
  */
 async function submit() {
-  if (!isTeamNumberValid() || !isMatchNumberValid()) {
-    console.log(scoutData.value)
-    scoutData.value.author = usernameState.value;
-    scoutData.value.event_key = currentEvent.value || eventOptions[0];
-    await db.post(scoutData.value);
-    await navigateTo('/teams');
-  }
+  console.log(scoutData.value)
+  scoutData.value.author = usernameState.value;
+  scoutData.value.event_key = currentEvent.value || eventOptions[0];
+  await db.post(scoutData.value);
+  await navigateTo('/teams');
 }
 </script>
 
@@ -173,37 +171,113 @@ async function submit() {
               />
             </UFormGroup>
           </div>
-          <UTabs :items="gameTimes" class="pt-2">
+          <UTabs :items="gameTimes" class="pt-2" variant="link" color="error">
             <template #auto="{ item }">
               <div class="flex flex-wrap w-full items-center">
-                <TieredObjective v-for="(tieredObjective, index) of jsonData.auto.tiered_objectives" :template="tieredObjective" v-model="scoutData.auto.tiered_objectives[index]" class="flex-1" />
-                <SimpleObjective v-for="(simpleObjective, index) of jsonData.auto.simple_objectives" :template="simpleObjective" v-model="scoutData.auto.simple_objectives[index]" class="flex-1" />
-                <SpecialObjective v-for="(specialObjective, index) of jsonData.auto.special_objectives" :template="specialObjective" v-model="scoutData.auto.special_objectives[index]" class="flex-1" />
-                <Objective v-for="(objective, index) of jsonData.auto.objectives" :template="objective" v-model="scoutData.auto.objectives[index]" class="flex-1" />
+                <TieredObjective
+                    v-for="(tieredObjective, index) of jsonData.auto.tiered_objectives"
+                    :template="tieredObjective"
+                    v-model="scoutData.auto.tiered_objectives[index]"
+                    class="flex-1"
+                />
+                <SimpleObjective
+                    v-for="(simpleObjective, index) of jsonData.auto.simple_objectives"
+                    :template="simpleObjective"
+                    v-model="scoutData.auto.simple_objectives[index]"
+                    class="flex-1"
+                />
+                <SpecialObjective
+                    v-for="(specialObjective, index) of jsonData.auto.special_objectives"
+                    :template="specialObjective"
+                    v-model="scoutData.auto.special_objectives[index]"
+                    class="flex-1"
+                />
+                <Objective
+                    v-for="(objective, index) of jsonData.auto.objectives"
+                    :template="objective"
+                    v-model="scoutData.auto.objectives[index]"
+                    class="flex-1"
+                />
               </div>
-              <Note v-for="(note, index) of jsonData.auto.notes" :template="note" v-model="scoutData.auto.notes[index]" />
+              <Note
+                  v-for="(note, index) of jsonData.auto.notes"
+                  :template="note"
+                  v-model="scoutData.auto.notes[index]"
+              />
             </template>
             <template #teleop="{ item }">
               <div class="flex flex-wrap w-full items-center">
-                <TieredObjective v-for="(tieredObjective, index) of jsonData.teleop.tiered_objectives" :template="tieredObjective" v-model="scoutData.teleop.tiered_objectives[index]" class="flex-1" />
-                <SimpleObjective v-for="(simpleObjective, index) of jsonData.teleop.simple_objectives" :template="simpleObjective" v-model="scoutData.teleop.simple_objectives[index]" class="flex-1" />
-                <SpecialObjective v-for="(specialObjective, index) of jsonData.teleop.special_objectives" :template="specialObjective" v-model="scoutData.teleop.special_objectives[index]" class="flex-1" />
-                <Objective v-for="(objective, index) of jsonData.teleop.objectives" :template="objective" v-model="scoutData.teleop.objectives[index]" class="flex-1" />
+                <TieredObjective
+                    v-for="(tieredObjective, index) of jsonData.teleop.tiered_objectives"
+                    :template="tieredObjective"
+                    v-model="scoutData.teleop.tiered_objectives[index]"
+                    class="flex-1"
+                />
+                <SimpleObjective
+                    v-for="(simpleObjective, index) of jsonData.teleop.simple_objectives"
+                    :template="simpleObjective"
+                    v-model="scoutData.teleop.simple_objectives[index]"
+                    class="flex-1"
+                />
+                <SpecialObjective
+                    v-for="(specialObjective, index) of jsonData.teleop.special_objectives"
+                    :template="specialObjective"
+                    v-model="scoutData.teleop.special_objectives[index]"
+                    class="flex-1"
+                />
+                <Objective
+                    v-for="(objective, index) of jsonData.teleop.objectives"
+                    :template="objective"
+                    v-model="scoutData.teleop.objectives[index]"
+                    class="flex-1"
+                />
               </div>
-              <Note v-for="(note, index) of jsonData.teleop.notes" :template="note" v-model="scoutData.teleop.notes[index]" />
+              <Note v-for="(note, index) of jsonData.teleop.notes"
+                    :template="note"
+                    v-model="scoutData.teleop.notes[index]" />
             </template>
             <template #endgame="{ item }">
               <div class="flex flex-wrap w-full items-center">
-                <TieredObjective v-for="(tieredObjective, index) of jsonData.endgame.tiered_objectives" :template="tieredObjective" v-model="scoutData.endgame.tiered_objectives[index]" class="flex-1" />
-                <SimpleObjective v-for="(simpleObjective, index) of jsonData.endgame.simple_objectives" :template="simpleObjective" v-model="scoutData.endgame.simple_objectives[index]" class="flex-1" />
-                <SpecialObjective v-for="(specialObjective, index) of jsonData.endgame.special_objectives" :template="specialObjective" v-model="scoutData.endgame.special_objectives[index]" class="flex-1" />
-                <Objective v-for="(objective, index) of jsonData.endgame.objectives" :template="objective" v-model="scoutData.endgame.objectives[index]" class="flex-1" />
+                <TieredObjective
+                    v-for="(tieredObjective, index) of jsonData.endgame.tiered_objectives"
+                    :template="tieredObjective"
+                    v-model="scoutData.endgame.tiered_objectives[index]"
+                    class="flex-1"
+                />
+                <SimpleObjective
+                    v-for="(simpleObjective, index) of jsonData.endgame.simple_objectives"
+                    :template="simpleObjective"
+                    v-model="scoutData.endgame.simple_objectives[index]"
+                    class="flex-1"
+                />
+                <SpecialObjective
+                    v-for="(specialObjective, index) of jsonData.endgame.special_objectives"
+                    :template="specialObjective"
+                    v-model="scoutData.endgame.special_objectives[index]"
+                    class="flex-1"
+                />
+                <Objective
+                    v-for="(objective, index) of jsonData.endgame.objectives"
+                    :template="objective"
+                    v-model="scoutData.endgame.objectives[index]"
+                    class="flex-1"
+                />
               </div>
-              <Note v-for="(note, index) of jsonData.endgame.notes" :template="note" v-model="scoutData.endgame.notes[index]" />
+              <Note
+                  v-for="(note, index) of jsonData.endgame.notes"
+                  :template="note"
+                  v-model="scoutData.endgame.notes[index]"
+              />
             </template>
             <template #notes="{ item }">
-              <NoteSections :template="jsonData.notes.note_sections" v-model="scoutData.notes.grouped_notes" />
-              <Note v-for="(note, index) of jsonData.notes.notes" :template="note" v-model="scoutData.notes.notes[index]" />
+              <NoteSections
+                  :template="jsonData.notes.note_sections"
+                  v-model="scoutData.notes.note_sections"
+              />
+              <Note
+                  v-for="(note, index) of jsonData.notes.notes"
+                  :template="note" v-model="scoutData.notes.notes[index]"
+              />
             </template>
           </UTabs>
         </template>
