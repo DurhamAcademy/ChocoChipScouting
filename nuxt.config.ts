@@ -1,13 +1,12 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 import vuetify, { transformAssetUrls } from 'vite-plugin-vuetify';
-import path from 'node:path';
-var sw = true;
 
 export default defineNuxtConfig({
   modules: [
     '@nuxt/image',
     '@vite-pwa/nuxt',
     '@nuxt/ui',
+    '@nuxtjs/tailwindcss',
     '@nuxtjs/color-mode',
     (_options, nuxt) => {
       nuxt.hooks.hook('vite:extendConfig', config => {
@@ -16,22 +15,6 @@ export default defineNuxtConfig({
       });
     },
   ],
-
-  webpack: {
-    aggressiveCodeRemoval: true,
-    optimization: {
-      minimize: true,
-      splitChunks: {
-        chunks: 'initial',
-        cacheGroups: {
-          vendor: {
-            name: 'node_vendors',
-            test: /[\\/]node_modules[\\/]/,
-          },
-        },
-      },
-    },
-  },
 
   nitro: {
     preset: 'bun',
@@ -55,37 +38,6 @@ export default defineNuxtConfig({
     transpile: ['vuetify'],
   },
 
-  // speedkit: {
-  //
-  //   detection: {
-  //     performance: true,
-  //     browserSupport: true
-  //   },
-  //
-  //   performanceMetrics: {
-  //     device: {
-  //       hardwareConcurrency: { min: 2, max: 48 },
-  //       deviceMemory: { min: 2 }
-  //     },
-  //     timing: {
-  //       fcp: 800,
-  //       dcl: 1200
-  //     }
-  //   },
-  //
-  //   componentAutoImport: false,
-  //   componentPrefix: undefined,
-  //
-  //   /**
-  //    * IntersectionObserver rootMargin for Components and Assets
-  //    */
-  //   lazyOffset: {
-  //     component: '0%',
-  //     asset: '0%'
-  //   }
-  //
-  // },
-  //
   image: {
     screens: {
       default: 320,
@@ -107,14 +59,10 @@ export default defineNuxtConfig({
     },
   },
 
-  // buildModules: [
-  //     'nuxt-speedkit',
-  //     '@nuxtjs/pwa'
-  // ],
   pwa: {
-    strategies: sw ? 'injectManifest' : 'generateSW',
-    srcDir: sw ? 'service-worker' : undefined,
-    filename: sw ? 'sw.ts' : undefined,
+    strategies: 'injectManifest',
+    srcDir: 'service-worker',
+    filename: 'sw.ts',
     registerType: 'autoUpdate',
     manifest: {
       name: 'DARC SIDE Scouting Webapp',
@@ -160,11 +108,8 @@ export default defineNuxtConfig({
     },
   },
 
-  plugins: ['~/plugins/vuetify.ts'],
-
   devtools: {
     enabled: true,
-
     timeline: {
       enabled: true,
     },
@@ -180,15 +125,12 @@ export default defineNuxtConfig({
     },
   },
 
-  logLevel: 'verbose',
+  logLevel: "verbose",
 
-  runtimeConfig: {
+  runtimeConfig:{
     tbaKey: process.env.NUXT_TBA_KEY,
     couchDB: {
-      hostname:
-        process.env.NUXT_COUCH_DB_HOSTNAME === undefined
-          ? process.env.NUXT_COUCH_DB_HOSTNAME
-          : 'localhost',
+      hostname: process.env.NUXT_COUCH_DB_HOSTNAME || 'localhost',
       serverAdminUser: {
         username: process.env.NUXT_COUCH_DB_SERVER_ADMIN_USER_USERNAME,
         password: process.env.NUXT_COUCH_DB_SERVER_ADMIN_USER_PASSWORD,
@@ -205,8 +147,9 @@ export default defineNuxtConfig({
     preference: 'light', // default value of $colorMode.preference
   },
 
-  tailwindcss: {
-    config: {
+
+  tailwindcss:{
+    config:{
       theme: {
         extend: {
           width: {
