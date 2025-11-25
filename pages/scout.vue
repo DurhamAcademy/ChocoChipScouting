@@ -114,7 +114,6 @@ function isMatchNumberValid() {
  also redirects the webpage to the /matches page (notice navigateTo)
  */
 async function submit() {
-  console.log(scoutData.value)
   scoutData.value.author = usernameState.value;
   scoutData.value.event_key = currentEvent.value || eventOptions[0];
   await db.post(scoutData.value);

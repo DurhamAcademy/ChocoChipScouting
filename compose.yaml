@@ -41,9 +41,7 @@ services:
             - .nuxt
             - .output
             - .idea
-            - .output
             - .data
-            - .nuxt
             - .nitro
             - .cache
             - dist

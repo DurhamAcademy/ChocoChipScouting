@@ -237,6 +237,34 @@ export type ScoutingDataTest = {
   }
 };
 
+export type ScoutingDataTemplate = {
+  auto: {
+    tiered_objectives: TieredObjectiveTemplate[];
+    simple_objectives: SimpleObjectiveTemplate[];
+    special_objectives: SpecialObjectiveTemplate[];
+    objectives: ObjectiveTemplate[];
+    notes: NoteTemplate[];
+  };
+  teleop: {
+    tiered_objectives: TieredObjectiveTemplate[];
+    simple_objectives: SimpleObjectiveTemplate[];
+    special_objectives: SpecialObjectiveTemplate[];
+    objectives: ObjectiveTemplate[];
+    notes: NoteTemplate[];
+  };
+  endgame: {
+    tiered_objectives: TieredObjectiveTemplate[];
+    simple_objectives: SimpleObjectiveTemplate[];
+    special_objectives: SpecialObjectiveTemplate[];
+    objectives: ObjectiveTemplate[];
+    notes: NoteTemplate[];
+  };
+  notes: {
+    note_sections: NoteSectionTemplate[];
+    notes: NoteTemplate[];
+  }
+};
+
 export type ObjectiveData = {
   count_made: number;
   count_missed: number;
@@ -334,3 +362,4 @@ export type NoteSectionTemplate = {
 
 export type GamePhase = 'auto' | 'teleop' | 'endgame'
 
+export type ObjectiveType = 'tiered_objectives' | 'simple_objectives' | 'special_objectives' | 'objectives'

@@ -88,6 +88,7 @@ export default defineNuxtConfig({
       ],
     },
     workbox: {
+      navigateFallback: '/dashboard',
       globPatterns: ['**/*.{js,css,html,png,svg,ico}'],
     },
     injectManifest: {

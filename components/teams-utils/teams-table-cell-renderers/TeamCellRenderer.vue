@@ -1,15 +1,13 @@
 <script setup lang="ts">
 
-import { defineProps } from 'vue';
 import { useRouter } from 'vue-router';
 
 const props = defineProps<{
-  teamNumber: number
+  params: any // AG Grid passes this automatically
 }>();
 
 const router = useRouter();
-
-const teamNumber = String(props.teamNumber);
+const teamNumber = String(props.params.data.team_number);
 
 const navigateToTeam = () => {
   router.push('/teams/' + teamNumber);
