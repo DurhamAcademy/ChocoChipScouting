@@ -40,30 +40,6 @@ class LocalRemoteDatabaseSyncHolder<Content extends {} = {}> {
     basic: this.databases.basic.remote,
   };
 }
-export type TeamTableDataTest = {
-  team_number: number;
-  auto: {
-    tiered_objectives: TieredObjectiveTableData[];
-    simple_objectives: SimpleObjectiveTableData[];
-    special_objectives: SpecialObjectiveTableData[];
-    objectives: ObjectiveTableData[];
-  };
-  teleop: {
-    tiered_objectives: TieredObjectiveTableData[];
-    simple_objectives: SimpleObjectiveTableData[];
-    special_objectives: SpecialObjectiveTableData[];
-    objectives: ObjectiveTableData[];
-  };
-  endgame: {
-    tiered_objectives: TieredObjectiveTableData[];
-    simple_objectives: SimpleObjectiveTableData[];
-    special_objectives: SpecialObjectiveTableData[];
-    objectives: ObjectiveTableData[];
-  };
-  notes: {
-    note_sections: NoteSectionTableData[];
-  }
-}
 
 export type TeamTableData = {
   team: { data: string; color: string };
@@ -270,11 +246,6 @@ export type ObjectiveData = {
   count_missed: number;
 }
 
-export type ObjectiveTableData = {
-  average_count_made: number;
-  average_count_missed: number;
-}
-
 export type ObjectiveTemplate = {
   name: string;
   points: number;
@@ -283,10 +254,6 @@ export type ObjectiveTemplate = {
 
 export type TieredObjectiveData = {
   objectives: ObjectiveData[];
-}
-
-export type TieredObjectiveTableData = {
-  objectives: ObjectiveTableData[];
 }
 
 export type TieredObjectiveTemplate = {
@@ -299,10 +266,6 @@ export type SpecialObjectiveData = {
   options: SpecialObjectiveOptionData[];
 }
 
-export type SpecialObjectiveTableData = {
-  options: SpecialObjectiveOptionTableData[];
-}
-
 export type SpecialObjectiveTemplate = {
   name: string;
   options: SpecialObjectiveOptionTemplate[];
@@ -310,10 +273,6 @@ export type SpecialObjectiveTemplate = {
 
 export type SpecialObjectiveOptionData = {
   selected: boolean;
-}
-
-export type SpecialObjectiveOptionTableData = {
-  count_selected: number;
 }
 
 export type SpecialObjectiveOptionTemplate = {
@@ -324,11 +283,6 @@ export type SpecialObjectiveOptionTemplate = {
 
 export type SimpleObjectiveData = {
   selected: boolean;
-}
-
-export type SimpleObjectiveTableData = {
-  count_selected: number;
-  count_not_selected: number;
 }
 
 export type SimpleObjectiveTemplate = {
@@ -348,10 +302,6 @@ export type NoteSectionData = {
   selected: boolean;
   rating: number;
   notes: NoteData[];
-}
-
-export type NoteSectionTableData = {
-  average_rating: number;
 }
 
 export type NoteSectionTemplate = {

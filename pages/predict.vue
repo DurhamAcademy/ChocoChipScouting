@@ -33,17 +33,19 @@ let teamOrgMatches = new Map<number, Array<any>>();
 
 for (let i = 0; i < match.length; i++) {
   let currentMatch = await match[i];
-  let team =
-    typeof currentMatch.teamNumber == 'string'
-      ? parseInt(currentMatch.teamNumber)
-      : currentMatch.teamNumber;
-  if (currentMatch.event == currentEvent) {
-    if (!teamOrgMatches.has(team)) {
-      teamOrgMatches.set(team, [currentMatch]);
-    } else {
-      let arr: Array<any> = teamOrgMatches.get(team)!;
-      arr.push(currentMatch);
-      teamOrgMatches.set(team, arr);
+  if (currentMatch !== undefined) {
+    let team =
+      typeof currentMatch.team_number == 'string'
+        ? parseInt(currentMatch.team_number)
+        : currentMatch.team_number;
+    if (currentMatch.event_key == currentEvent) {
+      if (!teamOrgMatches.has(team)) {
+        teamOrgMatches.set(team, [currentMatch]);
+      } else {
+        let arr: Array<any> = teamOrgMatches.get(team)!;
+        arr.push(currentMatch);
+        teamOrgMatches.set(team, arr);
+      }
     }
   }
 }
@@ -330,8 +332,6 @@ watch(status, () => {
       teamsFound.value = JSON.parse(tf);
       blueTotal.value = JSON.parse(blue);
       redTotal.value = JSON.parse(red);
-
-
     }
   }
 });
