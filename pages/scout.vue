@@ -13,6 +13,7 @@ import SimpleObjective from "~/components/scouting-components/SimpleObjective.vu
 import Note from "~/components/scouting-components/Note.vue";
 import NoteSections from "~/components/scouting-components/NoteSections.vue";
 import Objective from "~/components/scouting-components/Objective.vue";
+import { useDebounceFn } from '@vueuse/core';
 
 
 let scoutData = ref<ScoutingDataTest>({
@@ -81,24 +82,56 @@ watch(currentEvent, value => {
   window.localStorage.setItem('currentEvent', value!);
 });
 
-//gets the blue alliance data for what teams are at the current event and puts them in an array
-const { data: tbaEventData, pending: tbaPending } = await useLazyFetch<
-    Array<any>
->('/api/eventTeams/' + currentEvent.value);
-watch(tbaPending, () => {
-  if (!tbaPending.value && tbaEventData.value != null) {
-    validTeamNums.value = tbaEventData.value.map(value => value.team_number);
-  }
-});
-let validTeamNums = ref<Array<number>>();
+const isTeamValid = ref<boolean>(false);
 
-//a quick function to check if the team and match numbers a user enters are valid
-function isTeamNumberValid() {
-  return (
-      !Number.isNaN(parseInt(scoutData.value.team_number)) &&
-      scoutData.value.team_number != '' &&
-      parseInt(scoutData.value.team_number) > 0
-  );
+// using cache to reduce api requests along with 1 second debounceFn
+const teamCheckCache = new Map<string, boolean>();
+
+const validateTeam = useDebounceFn(async (teamNum: string) => {
+  isTeamValid.value = false;
+
+  if (!teamNum || Number.isNaN(parseInt(teamNum))) {
+    return;
+  }
+
+  // see if cache contains team # being checked
+  if (teamCheckCache.has(teamNum)) {
+    isTeamValid.value = teamCheckCache.get(teamNum)!;
+    return;
+  }
+
+  // check api if team not in cache
+  const { data, error } = await useFetch(`/api/team/frc${teamNum}`);
+
+  const valid = !(data?.value?.Error?.includes("does not exist") ?? false);
+
+  // cache api result
+  teamCheckCache.set(teamNum, valid);
+
+  isTeamValid.value = valid;
+}, 1000);
+
+
+watch(
+  () => scoutData.value.team_number,
+  (teamNum) => validateTeam(teamNum)
+);
+
+function ableToSubmit() {
+  return isMatchNumberValid() && isTeamValid.value === true && ratingsFilled()
+}
+
+function ableToSubmitTooltip() {
+  if (ableToSubmit()) return "";
+  if (!isTeamValid.value) {
+    return "Your entered team number is not valid!"
+  }
+  if (!isMatchNumberValid()) {
+    return "Your entered match number is not valid!"
+  }
+  if (!ratingsFilled()) {
+    return "Please fill in the robot ratings in the notes section!"
+  }
 }
 
 function isMatchNumberValid() {
@@ -107,6 +140,16 @@ function isMatchNumberValid() {
       scoutData.value.match_number != '' &&
       parseInt(scoutData.value.match_number) > 0
   );
+}
+
+function ratingsFilled() {
+  const noteSections = scoutData.value.notes.note_sections;
+  if (noteSections.length === 0) { return true; }
+  for (const noteSection of noteSections) {
+    if (!noteSection.selected || noteSection.rating === 0) return false;
+  }
+
+  return true;
 }
 
 /***
@@ -293,14 +336,16 @@ async function submit() {
                   variant="outline"
               />
               <!-- a button to submit -->
-              <UButton
+              <UTooltip :text="ableToSubmitTooltip()">
+                <UButton
                   class="m-1"
                   label="Submit"
                   type="submit"
                   variant="solid"
-                  :disabled="!isTeamNumberValid() || !isMatchNumberValid()"
+                  :disabled="!ableToSubmit()"
                   @click="submit"
-              />
+                />
+              </UTooltip>
             </div>
           </div>
         </template>

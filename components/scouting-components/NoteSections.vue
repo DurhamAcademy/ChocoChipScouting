@@ -53,7 +53,7 @@ value.value = props.template.map(noteSectionTemplate => createNoteSectionData(no
     <template v-for="(noteSection, index) in template" #[noteSection.name] >
       <PromptedNote
           :template="noteSection"
-          v-model="value[index]"
+          v-model="value[index]!"
       />
     </template>
   </UAccordion>

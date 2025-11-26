@@ -18,7 +18,7 @@ const value = computed({
 });
 
 // function to declare an empty NoteSectionData obj
-function createNoteSectionData(noteSectionTemplate: NoteSectionTemplate): GroupNoteData {
+function createNoteSectionData(noteSectionTemplate: NoteSectionTemplate): NoteSectionData {
   return {
     selected: false,
     rating: 0,
@@ -63,7 +63,7 @@ value.value = createNoteSectionData(props.template)
       :variant="!value.selected ? 'outline' : 'solid'"
     ></UBadge>
   </div>
-  <Note v-if="value" v-for="(prompt, index) of template.notes" :template="prompt" v-model="value.notes[index]" />
+  <Note v-if="value" v-for="(prompt, index) of template.notes" :template="prompt" v-model="value.notes[index]!" />
 </template>
 
 <style scoped></style>
