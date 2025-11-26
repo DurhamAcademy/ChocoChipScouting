@@ -42,7 +42,7 @@ const percentile = computed(() => {
 });
 
 const badgeColor = !props.params.inverted ? computed(() => {
-  if (percentile.value === null) {
+  if (percentile.value === null || value.value === -1) {
     return "gray";
   }
 

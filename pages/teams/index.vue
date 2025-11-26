@@ -160,14 +160,11 @@ async function tableSetup() {
                 0,
               ) / matchLength;
             const total = avgMade + avgMissed;
-            const accuracy = total === 0 ? 'N/A' : (avgMade / total) * 100;
+            const accuracy = total === 0 ? -1 : (avgMade / total) * 100;
 
-            row[`${phase}_tiered_${tieredIndex}_obj_${objIndex}_made`] =
-              avgMade;
-            row[`${phase}_tiered_${tieredIndex}_obj_${objIndex}_missed`] =
-              avgMissed;
-            row[`${phase}_tiered_${tieredIndex}_obj_${objIndex}_accuracy`] =
-              accuracy;
+            row[`${phase}_tiered_${tieredIndex}_obj_${objIndex}_made`] = avgMade;
+            row[`${phase}_tiered_${tieredIndex}_obj_${objIndex}_missed`] = avgMissed;
+            row[`${phase}_tiered_${tieredIndex}_obj_${objIndex}_accuracy`] = accuracy;
 
             tieredTotal += avgMade;
           });
@@ -214,7 +211,7 @@ async function tableSetup() {
             objectiveData.reduce((sum, obj) => sum + obj.count_missed, 0) /
             matchLength;
           const total = avgMade + avgMissed;
-          const accuracy = total === 0 ? 'N/A' : (avgMade / total) * 100;
+          const accuracy = total === 0 ? -1 : (avgMade / total) * 100;
 
           row[`${phase}_obj_${objIndex}_made`] = avgMade;
           row[`${phase}_obj_${objIndex}_missed`] = avgMissed;
@@ -237,8 +234,7 @@ async function tableSetup() {
             0,
           );
           const total = countSelected + countNotSelected;
-          const percentage =
-            total === 0 ? 'N/A' : (countSelected / total) * 100;
+          const percentage = total === 0 ? -1 : (countSelected / total) * 100;
 
           row[`${phase}_simple_${simpleIndex}_selected`] = countSelected;
           row[`${phase}_simple_${simpleIndex}_not_selected`] = countNotSelected;
@@ -262,7 +258,7 @@ function buildColDefs(template: ScoutingDataTemplate) {
 
   // formatters
   const decimal = (v: number) => v.toFixed(1);
-  const percent = (v: number) => v.toFixed(1) + '%';
+  const percent = (v: number) => v !== -1 ? v.toFixed(1) + '%' : 'N/A';
 
   let colDefs: (ColGroupDef | ColDef)[] = [
     {
@@ -434,7 +430,7 @@ function calculateColumnBounds() {
     const values = teamsData
       .map(row => row[key])
       .filter(
-        (v): v is number => typeof v === 'number' && !isNaN(v) && v !== null,
+        (v): v is number => typeof v === 'number' && !isNaN(v) && v !== -1,
       );
 
     if (values.length > 0) {
